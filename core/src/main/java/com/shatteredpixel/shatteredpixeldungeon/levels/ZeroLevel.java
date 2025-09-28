@@ -59,7 +59,6 @@ public class ZeroLevel extends Level {
 		entrance  =center*width()+center;
 		//map[entrance]=Terrain.ENTRANCE;
 		exit      =center*width()+center;
-
 		
 		placeTrigger(new WindowTriggerForSaveSlot().create(saveSlot1,1));
 		placeTrigger(new WindowTriggerForSaveSlot().create(saveSlot2,2));

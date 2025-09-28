@@ -74,7 +74,6 @@ public class Assets {
 		public static final String TERRAIN_FEATURES = "environment/terrain_features.png";
 
 		public static final String VISUAL_GRID  = "environment/visual_grid.png";
-		public static final String WALL_BLOCKING= "environment/wall_blocking.png";
 
 		public static final String TILES_ZERO_LEVEL="environment/tiles_zero_level.png";
 		public static final String TILES_SEWERS    ="environment/tiles_sewers.png";
