@@ -36,9 +36,10 @@ public class Noel extends NPC {
         return true;
     }
 
-    public boolean interact() {
-        sprite.turnTo( pos, Dungeon.hero.pos );
+    @Override
+    public boolean interact(Char c) {
+        sprite.turnTo(pos,c.pos);
         //mark
-        return false;
+        return true;
     }
 }

@@ -31,13 +31,16 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Regrowth;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.StormCloud;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Noel;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HeavyBoomerang;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
@@ -87,6 +90,7 @@ public class PrisonBossLevel extends Level {
 	
 	private State state;
 	private Tengu tengu;
+	private Noel noel=null;
 
 	@Override
 	public void playLevelMusic() {
@@ -115,6 +119,7 @@ public class PrisonBossLevel extends Level {
 	
 	private static final String STATE	        = "state";
 	private static final String TENGU	        = "tengu";
+	private static final String NOEL            = "noel";
 	private static final String STORED_ITEMS    = "storeditems";
 	private static final String TRIGGERED       = "triggered";
 	
@@ -123,6 +128,7 @@ public class PrisonBossLevel extends Level {
 		super.storeInBundle(bundle);
 		bundle.put( STATE, state );
 		bundle.put( TENGU, tengu );
+		bundle.put( NOEL , noel  );
 		bundle.put( STORED_ITEMS, storedItems);
 		bundle.put(TRIGGERED, triggered );
 	}
@@ -131,7 +137,7 @@ public class PrisonBossLevel extends Level {
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle(bundle);
 		state = bundle.getEnum( STATE, State.class );
-		
+
 		//in some states tengu won't be in the world, in others he will be.
 		if (state == State.START || state == State.FIGHT_PAUSE) {
 			tengu = (Tengu)bundle.get( TENGU );
@@ -139,7 +145,8 @@ public class PrisonBossLevel extends Level {
 			for (Mob mob : mobs){
 				if (mob instanceof Tengu) {
 					tengu = (Tengu) mob;
-					break;
+				}else if (mob instanceof Noel) {
+					noel  = (Noel ) mob;
 				}
 			}
 		}
@@ -308,6 +315,12 @@ public class PrisonBossLevel extends Level {
 			if(Dungeon.hero!=ch || triggered){return;}
 			triggered=true;
 
+			for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
+				if (mob instanceof Noel){
+					Buff.append(Dungeon.hero,TalismanOfForesight.CharAwareness.class,5f).charID=mob.id();
+				}
+			}
+			
 			GLog.n(Messages.get(PrisonBossLevel.class,"noel_be_found"));
 		}
 	}
@@ -326,7 +339,9 @@ public class PrisonBossLevel extends Level {
 
 		if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
 			//placeTrigger(new Teleporter().create(13+10*width(),-1,1010));
-
+			noel=new Noel();
+			noel.pos=7+18*width();
+			GameScene.add(noel);
 			placeTrigger(new NoelTrigger().create(10+23*width()));
 		}
 		
@@ -372,7 +387,7 @@ public class PrisonBossLevel extends Level {
 		}
 		
 		for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
-			if (mob != tengu && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
+			if (mob != tengu && mob!=noel && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
 				mob.destroy();
 				if (mob.sprite != null)
 					mob.sprite.killAndErase();
