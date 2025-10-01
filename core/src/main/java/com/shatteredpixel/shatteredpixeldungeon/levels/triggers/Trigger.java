@@ -24,6 +24,10 @@ public abstract class Trigger implements Bundlable {
 		return true;
 	}
 
+	public boolean canBePressed(){
+		return false;
+	}
+
 	public boolean canInteract(Char ch){
 		if(pos==ch.pos){
 			return true;
