@@ -11,11 +11,6 @@ import com.watabou.utils.Bundle;
 import com.watabou.utils.Reflection;
 
 public abstract class WindowTrigger extends Trigger{
-	public WindowTrigger create(int pos){
-		this.pos=pos;
-		return this;
-	}
-	
 	@Override
 	public void activate(Char ch){
 		if(ch==Dungeon.hero){

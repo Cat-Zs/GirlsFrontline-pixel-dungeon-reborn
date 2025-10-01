@@ -40,7 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.HeavyBoomerang;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.TenguDartTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TargetHealthIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
@@ -274,6 +275,42 @@ public class PrisonBossLevel extends Level {
 			e, e, e, W, W, W, W, W, W, W, W, C, C, W,
 			W, W, W, W, W, W, W, W, W, W, W, C, C, W
 	};
+
+	public static class NoelTrigger extends Trigger{
+		public boolean triggered=false;
+
+		private static final String TRIGGERED="triggered";
+
+		@Override
+		public void storeInBundle( Bundle bundle ) {
+			super.storeInBundle(bundle);
+			bundle.put(TRIGGERED,triggered);
+		}
+
+		@Override
+		public void restoreFromBundle( Bundle bundle ) {
+			super.restoreFromBundle(bundle);
+			triggered=bundle.getBoolean(TRIGGERED);
+		}
+
+		@Override
+		public boolean canBeTouched(){
+			return false;
+		}
+
+		@Override
+		public boolean canBePressed(){
+			return true;
+		}
+
+		@Override
+		public void activate(Char ch){
+			if(Dungeon.hero!=ch || triggered){return;}
+			triggered=true;
+
+			GLog.n(Messages.get(PrisonBossLevel.class,"noel_be_found"));
+		}
+	}
 	
 	private void setMapEnd(){
 		
@@ -288,7 +325,9 @@ public class PrisonBossLevel extends Level {
 		}
 
 		if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
-			placeTrigger(new Teleporter().create(13+10*width(),-1,1010));
+			//placeTrigger(new Teleporter().create(13+10*width(),-1,1010));
+
+			placeTrigger(new NoelTrigger().create(10+23*width()));
 		}
 		
 		CustomTilemap vis = new ExitVisual();
@@ -837,9 +876,6 @@ public class PrisonBossLevel extends Level {
 		public Tilemap create() {
 			Tilemap v = super.create();
 			int[] data = mapSimpleImage(0, 0, TEX_WIDTH);
-			if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
-				data[2]+=1;
-			}
 
 			for (int i = 0; i < data.length; i++){
 				if (render[i] == 0) data[i] = -1;

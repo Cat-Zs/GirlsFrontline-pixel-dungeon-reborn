@@ -10,6 +10,11 @@ public abstract class Trigger implements Bundlable {
 
 	private static final String POS	= "pos";
 
+	public Trigger create(int pos){
+		this.pos=pos;
+		return this;
+	}
+
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put(POS,pos);
