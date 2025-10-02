@@ -90,7 +90,6 @@ public class PrisonBossLevel extends Level {
 	
 	private State state;
 	private Tengu tengu;
-	private Noel noel=null;
 
 	@Override
 	public void playLevelMusic() {
@@ -119,7 +118,6 @@ public class PrisonBossLevel extends Level {
 	
 	private static final String STATE	        = "state";
 	private static final String TENGU	        = "tengu";
-	private static final String NOEL            = "noel";
 	private static final String STORED_ITEMS    = "storeditems";
 	private static final String TRIGGERED       = "triggered";
 	
@@ -128,7 +126,6 @@ public class PrisonBossLevel extends Level {
 		super.storeInBundle(bundle);
 		bundle.put( STATE, state );
 		bundle.put( TENGU, tengu );
-		bundle.put( NOEL , noel  );
 		bundle.put( STORED_ITEMS, storedItems);
 		bundle.put(TRIGGERED, triggered );
 	}
@@ -145,8 +142,7 @@ public class PrisonBossLevel extends Level {
 			for (Mob mob : mobs){
 				if (mob instanceof Tengu) {
 					tengu = (Tengu) mob;
-				}else if (mob instanceof Noel) {
-					noel  = (Noel ) mob;
+					break;
 				}
 			}
 		}
@@ -338,8 +334,7 @@ public class PrisonBossLevel extends Level {
 		}
 
 		if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
-			//placeTrigger(new Teleporter().create(13+10*width(),-1,1010));
-			noel=new Noel();
+			Noel noel=new Noel();
 			noel.pos=7+18*width();
 			GameScene.add(noel);
 			placeTrigger(new NoelTrigger().create(10+23*width()));
@@ -387,7 +382,7 @@ public class PrisonBossLevel extends Level {
 		}
 		
 		for (Mob mob : Dungeon.level.mobs.toArray(new Mob[0])){
-			if (mob != tengu && mob!=noel && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
+			if (mob != tengu && !(mob instanceof Noel) && (safeArea == null || !safeArea.inside(cellToPoint(mob.pos)))){
 				mob.destroy();
 				if (mob.sprite != null)
 					mob.sprite.killAndErase();
