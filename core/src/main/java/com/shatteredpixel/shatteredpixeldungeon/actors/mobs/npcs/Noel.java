@@ -67,6 +67,8 @@ public class Noel extends NPC {
 			diaLogState=1;
 			Game.runOnRenderThread(()->GameScene.show(new WndDialog(new Noel_Plot_L1())));
 		}else{
+			Noel noel=this;
+
 			Game.runOnRenderThread(()->GameScene.show(new WndOptions(
 				sprite(),
 				Messages.titleCase(name()),
@@ -78,6 +80,8 @@ public class Noel extends NPC {
 				protected void onSelect(int index) {
 					if(index==0){
 						new Teleporter().create(0,-1,1010).activate(c);
+						noel.destroy();
+						noel.sprite.killAndErase();
 					}else{
 						yell(Messages.get(Noel.class,"teleport_fine"));
 					}
