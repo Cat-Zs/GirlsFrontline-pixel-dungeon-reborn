@@ -121,8 +121,9 @@ public class WndHero extends WndTabbed {
 		buffs.layout();
 	}
 
+	// 在StatsTab类的initialize方法中添加饱食度显示
 	private class StatsTab extends Group {
-		
+	
 		private static final int GAP = 6;
 		
 		private float pos;
@@ -130,9 +131,9 @@ public class WndHero extends WndTabbed {
 		public StatsTab() {
 			initialize();
 		}
-
+	
 		public void initialize(){
-
+	
 			for (Gizmo g : members){
 				if (g != null) g.destroy();
 			}
