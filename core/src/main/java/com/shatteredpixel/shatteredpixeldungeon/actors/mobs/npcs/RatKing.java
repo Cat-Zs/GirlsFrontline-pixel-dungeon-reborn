@@ -51,6 +51,11 @@ public class RatKing extends NPC {
 	public static class ChocoTracker extends CounterBuff {
 		{ revivePersists = true; }
 	}
+    
+    // 添加choco限制提示计数器
+    public static class ChocoLimitNotifier extends CounterBuff {
+        { revivePersists = true; }
+    }
 	
 	@Override
 	public int defenseSkill( Char enemy ) {
@@ -179,8 +184,29 @@ public class RatKing extends NPC {
 				// 增加计数器
 				Buff.count(Dungeon.hero, ChocoTracker.class, 1);
 			} else {
-				// 达到获取上限 - 使用Messages类而不是硬编码文本
-				yell(Messages.get(this, "choco_limit"));
+				// 检查提示次数
+				ChocoLimitNotifier notifier = Dungeon.hero.buff(ChocoLimitNotifier.class);
+				float notifyCount = (notifier != null) ? notifier.count() : 0;
+				
+				if (notifyCount < 3) {
+					// 根据提示次数显示不同的消息
+					if (notifyCount == 0) {
+						yell(Messages.get(this, "choco_limit"));
+					} else if (notifyCount == 1) {
+						yell(Messages.get(this, "choco_limit_2"));
+					} else {
+						yell(Messages.get(this, "choco_limit_3"));
+					}
+					// 增加提示计数器
+					Buff.count(Dungeon.hero, ChocoLimitNotifier.class, 1);
+				} else {
+					// 已经提示了3次，根据玩家状态显示相应的原始对话
+					if (Dungeon.hero.armorAbility instanceof Ratmogrify) {
+						yell(Messages.get(this, "crown_after"));
+					} else {
+						yell(Messages.get(this, "what_is_it"));
+					}
+				}
 			}
 		}
 		return true;
