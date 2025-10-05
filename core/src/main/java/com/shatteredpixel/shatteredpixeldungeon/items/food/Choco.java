@@ -6,7 +6,7 @@ public class Choco extends Food {
 
     {
         stackable = true;
-        image = ItemSpriteSheet.RATION; // 使用与MRE相同的贴图
+        image = ItemSpriteSheet.CHOCO; // 从MRE贴图修改为choco贴图
         defaultAction = AC_EAT;
         bones = true;
     }

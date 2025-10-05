@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Choco;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.FncSprite;
@@ -35,12 +36,20 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
 
+// 在导入部分添加CounterBuff类的导入
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
+
 public class RatKing extends NPC {
 
-	{
+	{        
 		spriteClass = FncSprite.class;
 		
 		state = SLEEPING;
+	}
+	
+	// 添加持久化的choco获取计数器
+	public static class ChocoTracker extends CounterBuff {
+		{ revivePersists = true; }
 	}
 	
 	@Override
@@ -149,9 +158,30 @@ public class RatKing extends NPC {
 				});
 			}
 		} else if (Dungeon.hero.armorAbility instanceof Ratmogrify) {
-			yell( Messages.get(RatKing.class, "crown_after") );
+			yell( Messages.get(this, "crown_after") );
 		} else {
-			yell( Messages.get(this, "what_is_it") );
+			// 检查choco获取次数
+			ChocoTracker tracker = Dungeon.hero.buff(ChocoTracker.class);
+			float chocoCount = (tracker != null) ? tracker.count() : 0;
+			
+			if (chocoCount < 2) {
+				// 玩家还可以获取choco
+				Choco t1 = new Choco();
+				t1.identify();
+				if (t1.doPickUp(Dungeon.hero)) {
+					// 显示获得信息
+					Messages.get(Dungeon.hero, "you_now_have", t1.name());
+				} else {
+					// 掉落至pos+1位置
+					Dungeon.level.drop(t1, Dungeon.hero.pos + 1).sprite.drop();
+				}
+				
+				// 增加计数器
+				Buff.count(Dungeon.hero, ChocoTracker.class, 1);
+			} else {
+				// 达到获取上限 - 使用Messages类而不是硬编码文本
+				yell(Messages.get(this, "choco_limit"));
+			}
 		}
 		return true;
 	}
