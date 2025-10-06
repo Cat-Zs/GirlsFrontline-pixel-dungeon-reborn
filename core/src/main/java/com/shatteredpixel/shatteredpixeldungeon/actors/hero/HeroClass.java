@@ -275,9 +275,6 @@ public enum HeroClass {
 
 		new PotionOfMindVision().identify();
 		new ScrollOfLullaby().identify();
-		
-		Choco choco = new Choco();
-		choco.quantity(5).collect();
 	}
 
 	private static void initType561( Hero hero ) {
