@@ -227,9 +227,24 @@ public class Elphelt extends Mob {
                 genoiseDst = traceGenoise.collisionPos;
 
                 if ( genoiseDst > 0 ) {
+                    // 修改Blast触发条件，避免在玩家靠近墙壁时触发
                     if (Dungeon.level.adjacent(pos, enemy.pos) && fieldOfView[enemy.pos]) {
-                        Blast();
-                        return true;
+                        // 检查玩家周围是否有足够的可通行空间
+                        int passableCount = 0;
+                        for (int dir : PathFinder.NEIGHBOURS8) {
+                            if (Dungeon.level.passable[enemy.pos + dir]) {
+                                passableCount++;
+                            }
+                        }
+                        
+                        // 如果玩家周围有足够空间才使用Blast，否则使用普通攻击
+                        if (passableCount >= 3) {
+                            Blast();
+                            return true;
+                        } else {
+                            // 没有足够空间，使用普通攻击
+                            return super.doAttack(enemy);
+                        }
                     }
                     if ( Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[genoiseDst] ) {
                         ((ElpheltSprite)sprite).genoise( genoiseDst );
@@ -390,62 +405,72 @@ public class Elphelt extends Mob {
 
     public void Blast() {
         //throws other chars around the center.
-        for (int i  : PathFinder.NEIGHBOURS8){
+        for (int i : PathFinder.NEIGHBOURS8) {
             Char ch = Actor.findChar(pos + i);
-
-            if (ch != null){
+    
+            if (ch != null) {
                 if (ch.isAlive()) {
-                    final Ballistica trajectory = new Ballistica(ch.pos, ch.pos + i, Ballistica.MAGIC_BOLT);
-
-                    final Char fch = ch;
-
-                    int dist = Math.min(trajectory.dist, POWER_OF_BLAST);
-                    //충돌 경로에 다른 캐릭터 있을 때 1칸 감소
-                    if (Actor.findChar(trajectory.path.get(dist)) != null){
-                        dist = Math.max(dist-1, 0);
-                    }
-
-                    // 적을 못날리면 자신이 1칸 뒤로 후퇴, 움직일 공간이 없으면 그냥 제누와즈 발사
-                    if (dist == 0 || ch.properties().contains(Char.Property.IMMOVABLE)) {
-                        int oldPos = pos;
-                        if (getFurther( ch.pos )) {
-                            spend( 1 / speed() );
-                            moveSprite( oldPos, pos );
-                        } else {
-                            if ( Dungeon.level.heroFOV[pos] || Dungeon.level.heroFOV[ch.pos] ) {
-                                ((ElpheltSprite)sprite).genoise( ch.pos );
-                            } else {
-                                fireGenoise( ch.pos );
+                    // 1. 计算推送方向，但不实际推送
+                    int pushDir = i; // 保持原方向
+                    int targetPos = ch.pos + pushDir; // 尝试推送的位置
+                    
+                    // 2. 确保目标位置可通行且没有其他角色
+                    if (!Dungeon.level.passable[targetPos] || Actor.findChar(targetPos) != null) {
+                        // 2.1 如果直接推送不可行，尝试找到一个可通行的邻近位置
+                        boolean pushed = false;
+                        for (int dir : PathFinder.NEIGHBOURS8) {
+                            int newPos = ch.pos + dir;
+                            if (Dungeon.level.passable[newPos] && Actor.findChar(newPos) == null) {
+                                // 找到一个可通行的位置，使用这个位置进行推送
+                                final int validPos = newPos;
+                                final Char fch = ch;
+                                final int initialpos = ch.pos;
+                                 
+                                Actor.addDelayed(new Pushing(ch, ch.pos, validPos, new Callback() {
+                                    public void call() {
+                                        if (initialpos != fch.pos) {
+                                            fch.sprite.place(fch.pos);
+                                            return;
+                                        }
+                                        fch.pos = validPos;
+                                        Paralysis.prolong(fch, Paralysis.class, 3.0f);
+                                        Dungeon.level.occupyCell(fch);
+                                        if (fch == Dungeon.hero) {
+                                            Dungeon.observe();
+                                        }
+                                    }
+                                }), -1);
+                                pushed = true;
+                                break;
                             }
                         }
-                        continue;
-                    }
-
-                    final int newPos = trajectory.path.get(dist);
-
-                    if (newPos == ch.pos) {
-                        continue;
-                    }
-
-                    final int initialpos = ch.pos;
-
-                    Actor.addDelayed(new Pushing(ch, ch.pos, newPos, new Callback() {
-                        public void call() {
-                            if (initialpos != fch.pos) {
-                                //something cased movement before pushing resolved, cancel to be safe.
-                                fch.sprite.place(fch.pos);
-                                return;
-                            }
-                            fch.pos = newPos;
-                            if (fch.pos == trajectory.collisionPos) {
+                        
+                        // 2.2 如果找不到任何可通行的位置，不进行推送，改为造成额外伤害
+                        if (!pushed) {
+                            ch.damage(Random.NormalIntRange(30, 45) - ch.drRoll(), this);
+                            Paralysis.prolong(ch, Paralysis.class, 2.0f);
+                        }
+                    } else {
+                        // 3. 如果原始目标位置可通行，进行正常推送
+                        final int newPos = targetPos;
+                        final Char fch = ch;
+                        final int initialpos = ch.pos;
+                        
+                        Actor.addDelayed(new Pushing(ch, ch.pos, newPos, new Callback() {
+                            public void call() {
+                                if (initialpos != fch.pos) {
+                                    fch.sprite.place(fch.pos);
+                                    return;
+                                }
+                                fch.pos = newPos;
                                 Paralysis.prolong(fch, Paralysis.class, 3.0f);
+                                Dungeon.level.occupyCell(fch);
+                                if (fch == Dungeon.hero) {
+                                    Dungeon.observe();
+                                }
                             }
-                            Dungeon.level.occupyCell(fch);
-                            if (fch == Dungeon.hero){
-                                Dungeon.observe();
-                            }
-                        }
-                    }), -1);
+                        }), -1);
+                    }
                 }
                 ch.next();
                 if (ch == Dungeon.hero) {
@@ -453,7 +478,7 @@ public class Elphelt extends Mob {
                 }
             }
         }
-        curGenoiseStack = Math.max(curGenoiseStack-1, 0);
+        curGenoiseStack = Math.max(curGenoiseStack - 1, 0);
         spend(attackDelay());
         next();
     }
@@ -817,15 +842,11 @@ public class Elphelt extends Mob {
 
     private class Genoise extends Actor {
 
-        {
-            actPriority = BUFF_PRIO;
-        }
+        { actPriority = BUFF_PRIO; }
 
         private int target = -1;
 
-        Genoise(int cell) {
-            target = cell;
-        }
+        Genoise(int cell) { target = cell; }
 
         public final int getTarget() { return target; }
 
