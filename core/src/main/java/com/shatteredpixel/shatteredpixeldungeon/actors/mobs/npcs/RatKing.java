@@ -169,7 +169,7 @@ public class RatKing extends NPC {
 			ChocoTracker tracker = Dungeon.hero.buff(ChocoTracker.class);
 			float chocoCount = (tracker != null) ? tracker.count() : 0;
 			
-			if (chocoCount < 2) {
+			if (chocoCount < 1) {
 				// 玩家还可以获取choco
 				Choco t1 = new Choco();
 				t1.identify();

@@ -38,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundlable;
@@ -159,6 +160,7 @@ public class RabbitBossLevel extends Level {
 
 	@Override
 	public void occupyCell(Char ch) {
+		GLog.n(String.valueOf(Dungeon.hero.pos));
 		super.occupyCell(ch);
 
 		if (ch == Dungeon.hero) {
