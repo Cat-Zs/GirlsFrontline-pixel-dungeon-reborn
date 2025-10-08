@@ -291,8 +291,8 @@ public class Assets {
 		public static final String ROGUE    = "sprites/rogue.png";
 		public static final String HUNTRESS = "sprites/sun.png";
 		public static final String TYPE561  = "sprites/type56.png";
-		public static final String MUBAN    = "sprites/gsh18.png"; // 添加新的精灵引用
-		public static final String HK416    = "sprites/hk416.png"; // 添加新的精灵引用
+		public static final String GSH18    = "sprites/gsh18.png";
+		public static final String HK416    = "sprites/hk416.png";
 		public static final String AVATARS  = "sprites/avatars.png";
 		public static final String PET      = "sprites/pet.png";
 		public static final String AMULET   = "sprites/amulet.png";

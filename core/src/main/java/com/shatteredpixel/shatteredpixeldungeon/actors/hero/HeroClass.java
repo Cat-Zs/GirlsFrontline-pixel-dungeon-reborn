@@ -99,7 +99,6 @@ public enum HeroClass {
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
 	TYPE561(HeroSubClass.PULSETROOPER, HeroSubClass.MODERN_REBORNER),
-	MUBAN( HeroSubClass.BERSERKER, HeroSubClass.GLADIATOR ), // 添加muban角色，使用与warrior相同的子职业
 	NONE(  HeroSubClass.NONE );
 	private HeroSubClass[] subClasses;
 
@@ -194,9 +193,6 @@ public enum HeroClass {
 				initType561( hero );
 				break;
 
-			case MUBAN:
-				initMuban( hero ); // 使用独立的初始化方法，而不是直接调用initWarrior
-				break;
 		}
 
 		for (int s = 0; s < QuickSlot.SIZE; s++){
@@ -224,8 +220,6 @@ public enum HeroClass {
 				return Badges.Badge.MASTERY_HUNTRESS;
 			case TYPE561:
 				return Badges.Badge.MASTERY_TYPE561;
-			case MUBAN:
-				return Badges.Badge.MASTERY_MUBAN; // 使用muban专用的精通徽章
 		}
 		return null;
 	}
@@ -237,21 +231,7 @@ public enum HeroClass {
 		if (hero.belongings.armor != null){
 			hero.belongings.armor.affixSeal(new BrokenSeal());
 		}
-	
-		ThrowingStone stone = new ThrowingStone();
-		stone.identify().quantity(3).collect();
-		Dungeon.quickslot.setSlot(0, stone);
-	}
 
-	// 添加muban专用的初始化方法，基于warrior但保持独立
-	private static void initMuban( Hero hero ) {
-		(hero.belongings.weapon = new Ump45()).identify();
-		new PotionOfHealing().identify().collect();
-		new PotionOfStrength().identify().collect();
-		if (hero.belongings.armor != null){
-			hero.belongings.armor.affixSeal(new BrokenSeal());
-		}
-	
 		ThrowingStone stone = new ThrowingStone();
 		stone.identify().quantity(3).collect();
 		Dungeon.quickslot.setSlot(0, stone);
@@ -326,165 +306,123 @@ public enum HeroClass {
 	}
 
 	public ArmorAbility[] armorAbilities(){
-	    switch (this) {
-	        case WARRIOR: 
-	            return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
-	        case MUBAN:
-	            return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
-	        case MAGE:
-	            return new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
-	        case ROGUE:
-	            return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
-	        case HUNTRESS:
-	            return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
-	        case TYPE561:
-	            return new ArmorAbility[]{};
-	        default:
-	            return new ArmorAbility[]{};
-	    }
+		switch (this) {
+			case WARRIOR: default:
+				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
+			case MAGE:
+				return new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
+			case ROGUE:
+				return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
+			case HUNTRESS:
+				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
+			case TYPE561:
+				return new ArmorAbility[]{};
+		}
 	}
-	
+
 	public String spritesheet() {
-	    switch (this) {
-	        case WARRIOR: 
-	            return Assets.Sprites.WARRIOR;
-	        case MAGE:
-	            return Assets.Sprites.MAGE;
-	        case ROGUE:
-	            return Assets.Sprites.ROGUE;
-	        case HUNTRESS:
-	            return Assets.Sprites.HUNTRESS;
-	        case TYPE561:
-	            return Assets.Sprites.TYPE561;
-	        case MUBAN:
-	            return Assets.Sprites.MUBAN; // 使用新的精灵资源
-	        default:
-	            return Assets.Sprites.WARRIOR;
-	    }
+		switch (this) {
+			case WARRIOR: default:
+				return Assets.Sprites.WARRIOR;
+			case MAGE:
+				return Assets.Sprites.MAGE;
+			case ROGUE:
+				return Assets.Sprites.ROGUE;
+			case HUNTRESS:
+				return Assets.Sprites.HUNTRESS;
+			case TYPE561:
+				return Assets.Sprites.TYPE561;
+		}
 	}
-	
+
 	public String splashArt(){
-	    switch (this) {
-	        case WARRIOR: 
-	            return Assets.Splashes.WARRIOR;
-	        case MAGE:
-	            return Assets.Splashes.MAGE;
-	        case ROGUE:
-	            return Assets.Splashes.ROGUE;
-	        case HUNTRESS:
-	            return Assets.Splashes.HUNTRESS;
-	        case MUBAN:
-	            return Assets.Splashes.WARRIOR; // 保持使用WARRIOR的splash art
-	        default:
-	            return Assets.Splashes.WARRIOR;
-	    }
-	}
-	
-	public boolean isUnlocked(){
-	    //always unlock on debug builds
-	    if (DeviceCompat.isDebug()) return true;
-	    
-	    switch (this){
-	        case WARRIOR: 
-	            return true;
-	        case MUBAN:
-	            return true;
-	        case MAGE:
-	            return Badges.isUnlocked(Badges.Badge.UNLOCK_MAGE);
-	        case ROGUE:
-	            return Badges.isUnlocked(Badges.Badge.UNLOCK_ROGUE);
-	        case HUNTRESS:
-	            return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
-	        case TYPE561:
-	            return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
-	        default:
-	            return false;
-	    }
+		switch (this) {
+			case WARRIOR: default:
+				return Assets.Splashes.WARRIOR;
+			case MAGE:
+				return Assets.Splashes.MAGE;
+			case ROGUE:
+				return Assets.Splashes.ROGUE;
+			case HUNTRESS:
+				return Assets.Splashes.HUNTRESS;
+		}
 	}
 	
 	public String[] perks() {
-	    switch (this) {
-	        case WARRIOR:
-	            return new String[]{
-	                    Messages.get(HeroClass.class, "warrior_perk1"),
-	                    Messages.get(HeroClass.class, "warrior_perk2"),
-	                    Messages.get(HeroClass.class, "warrior_perk3"),
-	                    Messages.get(HeroClass.class, "warrior_perk4"),
-	                    Messages.get(HeroClass.class, "warrior_perk5"),
-	            };
-	        case MUBAN:
-	            // 为muban提供独立的的天赋实现
-	            try {
-	                return new String[]{
-	                        // 尝试获取本地化文本，如果不存在则使用默认值
-	                        Messages.get(HeroClass.class, "muban_perk1"),
-	                        "",
-	                        "",
-	                        "",
-	                        "",
-	                };
-	            } catch (Exception e) {
-	                // 如果本地化文本不存在，使用默认文本
-	                return new String[]{
-	                        "使用治疗药水时效果增强",
-	                        "",
-	                        "",
-	                        "",
-	                        "",
-	                };
-	            }
-	        case MAGE:
-	            return new String[]{
-	                    Messages.get(HeroClass.class, "mage_perk1"),
-	                    Messages.get(HeroClass.class, "mage_perk2"),
-	                    Messages.get(HeroClass.class, "mage_perk3"),
-	                    Messages.get(HeroClass.class, "mage_perk4"),
-	                    Messages.get(HeroClass.class, "mage_perk5"),
-	            };
-	        case ROGUE:
-	            return new String[]{
-	                    Messages.get(HeroClass.class, "rogue_perk1"),
-	                    Messages.get(HeroClass.class, "rogue_perk2"),
-	                    Messages.get(HeroClass.class, "rogue_perk3"),
-	                    Messages.get(HeroClass.class, "rogue_perk4"),
-	                    Messages.get(HeroClass.class, "rogue_perk5"),
-	            };
-	        case HUNTRESS:
-	            return new String[]{
-	                    Messages.get(HeroClass.class, "huntress_perk1"),
-	                    Messages.get(HeroClass.class, "huntress_perk2"),
-	                    Messages.get(HeroClass.class, "huntress_perk3"),
-	                    Messages.get(HeroClass.class, "huntress_perk4"),
-	                    Messages.get(HeroClass.class, "huntress_perk5"),
-	            };
-	        case TYPE561:
-	            return new String[]{
-	                    Messages.get(HeroClass.class, "type561_perk1"),
-	                    Messages.get(HeroClass.class, "type561_perk2"),
-	                    Messages.get(HeroClass.class, "type561_perk3"),
-	                    Messages.get(HeroClass.class, "type561_perk4"),
-	                    Messages.get(HeroClass.class, "type561_perk5"),
-	            };
-	    }
-	    return new String[0]; // 添加默认返回值以避免编译警告
+		switch (this) {
+			case WARRIOR: default:
+				return new String[]{
+						Messages.get(HeroClass.class, "warrior_perk1"),
+						Messages.get(HeroClass.class, "warrior_perk2"),
+						Messages.get(HeroClass.class, "warrior_perk3"),
+						Messages.get(HeroClass.class, "warrior_perk4"),
+						Messages.get(HeroClass.class, "warrior_perk5"),
+				};
+			case MAGE:
+				return new String[]{
+						Messages.get(HeroClass.class, "mage_perk1"),
+						Messages.get(HeroClass.class, "mage_perk2"),
+						Messages.get(HeroClass.class, "mage_perk3"),
+						Messages.get(HeroClass.class, "mage_perk4"),
+						Messages.get(HeroClass.class, "mage_perk5"),
+				};
+			case ROGUE:
+				return new String[]{
+						Messages.get(HeroClass.class, "rogue_perk1"),
+						Messages.get(HeroClass.class, "rogue_perk2"),
+						Messages.get(HeroClass.class, "rogue_perk3"),
+						Messages.get(HeroClass.class, "rogue_perk4"),
+						Messages.get(HeroClass.class, "rogue_perk5"),
+				};
+			case HUNTRESS:
+				return new String[]{
+						Messages.get(HeroClass.class, "huntress_perk1"),
+						Messages.get(HeroClass.class, "huntress_perk2"),
+						Messages.get(HeroClass.class, "huntress_perk3"),
+						Messages.get(HeroClass.class, "huntress_perk4"),
+						Messages.get(HeroClass.class, "huntress_perk5"),
+				};
+			case TYPE561:
+				return new String[]{
+						Messages.get(HeroClass.class, "type561_perk1"),
+						Messages.get(HeroClass.class, "type561_perk2"),
+						Messages.get(HeroClass.class, "type561_perk3"),
+						Messages.get(HeroClass.class, "type561_perk4"),
+						Messages.get(HeroClass.class, "type561_perk5"),
+				};
+		}
+	}
+	
+	public boolean isUnlocked(){
+		//always unlock on debug builds
+		if (DeviceCompat.isDebug()) return true;
+		
+		switch (this){
+			case WARRIOR: default:
+				return true;
+			case MAGE:
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_MAGE);
+			case ROGUE:
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_ROGUE);
+			case HUNTRESS:
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
+			case TYPE561:
+				return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
+		}
 	}
 	
 	public String unlockMsg() {
-	    switch (this){
-	        case WARRIOR: 
-	            return "";
-	        case MUBAN:
-	            return "";
-	        case MAGE:
-	            return Messages.get(HeroClass.class, "mage_unlock");
-	        case ROGUE:
-	            return Messages.get(HeroClass.class, "rogue_unlock");
-	        case HUNTRESS:
-	            return Messages.get(HeroClass.class, "huntress_unlock");
-	        case TYPE561:
-	            return Messages.get(HeroClass.class, "type561_unlock");
-	        default:
-	            return "";
-	    }
+		switch (this){
+			case WARRIOR: default:
+				return "";
+			case MAGE:
+				return Messages.get(HeroClass.class, "mage_unlock");
+			case ROGUE:
+				return Messages.get(HeroClass.class, "rogue_unlock");
+			case HUNTRESS:
+				return Messages.get(HeroClass.class, "huntress_unlock");
+			case TYPE561:
+				return Messages.get(HeroClass.class, "type561_unlock");
+		}
 	}
 }

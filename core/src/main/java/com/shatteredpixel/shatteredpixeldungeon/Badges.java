@@ -53,7 +53,6 @@ public class Badges {
 		MASTERY_ROGUE,
 		MASTERY_HUNTRESS,
 		MASTERY_TYPE561,
-		MASTERY_MUBAN, // 添加muban的精通徽章
 		FOUND_RATMOGRIFY,
 
 		//bronze
@@ -107,7 +106,6 @@ public class Badges {
 		BOSS_SLAIN_1_ROGUE,
 		BOSS_SLAIN_1_HUNTRESS,
 		BOSS_SLAIN_1_TYPE561,
-		BOSS_SLAIN_1_MUBAN, // 添加muban的Boss击杀徽章
 		BOSS_SLAIN_1_ALL_CLASSES    ( 53, true ),
 		GAMES_PLAYED_2              ( 54, true ),
 
@@ -163,7 +161,6 @@ public class Badges {
 		VICTORY_ROGUE,
 		VICTORY_HUNTRESS,
 		VICTORY_TYPE561,
-		VICTORY_MUBAN, // 添加muban的胜利徽章
 		VICTORY_ALL_CLASSES         ( 98, true ),
 		GAMES_PLAYED_4              ( 99, true ),
 		CHAMPION_1                  ( 100 ),
@@ -676,20 +673,16 @@ public class Badges {
 					break;
 				case TYPE561:
 					badge = Badge.BOSS_SLAIN_1_TYPE561;
-				break;
-			case MUBAN:
-				badge = Badge.BOSS_SLAIN_1_MUBAN;
-				break;
-			}
+					break;
+				}
 				local.add( badge );
 				addGlobal(badge);
 				
 				if (isUnlocked( Badge.BOSS_SLAIN_1_WARRIOR ) &&
-				isUnlocked( Badge.BOSS_SLAIN_1_MAGE ) &&
-				isUnlocked( Badge.BOSS_SLAIN_1_ROGUE ) &&
-				isUnlocked( Badge.BOSS_SLAIN_1_HUNTRESS) &&
-				isUnlocked( Badge.BOSS_SLAIN_1_TYPE561) &&
-				isUnlocked( Badge.BOSS_SLAIN_1_MUBAN)) {
+					isUnlocked( Badge.BOSS_SLAIN_1_MAGE ) &&
+					isUnlocked( Badge.BOSS_SLAIN_1_ROGUE ) &&
+					isUnlocked( Badge.BOSS_SLAIN_1_HUNTRESS) &&
+					isUnlocked( Badge.BOSS_SLAIN_1_TYPE561)) {
 					
 					badge = Badge.BOSS_SLAIN_1_ALL_CLASSES;
 					if (!isUnlocked( badge )) {
@@ -766,9 +759,6 @@ public class Badges {
 		case TYPE561:
 			badge = Badge.MASTERY_TYPE561;
 			break;
-		case MUBAN:
-			badge = Badge.MASTERY_MUBAN;
-			break;
 		}
 		
 		addGlobal(badge);
@@ -809,46 +799,39 @@ public class Badges {
 	}
 	
 	public static void validateVictory() {
-    
-	    Badge badge = Badge.VICTORY;
-	    displayBadge( badge );
 
-	    switch (Dungeon.hero.heroClass) {
-	    case WARRIOR:
-	        badge = Badge.VICTORY_WARRIOR;
-	        break;
-	    case MAGE:
-	        badge = Badge.VICTORY_MAGE;
-	        break;
-	    case ROGUE:
-	        badge = Badge.VICTORY_ROGUE;
-	        break;
-	    case HUNTRESS:
-	        badge = Badge.VICTORY_HUNTRESS;
-	        break;
-	    case TYPE561:
-	        badge = Badge.VICTORY_TYPE561;
-	        break;
-	    case MUBAN:
-	        badge = Badge.VICTORY_MUBAN;
-	        break;
-	    }
-	    
-	    
-	    local.add( badge );
-	    addGlobal(badge);
-	    
-	    
-	    if (isUnlocked( Badge.VICTORY_WARRIOR ) &&
-	        isUnlocked( Badge.VICTORY_MAGE ) &&
-	        isUnlocked( Badge.VICTORY_ROGUE ) &&
-	        isUnlocked( Badge.VICTORY_HUNTRESS ) &&
-	        isUnlocked( Badge.VICTORY_TYPE561 ) &&
-	        isUnlocked( Badge.VICTORY_MUBAN )) {
-	        
-	        badge = Badge.VICTORY_ALL_CLASSES;
-	        displayBadge( badge );
-	    }
+		Badge badge = Badge.VICTORY;
+		displayBadge( badge );
+
+		switch (Dungeon.hero.heroClass) {
+		case WARRIOR:
+			badge = Badge.VICTORY_WARRIOR;
+			break;
+		case MAGE:
+			badge = Badge.VICTORY_MAGE;
+			break;
+		case ROGUE:
+			badge = Badge.VICTORY_ROGUE;
+			break;
+		case HUNTRESS:
+			badge = Badge.VICTORY_HUNTRESS;
+			break;
+		case TYPE561:
+			badge = Badge.VICTORY_TYPE561;
+			break;
+		}
+		local.add( badge );
+		addGlobal(badge);
+		
+		if (isUnlocked( Badge.VICTORY_WARRIOR ) &&
+			isUnlocked( Badge.VICTORY_MAGE )    &&
+			isUnlocked( Badge.VICTORY_ROGUE )   &&
+			isUnlocked( Badge.VICTORY_TYPE561 ) &&
+			isUnlocked( Badge.VICTORY_HUNTRESS )) {
+			
+			badge = Badge.VICTORY_ALL_CLASSES;
+			displayBadge( badge );
+		}
 	}
 
 	public static void validateNoKilling() {
