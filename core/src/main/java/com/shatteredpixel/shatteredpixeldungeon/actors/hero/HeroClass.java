@@ -100,7 +100,6 @@ public enum HeroClass {
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
 	TYPE561(HeroSubClass.PULSETROOPER, HeroSubClass.MODERN_REBORNER),
 	MUBAN( HeroSubClass.BERSERKER, HeroSubClass.GLADIATOR ), // 添加muban角色，使用与warrior相同的子职业
-	HK416( HeroSubClass.BERSERKER, HeroSubClass.GLADIATOR ), // 添加hk416角色，使用与warrior相同的子职业
 	NONE(  HeroSubClass.NONE );
 	private HeroSubClass[] subClasses;
 
@@ -196,11 +195,7 @@ public enum HeroClass {
 				break;
 
 			case MUBAN:
-				initMuban( hero );
-				break;
-				
-			case HK416:
-				initHk416( hero ); // 添加HK416的初始化分支
+				initMuban( hero ); // 使用独立的初始化方法，而不是直接调用initWarrior
 				break;
 		}
 
@@ -230,9 +225,7 @@ public enum HeroClass {
 			case TYPE561:
 				return Badges.Badge.MASTERY_TYPE561;
 			case MUBAN:
-				return Badges.Badge.MASTERY_MUBAN;
-			case HK416:
-				return Badges.Badge.MASTERY_MUBAN; // 暂时使用MUBAN的精通徽章
+				return Badges.Badge.MASTERY_MUBAN; // 使用muban专用的精通徽章
 		}
 		return null;
 	}
@@ -252,20 +245,6 @@ public enum HeroClass {
 
 	// 添加muban专用的初始化方法，基于warrior但保持独立
 	private static void initMuban( Hero hero ) {
-		(hero.belongings.weapon = new Ump45()).identify();
-		new PotionOfHealing().identify().collect();
-		new PotionOfStrength().identify().collect();
-		if (hero.belongings.armor != null){
-			hero.belongings.armor.affixSeal(new BrokenSeal());
-		}
-	
-		ThrowingStone stone = new ThrowingStone();
-		stone.identify().quantity(3).collect();
-		Dungeon.quickslot.setSlot(0, stone);
-	}
-
-	// 添加HK416专用的初始化方法，基于MUBAN但保持独立
-	private static void initHk416( Hero hero ) {
 		(hero.belongings.weapon = new Ump45()).identify();
 		new PotionOfHealing().identify().collect();
 		new PotionOfStrength().identify().collect();
@@ -352,8 +331,6 @@ public enum HeroClass {
 	            return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
 	        case MUBAN:
 	            return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
-	        case HK416:
-	            return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()}; // 使用与MUBAN相同的护甲技能
 	        case MAGE:
 	            return new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
 	        case ROGUE:
@@ -380,9 +357,7 @@ public enum HeroClass {
 	        case TYPE561:
 	            return Assets.Sprites.TYPE561;
 	        case MUBAN:
-	            return Assets.Sprites.MUBAN;
-	        case HK416:
-	            return Assets.Sprites.HK416; // 使用HK416的精灵资源
+	            return Assets.Sprites.MUBAN; // 使用新的精灵资源
 	        default:
 	            return Assets.Sprites.WARRIOR;
 	    }
@@ -399,9 +374,7 @@ public enum HeroClass {
 	        case HUNTRESS:
 	            return Assets.Splashes.HUNTRESS;
 	        case MUBAN:
-	            return Assets.Splashes.WARRIOR;
-	        case HK416:
-	            return Assets.Splashes.WARRIOR; // 暂时使用WARRIOR的splash art
+	            return Assets.Splashes.WARRIOR; // 保持使用WARRIOR的splash art
 	        default:
 	            return Assets.Splashes.WARRIOR;
 	    }
@@ -416,8 +389,6 @@ public enum HeroClass {
 	            return true;
 	        case MUBAN:
 	            return true;
-	        case HK416:
-	            return true; // 默认解锁HK416
 	        case MAGE:
 	            return Badges.isUnlocked(Badges.Badge.UNLOCK_MAGE);
 	        case ROGUE:
@@ -462,29 +433,6 @@ public enum HeroClass {
 	                        "",
 	                };
 	            }
-	            // break; // 这里不需要break，因为前面已经有return语句
-	        case HK416:
-	            // 为HK416提供临时天赋实现，使用治疗药水效果
-	            try {
-	                return new String[]{
-	                        // 尝试获取本地化文本
-	                        Messages.get(HeroClass.class, "hk416_perk1"),
-	                        "",
-	                        "",
-	                        "",
-	                        "",
-	                };
-	            } catch (Exception e) {
-	                // 如果本地化文本不存在，使用默认文本
-	                return new String[]{
-	                        "使用治疗药水时效果增强",
-	                        "",
-	                        "",
-	                        "",
-	                        "",
-	                };
-	            }
-	            // break; // 这里不需要break，因为前面已经有return语句
 	        case MAGE:
 	            return new String[]{
 	                    Messages.get(HeroClass.class, "mage_perk1"),
@@ -526,8 +474,6 @@ public enum HeroClass {
 	        case WARRIOR: 
 	            return "";
 	        case MUBAN:
-	            return "";
-	        case HK416:
 	            return "";
 	        case MAGE:
 	            return Messages.get(HeroClass.class, "mage_unlock");
