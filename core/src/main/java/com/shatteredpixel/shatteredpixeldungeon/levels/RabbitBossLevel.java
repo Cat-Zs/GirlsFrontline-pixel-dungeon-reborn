@@ -160,7 +160,6 @@ public class RabbitBossLevel extends Level {
 
 	@Override
 	public void occupyCell(Char ch) {
-		GLog.n(String.valueOf(Dungeon.hero.pos));
 		super.occupyCell(ch);
 
 		if (ch == Dungeon.hero) {
