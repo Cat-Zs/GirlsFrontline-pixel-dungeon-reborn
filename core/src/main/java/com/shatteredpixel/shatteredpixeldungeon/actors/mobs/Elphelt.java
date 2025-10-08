@@ -134,13 +134,15 @@ public class Elphelt extends Mob {
 	@Override
 	public void notice() {
 		super.notice();
-		BossHealthBar.assignBoss(this);
+		if (!BossHealthBar.isAssigned()) {
+			BossHealthBar.assignBoss(this);
 
-		if (phase < 1) {
-			phase = 1;
+			if (phase < 1) {
+				phase = 1;
+			}
+
+			Game.runOnRenderThread(()->GameScene.scene.add(new WndDialog(new Elphelt_Plot())));
 		}
-
-		Game.runOnRenderThread(()->GameScene.scene.add(new WndDialog(new Elphelt_Plot())));
 	}
 
 	@Override
