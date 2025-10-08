@@ -329,7 +329,8 @@ public enum HeroClass {
 			case ROGUE:
 				return Assets.Sprites.ROGUE;
 			case HUNTRESS:
-				return Assets.Sprites.HUNTRESS;
+				return Assets.Sprites.HK416;
+				//return Assets.Sprites.HUNTRESS;
 			case TYPE561:
 				return Assets.Sprites.TYPE561;
 		}
