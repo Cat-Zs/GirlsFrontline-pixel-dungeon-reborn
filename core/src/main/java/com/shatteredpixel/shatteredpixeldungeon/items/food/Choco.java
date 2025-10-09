@@ -24,7 +24,7 @@ public class Choco extends Food {
         if (Holidays.holiday == Holidays.Holiday.midAutumnFestival) {
             return Messages.get(this, "salty_moon_cake");
         } else {
-            return Messages.get(this, "choco");
+            return Messages.get(this, "name");
         }
     }
     
@@ -33,7 +33,7 @@ public class Choco extends Food {
         if (Holidays.holiday == Holidays.Holiday.midAutumnFestival) {
             return Messages.get(this, "salty_moon_cake_desc");
         } else {
-            return Messages.get(this, "choco_desc");
+            return Messages.get(this, "desc");
         }
     }
     
