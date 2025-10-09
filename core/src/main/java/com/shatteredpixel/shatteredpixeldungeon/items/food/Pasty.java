@@ -33,8 +33,8 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 
 import com.nlf.calendar.Lunar;
 import java.util.Date;
-import java.util.Calendar;
 import java.util.List;
+import java.util.Calendar;
 
 public class Pasty extends Food {
 
@@ -54,12 +54,8 @@ public class Pasty extends Food {
 		holiday = Holiday.NONE;
 
 		final Calendar calendar = Calendar.getInstance();
-        int year  = calendar.get(Calendar.YEAR);
-        int month = calendar.get(Calendar.MONTH) + 1;// 注意：Calendar 月份从 0 开始
-        int day   = calendar.get(Calendar.DAY_OF_MONTH);
-        // 转换为农历
-        Lunar lunar =new Lunar(new Date());
-        List<String> festivals = lunar.getFestivals();
+
+        List<String> festivals = (new Lunar(new Date())).getFestivals();
 
         // 判断是否是中秋节
         if (festivals.contains("中秋节")) {

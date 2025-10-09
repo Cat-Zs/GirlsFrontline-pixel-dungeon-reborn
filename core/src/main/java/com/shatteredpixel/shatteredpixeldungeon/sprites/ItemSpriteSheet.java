@@ -653,6 +653,7 @@ public class ItemSpriteSheet {
 	public static final int SUGARZONGZI   = FOOD+27;
 	public static final int SALTYZONGZI   = FOOD+28;
 	public static final int CHOCO         = FOOD+29;
+	public static final int NUTSMOONCAKE  = FOOD+30;
 	public static final int SALTYMOONCAKE = FOOD+31;
 	static{
 		assignItemRect(MEAT,         15,11);
@@ -673,6 +674,7 @@ public class ItemSpriteSheet {
 		assignItemRect(SUGARZONGZI , 16,14);
 		assignItemRect(SALTYZONGZI , 16,15);
 		assignItemRect(CHOCO,        16,15);
+		assignItemRect(NUTSMOONCAKE, 14,13);
 		assignItemRect(SALTYMOONCAKE,16,15);
 	}
 

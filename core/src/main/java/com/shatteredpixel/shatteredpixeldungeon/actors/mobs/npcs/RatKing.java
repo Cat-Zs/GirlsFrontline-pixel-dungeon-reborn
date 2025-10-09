@@ -178,7 +178,7 @@ public class RatKing extends NPC {
 					Messages.get(Dungeon.hero, "you_now_have", t1.name());
 				} else {
 					// 掉落至pos+1位置
-					Dungeon.level.drop(t1, Dungeon.hero.pos + 1).sprite.drop();
+					Dungeon.level.drop(t1, Dungeon.hero.pos).sprite.drop();
 				}
 				
 				// 增加计数器
