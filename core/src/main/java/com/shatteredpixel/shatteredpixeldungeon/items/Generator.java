@@ -128,6 +128,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.HB.Kriss;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.M1911;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.GSH18;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.NAGANT;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.Wa;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Launcher.Gepard;
@@ -361,9 +362,10 @@ public class Generator {
 					SR3.class,
                     Cannon.class,
 					SRS.class,
-					Thunder.class
+					Thunder.class,
+					GSH18.class
 			};
-			WEP_T1.probs = new float[]{ 0, 1, 0, 1, 1, 1, 1, 0, 0, 0.09f };
+			WEP_T1.probs = new float[]{ 0, 1, 0, 1, 1, 1, 1, 0, 0, 0.09f, 2 };
 			
 			WEP_T2.classes = new Class<?>[]{
 					M16.class,

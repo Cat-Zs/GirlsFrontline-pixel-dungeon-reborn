@@ -771,10 +771,12 @@ public class ItemSpriteSheet {
 	public static final  int GUN561           =GUN561_NUKE+2;
 	public static final  int GUN562    	      =GUN561_NUKE+3;
 	public static final  int GUN562ACCESSORIES=GUN561_NUKE+4;
+	public static final  int GSH18           =GUN561_NUKE+5;
 	static {
 		assignItemRect(GUN561,            14, 16);
 		assignItemRect(GUN562,            16, 15);
 		assignItemRect(GUN562ACCESSORIES, 16, 15);
+		assignItemRect(GSH18,             16, 16);
 	}                                                               //16 free slots
 
 	//for smaller 8x8 icons that often accompany an item sprite
