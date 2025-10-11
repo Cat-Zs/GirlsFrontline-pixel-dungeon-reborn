@@ -365,7 +365,7 @@ public class Generator {
 					Thunder.class,
 					GSH18.class
 			};
-			WEP_T1.probs = new float[]{ 0, 1, 0, 1, 1, 1, 1, 0, 0, 0.09f, 2 };
+			WEP_T1.probs = new float[]{ 0, 1, 0, 1, 1, 1, 1, 0, 0, 0.09f, 0.75f };
 			
 			WEP_T2.classes = new Class<?>[]{
 					M16.class,
