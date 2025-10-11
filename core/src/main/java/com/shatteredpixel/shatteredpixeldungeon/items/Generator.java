@@ -151,6 +151,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.AWP;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.M1903;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.Ntw20;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SR.MOSINNAGANT;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SakuraBlade;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Thunder;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.C96;
@@ -385,9 +386,10 @@ public class Generator {
 					Kriss.class,
 					Wa.class,
 					C96.class,
-					Gun562.class
+					Gun562.class,
+					MOSINNAGANT.class
 			};
-			WEP_T3.probs = new float[]{ 6, 5, 5, 4, 4, 4, 2, 0 };
+			WEP_T3.probs = new float[]{ 6, 5, 5, 4, 4, 4, 2, 0 ,2 };
 			
 			WEP_T4.classes = new Class<?>[]{
 					Win97.class,
