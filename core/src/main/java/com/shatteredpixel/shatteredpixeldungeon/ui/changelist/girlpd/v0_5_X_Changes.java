@@ -32,21 +32,28 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+    
     public static void add_0_5_4_Changes( ArrayList<ChangeInfo> changeInfos ){
-        ChangeInfo changes = new ChangeInfo("v0.5.3", true, "");
+        ChangeInfo changes = new ChangeInfo("v0.5.4", true, "");
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
+        
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.TROLL, 0, 0, 12, 21), "游戏改动",
+			"_-_ 字体渲染：现已可使用系统字体和像素字体。"
+        ));
 
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
 
-
-
-
-
-
+		changes.addButton( new ChangeButton(BadgeBanner.image(Badges.Badge.KILL_CALC.image), "游戏优化",
+			"现在只需要击败15层计量官Boss，即可解锁挑战。"
+		));
+    }    
 
 
     public static void add_0_5_3_Changes( ArrayList<ChangeInfo> changeInfos ){
@@ -110,7 +117,7 @@ public class v0_5_X_Changes {
 
 		changes.addButton(new ChangeButton(new Image(Assets.Sprites.SPINNER, 144, 0, 16, 16), Messages.get(ChangesScene.class, "bugfixes"),
 		"_-_ 现在鼠王护甲能正常使用了，561也可以使用鼠王护甲\n"+
-				"_-_ 修改了Ppsh-47的贴图\n"+
+				"_-_ 修改了Ppsh-41的贴图\n"+
 				"_-_ 更改了侦查中枢的显示偏移，现在视觉上不会阻挡其他怪物了\n"+
 				"_-_ 修复了G11 虹卫，镜像 攻击崩溃的bug\n"+
 				"_-_ 修复了骷髅文本错误问题\n"+
