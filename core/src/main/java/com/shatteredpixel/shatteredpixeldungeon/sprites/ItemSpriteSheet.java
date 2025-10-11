@@ -306,7 +306,7 @@ public class ItemSpriteSheet {
 	public static final int MG42			= WEP_TIER6+1;
 	public static final int NAGANT			= WEP_TIER6+2;
 	public static final int NTW20			= WEP_TIER6+3;
-	public static final int MOSINNAGANT			= WEP_TIER6+9;
+	public static final int MOSINNAGANT			= WEP_TIER6+4;
 	public static final int GROZA            = WEP_TIER6+5;
 	static{
 		assignItemRect(GROZA,     16, 17);
