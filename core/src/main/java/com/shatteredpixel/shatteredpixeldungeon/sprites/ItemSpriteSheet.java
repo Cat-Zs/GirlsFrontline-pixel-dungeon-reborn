@@ -306,15 +306,17 @@ public class ItemSpriteSheet {
 	public static final int MG42			= WEP_TIER6+1;
 	public static final int NAGANT			= WEP_TIER6+2;
 	public static final int NTW20			= WEP_TIER6+3;
-	public static final int MOSINNAGANT			= WEP_TIER6+4;
 	public static final int GROZA            = WEP_TIER6+5;
+	public static final int MOSINNAGANT			= WEP_TIER6+6;
+	public static final int cz75axe			= WEP_TIER6+7;
 	static{
 		assignItemRect(GROZA,     16, 17);
 		assignItemRect(MG42,     16, 17);
 		assignItemRect(SAIGA,     16, 17);
 		assignItemRect(NAGANT,     16, 17);
-		assignItemRect(MOSINNAGANT,     16, 17);
 		assignItemRect(NTW20,     19, 19);
+			assignItemRect(MOSINNAGANT,     16, 17);
+			assignItemRect(cz75axe,     14, 14);
 	}
 
 
@@ -337,6 +339,7 @@ public class ItemSpriteSheet {
 			assignItemRect(i, 15, 15);
 	}
 	
+	//这是护甲行别找不到对应的贴图，所以这里先注释掉
 	private static final int ARMOR          =                               xy(1, 12);  //16 slots
 	public static final int ARMOR_CLOTH     = ARMOR+0;
 	public static final int ARMOR_LEATHER   = ARMOR+1;
@@ -354,11 +357,11 @@ public class ItemSpriteSheet {
 		assignItemRect(ARMOR_MAIL,      14, 12);
 		assignItemRect(ARMOR_SCALE,     14, 11);
 		assignItemRect(ARMOR_PLATE,     12, 12);
-		assignItemRect(ARMOR_WARRIOR,   12, 12);
-		assignItemRect(ARMOR_MAGE,      15, 15);
-		assignItemRect(ARMOR_ROGUE,     14, 12);
-		assignItemRect(ARMOR_HUNTRESS,  13, 15);
-		assignItemRect(ARMOR_TYPE561,   16, 14);
+		assignItemRect(ARMOR_WARRIOR,   16, 16);
+		assignItemRect(ARMOR_MAGE,      16, 16);
+		assignItemRect(ARMOR_ROGUE,     16, 16);
+		assignItemRect(ARMOR_HUNTRESS,  16, 16);
+		assignItemRect(ARMOR_TYPE561,   16, 16);
 	}
 
 	                                                                                    //16 free slots
@@ -381,7 +384,7 @@ public class ItemSpriteSheet {
 	//TODO 贴图需要优化
 	public static final int M79                   = WANDS+13;
 	public static final int M84                   = WANDS+14;
-
+	public static final int WAND_DISINTEGRATION2  = WANDS+15;
 	static {
 		for (int i = WANDS; i < WANDS+16; i++)
 			assignItemRect(i, 14, 14);
@@ -768,17 +771,19 @@ public class ItemSpriteSheet {
 		assignItemRect(THROWING_HAMMER, 12, 12);
 		assignItemRect(FORCE_CUBE,      11, 12);
 	}
-
+	//这是新添加的武器行，别找不到对应的贴图，所以这里先注释一下
 	private static final int GUN561_NUKE      =xy(1, 38);
 	public static final  int GUN561           =GUN561_NUKE+2;
 	public static final  int GUN562    	      =GUN561_NUKE+3;
 	public static final  int GUN562ACCESSORIES=GUN561_NUKE+4;
 	public static final  int GSH18           =GUN561_NUKE+5;
+	public static final  int GUN64           =GUN561_NUKE+7;
 	static {
 		assignItemRect(GUN561,            14, 16);
 		assignItemRect(GUN562,            16, 15);
 		assignItemRect(GUN562ACCESSORIES, 16, 15);
 		assignItemRect(GSH18,             16, 16);
+		assignItemRect(GUN64,             12, 16);
 	}                                                               //16 free slots
 
 	//for smaller 8x8 icons that often accompany an item sprite
