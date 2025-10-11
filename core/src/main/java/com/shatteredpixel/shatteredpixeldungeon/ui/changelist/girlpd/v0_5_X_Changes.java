@@ -42,16 +42,28 @@ public class v0_5_X_Changes {
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
         
-        changes.addButton(new ChangeButton(new Image(Assets.Sprites.TROLL, 0, 0, 12, 21), "游戏改动",
-			"_-_ 字体渲染：现已可使用系统字体和像素字体。"
+        changes.addButton(new ChangeButton(new Image(Assets.Sprites.TROLL, 0, 0, 12, 21), "优化游戏体验",
+			"_-_ 将反射子弹加入正式游戏中，可使用AP+黏咕球+邪能碎片合成（请不要把反射子弹装入G11！）。"
+			"_-_ 修复了部分情况下新建游戏会闪退的BUG。"
+			"_-_ 优化了泛黄的袖珍本，增强了其与其它遗物的相关性。"
+			"_-_ 修复了第6大区远处的井贴图错误的BUG。"
+			"_-_ 因为一些特殊目的，删除了塌方陷阱。"
+			"_-_ 强化了Type 56-2武器榴弹的伤害。"
+			"_-_ 修正了大量文本错误，对部分文本进行了优化。"
         ));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-		changes.addButton( new ChangeButton(BadgeBanner.image(Badges.Badge.KILL_CALC.image), "游戏优化",
-			"现在只需要击败15层计量官Boss，即可解锁挑战。"
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GSH18,null), "新增游戏内容",
+			"_-_ 在测试模式加入了地块编辑器，虽然有些繁琐，但玩家可以自定义地形了。"
+			"_-_ 将【少女前线X罪恶装备/苍翼默示录】相关联动内容作为彩蛋加入游戏，玩家在开启深入敌腹挑战后进行闯关即可体验！"
+			"_-_ 增加了角色饱食度指示UI，现在角色的饱食度数值可视化了。"
+			"_-_ FNC带着格里芬的补给来到了地牢！与其对话将能获取一些有趣的补给！"
+			"_-_ 新增了一份节日彩蛋！"
+			"_-_ 全新武器GSh-18加入。"
+			"_-_ 为灵刀·樱吹雪添加了新技能，使其不再只是一把‘刀’"
 		));
     }    
 
