@@ -26,11 +26,28 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_4_Changes(changeInfos);
     	add_0_5_3_Changes(changeInfos);
 		add_0_5_2_Changes(changeInfos);
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+    public static void add_0_5_4_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.3", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+
+
+
+
+
+
+
 
     public static void add_0_5_3_Changes( ArrayList<ChangeInfo> changeInfos ){
 		ChangeInfo changes = new ChangeInfo("v0.5.3", true, "");
