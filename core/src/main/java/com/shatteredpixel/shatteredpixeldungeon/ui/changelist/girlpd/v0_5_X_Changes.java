@@ -38,23 +38,6 @@ public class v0_5_X_Changes {
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
-		changes.hardlight( CharSprite.WARNING );
-		changeInfos.add(changes);
-        
-
-        Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
-        imageTemp.scale.x=0.8f;
-        imageTemp.scale.y=0.8f;
-        changes.addButton(new ChangeButton(imageTemp, "优化游戏体验",
-			"_-_ 修复了部分情况下新建游戏会闪退的BUG。\n"+
-			"_-_ 优化了_泛黄的袖珍本_，增强了其与其它遗物的相关性。\n"+
-			"_-_ 修复了第6大区_远处的井_贴图错误的BUG。\n"+
-			"_-_ 因为一些特殊目的，删除了_塌方陷阱_。\n"+
-			"_-_ 强化了_Type 56-2_武器榴弹的伤害。\n"+
-			"_-_ 修正了大量文本错误，对部分文本进行了优化。\n"
-        ));
-
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
@@ -68,6 +51,22 @@ public class v0_5_X_Changes {
 			"_-_ 全新武器_GSh-18_加入。\n"+
 			"_-_ 为_灵刀·樱吹雪_添加了新技能，使其不再只是一把‘刀’\n"
 		));
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+        
+        Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "优化游戏体验",
+			"_-_ 修复了部分情况下新建游戏会闪退的BUG。\n"+
+			"_-_ 优化了_泛黄的袖珍本_，增强了其与其它遗物的相关性。\n"+
+			"_-_ 修复了第6大区_远处的井_贴图错误的BUG。\n"+
+			"_-_ 因为一些特殊目的，删除了_塌方陷阱_。\n"+
+			"_-_ 强化了_Type 56-2_武器榴弹的伤害。\n"+
+			"_-_ 修正了大量文本错误，对部分文本进行了优化。\n"
+        ));
     }    
 
 
