@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 public class RedBook extends Artifact{
     public static final String AC_CAST="CAST";
+    public static final String AC_FLIP_PAGE="FLIP_PAGE"; // 新添加的翻阅动作
     public static final int[] LEVEL_TO_CHARGE ={3,4,5,7,9,10};
     public static final int[] COUNT_TO_UPGRADE={1,1,2,2,2,-1};
 
@@ -46,8 +47,10 @@ public class RedBook extends Artifact{
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions( hero );
-        if (isEquipped(hero) && !cursed)
+        if (isEquipped(hero) && !cursed) {
             actions.add(AC_CAST);
+            actions.add(AC_FLIP_PAGE); // 添加翻阅动作到可用动作列表
+        }
         return actions;
     }
 
@@ -56,6 +59,19 @@ public class RedBook extends Artifact{
         super.execute(hero, action);
         if (action.equals(AC_CAST)&& isEquipped(hero)&&!cursed) {
             GameScene.selectCell(targeter);
+        } else if (action.equals(AC_FLIP_PAGE) && isEquipped(hero) && !cursed) {
+            // 处理翻阅动作
+            if (charge < 1) {
+                GLog.w(Messages.get(RedBook.class, "not_enough_charge_flip"));
+                return;
+            }
+            
+            charge -= 1;
+            Buff.affect(curUser, Bless.class, 5f); // 添加5回合祝福效果
+            GLog.i(Messages.get(RedBook.class, "flip_success"));
+            
+            updateQuickslot();
+            // 不消耗回合
         }
     }
 
