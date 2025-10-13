@@ -52,8 +52,8 @@ public class Ntw20 extends SniperRifle {
             aimMode = true;
             // 显示消息
             hero.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "aim_mode_on"));
-            // 消耗10个回合
-            hero.spendAndNext(10f);
+            // 消耗4个回合
+            hero.spendAndNext(4f);
         } else {
             super.execute(hero, action);
         }

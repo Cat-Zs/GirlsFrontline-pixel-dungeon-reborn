@@ -6,6 +6,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bless;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -73,16 +74,28 @@ public class RedBook extends Artifact{
             int killed=0;
             if(target.alignment==Char.Alignment.ALLY){
                 if(charge<5){
+                    GLog.w(Messages.get(RedBook.class, "not_enough_charge_ally"));
                     return;
                 }
 
                 charge-=5;
                 killed=deadBomb(level()==levelCap?3:2,target);
+                
+                // 如果目标是自己，则添加祝福效果
+                if(target == curUser){
+                    Buff.affect(curUser, Bless.class, 10f);
+                }
             }else if(charge>=3){
                 charge-=3;
                 killed=deadBomb(0,target);
             }else{
+                GLog.w(Messages.get(RedBook.class, "not_enough_charge_enemy"));
                 return;
+            }
+
+            // 成功使用之后，下次升级提示
+            if(level() < levelCap && COUNT_TO_UPGRADE[level()] != -1){
+                GLog.i(Messages.get(RedBook.class, "next_upgrade_hint", COUNT_TO_UPGRADE[level()]));
             }
 
             if(level()<levelCap && killed>=COUNT_TO_UPGRADE[level()]){
