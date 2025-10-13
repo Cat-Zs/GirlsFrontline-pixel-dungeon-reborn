@@ -26,7 +26,7 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
-    	add_0_5_4_1_Changes(changeInfos);
+    	add_0_5_4_x_Changes(changeInfos);
     	add_0_5_4_Changes(changeInfos);
     	add_0_5_3_Changes(changeInfos);
 		add_0_5_2_Changes(changeInfos);
@@ -34,7 +34,7 @@ public class v0_5_X_Changes {
 		add_0_5_0_Changes(changeInfos);
     }
 
-    public static void add_0_5_4_Changes( ArrayList<ChangeInfo> changeInfos ){
+    public static void add_0_5_4_x_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.4", true, "");
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
@@ -49,7 +49,17 @@ public class v0_5_X_Changes {
         changes.addButton(new ChangeButton(imageTemp, "优化游戏体验", 
             "_-_ 修复了点击排行榜导致存档损坏的BUG。\n"+
 			"_-_ 修复了AR15和M16A1对话文本错乱的BUG。\n"+
-			"_-_ 修复了移动端击败艾尔菲尔特可能出现崩溃的BUG。\n"+
+			"_-_ 修复了移动端击败艾尔菲尔特可能出现崩溃的BUG。\n"
+        ));
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.LAR, null), "角色调整",
+            "_-_ 简单增强了灰熊\n"
+        ));
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.NTW20, null), "武器增强",
+            "_-_ 增强了Ntw20\n"
+        ));
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.FOOD_POUCH, null), "功能优化",
+            "_-_ 增加了食物包，优化pc端背包按钮显示\n"+
+            "_-_ 优化了文本显示\n"
         ));
     }    
 
@@ -127,7 +137,7 @@ public class v0_5_X_Changes {
 			"_-_ 修复了\"不动如山\"的文本问题(现在不再是小南娘了^-^)\n"+
 			"_-_ 修复了徽章\"全能大师\"的文本问题\n"+
 			"_-_ 修复了\"多面手\"与\"全面手\"的文本问题\n"+
-			"_-_ 修复了徽章文本问题:“戒指研究员”-->“瞄准镜研究员”,“瞄具研究员”-->“药水研究员”\n"+
+			"_-_ 修复了徽章文本问题:“戒指研究员”-->“瞄具研究员”,“瞄具研究员”-->“药水研究员”\n"+
 			"_-_ 修复了魔法免疫时使用卷轴的文本问题\n"+
 			"_-_ 修复了虚弱buff的文本问题\n"+
 			"_-_ 修复了HK416两个绒布袋的问题\n"+
