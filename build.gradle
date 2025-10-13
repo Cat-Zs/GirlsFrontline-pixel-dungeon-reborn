@@ -16,7 +16,7 @@ allprojects {
         appPackageName = 'com.ngfpixel.gfchemistrypixeldungeon'
 
         appVersionCode = 633
-        appVersionName = '0.5.4'
+        appVersionName = '0.5.4.1'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 
