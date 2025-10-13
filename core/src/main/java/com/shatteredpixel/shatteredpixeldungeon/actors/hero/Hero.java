@@ -244,6 +244,12 @@ public class Hero extends Char {
 		if (buff != null){
 			strBonus += buff.boost();
 		}
+		
+		Hunger hunger = buff(Hunger.class);
+		if (hunger != null && hunger.isStarving() && heroClass == HeroClass.TYPE561 && STR >= 13){
+			strBonus -= 1;
+		}
+
 
 		if (hasTalent(Talent.STRONGMAN)){
 			strBonus += (int)Math.floor(STR * (0.03f + 0.05f*pointsInTalent(Talent.STRONGMAN)));
