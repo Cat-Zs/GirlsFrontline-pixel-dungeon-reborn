@@ -34,7 +34,7 @@ public class v0_5_X_Changes {
 		add_0_5_0_Changes(changeInfos);
     }
 
-    public static void add_0_5_4_3Changes( ArrayList<ChangeInfo> changeInfos ){
+    public static void add_0_5_4_3_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.4.3", true, "");
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
