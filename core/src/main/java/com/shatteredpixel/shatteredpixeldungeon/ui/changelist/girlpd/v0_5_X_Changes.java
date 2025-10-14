@@ -29,6 +29,7 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_4_5_Changes(changeInfos);
     	add_0_5_4_3_Changes(changeInfos);
     	add_0_5_4_1_Changes(changeInfos);
     	add_0_5_3_Changes(changeInfos);
@@ -36,6 +37,26 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+
+     public static void add_0_5_4_5_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.4.5", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+		changes.hardlight( CharSprite.POSITIVE );
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_ROSE3, null), "某人的刺刀",
+			"_-_ 当AR15被召唤出期间，刺刀通过收集心智碎片获得了升级，AR15将获得生命值回复。"
+		 ));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MAGNUMWEDDING, null), "BUG修复",
+        	 "_-_ 修复了艾尔菲尔特系列武器导致游戏崩溃的一系列问题。\n"+
 
     public static void add_0_5_4_3_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.4.3", true, "");
@@ -60,10 +81,7 @@ public class v0_5_X_Changes {
             "_-_ 新增了可以消耗1点充能自己阅读袖珍本，同时获得短时间的祝福效果\n"+
             "_-_ 对袖珍本升级条件进行了补充说明，便于玩家理解并实现遗物升级"
         ));
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_ROSE3, null), "某人的刺刀",
-			"_-_ 当AR15被召唤出期间，刺刀通过收集心智碎片获得了升级，AR15将获得生命值回复。"
-		 ));
-
+       
     changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
