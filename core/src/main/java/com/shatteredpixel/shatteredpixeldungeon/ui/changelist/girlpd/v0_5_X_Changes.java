@@ -148,7 +148,7 @@ public class v0_5_X_Changes {
 		));
 
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GREATAXE,null), "灵刀·樱吹雪",
-			"_-_ 灵刀·樱吹雪添加了新技能，使其不再只是一把‘刀’\n"+
+			"_-_ 灵刀·樱吹雪添加了新技能，使其不再只是一把‘刀’\n"
 		));
 
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
