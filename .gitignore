@@ -2,6 +2,9 @@
 *.apk
 *.smali
 
+*.exe
+*.iss
+
 *.hprof
 *.json
 
