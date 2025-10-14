@@ -11,5 +11,4 @@ public class AvailableUpdateData {
 	public String URL2;
 	public String URL3;
 
-	public String URL4;
 }

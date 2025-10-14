@@ -264,19 +264,6 @@ public class GDChangesButton extends StyledButton {
 			btn4.setRect(0, pos, width/2f, BUTTON_HEIGHT);
 			add(btn4);
 
-			RedButton btn5 = new RedButton(Messages.get(GDChangesButton.class,"join2")) {
-				@Override
-				protected void onClick() {
-					if(Objects.equals(update.URL3, "null")){
-						GirlsFrontlinePixelDungeon.platform.openURI( "https://qm.qq.com/q/i3ZenvhANa" );
-					} else {
-						GirlsFrontlinePixelDungeon.platform.openURI( update.URL4 );
-					}
-				}
-			};
-			btn5.setRect(btn4.right(), pos, width/2f, BUTTON_HEIGHT);
-			add(btn5);
-
 
 			pos += BUTTON_HEIGHT + MARGIN;
 
