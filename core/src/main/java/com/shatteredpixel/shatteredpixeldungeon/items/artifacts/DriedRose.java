@@ -376,7 +376,8 @@ public class DriedRose extends Artifact {
 			//rose does not charge while ghost hero is alive
 			if (ghost != null){
 				defaultAction = AC_DIRECT;
-				
+				ghost.updateRose();
+				ghost.HP = Math.min(ghost.HP+8, ghost.HT);//抄了破碎代码，把哈基evan的升级玫瑰让幽灵回血加入了
 				//heals to full over 500 turns
 				LockedFloor lock = target.buff(LockedFloor.class);
 				if (ghost.HP < ghost.HT && (lock == null || lock.regenOn())) {
