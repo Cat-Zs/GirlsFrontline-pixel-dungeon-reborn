@@ -25,6 +25,8 @@ import com.watabou.noosa.Image;
 
 import java.util.ArrayList;
 
+//求你们别乱加我的更新文本了，求求了！！！
+
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
     	add_0_5_4_3_Changes(changeInfos);
@@ -58,8 +60,8 @@ public class v0_5_X_Changes {
             "_-_ 新增了可以消耗1点充能自己阅读袖珍本，同时获得短时间的祝福效果\n"+
             "_-_ 对袖珍本升级条件进行了补充说明，便于玩家理解并实现遗物升级"
         ));
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_ROSE3, null), "刺刀",
-			"_-_ 刺刀增强，升级时可以为AR15提供少量恢复"
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_ROSE3, null), "某人的刺刀",
+			"_-_ 当AR15被召唤出期间，刺刀通过收集心智碎片获得了升级，AR15将获得生命值回复。"
 		 ));
 
     changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
@@ -103,7 +105,7 @@ public class v0_5_X_Changes {
             "_-_ 该特性仅在角色力量大于12时生效"
         ));
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GLAIVE, null), "M99",
-            "_-_ 根据描述改动，m99无法偷袭已经实装"
+            "_-_ 将_M99_的实际能力改为与描述文本相同，现在无法进行偷袭。"
         ));
     }    
 
@@ -124,10 +126,11 @@ public class v0_5_X_Changes {
 			"_-_ 新增了一份节日彩蛋！\n"+
 			"_-_ 全新武器_GSh-18_加入。\n"
 		));
+
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GREATAXE,null), "灵刀·樱吹雪",
 			"_-_ 灵刀·樱吹雪添加了新技能，使其不再只是一把‘刀’\n"+
-			"_-_ 新增了_灵刀·樱吹雪_的武器技能_居合斩_，在瞄准模式下将可以更快的进行强力攻击\n"
 		));
+
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
@@ -143,14 +146,14 @@ public class v0_5_X_Changes {
 			"_-_ 强化了_Type 56-2_武器榴弹的伤害。\n"+
 			"_-_ 修正了大量文本错误，对部分文本进行了优化。\n"
         ));
+
 		Image tp = new Image(new TyphoonSprite.TyphoonSpriteRe());
 		tp.scale.set(PixelScene.align(0.30f));
 		changes.addButton( new ChangeButton(tp, "提丰",
 			"_-_ 将提丰的生成率改回了在全局28-29层中有1%刷新率，而不是之前的替换28-29楼层初始怪组%。\n"+
-			"_-_ 这也意味着提丰现在在地牢中出现的频率会更高了。"
+			"_-_ 提丰现在在地牢中出现的频率会更高了。"
         ));
     }    
-
 
     public static void add_0_5_3_Changes( ArrayList<ChangeInfo> changeInfos ){
 		ChangeInfo changes = new ChangeInfo("v0.5.3", true, "");
