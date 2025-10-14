@@ -56,7 +56,9 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MAGNUMWEDDING, null), "BUG修复",
-        	 "_-_ 修复了艾尔菲尔特系列武器导致游戏崩溃的一系列问题。\n"+
+        	 "_-_ 修复了艾尔菲尔特系列武器导致游戏崩溃的一系列问题。\n"
+        	));
+    }
 
     public static void add_0_5_4_3_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.4.3", true, "");
