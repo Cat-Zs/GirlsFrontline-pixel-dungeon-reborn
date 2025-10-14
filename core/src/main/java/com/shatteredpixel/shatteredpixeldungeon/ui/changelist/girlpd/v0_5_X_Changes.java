@@ -35,7 +35,7 @@ public class v0_5_X_Changes {
     }
 
     public static void add_0_5_4_3_Changes( ArrayList<ChangeInfo> changeInfos ){
-        ChangeInfo changes = new ChangeInfo("v0.5.4", true, "");
+        ChangeInfo changes = new ChangeInfo("v0.5.4.3", true, "");
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
@@ -52,6 +52,11 @@ public class v0_5_X_Changes {
             "_-_ 为NTW-20增加了武器技能，在瞄准模式下将可以更快的进行强力攻击\n"+
             "_-_ 瞄准模式下，攻击的伤害区间为武器最高伤害的85%-120%，且精准度提升"
         ));
+
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.REDBOOK, null), "红色语录",
+            "_-_ 新增了可以消耗1点充能自己阅读语录，同时获得短时间的祝福效果\n"+
+            "_-_ 对语录升级条件进行了补充说明，便于玩家理解并实现遗物升级"
+        ));
        
     changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
@@ -66,6 +71,11 @@ public class v0_5_X_Changes {
 			"_-_ 修复了移动端击败艾尔菲尔特可能出现崩溃的BUG。\n"
         ));  
 
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_CHALICE1, null), "增压器",
+            "_-_ 对增压器进行下次充能需要多少能量供给增加了实时文本提示\n"+
+            "_-_ 现在不熟悉的游戏机制的玩家将不会因为贪增压器而Game Over了（大概）"
+        ));
+        
     changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
@@ -74,6 +84,10 @@ public class v0_5_X_Changes {
             "_-_ 增加了野餐篮，用来专门存放食物类物品，同时优化pc端背包按钮显示\n"
         ));
 
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_BEACON, null), "空降妖精",
+            "_-_ 重新加回了空降妖精，击败行裁者后将有12.5%的概率掉落"
+        ));    
+
     changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
 		changes.hardlight( CharSprite.NEGATIVE );
 		changeInfos.add(changes);
@@ -81,12 +95,13 @@ public class v0_5_X_Changes {
     Image gun561 = new Image(HeroSprite.avatar(HeroClass.TYPE561, 5));
 		gun561.scale.set(0.75f);
         changes.addButton( new ChangeButton(gun561, "56-1式",
-            "56-1式重新获得了在饥肠辘辘状态下力量-1的特性，但该特性仅在角色力量大于12时生效"
+            "_-_ 56-1式重新获得了在饥肠辘辘状态下力量-1的特性\n"+
+            "_-_ 该特性仅在角色力量大于12时生效"
         ));
     }    
 
     public static void add_0_5_4_1_Changes( ArrayList<ChangeInfo> changeInfos ){
-        ChangeInfo changes = new ChangeInfo("v0.5.4", true, "");
+        ChangeInfo changes = new ChangeInfo("v0.5.4.1", true, "");
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
