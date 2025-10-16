@@ -33,6 +33,13 @@ public class ZeroLevel extends Level {
 		return Assets.Environment.WATER_HALLS;
 	}
 	
+	public static class ComputerTriger extends SceneSwitcher{
+		@Override
+		public boolean canInteract(Char ch){
+			return Dungeon.hero==ch && Dungeon.level.adjacent(pos,ch.pos);
+		}
+	}
+
 	@Override
 	protected boolean build() {
 		setSize(SIZE, SIZE);
@@ -48,17 +55,17 @@ public class ZeroLevel extends Level {
 		//map[entrance]=Terrain.ENTRANCE;
 		exit      =center*width()+center;
 
-		int title=(TEMP_MIN+2)*width()+TEMP_MIN   ;
-		map[title]=Terrain.WATER;
-		placeTrigger(new SceneSwitcher().create(title,TitleScene.class));
+		int title=(TEMP_MIN+2)*width()+TEMP_MIN;
+		map[title]=Terrain.STATUE;
+		placeTrigger(new ComputerTriger().create(title,TitleScene.class));
 
-		int teleporter=title+2;
-		map[teleporter]=Terrain.DOOR;
-		placeTrigger(new Teleporter().create(teleporter,-1,1000));
+		//int teleporter=title+2;
+		//map[teleporter]=Terrain.DOOR;
+		//placeTrigger(new Teleporter().create(teleporter,-1,1000));
 
-		int teleporter2=teleporter+2;
-		map[teleporter2]=Terrain.DOOR;
-		placeTrigger(new Teleporter().create(teleporter2,-1,1025));
+		//int teleporter2=teleporter+2;
+		//map[teleporter2]=Terrain.DOOR;
+		//placeTrigger(new Teleporter().create(teleporter2,-1,1025));
 
 		CustomTilemap customBottomTile=new CustomBottomTile();
 		customBottomTile.setRect(0,0,width(),height());
