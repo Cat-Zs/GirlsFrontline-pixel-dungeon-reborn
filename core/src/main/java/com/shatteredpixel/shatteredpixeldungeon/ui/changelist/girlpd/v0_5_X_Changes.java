@@ -26,6 +26,7 @@ import com.watabou.noosa.Image;
 import java.util.ArrayList;
 
 //求你们别乱加我的更新文本了，求求了！！！
+//055更新：完善了灵刀机制-技能击败敌人10%概率升级，最高升5级，cd100回合。你写完删了这里就行
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
