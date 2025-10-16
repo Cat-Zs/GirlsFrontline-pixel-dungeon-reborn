@@ -71,15 +71,14 @@ import com.watabou.utils.ColorMath;
 import com.watabou.utils.DeviceCompat;
 import java.util.Date;
 
-public class ZeroLevelScene extends Scene {
+public class ZeroLevelScene extends PixelScene {
 	@Override
 	public void create() {
 		Game.switchScene(TitleScene.class);
-		//Dungeon.hero=null;
-		//enterMainGame();
 	}
 
-	private void enterMainGame(){
+	private static void enterMainGame(){
+		Dungeon.hero=null;
 		ActionIndicator.action  = null;
 		GamesInProgress.curSlot = 0;
 		GamesInProgress.selectedClass=HeroClass.TYPE561;
@@ -114,8 +113,7 @@ public class ZeroLevelScene extends Scene {
 		protected static ScrollPane squad;
 
 
-		public WndSelectGameInProgress()
-		{
+		public WndSelectGameInProgress(){
 			Badges.loadGlobal();
 			Journal.loadGlobal();
 
@@ -185,7 +183,6 @@ public class ZeroLevelScene extends Scene {
 		}
 
 		private static class SaveSlot extends Component {
-
 			protected Image portrait;
 			protected Image frame;
 
@@ -347,18 +344,13 @@ public class ZeroLevelScene extends Scene {
 			protected void onClick() {
 
 			}
-
 		}
-
-
 	}
 
 	//temporary
 	public static class TitleScene extends PixelScene {
-
 		@Override
 		public void create() {
-
 			super.create();
 
 			Music.INSTANCE.play(Assets.Music.THEME_1,true);
@@ -406,6 +398,15 @@ public class ZeroLevelScene extends Scene {
 
 			final Chrome.Type WINDOW = GREY_BUTTON;
 
+			StyledButton btnZeroLevel = new StyledButton(GREY_BUTTON,"返回地表"){
+				@Override
+				protected void onClick() {
+					enterMainGame();
+				}
+			};
+			btnZeroLevel.icon(Icons.get(Icons.ENTER));
+			add(btnZeroLevel);
+
 			StyledButton btnPlay = new StyledButton(GREY_BUTTON,"进入游戏"){
 				@Override
 				protected void onClick() {
@@ -414,17 +415,6 @@ public class ZeroLevelScene extends Scene {
 					} else {
 						TitleScene.this.add( new WndSelectGameInProgress() );
 					}
-				}
-
-				@Override
-				protected boolean onLongClick() {
-					//making it easier to start runs quickly while debugging
-					if (DeviceCompat.isDebug()) {
-						GamesInProgress.selectedClass = null;
-						new WndStartGame(GamesInProgress.firstEmpty());
-						return true;
-					}
-					return super.onLongClick();
 				}
 			};
 			btnPlay.icon(Icons.get(Icons.ENTER));
@@ -471,15 +461,17 @@ public class ZeroLevelScene extends Scene {
 			final int GAP = 2;
 
 			if (landscape()) {
-				btnPlay.setRect(title.x - 50, topRegion + GAP, title.width() + 100 - 1, BTN_HEIGHT);
-				align(btnPlay);
-				btnRankings.setRect(btnPlay.left(), btnPlay.bottom()+ GAP, btnPlay.width()/2f, BTN_HEIGHT);
-				btnBadges.setRect(btnRankings.left(), btnRankings.bottom()+GAP, btnPlay.width()/2f, BTN_HEIGHT);
-				btnSettings.setRect(btnBadges.right() + 2, btnRankings.top(), btnPlay.width()/2f-GAP, BTN_HEIGHT);
-				btnAbout.setRect(btnSettings.left(), btnSettings.bottom() + GAP,btnPlay.width()/2f-GAP, BTN_HEIGHT);
+				btnZeroLevel.setRect(title.x - 50, topRegion + GAP, title.width() + 100 - 1, BTN_HEIGHT);
+				align(btnZeroLevel);
+				btnPlay    .setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
+				btnRankings.setRect(btnPlay.left()     ,btnPlay.bottom()+GAP     ,btnPlay.width()/2f    ,BTN_HEIGHT);
+				btnBadges  .setRect(btnRankings.left() ,btnRankings.bottom()+GAP ,btnPlay.width()/2f    ,BTN_HEIGHT);
+				btnSettings.setRect(btnBadges.right()+2,btnRankings.top()        ,btnPlay.width()/2f-GAP,BTN_HEIGHT);
+				btnAbout   .setRect(btnSettings.left() ,btnSettings.bottom()+GAP ,btnPlay.width()/2f-GAP,BTN_HEIGHT);
 			} else {
-				btnPlay.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
-				align(btnPlay);
+				btnZeroLevel.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
+				align(btnZeroLevel);
+				btnPlay    .setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
 				btnRankings.setRect(btnPlay.left(),btnPlay    .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
 				btnBadges  .setRect(btnPlay.left(),btnRankings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
 				btnSettings.setRect(btnPlay.left(),btnBadges  .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
@@ -537,6 +529,5 @@ public class ZeroLevelScene extends Scene {
 				GirlsFrontlinePixelDungeon.scene().add(new WndSettings());
 			}
 		}
-
 	}
 }
