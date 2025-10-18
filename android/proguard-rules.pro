@@ -1,6 +1,10 @@
 # retain these to support class references for the bundling and translation systems
 -keepnames class com.shatteredpixel.** { *; }
 -keepnames class com.watabou.** { *; }
+# 保留AN94类，确保测试模式中可以访问
+-keep class com.shatteredpixel.shatteredpixeldungeon.custom.items.weapon.melee.DMR.AN94 { *; }
+# 保留Cypros类，确保测试模式中可以访问
+-keep class com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cypros { *; }
 
 # keep members of classes that are instantiated via reflection
 -keepclassmembers class * extends com.watabou.glscripts.Script
