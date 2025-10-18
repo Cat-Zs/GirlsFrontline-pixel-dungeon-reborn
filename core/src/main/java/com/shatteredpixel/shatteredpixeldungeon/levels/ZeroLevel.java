@@ -111,4 +111,25 @@ public class ZeroLevel extends Level {
 	@Override
 	protected void createItems() {
 	}
+	
+	// 初始化locked变量为true以禁用饥饿值增加
+	{
+		locked = true;
+	}
+	
+	// 重写updateFieldOfView方法，实现永久视野
+	@Override
+	public void updateFieldOfView(Char c, boolean[] fieldOfView) {
+		// 对于0层，设置所有单元格为可见
+		for (int i = 0; i < fieldOfView.length; i++) {
+			fieldOfView[i] = true;
+		}
+		
+		// 同时将所有单元格标记为已映射，确保完全可见
+		if (mapped != null) {
+			for (int i = 0; i < mapped.length; i++) {
+				mapped[i] = true;
+			}
+		}
+	}
 }
