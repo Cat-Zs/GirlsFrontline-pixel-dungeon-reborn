@@ -67,15 +67,15 @@ public class AboutScene extends PixelScene {
 		CreditsBlock shpx = new CreditsBlock(true, 0xEB9388,
 				"Girl Front Line Pixel Dungeon",
 				Icons.GIRLPD.get(),
-				"新版少前地牢开发组",
+				"新版少前地牢开发组"+'\n'+"此游戏完全免费，如您消费购买，立即退款并举报",
 				null,
 				null);
 		shpx.setRect((w - fullWidth)/2f, 6, fullWidth, 0);
 		content.add(shpx);
-		addLine(38, content);
+		addLine(42, content);
 
 		CreditsBlock alex = new CreditsBlock(false, 0xffbfa6,
-				"策划 & 副文案",
+				"策划 & 发起者",
 				Icons.BAKA.get(),
 				"西露库",
 				null,
@@ -92,7 +92,7 @@ public class AboutScene extends PixelScene {
 				null);
 		charlie.setRect(alex.right(), alex.top(), colWidth/2f, 0);
 		content.add(charlie);
-		addLine(68, content);
+		addLine(72, content);
 
 		//*** Art Credits ***
 		CreditsBlock arcnor = new CreditsBlock(true, 0xcf3227,
