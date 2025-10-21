@@ -221,8 +221,22 @@ public class Hero extends Char {
 	
 	public void updateHT( boolean boostHP ){
 		int curHT = HT;
+		int baseHT;
 		
-		HT = 20 + 5*(lvl-1) + HTBoost;
+		// GSH18角色：初始血量为默认的80%，10级后升级获得的生命值为默认的50%
+		if (heroClass == HeroClass.GSH18) {
+			if (lvl <= 10) {
+				baseHT = 20 + 5*(lvl-1);
+				HT = Math.round(baseHT * 0.8f);
+			} else {
+				baseHT = 20 + 5*9 + 5*(lvl-10)/2; // 10级及以下每级5点，11级及以上每级2.5点（向下取整为2点）
+				HT = Math.round(baseHT * 0.8f);
+			}
+		} else {
+			HT = 20 + 5*(lvl-1);
+		}
+		
+		HT += HTBoost;
 		float multiplier = RingOfMight.HTMultiplier(this);
 		HT = Math.round(multiplier * HT);
 		

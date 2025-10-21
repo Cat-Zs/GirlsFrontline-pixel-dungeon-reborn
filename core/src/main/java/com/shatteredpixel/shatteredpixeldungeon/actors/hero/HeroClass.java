@@ -87,6 +87,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SA.Welrod;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.M9;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.LR.GSH18;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
@@ -100,6 +101,7 @@ public enum HeroClass {
 	ROGUE( HeroSubClass.ASSASSIN, HeroSubClass.FREERUNNER ),
 	HUNTRESS( HeroSubClass.SNIPER, HeroSubClass.WARDEN ),
 	TYPE561(HeroSubClass.PULSETROOPER, HeroSubClass.MODERN_REBORNER),
+	GSH18(HeroSubClass.BERSERKER, HeroSubClass.GLADIATOR), // 暂时使用战士的子职业
 	NONE(  HeroSubClass.NONE );
 	private HeroSubClass[] subClasses;
 
@@ -193,10 +195,13 @@ public enum HeroClass {
 				break;
 
 			case TYPE561:
-				initType561( hero );
-				break;
+			initType561( hero );
+			break;
+		case GSH18:
+			initGSH18( hero );
+			break;
 
-		}
+	}
 
 		for (int s = 0; s < QuickSlot.SIZE; s++){
 			if (Dungeon.quickslot.getItem(s) == null){
@@ -222,8 +227,10 @@ public enum HeroClass {
 			case HUNTRESS:
 				return Badges.Badge.MASTERY_HUNTRESS;
 			case TYPE561:
-				return Badges.Badge.MASTERY_TYPE561;
-		}
+			return Badges.Badge.MASTERY_TYPE561;
+		case GSH18:
+			return Badges.Badge.MASTERY_GSH18;
+	}
 		return null;
 	}
 
@@ -295,6 +302,20 @@ public enum HeroClass {
 		new SaltyZongzi().collect();
 		new PotionOfMindVision().identify();
 	}
+	
+	private static void initGSH18( Hero hero ) {
+		// 使用GSH18作为初始武器
+		(hero.belongings.weapon = new GSH18()).identify();
+		new PotionOfHealing().identify().collect();
+		new PotionOfHealing().identify().collect(); // 给两瓶治疗药水作为天赋效果
+		if (hero.belongings.armor != null){
+			hero.belongings.armor.affixSeal(new BrokenSeal());
+		}
+
+		ThrowingStone stone = new ThrowingStone();
+		stone.identify().quantity(3).collect();
+		Dungeon.quickslot.setSlot(0, stone);
+	}
 
 	public String title() {
 		return Messages.get(HeroClass.class, name());
@@ -319,8 +340,10 @@ public enum HeroClass {
 			case HUNTRESS:
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
 			case TYPE561:
-				return new ArmorAbility[]{};
-		}
+			return new ArmorAbility[]{};
+		case GSH18:
+			return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()}; // 使用战士的技能
+	}
 	}
 
 	public String spritesheet() {
@@ -335,7 +358,9 @@ public enum HeroClass {
 				return Assets.Sprites.HK416;
 				//return Assets.Sprites.HUNTRESS;
 			case TYPE561:
-				return Assets.Sprites.TYPE561;
+			return Assets.Sprites.TYPE561;
+		case GSH18:
+			return Assets.Sprites.GSH18; // 使用正确的GSH18精灵
 		}
 	}
 
@@ -349,6 +374,10 @@ public enum HeroClass {
 				return Assets.Splashes.ROGUE;
 			case HUNTRESS:
 				return Assets.Splashes.HUNTRESS;
+			case TYPE561:
+				return Assets.Splashes.HUNTRESS; // 暂时使用HUNTRESS的溅落效果
+			case GSH18:
+				return Assets.Splashes.HUNTRESS; // 暂时使用HUNTRESS的溅落效果
 		}
 	}
 	
@@ -387,14 +416,22 @@ public enum HeroClass {
 						Messages.get(HeroClass.class, "huntress_perk5"),
 				};
 			case TYPE561:
-				return new String[]{
-						Messages.get(HeroClass.class, "type561_perk1"),
-						Messages.get(HeroClass.class, "type561_perk2"),
-						Messages.get(HeroClass.class, "type561_perk3"),
-						Messages.get(HeroClass.class, "type561_perk4"),
-						Messages.get(HeroClass.class, "type561_perk5"),
-				};
-		}
+			return new String[]{
+					Messages.get(HeroClass.class, "type561_perk1"),
+					Messages.get(HeroClass.class, "type561_perk2"),
+					Messages.get(HeroClass.class, "type561_perk3"),
+					Messages.get(HeroClass.class, "type561_perk4"),
+					Messages.get(HeroClass.class, "type561_perk5"),
+			};
+		case GSH18:
+			return new String[]{
+					Messages.get(HeroClass.class, "warrior_perk1"),
+					Messages.get(HeroClass.class, "warrior_perk2"),
+					Messages.get(HeroClass.class, "warrior_perk3"),
+					Messages.get(HeroClass.class, "warrior_perk4"),
+					"初始获得两瓶治疗药水", // 天赋效果
+			};
+	}
 	}
 	
 	public boolean isUnlocked(){
@@ -411,8 +448,10 @@ public enum HeroClass {
 			case HUNTRESS:
 				return Badges.isUnlocked(Badges.Badge.UNLOCK_HUNTRESS);
 			case TYPE561:
-				return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
-		}
+			return Badges.isUnlocked(Badges.Badge.UNLOCK_TYPE561);
+		case GSH18:
+			return Badges.isUnlocked(Badges.Badge.UNLOCK_GSH18);
+	}
 	}
 	
 	public String unlockMsg() {
@@ -426,7 +465,9 @@ public enum HeroClass {
 			case HUNTRESS:
 				return Messages.get(HeroClass.class, "huntress_unlock");
 			case TYPE561:
-				return Messages.get(HeroClass.class, "type561_unlock");
-		}
+			return Messages.get(HeroClass.class, "type561_unlock");
+		case GSH18:
+			return Messages.get(HeroClass.class, "gsh18_unlock");
+	}
 	}
 }
