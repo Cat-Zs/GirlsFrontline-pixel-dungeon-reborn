@@ -704,7 +704,7 @@ public class Badges {
 					isUnlocked( Badge.BOSS_SLAIN_1_ROGUE ) &&
 					isUnlocked( Badge.BOSS_SLAIN_1_HUNTRESS) &&
 					isUnlocked( Badge.BOSS_SLAIN_1_TYPE561) &&
-				isUnlocked( Badge.BOSS_SLAIN_1_GSH18)
+					isUnlocked( Badge.BOSS_SLAIN_1_GSH18)
 				) {
 					
 					badge = Badge.BOSS_SLAIN_1_ALL_CLASSES;

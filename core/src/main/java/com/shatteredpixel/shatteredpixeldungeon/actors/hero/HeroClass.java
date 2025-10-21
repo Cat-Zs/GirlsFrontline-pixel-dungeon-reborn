@@ -79,6 +79,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfUpgrade;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfMagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
@@ -307,14 +308,10 @@ public enum HeroClass {
 		// 使用GSH18作为初始武器
 		(hero.belongings.weapon = new GSH18()).identify();
 		new PotionOfHealing().identify().collect();
-		new PotionOfHealing().identify().collect(); // 给两瓶治疗药水作为天赋效果
-		if (hero.belongings.armor != null){
-			hero.belongings.armor.affixSeal(new BrokenSeal());
-		}
 
-		ThrowingStone stone = new ThrowingStone();
-		stone.identify().quantity(3).collect();
-		Dungeon.quickslot.setSlot(0, stone);
+		// 开局获得疫苗磁盘
+		new ScrollOfRemoveCurse().identify().collect();
+		Dungeon.quickslot.setSlot(0, hero.belongings.getItem(ScrollOfRemoveCurse.class));
 	}
 
 	public String title() {

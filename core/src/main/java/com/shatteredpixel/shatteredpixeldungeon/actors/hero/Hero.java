@@ -488,6 +488,14 @@ public class Hero extends Char {
 			case 3:accuracy*=2f;break;
 		}
 		
+		// GSH18天赋：短线作战
+		if (hasTalent(Talent.GSH18_CLOSE_COMBAT) && Dungeon.level.adjacent(pos, target.pos)) {
+			switch(pointsInTalent(Talent.GSH18_CLOSE_COMBAT)){
+				case 1:accuracy*=1.2f;break; // +1级：攻击距离为1的敌人时，命中率增加20%
+				case 2:accuracy*=1.45f;break;  // +2级：攻击距离为1的敌人时，命中率增加45%
+			}
+		}
+		
 		if (wep instanceof MissileWeapon){
 			if (Dungeon.level.adjacent( pos, target.pos )) {
 				accuracy *= (0.5f + 0.2f*pointsInTalent(Talent.POINT_BLANK));
