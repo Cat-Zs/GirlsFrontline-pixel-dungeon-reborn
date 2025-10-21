@@ -434,6 +434,11 @@ public class Badges {
 	public static void validateFoodEaten() {
 		Badge badge = null;
 		
+		// 检查一局内吃3个食物解锁type561角色
+		if (!isUnlocked(Badge.UNLOCK_TYPE561) && Statistics.foodEaten >= 3) {
+			validateType561Unlock();
+		}
+		
 		if (!local.contains( Badge.FOOD_EATEN_1 ) && Statistics.foodEaten >= 10) {
 			badge = Badge.FOOD_EATEN_1;
 			local.add( badge );
