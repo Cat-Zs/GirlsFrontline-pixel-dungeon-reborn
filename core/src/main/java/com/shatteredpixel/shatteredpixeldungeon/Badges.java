@@ -168,6 +168,7 @@ public class Badges {
 		VICTORY_ALL_CLASSES         ( 98, true ),
 		GAMES_PLAYED_4              ( 99, true ),
 		CHAMPION_1                  ( 100 ),
+		KILL_ELPHELT				(  101),
 		//diamond
 		GAMES_PLAYED_5              ( 112, true ),
 		CHAMPION_2                  ( 113 ),
@@ -906,6 +907,10 @@ public class Badges {
 	
 	public static void validateHappyEnd() {
 		displayBadge( Badge.HAPPY_END );
+	}
+	
+	public static void validateElpheltKilled() {
+		displayBadge( Badge.KILL_ELPHELT );
 	}
 
 	public static void validateChampion( int challenges ) {
