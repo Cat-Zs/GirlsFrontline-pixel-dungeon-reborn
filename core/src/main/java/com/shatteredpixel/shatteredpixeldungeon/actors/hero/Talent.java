@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.LeafParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StarShield;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
@@ -212,7 +213,7 @@ public enum Talent {
 	@Override
 	public boolean act() {
 		// 每回合开始时重置计数器
-		countUp(0);
+		countDown(count());
 		spend(TICK); // 等待下一回合
 		return true;
 	}
@@ -372,14 +373,14 @@ public enum Talent {
 				if (e != null) e.burst(Speck.factory(Speck.HEALING), 2);
 			}
 		}
-		// +2:进食获得2点护盾值
+		// +2:进食获得2点星之护盾值
 		if(hero.pointsInTalent(GSH18_MEAL_TREATMENT) >= 2){
-			BrokenSeal.WarriorShield shield = hero.buff(BrokenSeal.WarriorShield.class);
-			if (shield == null) {
-				// 修正bug：如果角色还没有护盾buff，创建一个新的
-				shield = Buff.affect(hero, BrokenSeal.WarriorShield.class);
+			StarShield starShield = hero.buff(StarShield.class);
+			if (starShield == null) {
+				// 如果角色还没有星之护盾buff，创建一个新的
+				starShield = Buff.affect(hero, StarShield.class);
 			}
-			shield.supercharge(2);
+			starShield.incShield(2);
 			if (hero.sprite != null) {
 				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
 			}
@@ -609,12 +610,12 @@ public enum Talent {
 			}
 			
 			if(tracker.count() < maxPerTurn){
-			BrokenSeal.WarriorShield shield = hero.buff(BrokenSeal.WarriorShield.class);
+			StarShield shield = hero.buff(StarShield.class);
 			if (shield == null) {
 				// 如果角色还没有护盾buff，创建一个新的
-				shield = Buff.affect(hero, BrokenSeal.WarriorShield.class);
+				shield = Buff.affect(hero, StarShield.class);
 			}
-			shield.supercharge(shieldPerHit);
+			shield.incShield(shieldPerHit);
 			tracker.countUp(shieldPerHit);
 			if (hero.sprite != null) {
 				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
