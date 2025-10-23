@@ -496,6 +496,12 @@ public class Hero extends Char {
 			}
 		}
 		
+		// GSH18天赋：元气一餐 +1级效果
+		if (hasTalent(Talent.GSH18_ENERGIZING_MEAL) && pointsInTalent(Talent.GSH18_ENERGIZING_MEAL) >= 1 && buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+			// 下次攻击必定命中，设置一个非常高的accuracy值，变成测试枪了（）
+			accuracy *= 1000f;
+		}
+		
 		if (wep instanceof MissileWeapon){
 			if (Dungeon.level.adjacent( pos, target.pos )) {
 				accuracy *= (0.5f + 0.2f*pointsInTalent(Talent.POINT_BLANK));
@@ -639,6 +645,14 @@ public class Hero extends Char {
 		//can always attack adjacent enemies
 		if (Dungeon.level.adjacent(pos, enemy.pos)) {
 			return true;
+		}
+
+		// GSH18天赋：元气一餐 +2级效果 - 攻击范围增加1格
+		if (hasTalent(Talent.GSH18_ENERGIZING_MEAL) && pointsInTalent(Talent.GSH18_ENERGIZING_MEAL) >= 2 && buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+			// 检查是否在2格范围内
+			if (Dungeon.level.distance(pos, enemy.pos) <= 2 && Dungeon.level.heroFOV[enemy.pos]) {
+				return true;
+			}
 		}
 
 		KindOfWeapon wep = Dungeon.hero.belongings.weapon();
@@ -1889,6 +1903,11 @@ public class Hero extends Char {
 
 		if (hit && subClass == HeroSubClass.GLADIATOR){
 			Buff.affect( this, Combo.class ).hit( enemy );
+		}
+		
+		// GSH18天赋：元气一餐 - 攻击后移除buff
+		if (buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+			buff(Talent.GSH18EnergizingMealTracker.class).detach();
 		}
 
 		curAction = null;

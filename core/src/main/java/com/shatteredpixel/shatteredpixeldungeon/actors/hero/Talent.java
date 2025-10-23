@@ -167,13 +167,13 @@ public enum Talent {
 	//modernReborner T3
 	NEWLIFE(142, 3), MORE_ACCURATE(143, 3), ENHANCE_GRENADE(144, 3),
 	
-	//GSH18 T1 - 位置在type561天赋贴图向下16格像素
+	//GSH18 T1 
 	GSH18_MEAL_TREATMENT(160), GSH18_DOCTOR_INTUITION(161), GSH18_CLOSE_COMBAT(162), GSH18_STAR_SHIELD(163),
 	//GSH18 T2
-	GSH18_ENHANCED_COMBO(164), GSH18_FAST_RELOAD(165), //GSH18_LIGHTWEIGHT(166),
+	GSH18_ENERGIZING_MEAL(164), GSH18_CHAIN_SHOCK(165), GSH18_LOGISTICS_SUPPORT(166), GSH18_COMIC_HEART(167), GSH18_MEDICAL_COMPATIBILITY(168),
 	//GSH18 T3
-	GSH18_ENHANCED_GRENADE(167), //GSH18_FAST_DRAW(168), GSH18_LIGHTWEIGHT(169),
-	;
+	GSH18_ENHANCED_GRENADE(169), GSH18_FAST_DRAW(170), GSH18_LIGHTWEIGHT(171);
+	
 
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
 		public int icon() { return BuffIndicator.TIME; }
@@ -202,6 +202,22 @@ public enum Talent {
 		public String toString() { return Messages.get(this, "name"); }
 		public String desc() { return Messages.get(this, "desc", dispTurns(visualcooldown())); }
 	};
+
+	public static class GSH18MealTreatmentTracker extends FlavourBuff{
+		public int icon() { return BuffIndicator.HEALING; }
+		public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.6f, 0.2f); }
+		public String toString() { return Messages.get(this, "name"); }
+		public String desc() { return Messages.get(this, "desc"); }
+	};
+
+	public static class GSH18EnergizingMealTracker extends FlavourBuff{
+		{// 设置为不会随时间自然消失，只在攻击后被移除
+			revivePersists = true;	}
+		public int icon() { return BuffIndicator.WELL_FED; }
+		public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.6f, 0.2f); }
+		public String toString() { return Messages.get(this, "name"); }
+		public String desc() { return Messages.get(this, "desc"); }
+	}
 	
 	// GSH18护盾恢复追踪器
 	public static class StarShieldTracker extends CounterBuff{
@@ -384,6 +400,11 @@ public enum Talent {
 			if (hero.sprite != null) {
 				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
 			}
+		}
+		// GSH18天赋：元气一餐
+		if(hero.hasTalent(GSH18_ENERGIZING_MEAL)){
+			// 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
+			Buff.affect(hero, GSH18EnergizingMealTracker.class, 1f);
 		}
 	}
 	}
@@ -688,7 +709,8 @@ public enum Talent {
 				Collections.addAll(tierTalents, BARGAIN_SKILLS, TRAP_EXPERT, HOW_DARE_YOU, JIEFANGCI, NIGHT_EXPERT);
 				break;
 			case GSH18:
-				Collections.addAll(tierTalents, GSH18_MEAL_TREATMENT, GSH18_DOCTOR_INTUITION, GSH18_CLOSE_COMBAT, GSH18_STAR_SHIELD);
+				Collections.addAll(tierTalents, GSH18_ENERGIZING_MEAL, GSH18_CHAIN_SHOCK, GSH18_LOGISTICS_SUPPORT, GSH18_COMIC_HEART, GSH18_MEDICAL_COMPATIBILITY
+				);
 				break;
 		}
 		for (Talent talent : tierTalents){
