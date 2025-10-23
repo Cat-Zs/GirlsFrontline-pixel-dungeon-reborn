@@ -347,7 +347,6 @@ public class Elphelt extends Mob {
 	@Override
 	public void die( Object cause ) {
 		Dungeon.level.drop( new Cypros().identify(), pos).sprite.drop();
-		super.die(cause);
 		Badges.validateElpheltKilled();
 		GameScene.bossSlain();
 		super.die( cause );
