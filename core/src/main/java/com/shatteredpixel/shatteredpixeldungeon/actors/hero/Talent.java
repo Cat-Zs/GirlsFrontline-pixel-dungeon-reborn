@@ -444,6 +444,21 @@ public enum Talent {
 				shield.supercharge(shieldToGive);
 			}
 		}
+		// GSH18天赋：医护兼容
+		if (hero.hasTalent(GSH18_MEDICAL_COMPATIBILITY)){
+			StarShield starShield = hero.buff(StarShield.class);
+			if (starShield == null) {
+				starShield = Buff.affect(hero, StarShield.class);
+			}
+			// 计算应回复的护盾层数：治疗药水恢复量的20%/50%
+			float healAmount = 0.8f * hero.HT + 14; // 基础治疗量
+			float shieldPercent = 0.2f * hero.pointsInTalent(GSH18_MEDICAL_COMPATIBILITY);
+			int shieldToAdd = Math.round(healAmount * shieldPercent);
+			starShield.incShield(shieldToAdd);
+			if (hero.sprite != null) {
+				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
+			}
+		}
 		if (hero.hasTalent(RESTORED_NATURE)){
 			ArrayList<Integer> grassCells = new ArrayList<>();
 			for (int i : PathFinder.NEIGHBOURS8){
