@@ -628,7 +628,7 @@ public class Hero extends Char {
 		
 		// 后勤保证天赋效果：拥有星之护盾时增加移动速度
 		if (hasTalent(Talent.GSH18_LOGISTICS_SUPPORT) && buff(StarShield.class) != null && buff(StarShield.class).shielding() > 0) {
-			speed *= (1f + 0.15f * pointsInTalent(Talent.GSH18_LOGISTICS_SUPPORT));
+			speed *= (1f + 0.1f * pointsInTalent(Talent.GSH18_LOGISTICS_SUPPORT));
 		}
 		
 		return speed;
@@ -1227,6 +1227,11 @@ public class Hero extends Char {
 		}
 
 		damage = Talent.onAttackProc( this, enemy, damage );
+		
+		// GSH18天赋：元气一餐 - 攻击后移除追踪buff
+		if (buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+			buff(Talent.GSH18EnergizingMealTracker.class).detach();
+		}
 		
 		switch (subClass) {
 		case SNIPER:
