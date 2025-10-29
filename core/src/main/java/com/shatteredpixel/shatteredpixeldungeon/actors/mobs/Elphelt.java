@@ -325,6 +325,7 @@ public class Elphelt extends Mob {
 		// die
 		if (newHP <= 0 && HP <= HT/2) {
 			((RabbitBossLevel)Dungeon.level).progress();
+			phase = 3;// see isAlive
 			return;
 		}
 
@@ -395,7 +396,7 @@ public class Elphelt extends Mob {
 
 	@Override
 	public boolean isAlive() {
-		return true;//special death rules, see RabbitBossLevel.progress()
+		return phase < 3;//special death rules, see RabbitBossLevel.progress()
 	}
 
 	public void Blast() {
@@ -661,8 +662,6 @@ public class Elphelt extends Mob {
 		NumOfGenoise = Genoises.size();
 		bundle.put( NUMGENOISE, NumOfGenoise );
 
-		bundle.put( PHASE, phase );
-
 		Iterator<Genoise> it = Genoises.iterator();
 
 		for (int i=0; i<NumOfGenoise; ++i) {
@@ -694,8 +693,6 @@ public class Elphelt extends Mob {
 		canBlast = bundle.getBoolean( CANBLAST );
 
 		NumOfGenoise = bundle.getInt( NUMGENOISE );
-
-		phase = bundle.getInt( PHASE );
 
 		for (int i=0; i< NumOfGenoise; ++i) {
 			Genoise g = new Genoise( bundle.getInt(GENOISEPOS + String.valueOf(i) ) );
