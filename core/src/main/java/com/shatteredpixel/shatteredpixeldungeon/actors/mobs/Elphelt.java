@@ -335,6 +335,8 @@ public class Elphelt extends Mob {
 			sprite.idle();
 			((RabbitBossLevel)Dungeon.level).progress();
 			phase = 2;
+
+			BossHealthBar.bleed(true);
 		}
 
 		LockedFloor lock = Dungeon.hero.buff(LockedFloor.class);
@@ -712,6 +714,9 @@ public class Elphelt extends Mob {
 				bridlePath.add(c);
 			}
 		}
+
+		if (phase > 0) BossHealthBar.assignBoss(this);
+		if (phase > 1) BossHealthBar.bleed(true);
 	}
 
 	{
