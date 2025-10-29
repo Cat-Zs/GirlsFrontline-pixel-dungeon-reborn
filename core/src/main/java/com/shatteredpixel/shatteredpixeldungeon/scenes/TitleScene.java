@@ -40,6 +40,7 @@ import java.util.ArrayList;
 
 //temporary
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON;
+import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.GREY_BUTTON_TR;
 import static com.shatteredpixel.shatteredpixeldungeon.Chrome.Type.TOAST_TR;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
@@ -119,14 +120,17 @@ public class TitleScene extends PixelScene {
 		signs.y = title.y;
 		add( signs );
 
-		final Chrome.Type WINDOW = GREY_BUTTON;
-
-		StyledButton btnZeroLevel = new StyledButton(GREY_BUTTON,"返回地表"){
-			@Override
-			protected void onClick() {
-				enterMainGame();
-			}
-		};
+		StyledButton btnZeroLevel=null;
+		if (Badges.isUnlocked(Badges.Badge.HAPPY_END) || DeviceCompat.isDebug()){
+			btnZeroLevel = new StyledButton(GREY_BUTTON,"返回地表"){
+				@Override
+				protected void onClick() {
+					enterMainGame();
+				}
+			};
+		}else{
+			btnZeroLevel = new StyledButton(GREY_BUTTON_TR,"返回地表(未解锁)");
+		}
 		btnZeroLevel.icon(Icons.get(Icons.ENTER));
 		add(btnZeroLevel);
 
@@ -161,7 +165,7 @@ public class TitleScene extends PixelScene {
 		btnBadges.icon(Icons.get(Icons.BADGES));
 		add(btnBadges);
 
-		StyledButton btnSettings = new SettingsButton(WINDOW,"设置");
+		StyledButton btnSettings = new SettingsButton(GREY_BUTTON,"设置");
 		add(btnSettings);
 
 		StyledButton btnAbout = new StyledButton(GREY_BUTTON,"关于"){
