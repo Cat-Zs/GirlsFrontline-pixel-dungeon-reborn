@@ -284,6 +284,9 @@ public class Elphelt extends Mob {
 
 	@Override
 	public void damage(int dmg, Object src) {
+		if (dmg < 0){
+			dmg = 0;
+		}
 
 		if (this.buff(Frost.class) != null){
 			Buff.detach( this, Frost.class );
@@ -390,6 +393,10 @@ public class Elphelt extends Mob {
 		}
 	}
 
+	@Override
+	public boolean isAlive() {
+		return true;//special death rules, see RabbitBossLevel.progress()
+	}
 
 	public void Blast() {
 		//throws other chars around the center.
