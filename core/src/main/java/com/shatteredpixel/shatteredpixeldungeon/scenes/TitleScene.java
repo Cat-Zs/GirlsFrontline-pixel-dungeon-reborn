@@ -406,12 +406,15 @@ public class TitleScene extends PixelScene {
 					case TYPE561:
 						order = 5;
 						break;
+					case GSH18:
+						order = 6;
+						break;
 					default:
 						order = 0;
 						break;
 				}
 
-				portrait = new Image(Assets.Interfaces.PORTRAIT1, (order % 6) * 38, (order / 6) * 60, 38, 60);
+				portrait = new Image(Assets.Interfaces.PORTRAIT1, (order % 7) * 38, (order / 7) * 60, 38, 60);
 				frame = new Image(Assets.Interfaces.SAVESLOT, 0, 0, 21, 52);
 
 				setRect(0, 0, frame.width * SCALE, frame.height * SCALE);
