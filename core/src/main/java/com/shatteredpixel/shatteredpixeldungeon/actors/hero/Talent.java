@@ -401,11 +401,11 @@ public enum Talent {
 				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
 			}
 		}
-		// GSH18天赋：元气一餐
-		if(hero.hasTalent(GSH18_ENERGIZING_MEAL)){
-			// 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
-			Buff.affect(hero, GSH18EnergizingMealTracker.class, 1f);
-		}
+	}
+	// GSH18天赋：元气一餐
+	if(hero.hasTalent(GSH18_ENERGIZING_MEAL)){
+		// 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
+		Buff.affect(hero, GSH18EnergizingMealTracker.class, 1f);
 	}
 	}
 
