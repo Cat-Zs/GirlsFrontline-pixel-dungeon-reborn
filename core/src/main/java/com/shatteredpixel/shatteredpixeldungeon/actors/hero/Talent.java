@@ -173,7 +173,7 @@ public enum Talent {
 	//GSH18 T2
 	GSH18_ENERGIZING_MEAL(164), GSH18_CHAIN_SHOCK(165), GSH18_LOGISTICS_SUPPORT(166), GSH18_COMIC_HEART(167), GSH18_MEDICAL_COMPATIBILITY(168),
 	//GSH18 T3
-	GSH18_ENHANCED_GRENADE(169), GSH18_FAST_DRAW(170), GSH18_LIGHTWEIGHT(171);
+	GSH18_INTELLIGENCE_AWARENESS(169, 3), GSH18_AGILE_MOVEMENT(170, 3);//GSH18_LIGHTWEIGHT(171);
 	
 
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
@@ -796,7 +796,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, SEARCH_ARMY, ELITE_ARMY);
 				break;
 			case GSH18:
-				Collections.addAll(tierTalents, GSH18_MEAL_TREATMENT, GSH18_DOCTOR_INTUITION, GSH18_CLOSE_COMBAT, GSH18_STAR_SHIELD);
+				Collections.addAll(tierTalents,GSH18_INTELLIGENCE_AWARENESS,GSH18_AGILE_MOVEMENT);
 				break;
 		}
 		for (Talent talent : tierTalents){
@@ -855,6 +855,12 @@ public enum Talent {
 				break;
 			case MODERN_REBORNER:
 				Collections.addAll(tierTalents, NEWLIFE, MORE_ACCURATE, ENHANCE_GRENADE);
+				break;
+			case THE_HEART_OF_SIRIUS:
+				Collections.addAll(tierTalents, GSH18_INTELLIGENCE_AWARENESS);
+				break;
+			case MOBILE_MEDICALTABLE:
+				Collections.addAll(tierTalents, GSH18_AGILE_MOVEMENT);
 				break;
 		}
 		for (Talent talent : tierTalents){
