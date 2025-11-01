@@ -92,7 +92,7 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
     Image gsh18 = new Image(HeroSprite.avatar(HeroClass.GSH18, 4));
-		gsh18.scale.set(0.9f);
+		gsh18.scale.set(0.8f);
         changes.addButton( new ChangeButton(gsh18, "新角色：GSH18",
         	"_-_ 新角色_GSH18_的加入\n\n"+
             "_-_ GSH18虽然较为脆弱，但拥有多样化的获取护盾的能力，且在拥有护盾时会获得额外能力\n"+
@@ -114,6 +114,9 @@ public class v0_5_X_Changes {
 			"_-_ 击败_艾尔菲尔特_，获得成就勋章，记录您的荣耀！"
 		));
 
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_CAPE, null), "核心装甲",
+			"_-_ 重新加回了_核心装甲_，击败_圣盾_将有25%的概率掉落\n" 
+		));
 
     }
 
