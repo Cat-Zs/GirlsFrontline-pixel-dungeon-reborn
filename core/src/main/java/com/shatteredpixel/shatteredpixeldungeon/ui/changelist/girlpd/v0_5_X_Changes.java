@@ -118,6 +118,15 @@ public class v0_5_X_Changes {
 			"_-_ 重新加回了_核心装甲_，击败_圣盾_将有25%的概率掉落\n" 
 		));
 
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
+		changes.hardlight( CharSprite.NEGATIVE );
+		changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.REDBOOK, null), "语录书",
+            "_-_ 考虑到语录书过高的伤害足以蒸发BOSS为56-1式带来了_过高的强度_，对语录书进行了_削弱_\n"+
+            "_-_ 现在语录书对BOSS造成的直接伤害有所降低。"
+        ));
+
     }
 
     public static void add_0_5_4_5_Changes( ArrayList<ChangeInfo> changeInfos ){
@@ -220,9 +229,15 @@ public class v0_5_X_Changes {
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
+		Image ep = new Image(Assets.ELPHELT, 0 ,0 ,15 ,24);
+        ep.scale.x=0.8f;
+        ep.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ep,"BUG修复",
+        	"_-_ 将_【少女前线X罪恶装备/苍翼默示录】_相关联动内容作为彩蛋加入游戏，玩家在开启_深入敌腹_挑战后进行闯关即可体验！\n"
+        ));
+
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GSH18,null), "新增游戏内容",
 			"_-_ 在测试模式加入了_地块编辑器_，虽然有些繁琐，但玩家可以自定义地形了。\n"+
-			"_-_ 将_【少女前线X罪恶装备/苍翼默示录】_相关联动内容作为彩蛋加入游戏，玩家在开启深入敌腹挑战后进行闯关即可体验！\n"+
 			"_-_ 增加了角色饱食度指示UI，现在角色的饱食度数值可视化了。\n"+
 			"_-_ FNC带着格里芬的补给来到了地牢！与其对话将能获取一些有趣的补给！\n"+
 			"_-_ 新增了一份节日彩蛋！\n"+
