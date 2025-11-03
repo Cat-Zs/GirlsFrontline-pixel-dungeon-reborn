@@ -27,6 +27,7 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_5_1_Changes(changeInfos);
     	add_0_5_5_Changes(changeInfos);
     	add_0_5_4_5_Changes(changeInfos);
     	add_0_5_4_3_Changes(changeInfos);
@@ -36,6 +37,27 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+    public static void add_0_5_5_1_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.5.1", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "紧急修复",
+			"_-_ 紧急修复了未能实现的更新内容\n\n" +
+			"_-_ _圣盾_现在将可以正常掉落_核心装甲_了！\n"+
+			"_-_ 正式取消了挑战：_饥饿游戏_中食物减半的特性"
+		));
+
+		Image tp = new Image(new SpinnerCatSprite());
+		tp.scale.set(PixelScene.align(0.80f));
+		changes.addButton( new ChangeButton(tp, "圆头耄蛛",
+			"_-_ 为稀有敌人_耄耋_增加了稀有掉落物，以符合其_稀有_的特性。"
+		));
+	}
 
     public static void add_0_5_5_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.5", true, "");
