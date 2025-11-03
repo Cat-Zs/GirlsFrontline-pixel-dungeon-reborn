@@ -49,7 +49,9 @@ public class v0_5_X_Changes {
 		changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "紧急修复",
 			"_-_ 紧急修复了未能实现的更新内容\n\n" +
 			"_-_ _圣盾_现在将可以正常掉落_核心装甲_了！\n"+
-			"_-_ 正式取消了挑战：_饥饿游戏_中食物减半的特性"
+			"_-_ 正式取消了挑战：_饥饿游戏_中食物减半的特性\n"+
+			"_-_ 地图贴图优化：下水道和监狱层的贴图现在更加清晰了！\n"+
+			"_-_ 绵羊文本优化：现在只是普通人形的6P62\n"
 		));
 
 		Image tp = new Image(new SpinnerCatSprite());
@@ -118,7 +120,7 @@ public class v0_5_X_Changes {
         changes.addButton( new ChangeButton(gsh18, "新角色：GSH18",
         	"_-_ 新角色_GSH18_的加入\n\n"+
             "_-_ GSH18虽然较为脆弱，但拥有多样化的获取护盾的能力，且在拥有护盾时会获得额外能力。\n"+
-            "_-_ 该角色尚不完善，仅供测试体验。"
+            "_-_ 该角色_尚不完善_，仅供_测试体验_。"
         ));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.AN94, null), "AN-94",
