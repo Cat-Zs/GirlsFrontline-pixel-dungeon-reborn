@@ -49,9 +49,9 @@ public class v0_5_X_Changes {
 		changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "紧急修复",
 			"_-_ 紧急修复了未能实现的更新内容\n\n" +
 			"_-_ _圣盾_现在将可以正常掉落_核心装甲_了！\n"+
-			"_-_ 正式取消了挑战：_饥饿游戏_中食物减半的特性\n"+
+			"_-_ 正式取消了挑战_饥饿游戏_中食物减半的特性。\n"+
 			"_-_ 地图贴图优化：下水道和监狱层的贴图现在更加清晰了！\n"+
-			"_-_ 文本优化：刮骨疗毒的那一天会到来的。\n"
+			"_-_ 文本优化：优化部分文本，后续会继续优化。\n"
 		));
 
 		Image tp = new Image(new SpinnerCatSprite());

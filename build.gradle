@@ -15,8 +15,8 @@ allprojects {
         appName = '少前地牢'
         appPackageName = 'com.ngfpixel.gfchemistrypixeldungeon'
 
-        appVersionCode = 639
-        appVersionName = '0.5.5.1v'
+        appVersionCode = 640
+        appVersionName = '0.5.5.v2'
 
         appJavaCompatibility = JavaVersion.VERSION_1_8
 
