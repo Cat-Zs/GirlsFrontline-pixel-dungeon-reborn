@@ -66,7 +66,7 @@ public class v0_5_X_Changes {
         "_-_ 房间内的随机_武器/外骨骼_奖励改为了_稀有药水/磁盘/符石_奖励"
         ));
 
-        Image ep = new Image(Assets.RED_SENTRY, 0 ,0 ,27 ,27);
+        Image ep = new Image(Assets.Sprites.RED_SENTRY, 0 ,0 ,27 ,27);
         ep.scale.x=0.8f;
         ep.scale.y=0.8f;
         changes.addButton(new ChangeButton(ep,"指南针",
@@ -78,10 +78,10 @@ public class v0_5_X_Changes {
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
 
-        Image ep = new Image(Assets.CRAB, 0 ,0 ,15 ,18);
-        ep.scale.x=0.8f;
-        ep.scale.y=0.8f;
-        changes.addButton(new ChangeButton(ep,"索敌精英",
+        Image ac = new Image(Assets.Sprites.CRAB, 0 ,0 ,15 ,18);
+        ac.scale.x=0.8f;
+        ac.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ac,"索敌精英",
         	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，当玩家首次接近到索敌精英一定距离时，索敌精英才会开始发动攻击。\n"+
         	"_-_ 这意味着现在玩家大概不会在黑暗中直接被视野外的索敌精英一套连击抽死了。"
         ));
