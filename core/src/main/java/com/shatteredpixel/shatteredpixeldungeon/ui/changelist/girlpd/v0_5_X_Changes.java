@@ -44,33 +44,66 @@ public class v0_5_X_Changes {
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"),  false, null);
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+		changes.hardlight( CharSprite.POSITIVE );
+		changeInfos.add(changes);
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GREATAXE,null), "灵刀·樱吹雪",
+			"_-_ _灵刀·樱吹雪_居合击杀后获得的升级冷却不会再被超级净化药水除去了。"
+		));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.WILD_ENERGY,null), "返回结晶",
+        "_-_ _返回结晶_的传送功能不再因为周围存在敌人而被_禁用_。\n"+
+        "_-_ 取而代之的代价是传送需要_多消耗一个回合_。"
+        ));
+
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY,null), "水晶房间",
+        "_-_ 需要三把钥匙才能完全开启的_水晶房间_内的奖励进行了优化\n"+
+        "_-_ 房间内的_少量钻石_奖励改为了_随机数量_的钻石奖励\n"+
+        "_-_ 房间内的随机_符石/种子_奖励改为了_随机药水_奖励\n"+
+        "_-_ 房间内的随机_药水/磁盘_奖励改为了_随机磁盘_奖励\n"+
+        "_-_ 房间内的随机_武器/外骨骼_奖励改为了_稀有药水/磁盘/符石_奖励"
+        ));
+
+        Image ep = new Image(Assets.RED_SENTRY, 0 ,0 ,27 ,27);
+        ep.scale.x=0.8f;
+        ep.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ep,"指南针",
+        	"_-_ _指南针_现在不会对心智不完整的人形发动攻击了。\n"+
+        	"_-_ 这意味着现在如果意外死亡在_哨卫房间_里，玩家不会因为无法取回_遗物_而变为死局了。"
+        ));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
 
-        ItemSprite crystalKeyIcon = new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY);
+        Image ep = new Image(Assets.CRAB, 0 ,0 ,15 ,18);
+        ep.scale.x=0.8f;
+        ep.scale.y=0.8f;
+        changes.addButton(new ChangeButton(ep,"索敌精英",
+        	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，当玩家首次接近到索敌精英一定距离时，索敌精英才会开始发动攻击。\n"+
+        	"_-_ 这意味着现在玩家大概不会在黑暗中直接被视野外的索敌精英一套连击抽死了。"
+        ));
 
-		changes.addButton( new ChangeButton(crystalKeyIcon, "优化改动",
-            "_-_ 索敌精英的攻击逻辑从无差别攻击加了判定条件。\n" +
-            "_-_ 返回结晶从周围8格有敌人就禁止传送改为了周围有敌人就消耗两个回合传送。\n" +
-            "_-_ 樱花刀的cd从普通buff改为了有利buff，防止被大净化药水误伤。\n" +
-            "_-_ 水晶钥匙房从垃圾玩意改为好东西:\n" +
-            "     case0:从5-12金币改成随机数量金币；\n" +
-            "     case1：从石头和种子改为了随机药水（不包括力量）；\n" +
-            "     case2：从随机药水和随机卷轴改为了随机卷轴（不包括升级）；\n" +
-            "     case3：从随机护甲和随机武器改为了经验药水/嬗变卷轴/附魔符石（超级增强）。\n" +
-            "_-_ 加速房修复：玩家死亡之后的丢包状态无法被水晶守卫锁定，防止包拿不回来\n" +
-            "_-_ 商店里的压缩饼干概率替换为大麦味可乐（啤酒）\n" +
-            "_- 抽空写的更新列表，暂时没有排版，后续会继续优化。_"+"\n" + 
-			"_-_ 由于旧版热更新系统因为一些原因不再被支持，和魔绫一样换了新的热更新系统。\n后续版本的热更新需要由此版本为基础配置，在此版本之后才可以被热更新支持。\n"
-			));
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MACCOL,null), "大麦味可乐",
+        "_-_ _大麦味可乐_重新回到了游戏！\n"+
+        "_-_ 现在商店中的_压缩饼干_将有概率变为_大麦味可乐_！"
+        ));
+
+        changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "在线更新系统重置",
+        	"_-_ 旧版在线更新系统因为一些原因_不再被支持_，新的在线更新系统已经重新加入游戏！\n"+
+        	"_-_ 新版在线更新系统需要以本版本为基础，因此本版本必须_手动下载_安装包并且进行更新。"
+        ));
 
 			Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
         imageTemp.scale.x=0.8f;
         imageTemp.scale.y=0.8f;
-        changes.addButton(new ChangeButton(imageTemp, "bug修复", 
-            "_-_ 修复了大兔子打完后吞地上物品的问题,\n修复了哨卫法杖击杀大兔子时闪退的问题,\n修复了击杀大兔子时盟友直接消失的问题\n"+
-			"_-_ 已修复鹰眼的充能秘术天赋1/2/3级均提供4回合神器充能的bug\n"
+        changes.addButton(new ChangeButton(imageTemp, "BUG修复", 
+            "_-_ 现在艾尔菲尔特被击败后，将不会清理掉地面的_掉落物_了。\n"+
+            "_-_ _ND-B子弹配件_击败艾尔菲尔特将不再会导致闪退\n"+
+            "_-_ 艾尔菲尔特被击败后，玩家的_盟友_将不再会被清除\n"+
+			"_-_ 已修复鹰眼的充能秘术天赋1/2/3级均提供4回合神器充能的BUG"
         ));  
     }
 	
