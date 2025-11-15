@@ -49,12 +49,12 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.GREATAXE,null), "灵刀·樱吹雪",
-			"_-_ _灵刀·樱吹雪_居合击杀后获得的升级冷却不会再被超级净化药水除去了。"
+			"_-_ _灵刀·樱吹雪_居合击杀后获得的升级冷却不会再被全面净化合剂净化而停止计数了。\n"
 		));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.WILD_ENERGY,null), "返回结晶",
         "_-_ _返回结晶_的传送功能不再因为周围存在敌人而被_禁用_。\n"+
-        "_-_ 取而代之的代价是传送需要_多消耗一个回合_。"
+        "_-_ 取而代之的代价是传送需要_多消耗一个回合_。\n"
         ));
 
 
@@ -82,8 +82,8 @@ public class v0_5_X_Changes {
         ac.scale.x=0.8f;
         ac.scale.y=0.8f;
         changes.addButton(new ChangeButton(ac,"索敌精英",
-        	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，当玩家首次接近到索敌精英一定距离时，索敌精英才会开始发动攻击。\n"+
-        	"_-_ 这意味着现在玩家大概不会在黑暗中直接被视野外的索敌精英一套连击抽死了。"
+        	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，当周围被阻拦时，索敌精英将不再可以攻击玩家。\n"+
+        	"_-_ 这意味着现在不会在被围困时被_索敌精英_类敌人直接攻击到了。"
         ));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MACCOL,null), "大麦味可乐",
@@ -91,21 +91,27 @@ public class v0_5_X_Changes {
         "_-_ 现在商店中的_压缩饼干_将有概率变为_大麦味可乐_！"
         ));
 
-        changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "在线更新系统重置",
+        changes.addButton( new ChangeButton(Icons.get(Icons.WARNING), "_在线更新系统重置_",
         	"_-_ 旧版在线更新系统因为一些原因_不再被支持_，新的在线更新系统已经重新加入游戏！\n"+
-        	"_-_ 新版在线更新系统需要以本版本为基础，因此本版本必须_手动下载_安装包并且进行更新。"
+        	"_-_ 新版在线更新系统需要以本版本为基础，因此本版本必须_手动下载_安装包并且进行更新。\n"
         ));
 
-			Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+		Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
         imageTemp.scale.x=0.8f;
         imageTemp.scale.y=0.8f;
         changes.addButton(new ChangeButton(imageTemp, "BUG修复", 
             "_-_ 现在艾尔菲尔特被击败后，将不会清理掉地面的_掉落物_了。\n"+
             "_-_ _ND-B子弹配件_击败艾尔菲尔特将不再会导致闪退\n"+
             "_-_ 艾尔菲尔特被击败后，玩家的_盟友_将不再会被清除\n"+
-			"_-_ 已修复鹰眼的充能秘术天赋1/2/3级均提供4回合神器充能的BUG"
+			"_-_ 已修复鹰眼的充能秘术天赋1/2/3级均提供4回合神器充能的BUG\n"+
+			"_-_ 已修复荆棘和反斥对盟友造成伤害的BUG\n"
         ));  
-    }
+        
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GLAIVE, null), "M99",
+            "_-_ M99的攻击削为_1.5_回合，但攻击范围_+1_；\n"+
+            "_-_在—_强化_至一定等级后，甚至可以_无视墙体_进行攻击。\n"
+        ));
+	}
 	
 	public static void add_0_5_5_1_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.5.1", true, "");
