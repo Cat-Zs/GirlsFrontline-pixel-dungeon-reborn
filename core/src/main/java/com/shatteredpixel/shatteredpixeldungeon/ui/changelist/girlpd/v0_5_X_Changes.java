@@ -3,6 +3,7 @@ package com.shatteredpixel.shatteredpixeldungeon.ui.changelist.girlpd;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower.naturesPowerTracker;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Goo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -27,6 +28,7 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_5_2_Changes(changeInfos);
     	add_0_5_5_1_Changes(changeInfos);
     	add_0_5_5_Changes(changeInfos);
     	add_0_5_4_5_Changes(changeInfos);
@@ -37,7 +39,42 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
-    public static void add_0_5_5_1_Changes( ArrayList<ChangeInfo> changeInfos ){
+    public static void add_0_5_5_2_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.5.2", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"),  false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+        ItemSprite crystalKeyIcon = new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY);
+
+		changes.addButton( new ChangeButton(crystalKeyIcon, "优化改动",
+            "_-_ 索敌精英的攻击逻辑从无差别攻击加了判定条件。\n" +
+            "_-_ 返回结晶从周围8格有敌人就禁止传送改为了周围有敌人就消耗两个回合传送。\n" +
+            "_-_ 樱花刀的cd从普通buff改为了有利buff，防止被大净化药水误伤。\n" +
+            "_-_ 水晶钥匙房从垃圾玩意改为好东西:\n" +
+            "     case0:从5-12金币改成随机数量金币；\n" +
+            "     case1：从石头和种子改为了随机药水（不包括力量）；\n" +
+            "     case2：从随机药水和随机卷轴改为了随机卷轴（不包括升级）；\n" +
+            "     case3：从随机护甲和随机武器改为了经验药水/嬗变卷轴/附魔符石（超级增强）。\n" +
+            "_-_ 加速房修复：玩家死亡之后的丢包状态无法被水晶守卫锁定，防止包拿不回来\n" +
+            "_-_ 商店里的压缩饼干概率替换为大麦味可乐（啤酒）\n" +
+            "_- 抽空写的更新列表，暂时没有排版，后续会继续优化。_"+"\n" + 
+			"_-_ 由于旧版热更新系统因为一些原因不再被支持，和魔绫一样换了新的热更新系统。\n后续版本的热更新需要由此版本为基础配置，在此版本之后才可以被热更新支持。\n"
+			));
+
+			Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "bug修复", 
+            "_-_ 修复了大兔子打完后吞地上物品的问题,\n修复了哨卫法杖击杀大兔子时闪退的问题,\n修复了击杀大兔子时盟友直接消失的问题\n"+
+			"_-_ 已修复鹰眼的充能秘术天赋1/2/3级均提供4回合神器充能的bug\n"
+        ));  
+    }
+	
+	public static void add_0_5_5_1_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.5.1", true, "");
         changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
