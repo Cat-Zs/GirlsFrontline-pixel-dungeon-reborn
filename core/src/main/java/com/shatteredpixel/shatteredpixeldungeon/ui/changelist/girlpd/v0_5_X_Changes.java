@@ -108,8 +108,7 @@ public class v0_5_X_Changes {
         ));  
         
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GLAIVE, null), "M99",
-            "_-_ M99的攻击削为_1.5_回合，但攻击范围_+1_；\n"+
-            "_-_在—_强化_至一定等级后，甚至可以_无视墙体_进行攻击。\n"
+            "_-_ M99的攻击削为_1.5_回合，但攻击范围_+1_；\n"
         ));
 	}
 	

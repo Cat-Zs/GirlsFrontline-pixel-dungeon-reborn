@@ -38,13 +38,13 @@ public class M99 extends DesignatedMarksmanRifle {
 
 	@Override
     public boolean canReach(Char owner, int target) {
-        // 3级及以上时无视墙体，只检查距离；3级以下使用默认的可达性检查
-        if (level() >= 3) {
-            return Dungeon.level.distance(owner.pos, target) <= reachFactor(owner);
-        } else {
+        // 15级及以上时无视墙体，只检查距离；15级以下使用默认的可达性检查
+        //if (level() >= 15) {
+          //  return Dungeon.level.distance(owner.pos, target) <= reachFactor(owner);
+        //} else {
             return super.canReach(owner, target);
         }
-    }
+    //}
 
 	@Override
 	public int max(int lvl) {
