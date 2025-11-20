@@ -44,6 +44,8 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextNumberInput;
+import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Image;
@@ -107,6 +109,7 @@ public class WndStartGame extends Window {
 				Dungeon.hero = null;
 				ActionIndicator.action = null;
 				GamesInProgress.curSlot = slot;
+				InterlevelScene.seedCode=SPDSettings.seedCode();
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
 
 				if (SPDSettings.intro()) {
@@ -154,10 +157,54 @@ public class WndStartGame extends Window {
 			challengeButton.setRect(WIDTH - 20, HEIGHT - 20, 20, 20);
 			challengeButton.visible = false;
 			add(challengeButton);
-
 		} else {
 			Dungeon.challenges = 0;
 			SPDSettings.challenges(0);
+		}
+
+		if (Badges.isUnlocked(Badges.Badge.KILL_CALC)||DeviceCompat.isDebug()){
+			IconButton seedButton = new IconButton(Icons.get(SPDSettings.seedCode()!=SPDSettings.SEED_CODE_RANDOM? Icons.CHALLENGE_ON: Icons.CHALLENGE_OFF)){
+				@Override
+				protected void onClick() {
+					GirlsFrontlinePixelDungeon.scene().addToFront(
+						new WndTextNumberInput(
+							Messages.get(WndStartGame.class, "set_seed_title"),
+							Messages.get(WndStartGame.class, "set_seed_desc"),
+							SPDSettings.seedCode(),
+							9,
+							false,
+							Messages.get(WndStartGame.class, "set_seed_confirm"),
+							Messages.get(WndStartGame.class, "set_seed_cancel"),
+							false
+						){
+							@Override
+							public void onSelect(boolean check, String text) {
+								if(check){
+									if(DungeonSeed.checkIfCodeValid(text)){
+										SPDSettings.seedCode(text);
+									}else if (text.length()==0){
+										SPDSettings.seedCode(SPDSettings.SEED_CODE_RANDOM);
+									}
+									icon(Icons.get(SPDSettings.seedCode()!=SPDSettings.SEED_CODE_RANDOM? Icons.CHALLENGE_ON: Icons.CHALLENGE_OFF ));
+								}
+							}
+						}
+					);
+				}
+
+				@Override
+				public void update() {
+					if( !visible && GamesInProgress.selectedClass != null){
+						visible = true;
+					}
+					super.update();
+				}
+			};
+			seedButton.setRect(0,HEIGHT-20,20,20);
+			seedButton.visible = false;
+			add(seedButton);
+		} else {
+			SPDSettings.seedCode(null);
 		}
 
 		resize(WIDTH, HEIGHT);

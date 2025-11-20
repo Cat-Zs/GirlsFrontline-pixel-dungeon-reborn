@@ -178,14 +178,18 @@ public class Dungeon {
 	public static int levelId;
 
 	public static long seed;
-	
-	public static void init() {
+
+	public static void init(String seedCode) {
 
 		version = Game.versionCode;
 		challenges = SPDSettings.challenges();
 		mobsToChampion = -1;
-	
-		seed = DungeonSeed.randomSeed();
+
+		if (SPDSettings.SEED_CODE_RANDOM==seedCode){
+			seed = DungeonSeed.randomSeed();
+		}else{
+			seed = DungeonSeed.convertFromCode(seedCode);
+		}
 	
 		Actor.clear();
 		Actor.resetNextID();

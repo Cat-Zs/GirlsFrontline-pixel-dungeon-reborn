@@ -83,17 +83,12 @@ public class DungeonSeed {
 		return result;
 	}
 
-	//Using this we can let users input 'fun' plaintext seeds and convert them to a long equivalent.
-	// This is basically the same as string.hashcode except with long, and accounting for overflow
-	// to ensure the produced seed is always in the range [0, TOTAL_SEEDS)
-	public static long convertFromText( String inputText ){
-		long total = 0;
-		for (char c : inputText.toCharArray()){
-			total = 31 * total + c;
+	public static boolean checkIfCodeValid(String seedCode){
+		try{
+			convertFromCode(seedCode);
+			return true;
+		}catch(IllegalArgumentException e){
+			return false;
 		}
-		if (total < 0) total += Long.MAX_VALUE;
-		total %= TOTAL_SEEDS;
-		return total;
 	}
-
 }
