@@ -113,11 +113,11 @@ public class Ump45 extends SubMachineGun {
             }
             //检查是否有毒
             else if (cursed){
-                GLog.i( Messages.get(this, "cursed") );
+                GLog.i( Messages.get(this, "curse") );
             }
             //检查是否超力
             else if (hero.STR() < STRReq()) {
-                GLog.w(Messages.get(Weapon.class, "too_heavy"));
+                GLog.w(Messages.get(Weapon.class, "too_heav"));
             }
             //检查是否cd
             else if (cooldownLeft > 0) {
