@@ -28,7 +28,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeUMP45;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -43,7 +42,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
-import com.watabou.utils.PathFinder;
 
 import java.util.ArrayList;
 
@@ -179,7 +177,6 @@ public class Ump45 extends SubMachineGun {
             if (Dungeon.level.heroFOV[cell]) {
                 Sample.INSTANCE.play( Assets.Sounds.GAS );
             }
-
             GameScene.add( Blob.seed( cell, 50, SmokeScreen.class ) );
             //返回值为掉落物品，此处设置为空
             return null;
