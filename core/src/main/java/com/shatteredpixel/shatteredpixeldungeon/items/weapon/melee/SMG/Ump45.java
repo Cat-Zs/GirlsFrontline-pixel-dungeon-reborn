@@ -50,7 +50,7 @@ public class Ump45 extends SubMachineGun {
 
     private static final String AC_SMOKE = "SMOKE";
     private static final int SMOKE_COST = 1; // 消耗X回合
-    private static final int BASE_COOLDOWN_TURNS = 100; // 基础冷却时间X回合
+    private static final int BASE_COOLDOWN_TURNS = 300; // 基础冷却时间X回合
     private int cooldownLeft = 0; // 当前剩余冷却时间
     private static final String COOLDOWN_LEFT = "cooldownLeft";
     {
@@ -281,3 +281,4 @@ public class Ump45 extends SubMachineGun {
     }
 
 }
+
