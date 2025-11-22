@@ -339,8 +339,9 @@ public class ItemSpriteSheet {
 	public static final int POISON_DART     = TIPPED_DARTS+10;
 	public static final int ROT_DART        = TIPPED_DARTS+11;
 	public static final int SHOCKING_DART   = TIPPED_DARTS+12;
+	public static final int SMOKEUmp45   = TIPPED_DARTS+13;
 	static {
-		for (int i = TIPPED_DARTS; i < TIPPED_DARTS+13; i++)
+		for (int i = TIPPED_DARTS; i < TIPPED_DARTS+14; i++)
 			assignItemRect(i, 15, 15);
 	}
 	
