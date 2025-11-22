@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.PathFinder;
 
 import java.util.ArrayList;
 
@@ -177,7 +178,28 @@ public class Ump45 extends SubMachineGun {
             if (Dungeon.level.heroFOV[cell]) {
                 Sample.INSTANCE.play( Assets.Sounds.GAS );
             }
-            GameScene.add( Blob.seed( cell, 50, SmokeScreen.class ) );
+
+            int centerVolume = 50;
+            //中心格非固体
+            if (!Dungeon.level.solid[cell]){
+                GameScene.add( Blob.seed( cell, centerVolume, SmokeScreen.class ) );
+            }
+            //中心格为固体
+            else {
+                int j =0;
+                for (int i : PathFinder.NEIGHBOURS8){
+                    if (!Dungeon.level.solid[cell+i]){
+                        //累计邻格非固体格子数量
+                        j++;
+                    }
+                }
+                for (int i : PathFinder.NEIGHBOURS8){
+                    if (!Dungeon.level.solid[cell+i]){
+                        //给予邻格非固体格子均分的气体量
+                        GameScene.add( Blob.seed( cell+i, centerVolume/j, SmokeScreen.class ) );
+                    }
+                }
+            }
             //返回值为掉落物品，此处设置为空
             return null;
         }
