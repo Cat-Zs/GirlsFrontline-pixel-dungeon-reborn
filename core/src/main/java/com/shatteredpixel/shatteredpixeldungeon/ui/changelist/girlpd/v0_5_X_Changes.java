@@ -65,6 +65,16 @@ public class v0_5_X_Changes {
 		"_-_ _晰除符石_保留丢出_拆除范围陷阱_的能力，并增加了可使用以_鉴定物品_是否带有_病毒_的能力。"
 		));
 
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MEAT_PIE,null), "地图种子编辑器",
+			"_-_ 新增了_地图种子编辑器_，使用编辑器可以锚定特定地形的地图进行游戏了！\n"+
+			"_-_ 解锁方式与_挑战_的解锁方式相同，完成15层的冒险即可解锁\n"+
+			"_-_ 地图种子编辑器解锁后，位于_开始游戏_按钮的左侧"
+		));
+
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
