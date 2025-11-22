@@ -23,10 +23,12 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG;
 
 import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
-import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SMOKEUmp45;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
+import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeUMP45;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -39,6 +41,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 
@@ -138,10 +141,10 @@ public class Ump45 extends SubMachineGun {
         @Override
         public void onSelect(Integer target) {
             if (target != null) {
-                //对冲掉物品的丢弃时间
-                hero.spendAndNext(-TIME_TO_THROW);
                 //使用SMOKEB中的cast操作，Potion的cast不会保留掉落物
                 SMOKEA().cast(curUser, target);
+                //对冲掉物品的丢弃时间
+                hero.spendAndNext(-TIME_TO_THROW);
                 //往下的是复制灵刀的
                 //固定消耗时间
                 hero.spendAndNext(SMOKE_COST);
@@ -170,15 +173,14 @@ public class Ump45 extends SubMachineGun {
             image = ItemSpriteSheet.SMOKEUmp45;
         }
         //shatter为从大隐身处复制过来的扩散逻辑，但生成的气体复制电击
+
         public Item shatter( Char owner, int cell ) {
-            //amount补回使用后摇的时间后，+2回合为烟雾弹持续时间
-            int amount = (int) (TIME_TO_THROW+2);
-            for (int i : PathFinder.NEIGHBOURS8){
-                if (!Dungeon.level.solid[cell+i]){
-                    GameScene.add( Blob.seed( cell+i, amount, SMOKEUmp45.class ) );
-                }
+            //气体音效
+            if (Dungeon.level.heroFOV[cell]) {
+                Sample.INSTANCE.play( Assets.Sounds.GAS );
             }
-            GameScene.add( Blob.seed( cell, amount, SMOKEUmp45.class ) );
+
+            GameScene.add( Blob.seed( cell, 50, SmokeScreen.class ) );
             //返回值为掉落物品，此处设置为空
             return null;
         }
