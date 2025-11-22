@@ -36,7 +36,6 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -105,7 +104,7 @@ public class C96 extends UniversaleGun {
         // 设置冷却时间（固定为基础冷却时间，不受天赋影响）
         cooldownLeft = BASE_COOLDOWN_TURNS;
         // 附加冷却Buff以处理冷却时间递减
-        Buff.affect(hero, Ump45.CooldownTracker.class);
+        Buff.affect(hero, C96.CooldownTracker.class);
         // 更新快捷栏显示
         updateQuickslot();
     }
@@ -213,3 +212,4 @@ public class C96 extends UniversaleGun {
     }
 
 }
+
