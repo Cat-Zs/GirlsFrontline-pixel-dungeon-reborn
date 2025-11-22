@@ -61,6 +61,18 @@ public class C96 extends UniversaleGun {
 
         defaultAction = AC_LIGHT;
     }
+    // 保存冷却状态
+    @Override
+    public void storeInBundle(Bundle bundle) {
+        super.storeInBundle(bundle);
+        bundle.put(COOLDOWN_LEFT, cooldownLeft);
+    }
+
+    @Override
+    public void restoreFromBundle(Bundle bundle) {
+        super.restoreFromBundle(bundle);
+        cooldownLeft = bundle.getInt(COOLDOWN_LEFT);
+    }
 
     @Override
     public ArrayList<String> actions(Hero hero ) {
@@ -212,4 +224,5 @@ public class C96 extends UniversaleGun {
     }
 
 }
+
 
