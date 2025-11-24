@@ -151,7 +151,7 @@ public class v0_5_X_Changes {
         changes.addButton(new ChangeButton(imageTemp, "BUG修复", 
             "_-_ 现在艾尔菲尔特被击败后，将不会清理掉地面的_掉落物_了。\n"+
             "_-_ _ND-B子弹配件_击败艾尔菲尔特将不再会导致闪退。\n"+
-            "_-_ 艾尔菲尔特被击败后，玩家的_盟友_将不再会被清除。\n"+
+            "_-_ 艾尔菲尔特被击败后，玩家的_盟友_将不再会被清除。\n"
         ));  
         
         changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.GLAIVE, null), "M99",
