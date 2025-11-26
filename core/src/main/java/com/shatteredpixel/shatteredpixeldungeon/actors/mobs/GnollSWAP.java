@@ -13,16 +13,16 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff.buffType;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.GnollSPAWSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.GnollSWAPSprite;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 import java.util.ArrayList;
 
-public class GnollSPAW extends Gnoll {
-    public GnollSPAW() {
-        this.spriteClass = GnollSPAWSprite.class;
+public class GnollSWAP extends Gnoll {
+    public GnollSWAP() {
+        this.spriteClass = GnollSWAPSprite.class;
         this.PASSIVE = new Passive();
         this.WANDERING = new Wandering();
         this.state = this.PASSIVE;
@@ -112,16 +112,16 @@ public class GnollSPAW extends Gnoll {
         }
 
         public boolean act(boolean enemyInFOV, boolean justAlerted) {
-            for(Buff b : GnollSPAW.this.buffs()) {
+            for(Buff b : GnollSWAP.this.buffs()) {
                 if (b.type == buffType.NEGATIVE) {
-                    GnollSPAW.this.state = GnollSPAW.this.WANDERING;
+                    GnollSWAP.this.state = GnollSWAP.this.WANDERING;
                     return true;
                 }
             }
 
-            if (GnollSPAW.this.fieldOfView[Dungeon.hero.pos] && Dungeon.level.heroFOV[GnollSPAW.this.pos]) {
+            if (GnollSWAP.this.fieldOfView[Dungeon.hero.pos] && Dungeon.level.heroFOV[GnollSWAP.this.pos]) {
                 if (this.seenNotifyCooldown <= 0) {
-                    GLog.p(Messages.get(GnollSPAW.class, "seen_passive", new Object[0]), new Object[0]);
+                    GLog.p(Messages.get(GnollSWAP.class, "seen_passive", new Object[0]), new Object[0]);
                 }
 
                 this.seenNotifyCooldown = 10;
@@ -130,8 +130,8 @@ public class GnollSPAW extends Gnoll {
             }
 
             if (enemyInFOV && justAlerted) {
-                if (Dungeon.level.heroFOV[GnollSPAW.this.pos]) {
-                    GLog.w(Messages.get(GnollSPAW.class, "seen_aggro", new Object[0]), new Object[0]);
+                if (Dungeon.level.heroFOV[GnollSWAP.this.pos]) {
+                    GLog.w(Messages.get(GnollSWAP.class, "seen_aggro", new Object[0]), new Object[0]);
                 }
 
                 return this.noticeEnemy();
@@ -144,7 +144,7 @@ public class GnollSPAW extends Gnoll {
     private class Wandering extends Mob.Wandering {
 
         protected boolean noticeEnemy() {
-            GLog.w(Messages.get(GnollSPAW.class, "seen_aggro", new Object[0]), new Object[0]);
+            GLog.w(Messages.get(GnollSWAP.class, "seen_aggro", new Object[0]), new Object[0]);
             return super.noticeEnemy();
         }
     }

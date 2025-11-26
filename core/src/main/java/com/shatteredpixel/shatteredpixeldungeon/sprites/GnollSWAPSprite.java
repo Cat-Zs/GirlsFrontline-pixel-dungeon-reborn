@@ -23,15 +23,13 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.watabou.noosa.TextureFilm;
-import com.watabou.utils.Callback;
-import com.watabou.utils.Random;
 
-public class GnollSPAWSprite extends MobSprite {
+public class GnollSWAPSprite extends MobSprite {
 
-    public GnollSPAWSprite() {
+    public GnollSWAPSprite() {
         super();
 
-        texture(Assets.Sprites.GNOLLSPAW);
+        texture(Assets.Sprites.GNOLLSWAP);
 
         TextureFilm frames = new TextureFilm(texture, 19, 22);
 

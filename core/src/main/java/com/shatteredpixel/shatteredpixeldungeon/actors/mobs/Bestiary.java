@@ -90,7 +90,7 @@ public class Bestiary {
 				} else if (cl == Golyat.class) {
                     cl = GolyatPlus.class;
                 }else if (cl == Gnoll.class) {
-                    cl = GnollSPAW.class;
+                    cl = GnollSWAP.class;
                 }
 				rotation.set(i, cl);
 			}
