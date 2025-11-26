@@ -34,19 +34,15 @@ public class Terrain {
 	public static final int EXIT			= 8;
 	public static final int EMBERS			= 9;
 	public static final int LOCKED_DOOR		= 10;
-	public static final int CRYSTAL_DOOR	= 31;
 	public static final int PEDESTAL		= 11;
 	public static final int WALL_DECO		= 12;
 	public static final int BARRICADE		= 13;
 	public static final int EMPTY_SP		= 14;
 	public static final int HIGH_GRASS		= 15;
-	public static final int FURROWED_GRASS	= 30;
-
 	public static final int SECRET_DOOR	    = 16;
 	public static final int SECRET_TRAP     = 17;
 	public static final int TRAP            = 18;
 	public static final int INACTIVE_TRAP   = 19;
-
 	public static final int EMPTY_DECO		= 20;
 	public static final int LOCKED_EXIT		= 21;
 	public static final int UNLOCKED_EXIT	= 22;
@@ -56,8 +52,9 @@ public class Terrain {
 	public static final int STATUE_SP		= 26;
 	public static final int BOOKSHELF		= 27;
 	public static final int ALCHEMY			= 28;
-
 	public static final int WATER		    = 29;
+	public static final int FURROWED_GRASS	= 30;
+	public static final int CRYSTAL_DOOR	= 31;
 	
 	public static final int PASSABLE		= 0x01;
 	public static final int LOS_BLOCKING	= 0x02;
