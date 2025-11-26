@@ -87,7 +87,9 @@ public class Bestiary {
 					cl = Senior.class;
 				} else if (cl == Scorpio.class) {
 					cl = Acidic.class;
-				}
+				} else if (cl == Golyat.class) {
+                    cl = GolyatPlus.class;
+                }
 				rotation.set(i, cl);
 			}
 		}

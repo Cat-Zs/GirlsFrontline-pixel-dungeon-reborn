@@ -53,6 +53,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollTrickster;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golem;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golyat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GolyatPlus;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Goo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GreatCrab;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Guard;
@@ -234,7 +235,7 @@ public enum MobBestiary {
 
         RARE.addEntities(
                 Albino.class, CausticSlime.class,
-                Bandit.class,
+                Bandit.class, GolyatPlus.class,
                 ArmoredBrute.class,
                 Elemental.ChaosElemental.class, Senior.class,
                 CrystalMimic.class, ArmoredStatue.class);
