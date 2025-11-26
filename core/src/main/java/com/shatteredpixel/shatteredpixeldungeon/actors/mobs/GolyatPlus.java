@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GolyatPlusSprite;
@@ -37,18 +38,22 @@ public class GolyatPlus extends Mob {
     {
         spriteClass = GolyatPlusSprite.class;
 
-        HP = HT = 1;
+        HP = HT = 60;
         defenseSkill = 5;
+        baseSpeed = 0.5f;
 
-        EXP = 3;
+        EXP = 10;
         maxLvl = 10;
 
-        properties.add(Property.ARMO);
+        loot = new MysteryMeat().quantity(3);
+        lootChance = 1f;
+
+
     }
 
     @Override
     public int damageRoll() {
-        return Random.NormalIntRange( 8, 8 );
+        return Random.NormalIntRange( 1, 3 );
     }
 
     @Override
@@ -62,7 +67,7 @@ public class GolyatPlus extends Mob {
         for (int i = 0; i < PathFinder.NEIGHBOURS8.length; i++) {
             Char ch = findChar( pos + PathFinder.NEIGHBOURS8[i] );
             if (ch != null && ch.isAlive()) {
-                int damage = Random.NormalIntRange(35, 45);
+                int damage = 999;
                 damage = Math.max( 0,  damage - (ch.drRoll() + ch.drRoll()) );
                 ch.damage( damage, this );
                 if (ch == Dungeon.hero && !ch.isAlive()) {

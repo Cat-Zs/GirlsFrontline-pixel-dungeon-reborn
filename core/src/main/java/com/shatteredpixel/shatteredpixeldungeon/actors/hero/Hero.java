@@ -47,7 +47,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
@@ -57,6 +56,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
@@ -120,6 +120,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWea
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
@@ -133,6 +134,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SurfaceScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ElpheltSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.AttackIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
@@ -141,6 +143,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.StatusPane;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndHero;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndMessage;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.noosa.Camera;
@@ -1095,18 +1098,46 @@ public class Hero extends Char {
 		//there can be multiple exit tiles, so descend on any of them
 		//TODO this is slightly brittle, it assumes there are no disjointed sets of exit tiles
 		} else if ((Dungeon.level.map[pos] == Terrain.EXIT || Dungeon.level.map[pos] == Terrain.UNLOCKED_EXIT)) {
-			
-			curAction = null;
+            if (Dungeon.level instanceof RabbitBossLevel){
+                Game.runOnRenderThread(new Callback() {
+                    @Override
+                    public void call() {
+                        GameScene.show(
+                                new WndOptions(new ElpheltSprite(),
+                                        Messages.titleCase(name()),
+                                        Messages.get(Elphelt.class, "pick_warn"),
+                                        Messages.get(Elphelt.class, "yes"),
+                                        Messages.get(Elphelt.class, "no")) {
+                                    @Override
+                                    protected void onSelect(int index) {
+                                        if (index == 0){
+                                            curAction = null;
 
-			TimekeepersHourglass.timeFreeze timeFreeze = buff(TimekeepersHourglass.timeFreeze.class);
-			if (timeFreeze != null) timeFreeze.disarmPressedTraps();
-			Swiftthistle.TimeBubble timeBubble = buff(Swiftthistle.TimeBubble.class);
-			if (timeBubble != null) timeBubble.disarmPressedTraps();
-			
-			InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
-			Game.switchScene( InterlevelScene.class );
+                                            TimekeepersHourglass.timeFreeze timeFreeze = buff(TimekeepersHourglass.timeFreeze.class);
+                                            if (timeFreeze != null) timeFreeze.disarmPressedTraps();
+                                            Swiftthistle.TimeBubble timeBubble = buff(Swiftthistle.TimeBubble.class);
+                                            if (timeBubble != null) timeBubble.disarmPressedTraps();
+                                            InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+                                            Game.switchScene( InterlevelScene.class );
+                                        }
+                                    }
+                                }
+                                );
+                    }
+                });
+                ready();
+            } else {
+                curAction = null;
 
-			return false;
+                TimekeepersHourglass.timeFreeze timeFreeze = buff(TimekeepersHourglass.timeFreeze.class);
+                if (timeFreeze != null) timeFreeze.disarmPressedTraps();
+                Swiftthistle.TimeBubble timeBubble = buff(Swiftthistle.TimeBubble.class);
+                if (timeBubble != null) timeBubble.disarmPressedTraps();
+
+                InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
+                Game.switchScene(InterlevelScene.class);
+            }
+            return false;
 
 		} else if (getCloser( stairs )) {
 
@@ -1147,7 +1178,39 @@ public class Hero extends Char {
 					Game.switchScene( SurfaceScene.class );
 				}
 				
-			} else {
+			}
+			  else if (Dungeon.depth == 10){
+                Game.runOnRenderThread(new Callback() {
+                    @Override
+                    public void call() {
+                        GameScene.show(
+                                new WndOptions(new ElpheltSprite(),
+                                        Messages.titleCase(name()),
+                                        Messages.get(Elphelt.class, "pick_warn"),
+                                        Messages.get(Elphelt.class, "yes"),
+                                        Messages.get(Elphelt.class, "no")) {
+                                    @Override
+                                    protected void onSelect(int index) {
+                                        if (index == 0) {
+
+                                            curAction = null;
+
+                                            TimekeepersHourglass.timeFreeze timeFreeze = buff(TimekeepersHourglass.timeFreeze.class);
+                                            if (timeFreeze != null) timeFreeze.disarmPressedTraps();
+                                            Swiftthistle.TimeBubble timeBubble = buff(Swiftthistle.TimeBubble.class);
+                                            if (timeBubble != null) timeBubble.disarmPressedTraps();
+
+                                            InterlevelScene.mode = InterlevelScene.Mode.ASCEND;
+                                            Game.switchScene(InterlevelScene.class);
+                                        }
+                                    }
+                                }
+                        );
+                    }
+                });
+                ready();
+            }
+              else {
 				
 				curAction = null;
 
