@@ -1104,7 +1104,7 @@ public class Hero extends Char {
                     public void call() {
                         GameScene.show(
                                 new WndOptions(new ElpheltSprite(),
-                                        Messages.titleCase(name()),
+                                        Messages.titleCase(Messages.get(Elphelt.class, "name", new Object[0])),
                                         Messages.get(Elphelt.class, "pick_warn"),
                                         Messages.get(Elphelt.class, "yes"),
                                         Messages.get(Elphelt.class, "no")) {
@@ -1179,13 +1179,13 @@ public class Hero extends Char {
 				}
 				
 			}
-			  else if (Dungeon.depth == 10){
+			  else if (Dungeon.level instanceof RabbitBossLevel){
                 Game.runOnRenderThread(new Callback() {
                     @Override
                     public void call() {
                         GameScene.show(
                                 new WndOptions(new ElpheltSprite(),
-                                        Messages.titleCase(name()),
+                                        Messages.titleCase(Messages.get(Elphelt.class, "name", new Object[0])),
                                         Messages.get(Elphelt.class, "pick_warn"),
                                         Messages.get(Elphelt.class, "yes"),
                                         Messages.get(Elphelt.class, "no")) {
