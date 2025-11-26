@@ -89,6 +89,8 @@ public class Bestiary {
 					cl = Acidic.class;
 				} else if (cl == Golyat.class) {
                     cl = GolyatPlus.class;
+                }else if (cl == Gnoll.class) {
+                    cl = GnollSPAW.class;
                 }
 				rotation.set(i, cl);
 			}
