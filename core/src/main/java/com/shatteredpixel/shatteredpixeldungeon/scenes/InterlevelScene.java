@@ -370,11 +370,11 @@ public class InterlevelScene extends PixelScene {
 
 	public static void start(){
 		Mob.clearHeldAllies();
-		Dungeon.init("ANEWWORLD");
+		Dungeon.init("ANEWWORLD",0);
 		GameLog.wipe();
 		Dungeon.depth=Statistics.deepestFloor=-1;
 		Level level = Dungeon.newLevel(0);
-		Dungeon.switchLevel(level, level.entrance );
+		Dungeon.switchLevel(level,level.entrance);
 	}
 
 	private void access(){

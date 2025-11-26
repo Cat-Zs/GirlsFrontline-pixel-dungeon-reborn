@@ -179,10 +179,14 @@ public class Dungeon {
 
 	public static long seed;
 
-	public static void init(String seedCode) {
+	public static void init(String seedCode){
+		init(seedCode,SPDSettings.challenges());
+	}
+
+	public static void init(String seedCode,int paramChallenges) {
 
 		version = Game.versionCode;
-		challenges = SPDSettings.challenges();
+		challenges = paramChallenges;
 		mobsToChampion = -1;
 
 		if (SPDSettings.SEED_CODE_RANDOM==seedCode){
