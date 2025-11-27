@@ -111,6 +111,13 @@ public class MeleeWeapon extends Weapon {
 	}
 	
 	public String statsInfo(){
+        if(DEF>0||DEFUPGRADE>0){
+            if (isIdentified()){
+                return Messages.get(this, "stats_desc",  DEF + DEFUPGRADE * buffedLvl());
+            } else{
+                return Messages.get(this, "typical_stats_desc", DEF );
+            }
+        }
 		return Messages.get(this, "stats_desc");
 	}
 	
