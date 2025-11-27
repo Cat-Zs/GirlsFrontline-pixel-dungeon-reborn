@@ -59,6 +59,8 @@ public class Ump45 extends SubMachineGun {
         tier = 1;
         RCH = 1;
         ACC = 0.7f;
+        DEF = 1;
+        DEFUPGRADE = 1;
 
         defaultAction = AC_SMOKE;
         usesTargeting = true;
@@ -70,19 +72,6 @@ public class Ump45 extends SubMachineGun {
                 lvl*(tier+1);   //scaling unchanged
     }
 
-    @Override
-    public int defenseFactor( Char owner ) {
-        return 1 + level();
-    }
-
-
-    public String statsInfo(){
-        if (isIdentified()){
-            return Messages.get(this, "stats_desc", 1 + 1 * level());
-        } else {
-            return Messages.get(this, "typical_stats_desc", 1);
-        }
-    }
     // 保存冷却状态
     @Override
     public void storeInBundle(Bundle bundle) {
