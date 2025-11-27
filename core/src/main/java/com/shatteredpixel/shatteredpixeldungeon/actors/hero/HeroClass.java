@@ -42,6 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Sh
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.AttributeViewer;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.BackpackCleaner;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.CustomWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.ImmortalShieldAffecter;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.LevelTeleporter;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.MobPlacer;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestBag;
@@ -129,9 +130,9 @@ public enum HeroClass {
 		Waterskin waterskin = new Waterskin();
 		waterskin.collect();
 
-		if (DeviceCompat.isDebug()){
-			new MapEditor().collect();
-		}
+//		if (DeviceCompat.isDebug()){
+//			new MapEditor().collect();
+//		}
 
 		if (DeviceCompat.isDebug() || Dungeon.isChallenged(Challenges.TEST_MODE)){
 			CustomWeapon customWeapon = new CustomWeapon();
@@ -139,6 +140,8 @@ public enum HeroClass {
 			customWeapon.identify().collect();
 			
 			new TestBag().collect();
+
+            new ImmortalShieldAffecter().collect();
 
 			new TrapPlacer().collect();
 
@@ -153,6 +156,7 @@ public enum HeroClass {
 			new LevelTeleporter().collect();
 
 			new LazyTest().collect();
+            new MapEditor().collect();
 
 			new TestArmor().collect();
 			new TestArtifact().collect();
