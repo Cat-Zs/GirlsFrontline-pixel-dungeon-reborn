@@ -366,6 +366,7 @@ public class Assets {
 		public static final String JAEGER_LOCK    = "sprites/girlpd/jager_lock.png";
 
 		public static final String SKS  = "sprites/girlpd/sks.png";
+        public static final String SKS_ARM  = "sprites/girlpd/sks_arm.png";
 		public static final String MANTI  = "sprites/girlpd/manti.png";
 
 		public static final String STRIKER			= "sprites/girlpd/striker.png";
