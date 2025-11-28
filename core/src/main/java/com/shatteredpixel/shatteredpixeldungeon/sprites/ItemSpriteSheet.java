@@ -195,7 +195,7 @@ public class ItemSpriteSheet {
 		assignItemRect(NOISEMAKER,      10, 13);
 		assignItemRect(ARCANE_BOMB,     10, 13);
 		assignItemRect(SHRAPNEL_BOMB,   10, 13);
-        assignItemRect(GOLYAT_BOMB,     13, 13);
+        assignItemRect(GOLYAT_BOMB,     14, 13);
 	}
 
 	
@@ -481,7 +481,7 @@ public class ItemSpriteSheet {
 	                                                                                    //16 free slots
 		
 	//卷轴行
-	private static final int SCROLLS        =                               xy(1, 19);  //16 slots
+	public static final int SCROLLS        =                               xy(1, 19);  //16 slots
 	public static final int SCROLL_KAUNAN   = SCROLLS+0;
 	public static final int SCROLL_SOWILO   = SCROLLS+1;
 	public static final int SCROLL_LAGUZ    = SCROLLS+2;
