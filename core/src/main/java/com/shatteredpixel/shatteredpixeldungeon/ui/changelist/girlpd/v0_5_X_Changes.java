@@ -28,6 +28,7 @@ import java.util.ArrayList;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+    	add_0_5_5_4_Changes(changeInfos);
     	add_0_5_5_3_Changes(changeInfos);
     	add_0_5_5_2_Changes(changeInfos);
     	add_0_5_5_1_Changes(changeInfos);
@@ -40,6 +41,95 @@ public class v0_5_X_Changes {
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
     }
+
+    public static void add_0_5_5_4_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.5.4", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "buffs"), false, null);
+		changes.hardlight( CharSprite.POSITIVE );
+		changeInfos.add(changes);
+
+       changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARMOR_SCALE, null), "狱火附魔",
+		"_-_ _狱火附魔_强化了其能力，使其回归到过往版本的强度\n" +
+		"_-_ _狱火附魔_除了完全免疫火焰的能力外，处于燃烧状态还将概率获得_护盾_。"
+		));
+
+        Image kr = new Image(Assets.Sprites.KEEPER, 0 ,0 ,26 ,19);
+        kr.scale.x=0.8f;
+        kr.scale.y=0.8f;
+        changes.addButton(new ChangeButton(kr, "商店", 
+            "_-_ 格琳娜商店与P7商店现在可以以_10倍售价_买回_卖出的物品_，玩家卖出的商品将会出现在_玩家周围的空地上_并作为特殊的商店货物存在。\n"+
+			"_-_ 格琳娜与P7在_首次遭遇_不利情况时将会进行警告，_警告后_才会因为各种不利情况而_撤离_。\n"+ 
+			"_-_ 以_信用卡_进行_盗窃失败_依然会导致商人直接撤离！"
+        ));  
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SAIGA, null), "测试模式-流形护盾",
+		"_-_ 测试模式道具_流形护盾_实现了其计划中应有的效果。\n" +
+		"_-_ 启动_流形护盾_后，玩家将进入_无敌_状态，直至关闭。"
+		));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.TELE_GRAB, null), "念力晶柱",
+		"_-_ _念力晶柱_取回掉落地面的物品的能力获得了强化。\n" +
+		"_-_ 现在_念力晶柱_将可以取回一格内_尽可能多_的全部物品，直到玩家_背包已满_。"
+		));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CLEANSING_DART, null), ".50口径子弹",
+		"_-_ _净化子弹_新增对敌使用效果为清除目标_所有效果_，并_消除对玩家仇恨_。\n" +
+		"_-_ _激素子弹_新增对敌使用效果为_令目标残废_。"
+		));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SEAL, null), "破碎的外骨骼配件",
+		"_-_ UMP45角色2层天赋_刻印转移_效果改动，现在破碎的外骨骼配件_初始_就可以携带_普通或稀有护甲刻印_。\n" +
+		"_-_ _刻印转移_+1效果改动，破碎的外骨骼配件可以携带_全稀有度的护甲刻印_。\n"+
+		"_-_ _刻印转移_+2效果改动，破碎的外骨骼配件可以从带刻印的护甲上_吸取刻印并保留和转移_。"
+		));
+
+		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CROWN, null), "外骨骼升级组件",
+		"_-_ 现在被外骨骼升级组件_升级的护甲_不再具有唯一性。\n" +
+		"_-_ _升级的护甲_可以_卸下升级组件_并将组件安装到另一件护甲，但会_破坏原有的护甲_。"
+		));
+
+		changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+		Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(imageTemp, "游戏优化", 
+            "_-_ 现在玩家可以在_排行榜界面_查看已完成游戏的_种子码_了，但该版本前完成游戏的种子码将默认为9个A。\n"+
+			"_-_ 修订了数处文本错误。\n"+ 
+			"_-_ 将_梦想家_与_末日魔犬_的贴图加入游戏。\n"+
+			"_-_ 将_传送器_的贴图优化。\n"+
+			"_-_ 优化了部分地图的_渲染模式_，避免了_贴图重叠_的情况发生。\n"+
+			"_-_ 差分了_西蒙诺夫_与_带护甲的西蒙诺夫_的贴图与介绍文本，防止玩家无法正确估算其战斗力。\n"+
+			"_-_ 为离开兔子层增加了_提示文本_，防止有人在此_遗漏重要物品_。"
+        ));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+		changes.hardlight( Window.TITLE_COLOR );
+		changeInfos.add(changes);
+
+		Image gy = new Image(Assets.GOLYATPLUS, 0 ,0 ,22 ,23);
+        gy.scale.x=0.8f;
+        gy.scale.y=0.8f;
+        changes.addButton(new ChangeButton(gy, "歌利亚Plus", 
+        "_-_ 增加新敌人_歌利亚Plus_作为普通_歌利亚_的精英版本。\n" +
+		"_-_ _歌利亚Plus_移动速度较慢但_自爆威力极高_，请_不要近距离击杀！_\n"+
+		"_-_ _歌利亚Plus_将掉落_断腿的歌利亚_,可以破坏墙体和地面，且能_直接破坏任何容器_并获取内部物资。"
+		));
+
+		Image gp = new Image(Assets.Sprites.GNOLLSWAP, 0 ,0 ,16 ,21);
+        gp.scale.x=0.8f;
+        gp.scale.y=0.8f;
+        changes.addButton(new ChangeButton(gp, "切割者", 
+        "_-_ 增加新敌人_切割者_作为_巡游者_的精英版本。（从代码原理上来说是这样的）\n" +
+		"_-_ _切割者_攻击距离较远且初始处于中立，其_携带了大量的物资_，在受到威胁后，切割者将_转变为敌对状态！_"
+		));
+
+	}
 
     public static void add_0_5_5_3_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.5.3", true, "");
@@ -69,7 +159,7 @@ public class v0_5_X_Changes {
 		changes.hardlight( Window.TITLE_COLOR );
 		changeInfos.add(changes);
 
-		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MEAT_PIE,null), "地图种子编辑器",
+		changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "地图种子编辑器",
 			"_-_ 新增了_地图种子编辑器_，使用编辑器可以锚定特定地形的地图进行游戏了！\n"+
 			"_-_ 解锁方式与_挑战_的解锁方式相同，完成15层的冒险即可解锁\n"+
 			"_-_ 地图种子编辑器解锁后，位于_开始游戏_按钮的左侧"
