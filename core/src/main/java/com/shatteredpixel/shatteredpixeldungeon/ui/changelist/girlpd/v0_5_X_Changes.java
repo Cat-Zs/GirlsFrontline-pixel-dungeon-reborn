@@ -72,16 +72,16 @@ public class v0_5_X_Changes {
 
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.TELE_GRAB, null), "念力晶柱",
 		"_-_ _念力晶柱_取回掉落地面的物品的能力获得了强化。\n" +
-		"_-_ 现在_念力晶柱_将可以取回一格内_尽可能多_的全部物品，直到玩家_背包已满_。"
+		"_-_ 现在_念力晶柱_将可以取回一格内_尽可能多_的全部物品，直到玩家_无法拿取_。"
 		));
 
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CLEANSING_DART, null), ".50口径子弹",
-		"_-_ _净化子弹_新增对敌使用效果为清除目标_所有效果_，并_消除对玩家仇恨_。\n" +
+		"_-_ _净化子弹_新增对敌使用效果为清除目标_正面效果_，并_消除对玩家仇恨_。\n" +
 		"_-_ _激素子弹_新增对敌使用效果为_令目标残废_。"
 		));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SEAL, null), "破碎的外骨骼配件",
-		"_-_ UMP45角色2层天赋_刻印转移_效果改动，现在破碎的外骨骼配件_初始_就可以携带_普通或稀有护甲刻印_。\n" +
+		"_-_ UMP45角色2层天赋_刻印转移_效果改动，现在破碎的外骨骼配件_在角色6级后_就可以携带_普通或稀有护甲刻印_。\n" +
 		"_-_ _刻印转移_+1效果改动，破碎的外骨骼配件可以携带_全稀有度的护甲刻印_。\n"+
 		"_-_ _刻印转移_+2效果改动，破碎的外骨骼配件可以从带刻印的护甲上_吸取刻印并保留和转移_。"
 		));
