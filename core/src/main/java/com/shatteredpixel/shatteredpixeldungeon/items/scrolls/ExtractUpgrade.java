@@ -33,7 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 public class ExtractUpgrade extends InventoryScroll {
 	
 	{
-        image = ItemSpriteSheet.SCROLLS;
+        image = ItemSpriteSheet.EXTRACTUPGRADE;
 		preferredBag = Belongings.Backpack.class;
 
 		unique = true;
