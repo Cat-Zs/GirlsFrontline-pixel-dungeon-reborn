@@ -195,7 +195,7 @@ public class ItemSpriteSheet {
 		assignItemRect(NOISEMAKER,      10, 13);
 		assignItemRect(ARCANE_BOMB,     10, 13);
 		assignItemRect(SHRAPNEL_BOMB,   10, 13);
-        assignItemRect(GOLYAT_BOMB,     14, 13);
+        assignItemRect(GOLYAT_BOMB,     17, 13);
 	}
 
 	
