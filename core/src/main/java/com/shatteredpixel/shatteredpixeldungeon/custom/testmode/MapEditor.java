@@ -20,13 +20,12 @@ import java.util.Arrays;
 public class MapEditor extends TestItem {
     public int chosen;
     public RenderedTextBlock name;
-    private static final String AC_PLACE = "place";
     private static final String AC_SET = "set";
     private final ArrayList<Integer> X;
 
     public MapEditor() {
         this.image = ItemSpriteSheet.PICKAXE;
-        this.defaultAction = "place";
+        this.defaultAction = "put";
         this.X = new ArrayList(Arrays.asList(DungeonTileSheet.CHASM, DungeonTileSheet.FLOOR, DungeonTileSheet.GRASS, DungeonTileSheet.EMPTY_WELL, DungeonTileSheet.FLAT_WALL, DungeonTileSheet.FLAT_DOOR, DungeonTileSheet.FLAT_DOOR_OPEN, DungeonTileSheet.ENTRANCE, DungeonTileSheet.EXIT, DungeonTileSheet.EMBERS, DungeonTileSheet.FLAT_DOOR_LOCKED, DungeonTileSheet.PEDESTAL, DungeonTileSheet.FLAT_WALL_DECO, DungeonTileSheet.FLAT_BARRICADE, DungeonTileSheet.FLOOR_SP, DungeonTileSheet.FLAT_HIGH_GRASS, DungeonTileSheet.FLAT_DOOR, -1, -1, -1, DungeonTileSheet.FLOOR_DECO, DungeonTileSheet.LOCKED_EXIT, DungeonTileSheet.UNLOCKED_EXIT, -1, DungeonTileSheet.WELL, DungeonTileSheet.FLAT_STATUE, DungeonTileSheet.FLAT_STATUE_SP, DungeonTileSheet.FLAT_BOOKSHELF, DungeonTileSheet.FLAT_ALCHEMY_POT, DungeonTileSheet.WATER, DungeonTileSheet.FLAT_FURROWED_GRASS, DungeonTileSheet.FLAT_DOOR_CRYSTAL));
     }
 
