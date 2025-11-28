@@ -21,7 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
-import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.ExtractSummoned;
+//import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.ExtractSummoned;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
