@@ -65,9 +65,9 @@ public class v0_5_X_Changes {
 			"_-_ 以_信用卡_进行_盗窃失败_依然会导致商人直接撤离！"
         ));  
 
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SAIGA, null), "测试模式-流形护盾",
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.PICKAXE, null), "测试模式",
 		"_-_ 测试模式道具_流形护盾_实现了其计划中应有的效果。\n" +
-		"_-_ 启动_流形护盾_后，玩家将进入_无敌_状态，直至关闭。"
+		"_-_ 启动_流形护盾_后，玩家将进入_无敌_状态，直至关闭。\n\n"+"_-_ 测试模式加入道具_玩家等级调整器_、_装备等级调整器_、_装备遗忘器_。"
 		));
 
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.TELE_GRAB, null), "念力晶柱",
