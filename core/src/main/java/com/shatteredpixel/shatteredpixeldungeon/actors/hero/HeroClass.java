@@ -53,6 +53,9 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.MapEditor;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.LazyTest;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestArmor;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestArtifact;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestExperience;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestIdentify;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestLevelSetting;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMelee;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMissile;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestPotion;
@@ -140,6 +143,9 @@ public enum HeroClass {
 			customWeapon.identify().collect();
 			
 			new TestBag().collect();
+            new TestLevelSetting().collect();
+            new TestIdentify().collect();
+            new TestExperience().collect();
 
             new ImmortalShieldAffecter().collect();
 
