@@ -26,12 +26,15 @@ import static com.shatteredpixel.shatteredpixeldungeon.levels.Level.set;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CavesBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.DeepCaveBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.utils.PathFinder;
+import com.watabou.utils.Point;
+import com.watabou.utils.Rect;
 
 public class GolyatBomb extends Bomb {
 	
@@ -42,12 +45,21 @@ public class GolyatBomb extends Bomb {
 	@Override
 	public void explode(int cell) {
 		super.explode(cell);
-        if(!(Dungeon.bossLevel())||(Dungeon.level instanceof CavesBossLevel)||(Dungeon.level instanceof SewerBossLevel)||(Dungeon.level instanceof RabbitBossLevel)){
+        if(!(Dungeon.bossLevel())||(Dungeon.level instanceof CavesBossLevel)||(Dungeon.level instanceof SewerBossLevel)||(Dungeon.level instanceof RabbitBossLevel)||(Dungeon.level instanceof DeepCaveBossLevel)){
             boolean terrainAffected = false;
+            Rect gate = CavesBossLevel.gate;
             for (int i : PathFinder.NEIGHBOURS4){
+                //直向邻格的破坏
                 int c = cell + i;
                 if (c >= 0 && c < Dungeon.level.length()){
                     if (Dungeon.level.breakable[c]){
+                        if (Dungeon.level.map[c] == Terrain.WALL || Dungeon.level.map[c] == Terrain.WALL_DECO){
+                            Point p = Dungeon.level.cellToPoint(c);
+                            if (p.y < gate.bottom && p.x > gate.left-2 && p.x < gate.right+2){
+                                continue;
+                                //搬运的DM300代码，现在仍然保留对15楼地形的破坏，但是gate周围的墙被禁止破坏，以免以低代价逃课15楼
+                            }
+                        }
                         set(c, Terrain.EMBERS);
                         GameScene.updateMap(c);
                         terrainAffected = true;
@@ -58,13 +70,24 @@ public class GolyatBomb extends Bomb {
                 }
             }
             if(Dungeon.level.breakable[cell]){
+                //中心破坏
                 set(cell, Terrain.EMBERS);
                 GameScene.updateMap(cell);
                 terrainAffected = true;
             }
+            for (int i : PathFinder.NEIGHBOURS9){
+                //对陷阱的破坏提升到3*3范围
+                int d = cell + i;
+                if ((Dungeon.level.map[d] == Terrain.TRAP)||(Dungeon.level.map[d] == Terrain.INACTIVE_TRAP)||(Dungeon.level.map[d] == Terrain.SECRET_TRAP)){
+                    set(d, Terrain.EMBERS);
+                    GameScene.updateMap(d);
+                    terrainAffected = true;
+                }
+            }
             if (terrainAffected) {
                 Dungeon.observe();
             }
+            Dungeon.level.cleanWalls();
         }
         Heap heap = Dungeon.level.heaps.get(cell);
         if (heap != null)
