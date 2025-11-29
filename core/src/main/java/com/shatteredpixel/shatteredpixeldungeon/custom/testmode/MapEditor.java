@@ -31,14 +31,14 @@ public class MapEditor extends TestItem {
 
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add("place");
+        actions.add("put");
         actions.add("set");
         return actions;
     }
 
     public void execute(Hero hero, String action) {
         super.execute(hero, action);
-        if (action.equals("place")) {
+        if (action.equals("put")) {
             GameScene.selectCell(new CellSelector.Listener() {
                 public void onSelect(Integer cell) {
                     if (MapEditor.this.chosen != 17 && MapEditor.this.chosen != 18 && MapEditor.this.chosen != 19 && cell != null) {
