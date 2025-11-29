@@ -203,6 +203,7 @@ public abstract class Level implements Bundlable {
 //				addItemToSpawn(Generator.random(Generator.Category.FOOD));  // 正常模式下随机生成食物
 //			}
 //饥荒挑战下的食物生成差分，现在无用，所以注释掉
+            addItemToSpawn(Generator.random(Generator.Category.FOOD));
 
 			if (Dungeon.isChallenged(Challenges.DARKNESS)){
 				addItemToSpawn( new Torch() );
