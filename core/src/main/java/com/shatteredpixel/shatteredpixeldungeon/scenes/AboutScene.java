@@ -162,7 +162,7 @@ public class AboutScene extends PixelScene {
         sea.setPos(catz.right(), catz.top());
 		content.add(sea);
         /*模板从此处开始*/
-		CreditsBlock onw = new CreditsBlock(true,Shock(),
+		CreditsBlock onw = new CreditsBlock(true,Blink(),
                 /*是否闪光、闪光颜色，闪光颜色是十六进制六位数，从0x000000到0xFFFFFF*/
 		        "　",
                 /*标题*/
@@ -227,8 +227,8 @@ public class AboutScene extends PixelScene {
 		awsl.setPos(ling.left(), cola.bottom()+14);
 		content.add(awsl);
 
-        CreditsBlock onw2 = new CreditsBlock(true,Shock(),
-                " 测 试 协 力 ",
+        CreditsBlock onw2 = new CreditsBlock(true,Blink(),
+                " 测  试  协  力 ",
                 Icons.ONWARD.get(),
                 "TO ME!",
                 null,
@@ -356,7 +356,7 @@ public class AboutScene extends PixelScene {
         }
     }
     //颜色是一个6位的十六进制数，这里对每一位随机一个数，然后转换成十六进制后再加到一起
-    private int Shock(){
+    private int Blink(){
         int RP = Random.Int(16);
         int GP = Random.Int(16);
         int BP = Random.Int(16);
