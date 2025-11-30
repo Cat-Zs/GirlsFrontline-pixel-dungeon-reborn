@@ -228,7 +228,7 @@ public class AboutScene extends PixelScene {
 		content.add(awsl);
 
         CreditsBlock onw2 = new CreditsBlock(true,Shock(),
-                " 测试协力 ",
+                " 测 试 协 力 ",
                 Icons.ONWARD.get(),
                 "TO ME!",
                 null,
