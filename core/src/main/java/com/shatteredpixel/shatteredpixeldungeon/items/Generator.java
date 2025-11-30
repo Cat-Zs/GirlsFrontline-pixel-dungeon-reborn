@@ -74,6 +74,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfMight;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfSharpshooting;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfTenacity;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfWealth;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.A1;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.B2;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.C4;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.D8;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.E16;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.F32;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.G20;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.H17;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfLullaby;
@@ -230,7 +238,8 @@ public class Generator {
 		SCROLL	( 8, 8, Scroll.class ),
 		STONE   ( 1, 1, Runestone.class),
 		
-		GOLD	( 10, 10,   Gold.class );
+		GOLD	( 10, 10,   Gold.class ),
+        RANDOM100	( 0, 0, Scroll.class );
 		
 		public Class<?>[] classes;
 
@@ -316,7 +325,20 @@ public class Generator {
 					ScrollOfTransmutation.class
 			};
 			SCROLL.defaultProbs = new float[]{ 0, 6, 4, 3, 3, 3, 2, 2, 2, 2, 2, 1 };
-			SCROLL.probs = SCROLL.defaultProbs.clone();
+            SCROLL.probs = SCROLL.defaultProbs.clone();
+            
+            RANDOM100.classes = new Class<?>[]{
+                    A1.class,
+                    B2.class,
+                    C4.class,
+                    D8.class,
+                    E16.class,
+                    F32.class,
+                    G20.class,
+                    H17.class
+            };
+            RANDOM100.defaultProbs = new float[]{ 1, 2, 4, 8, 16, 32, 20, 17 };
+            RANDOM100.probs = RANDOM100.defaultProbs.clone();
 			
 			STONE.classes = new Class<?>[]{
 					StoneOfEnchantment.class,   //1 is guaranteed to drop on floors 6-19
