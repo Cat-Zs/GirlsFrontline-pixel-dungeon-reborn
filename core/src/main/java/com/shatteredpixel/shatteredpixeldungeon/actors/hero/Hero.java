@@ -502,6 +502,7 @@ public class Hero extends Char {
 		// GSH18天赋：元气一餐 +1级效果
 		if (hasTalent(Talent.GSH18_ENERGIZING_MEAL) && pointsInTalent(Talent.GSH18_ENERGIZING_MEAL) >= 1 && buff(Talent.GSH18EnergizingMealTracker.class) != null) {
 			// 下次攻击必定命中，设置一个非常高的accuracy值，变成测试枪了（）
+            accuracy += 1000f;
 			accuracy *= 1000f;
 		}
 		
@@ -1293,11 +1294,6 @@ public class Hero extends Char {
 
 		damage = Talent.onAttackProc( this, enemy, damage );
 		
-		// GSH18天赋：元气一餐 - 攻击后移除追踪buff
-		if (buff(Talent.GSH18EnergizingMealTracker.class) != null) {
-			buff(Talent.GSH18EnergizingMealTracker.class).detach();
-		}
-		
 		switch (subClass) {
 		case SNIPER:
 			if (wep instanceof MissileWeapon && !(wep instanceof SpiritBow.SpiritArrow) && enemy != this) {
@@ -1982,7 +1978,7 @@ public class Hero extends Char {
 		}
 		
 		// GSH18天赋：元气一餐 - 攻击后移除buff
-		if (buff(Talent.GSH18EnergizingMealTracker.class) != null) {
+		if (hit&&(buff(Talent.GSH18EnergizingMealTracker.class) != null)) {
 			buff(Talent.GSH18EnergizingMealTracker.class).detach();
 		}
 
