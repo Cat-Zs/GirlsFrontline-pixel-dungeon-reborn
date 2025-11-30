@@ -181,7 +181,7 @@ public class Armor extends EquipableItem {
 				degrade();
 			}
 			if (detaching.getGlyph() != null){
-				if (hero.hasTalent(Talent.RUNIC_TRANSFERENCE)
+				if (hero.lvl>=6&&hero.haveTalent(Talent.RUNIC_TRANSFERENCE)
 						&& (Arrays.asList(Glyph.common).contains(detaching.getGlyph().getClass())
 							|| Arrays.asList(Glyph.uncommon).contains(detaching.getGlyph().getClass()))){
 					inscribe(null);
