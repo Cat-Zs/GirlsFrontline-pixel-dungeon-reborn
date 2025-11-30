@@ -84,9 +84,19 @@ public class GolyatBomb extends Bomb {
                     terrainAffected = true;
                 }
             }
+            for (int i : PathFinder.NEIGHBOURS25){
+                //对失效陷阱的破坏提升到5*5范围
+                int e = cell + i;
+                if (Dungeon.level.map[e] == Terrain.INACTIVE_TRAP){
+                    set(e, Terrain.EMBERS);
+                    GameScene.updateMap(e);
+                    terrainAffected = true;
+                }
+            }
             if (terrainAffected) {
                 Dungeon.observe();
             }
+            //从DM300处复制来的更新墙体的阴影
             Dungeon.level.cleanWalls();
         }
         Heap heap = Dungeon.level.heaps.get(cell);
