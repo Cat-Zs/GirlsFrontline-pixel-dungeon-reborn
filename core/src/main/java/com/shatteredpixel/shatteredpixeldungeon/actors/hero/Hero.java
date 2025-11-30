@@ -360,13 +360,17 @@ public class Hero extends Char {
 		return pointsInTalent(talent) > 0;
 	}
 
+    public boolean haveTalent( Talent talent ){
+        return pointsInTalent(talent) >= 0;
+    }
+
 	public int pointsInTalent( Talent talent ){
 		for (LinkedHashMap<Talent, Integer> tier : talents){
 			for (Talent f : tier.keySet()){
 				if (f == talent) return tier.get(f);
 			}
 		}
-		return 0;
+		return -1;
 	}
 
 	public void upgradeTalent( Talent talent ){
