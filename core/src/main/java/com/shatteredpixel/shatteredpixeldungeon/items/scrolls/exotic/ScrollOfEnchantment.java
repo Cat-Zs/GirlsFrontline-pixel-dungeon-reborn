@@ -118,9 +118,13 @@ public class ScrollOfEnchantment extends ExoticScroll {
 
 		@Override
 		public void onSelect(final Item item) {
+            if(item != null){
+                if (!ScrollOfEnchantment.identifiedByUse && ScrollOfEnchantment.curItem instanceof ScrollOfEnchantment) {
+                    ScrollOfEnchantment.curItem.detach(ScrollOfEnchantment.curUser.belongings.backpack);
+                }
+            }
 			
 			if (item instanceof Weapon){
-				
 				final Weapon.Enchantment enchants[] = new Weapon.Enchantment[3];
 				
 				Class<? extends Weapon.Enchantment> existing = ((Weapon) item).enchantment != null ? ((Weapon) item).enchantment.getClass() : null;
@@ -141,9 +145,6 @@ public class ScrollOfEnchantment extends ExoticScroll {
 					@Override
 					protected void onSelect(int index) {
 						if (index < 3) {
-                            if (!ScrollOfEnchantment.identifiedByUse && ScrollOfEnchantment.curItem instanceof ScrollOfEnchantment) {
-                                ScrollOfEnchantment.curItem.detach(ScrollOfEnchantment.curUser.belongings.backpack);
-                            }
 							((Weapon) item).enchant(enchants[index]);
 							GLog.p(Messages.get(StoneOfEnchantment.class, "weapon"));
 							((ScrollOfEnchantment)curItem).readAnimation();
@@ -194,9 +195,6 @@ public class ScrollOfEnchantment extends ExoticScroll {
 					@Override
 					protected void onSelect(int index) {
 						if (index < 3) {
-                            if (!ScrollOfEnchantment.identifiedByUse && ScrollOfEnchantment.curItem instanceof ScrollOfEnchantment) {
-                            ScrollOfEnchantment.curItem.detach(ScrollOfEnchantment.curUser.belongings.backpack);
-                            }
 							((Armor) item).inscribe(glyphs[index]);
 							GLog.p(Messages.get(StoneOfEnchantment.class, "armor"));
 							((ScrollOfEnchantment)curItem).readAnimation();
