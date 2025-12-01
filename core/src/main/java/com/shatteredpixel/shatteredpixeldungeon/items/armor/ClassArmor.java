@@ -161,7 +161,7 @@ abstract public class ClassArmor extends Armor {
 			actions.add( AC_ABILITY );
 		}
 
-        actions.add("TRANSFER");
+        actions.add(AC_TRANSFER);
 		return actions;
 	}
 
@@ -200,7 +200,7 @@ abstract public class ClassArmor extends Armor {
 				hero.armorAbility.use(this, hero);
 			}
 			
-		}else if (action.equals("TRANSFER")) {
+		}else if (action.equals(AC_TRANSFER)) {
             GameScene.show(new WndOptions(new ItemSprite(ItemSpriteSheet.CROWN), Messages.get(ClassArmor.class, "transfer_title", new Object[0]), Messages.get(ClassArmor.class, "transfer_desc", new Object[0]), new String[]{Messages.get(ClassArmor.class, "transfer_prompt", new Object[0]), Messages.get(ClassArmor.class, "transfer_cancel", new Object[0])}) {
                 protected void onSelect(int index) {
                     if (index == 0) {
@@ -210,7 +210,7 @@ abstract public class ClassArmor extends Armor {
                             }
 
                             public boolean itemSelectable(Item item) {
-                                return item instanceof Armor;
+                                return (item instanceof Armor)&&(item != ClassArmor.this);
                             }
 
                             public void onSelect(Item item) {
@@ -248,13 +248,7 @@ abstract public class ClassArmor extends Armor {
                                         ClassArmor.this.inscribe(armor.glyph);
                                     }
 
-                                    if (armor.levelKnown && armor.cursedKnown) {
-                                        ClassArmor.this.identify();
-                                    } else {
-                                        ClassArmor.this.levelKnown = armor.levelKnown;
-                                        ClassArmor.this.cursedKnown = true;
-                                    }
-
+                                    ClassArmor.this.identify();
                                     GLog.p(Messages.get(ClassArmor.class, "transfer_complete", new Object[0]), new Object[0]);
                                     hero.sprite.operate(hero.pos);
                                     hero.sprite.emitter().burst(Speck.factory(104), 12);
