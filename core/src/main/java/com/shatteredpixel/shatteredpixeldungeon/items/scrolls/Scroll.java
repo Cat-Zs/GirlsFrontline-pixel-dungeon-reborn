@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.scrolls;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -65,6 +67,9 @@ public abstract class Scroll extends Item {
 
 	public static final String AC_READ	= "READ";
 
+    public boolean isCost(){
+        return false;
+    }
 	protected static final float TIME_TO_READ	= 1f;
 
 	private static final HashMap<String, Integer> runes = new HashMap<String, Integer>() {
@@ -172,6 +177,9 @@ public abstract class Scroll extends Item {
 			} else {
 				curUser = hero;
 				doRead();
+                if(!isCost()){
+                    curItem = detach( hero.belongings.backpack );
+                }
 			}
 
 		}

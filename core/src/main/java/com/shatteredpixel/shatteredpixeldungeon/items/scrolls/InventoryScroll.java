@@ -36,6 +36,10 @@ import com.watabou.noosa.audio.Sample;
 public abstract class InventoryScroll extends Scroll {
 
 	protected static boolean identifiedByUse = false;
+    @Override
+    public boolean isCost(){
+        return true;
+    }
 
 	@Override
 	public void doRead() {
