@@ -41,6 +41,11 @@ public class GolyatBomb extends Bomb {
 	{
 		image = ItemSpriteSheet.GOLYAT_BOMB;
 	}
+
+    private boolean outMap(int cell){
+        Point p = Dungeon.level.cellToPoint(cell);
+        return p.x <= 0 || p.y <= 0 || p.x >= Dungeon.level.width() - 1 || p.y >= Dungeon.level.height() - 1;
+    }
 	
 	@Override
 	public void explode(int cell) {
@@ -51,14 +56,17 @@ public class GolyatBomb extends Bomb {
             for (int i : PathFinder.NEIGHBOURS4){
                 //直向邻格的破坏
                 int c = cell + i;
-                if (c >= 0 && c < Dungeon.level.length()){
+                if (c >= 0 && c < Dungeon.level.length()-1){
                     if (Dungeon.level.breakable[c]){
-                        if (Dungeon.level.map[c] == Terrain.WALL || Dungeon.level.map[c] == Terrain.WALL_DECO){
+                        if ((Dungeon.level instanceof CavesBossLevel)&&(Dungeon.level.map[c] == Terrain.WALL || Dungeon.level.map[c] == Terrain.WALL_DECO)){
                             Point p = Dungeon.level.cellToPoint(c);
                             if (p.y < gate.bottom && p.x > gate.left-2 && p.x < gate.right+2){
                                 continue;
                                 //搬运的DM300代码，现在仍然保留对15楼地形的破坏，但是gate周围的墙被禁止破坏，以免以低代价逃课15楼
                             }
+                        }
+                        if (outMap(c)) {
+                            continue;
                         }
                         set(c, Terrain.EMBERS);
                         GameScene.updateMap(c);
@@ -78,7 +86,10 @@ public class GolyatBomb extends Bomb {
             for (int i : PathFinder.NEIGHBOURS9){
                 //对陷阱的破坏提升到3*3范围
                 int d = cell + i;
-                if ((Dungeon.level.map[d] == Terrain.TRAP)||(Dungeon.level.map[d] == Terrain.INACTIVE_TRAP)||(Dungeon.level.map[d] == Terrain.SECRET_TRAP)){
+                if (outMap(d)) {
+                    continue;
+                }
+                if ((Dungeon.level.map[d] == Terrain.TRAP) || (Dungeon.level.map[d] == Terrain.INACTIVE_TRAP) || (Dungeon.level.map[d] == Terrain.SECRET_TRAP)) {
                     set(d, Terrain.EMBERS);
                     GameScene.updateMap(d);
                     terrainAffected = true;
@@ -87,7 +98,10 @@ public class GolyatBomb extends Bomb {
             for (int i : PathFinder.NEIGHBOURS25){
                 //对失效陷阱的破坏提升到5*5范围
                 int e = cell + i;
-                if (Dungeon.level.map[e] == Terrain.INACTIVE_TRAP){
+                if (outMap(e)) {
+                    continue;
+                }
+                if (Dungeon.level.map[e] == Terrain.INACTIVE_TRAP) {
                     set(e, Terrain.EMBERS);
                     GameScene.updateMap(e);
                     terrainAffected = true;
