@@ -590,6 +590,7 @@ public abstract class Level implements Bundlable {
 
 		@Override
 		protected boolean act() {
+            //此处是循环刷怪
 
 			if (Dungeon.level.mobCount() < Dungeon.level.mobLimit()) {
 
@@ -619,10 +620,14 @@ public abstract class Level implements Bundlable {
 	}
 
 	public boolean spawnMob(int disLimit){
+        //此处是循环刷怪所用到的生成怪物
 		PathFinder.buildDistanceMap(Dungeon.hero.pos, BArray.or(Dungeon.level.passable, Dungeon.level.avoid, null));
 
 		Mob mob = Dungeon.level.createMob();
-		mob.state = mob.WANDERING;
+        if(mob.state!=mob.PASSIVE){
+            mob.state = mob.WANDERING;
+            //从默认警戒/进攻改为，当初始行动逻辑不为中立/被动时，再赋予警戒/进攻
+        }
 		mob.pos = Dungeon.level.randomRespawnCell( mob );
 		if (Dungeon.hero.isAlive() && mob.pos != -1 && PathFinder.distance[mob.pos] >= disLimit) {
 			GameScene.add( mob );
