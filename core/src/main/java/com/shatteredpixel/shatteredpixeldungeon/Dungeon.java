@@ -192,8 +192,8 @@ public class Dungeon {
 
 		if (SPDSettings.SEED_CODE_RANDOM==seedCode){
 			seed = DungeonSeed.randomSeed();
-		}else{
-			seed = DungeonSeed.convertFromCode(seedCode);
+		} else{
+			seed = DungeonSeed.convertFromText(seedCode);
 		}
 	
 		Actor.clear();
