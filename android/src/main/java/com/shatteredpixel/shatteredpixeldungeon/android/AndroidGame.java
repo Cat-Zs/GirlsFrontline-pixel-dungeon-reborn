@@ -35,6 +35,7 @@ import com.badlogic.gdx.backends.android.AndroidAudio;
 import com.badlogic.gdx.backends.android.AsynchronousAndroidAudio;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
+import com.shatteredpixel.shatteredpixeldungeon.custom.utils.CrashHandler;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.News;
 import com.shatteredpixel.shatteredpixeldungeon.services.news.NewsImpl;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
@@ -44,6 +45,7 @@ import com.watabou.noosa.Game;
 import com.watabou.utils.DeviceCompat;
 import com.watabou.utils.FileUtils;
 
+import cat.ereza.customactivityoncrash.CustomActivityOnCrash;
 import cat.ereza.customactivityoncrash.config.CaocConfig;
 
 public class AndroidGame extends AndroidApplication {
@@ -51,15 +53,62 @@ public class AndroidGame extends AndroidApplication {
 	public static AndroidApplication instance;
 	
 	private static AndroidPlatformSupport support;
+
+    private static class CrashEventListener implements CustomActivityOnCrash.EventListener {
+        @Override
+        public void onLaunchErrorActivity() {
+            // 在跳转到错误页面之前保存错误报告
+            CrashHandler.getInstance().init();
+        }
+
+        @Override
+        public void onRestartAppFromErrorActivity() {
+            // 从错误页面重启应用时的处理
+        }
+
+        @Override
+        public void onCloseAppFromErrorActivity() {
+            // 从错误页面关闭应用时的处理
+        }
+    }
 	
 	@Override
 	protected void onCreate (Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		CaocConfig.Builder.create()
-				.backgroundMode(CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM) //default: CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM
-				.minTimeBetweenCrashesMs(2000) //default: 3000
-				.errorActivity(ErrorActivity.class) //default: null (default error activity)
-				.apply();
+
+        // 初始化CustomActivityOnCrash
+        CaocConfig.Builder.create()
+                .backgroundMode(CaocConfig.BACKGROUND_MODE_SHOW_CUSTOM)
+                .minTimeBetweenCrashesMs(2000)
+                .errorActivity(ErrorActivity.class)
+                .eventListener(new CrashEventListener())
+                .apply();
+
+        // 保存CustomActivityOnCrash的处理器
+        final Thread.UncaughtExceptionHandler caocHandler = Thread.getDefaultUncaughtExceptionHandler();
+
+        // 设置新的异常处理器
+        Thread.setDefaultUncaughtExceptionHandler(new Thread.UncaughtExceptionHandler() {
+            @Override
+            public void uncaughtException(Thread thread, Throwable throwable) {
+                // 先用CrashHandler保存报告
+                CrashHandler crashHandler = CrashHandler.getInstance();
+                crashHandler.init();
+
+                // 保存崩溃报告但不退出
+                try {
+                    crashHandler.saveCrashReport(crashHandler.generateCrashReport(thread, throwable));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+
+                // 然后调用CustomActivityOnCrash的处理器
+                if (caocHandler != null) {
+                    caocHandler.uncaughtException(thread, throwable);
+                }
+            }
+        });
+
 		//there are some things we only need to set up on first launch
 		if (instance == null) {
 
