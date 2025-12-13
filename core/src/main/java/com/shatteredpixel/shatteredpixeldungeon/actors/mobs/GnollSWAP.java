@@ -75,10 +75,23 @@ public class GnollSWAP extends Gnoll {
             }
 
             for(Item item : items) {
+                int dropPlace;
+                int TryTimes=0;
                 int ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
-                if (!Dungeon.level.solid[this.pos + ofs] || Dungeon.level.passable[this.pos + ofs]) {
-                    Dungeon.level.drop(item, this.pos + ofs).sprite.drop(this.pos);
-                }
+                do{
+                    if(TryTimes<9){
+                        TryTimes++;
+                        dropPlace=this.pos+ofs;
+                        //尝试9次向NEIGHBOURS9投出
+                    }else {
+                        dropPlace=this.pos;
+                        //9次尝试均无法投出时，原地放下
+                    }
+                }while (
+                        !(!Dungeon.level.solid[dropPlace] || Dungeon.level.passable[dropPlace]||TryTimes>9)
+                        //落点并非固体，或者是固体但是可以通过（门），或者9次尝试均无法投出时，以所得到的落点放下物品
+                );
+                    Dungeon.level.drop(item, dropPlace).sprite.drop(this.pos);
             }
 
         }
