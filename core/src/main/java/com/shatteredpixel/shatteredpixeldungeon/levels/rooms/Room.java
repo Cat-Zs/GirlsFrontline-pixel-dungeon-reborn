@@ -21,8 +21,6 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms;
 
-import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
@@ -46,11 +44,6 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 	public Room(){
 		super();
 	}
-    public Item Roomchange(){
-        ArrayList<Item> Roomchange = new ArrayList();
-        Roomchange.add(Generator.random(Random.oneOf(Generator.Category.RANDOM100)));
-        return (Item)Roomchange.remove(0);
-    }
 	
 	public Room( Rect other ){
 		super(other);
@@ -319,7 +312,7 @@ public abstract class Room extends Rect implements Graph.Node, Bundlable {
 		}
 		return points;
 	}
-
+	
 	//whether or not a painter can place a trap at a specific point
 	public boolean canPlaceTrap(Point p){
 		return true;

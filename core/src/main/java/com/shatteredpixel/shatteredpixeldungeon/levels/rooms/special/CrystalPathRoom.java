@@ -28,9 +28,6 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.B2;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.E16;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.F32;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfEnchantment;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
@@ -47,12 +44,9 @@ public class CrystalPathRoom extends SpecialRoom {
     @Override
     public int minWidth() { return 7; }
     public int minHeight() { return 7; }
-    Item Ran = Roomchange();
-    boolean old = ( Ran instanceof E16||Ran instanceof F32 || Ran instanceof B2);
-    //old的作用为使用A房间的概率，由于关联到种子的随机数总是绑定物品，所以我只能出此下策了
-    //Dungeon中加入了Random100的生成，分别是A1、B2、C4、D8、E16、F32、G20、H17
-    //在Room.java写了Roomchange是依赖种子随机生成物品，然后在这里获取了生成的物品
-    //现在概率的表示是随机物品是xx的概率，当不直接表示1、2、4、8、16、32、20、17时，（物品被A取代||物品被B取代）就表示A+B的概率
+
+    boolean old = ( Random.Int(100)<50 );
+    //old的作用为随机取代，后面的random的写法是为了方便转换成百分比来理解，此时的(100)<50的概率是50/100=50%
     //此处的命名规则为，A是旧的三水晶房，B是六选三
     @Override
     public void paint(Level level){
