@@ -7,6 +7,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
+import com.watabou.utils.DeviceCompat;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -137,9 +138,12 @@ public class CrashHandler implements Thread.UncaughtExceptionHandler {
         sb.append("Time: ").append(timestamp).append("\n");
         sb.append("Thread: ").append(thread.getName()).append(" (").append(thread.getId()).append(")\n");
         sb.append("Game Version: ").append(Game.version).append("\n");
-        sb.append("Java Version: ").append(System.getProperty("java.version")).append("\n");
-        sb.append("OS: ").append(System.getProperty("os.name")).append(" ").append(System.getProperty("os.version")).append("\n\n");
 
+        if(DeviceCompat.isDesktop()){
+            sb.append("Java Version: ").append(System.getProperty("java.version")).append("\n");
+            sb.append("OS: ").append(System.getProperty("os.name")).append(" ").append(System.getProperty("os.version")).append("\n\n");
+        }
+        
         sb.append("GameSeed: ").append(Dungeon.seed).append("\n");
         sb.append("Challenges: ").append(Dungeon.challenges).append("\n\n");
 
