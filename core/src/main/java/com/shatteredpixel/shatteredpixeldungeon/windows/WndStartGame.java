@@ -44,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
 import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextNumberInput;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.ColorBlock;
@@ -163,29 +164,29 @@ public class WndStartGame extends Window {
 		}
 
 		if (Badges.isUnlocked(Badges.Badge.KILL_CALC)||DeviceCompat.isDebug()){
-			IconButton seedButton = new IconButton(Icons.get(SPDSettings.seedCode()!=SPDSettings.SEED_CODE_RANDOM? Icons.CHALLENGE_ON: Icons.CHALLENGE_OFF)){
+			IconButton seedButton = new IconButton(new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS)){
 				@Override
 				protected void onClick() {
 					GirlsFrontlinePixelDungeon.scene().addToFront(
-						new WndTextNumberInput(
+						new WndTextInput(
 							Messages.get(WndStartGame.class, "set_seed_title"),
 							Messages.get(WndStartGame.class, "set_seed_desc"),
 							SPDSettings.seedCode(),
-							9,
+							20,
 							false,
 							Messages.get(WndStartGame.class, "set_seed_confirm"),
-							Messages.get(WndStartGame.class, "set_seed_cancel"),
-							false
+							Messages.get(WndStartGame.class, "set_seed_cancel")
 						){
 							@Override
 							public void onSelect(boolean check, String text) {
 								if(check){
-									if(DungeonSeed.checkIfCodeValid(text)){
-										SPDSettings.seedCode(text);
-									}else if (text.length()==0){
-										SPDSettings.seedCode(SPDSettings.SEED_CODE_RANDOM);
-									}
-									icon(Icons.get(SPDSettings.seedCode()!=SPDSettings.SEED_CODE_RANDOM? Icons.CHALLENGE_ON: Icons.CHALLENGE_OFF ));
+                                    text = DungeonSeed.formatText(text);
+                                    long seed = DungeonSeed.convertFromText(text);
+                                    if (seed != -1){
+                                        SPDSettings.seedCode(text);
+                                    } else {
+                                        SPDSettings.seedCode(SPDSettings.SEED_CODE_RANDOM);
+                                    }
 								}
 							}
 						}
@@ -197,6 +198,7 @@ public class WndStartGame extends Window {
 					if( !visible && GamesInProgress.selectedClass != null){
 						visible = true;
 					}
+                    icon(!SPDSettings.seedCode().equals(SPDSettings.SEED_CODE_RANDOM) ? new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS) :new ItemSprite(ItemSpriteSheet.SEED_FADELEAF));
 					super.update();
 				}
 			};
