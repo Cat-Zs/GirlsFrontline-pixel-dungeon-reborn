@@ -1,7 +1,7 @@
 # Built application files
 *.apk
 *.smali
-
+*.log
 *.exe
 *.iss
 
