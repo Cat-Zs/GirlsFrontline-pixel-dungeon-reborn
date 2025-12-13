@@ -695,6 +695,14 @@ public class Generator {
 		}
 		return false;
 	}
+    public static void Artifactremove(Class<?extends Artifact> artifact) {
+        Category cat = Category.ARTIFACT;
+        for (int i = 0; i < cat.classes.length; i++){
+            if (cat.classes[i].equals(artifact) && cat.probs[i] > 0) {
+                cat.probs[i] = 0;
+            }
+        }
+    }
 
 	private static final String FIRST_DECK = "first_deck";
 	private static final String GENERAL_PROBS = "general_probs";
