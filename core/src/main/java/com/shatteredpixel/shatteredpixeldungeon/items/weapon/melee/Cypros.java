@@ -34,7 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
-import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfGenoise;
+import com.shatteredpixel.shatteredpixeldungeon.items.wands.RabbitWeaponGenoise;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -92,7 +92,7 @@ public class Cypros extends MeleeWeapon {
     private static final float STAFF_SCALE_FACTOR = 0.75f;
 
     public Cypros(){
-        Wand wand = new WandOfGenoise();
+        Wand wand = new RabbitWeaponGenoise();
 
         wand.cursed = false;
         wand.maxCharges = 1;
