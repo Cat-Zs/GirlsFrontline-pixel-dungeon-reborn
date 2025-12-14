@@ -102,8 +102,14 @@ public class WandOfCorruption extends Wand {
 	}
 	@Override
 	public void onHit(MagesStaff staff, Char attacker, Char defender, int damage) {
+        int level = Math.max(0, this.buffedLvl());
+        float procChance = ((float)level + 1.0F) / ((float)level + 6.0F) * procChanceMultiplier(attacker);
+        if (Random.Float() < procChance) {
+            float powerMulti = Math.max(1.0F, procChance);
+            Buff.prolong(defender, Amok.class, (float)Math.round((float)(4 + level * 2) * powerMulti));
+        }
 
-	}
+    }
 	private static final float MAJOR_DEBUFF_WEAKEN = 1/2f;
 	private static final HashMap<Class<? extends Buff>, Float> MAJOR_DEBUFFS = new HashMap<>();
 	static{
