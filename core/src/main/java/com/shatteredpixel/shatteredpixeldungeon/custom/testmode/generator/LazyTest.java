@@ -145,13 +145,8 @@ public class LazyTest extends TestGenerator {
             new Sungrass.Seed().quantity(100).identify().collect();
             new Swiftthistle.Seed().quantity(100).identify().collect();
 
-            for (int i = 0; i < 6; i++) {
-                new PotionOfStrength().apply(hero);
-            }
-
-            for (int i = 0; i < 41; i++) {
-                new PotionOfExperience().apply(hero);
-            }
+            curUser.STR=16;
+            curUser.lvl=40;
 
             RingOfAccuracy roa = new RingOfAccuracy();
             roa.level(22);

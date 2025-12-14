@@ -40,7 +40,6 @@ public class TestExperience extends TestItem {
         super.execute(hero, action);
         if (action.equals(AC_SET)){
             setLevel();
-            updateLevel();
         }
     }
     private void updateLevel(){
