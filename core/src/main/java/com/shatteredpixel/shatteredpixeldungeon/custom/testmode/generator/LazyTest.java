@@ -1,5 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
@@ -149,6 +151,7 @@ public class LazyTest extends TestGenerator {
             curUser.STR=16;
             new PotionOfExperience().apply(hero);
             curUser.lvl=40;
+            hero.updateHT( true );
 
             RingOfAccuracy roa = new RingOfAccuracy();
             roa.level(22);
