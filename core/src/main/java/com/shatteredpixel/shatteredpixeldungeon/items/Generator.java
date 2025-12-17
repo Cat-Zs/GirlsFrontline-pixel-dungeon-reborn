@@ -680,7 +680,7 @@ public class Generator {
 			return null;
 		}
 
-		cat.probs[i]--;
+		cat.probs[i]=0;
 		return (Artifact) Reflection.newInstance((Class<? extends Artifact>) cat.classes[i]).random();
 
 	}
