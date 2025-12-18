@@ -194,7 +194,7 @@ public class TitleScene extends PixelScene {
 		add( version );
 
         ErrorButton btnError = new ErrorButton();
-        btnError.setPos( w-version.width()+30, version.y-20 );
+        btnError.setPos( w-25, version.y-20 );
         add(btnError);
 
 		if (DeviceCompat.isDesktop()) {
