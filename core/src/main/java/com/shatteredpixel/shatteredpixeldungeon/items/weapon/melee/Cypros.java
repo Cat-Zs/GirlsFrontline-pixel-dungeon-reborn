@@ -348,7 +348,7 @@ public class Cypros extends MeleeWeapon {
     @Override
     public String info() {
 
-        String info = desc();
+        String info = super.info();
 
         if (levelKnown) {
             info += "\n\n" + Messages.get(MeleeWeapon.class, "stats_known", tier, augment.damageFactor(min()), augment.damageFactor(max()), STRReq());
