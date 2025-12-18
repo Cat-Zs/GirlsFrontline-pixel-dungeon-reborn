@@ -21,12 +21,21 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ItemSlot;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
+import com.watabou.noosa.Game;
 
 public class WndInfoItem extends Window {
 	
@@ -84,7 +93,28 @@ public class WndInfoItem extends Window {
 
 		layoutFields(titlebar, txtInfo);
 	}
-	
+    private void layoutFields(IconTitle title, RenderedTextBlock info){
+        int width = WIDTH_MIN;
+
+        info.maxWidth(width);
+
+        //window can go out of the screen on landscape, so widen it as appropriate
+        while (PixelScene.landscape()
+                && info.height() > 100
+                && width < WIDTH_MAX){
+            width += 20;
+            info.maxWidth(width);
+        }
+
+        title.setRect( 0, 0, width, 0 );
+        add( title );
+
+        info.setPos(title.left(), title.bottom() + GAP);
+        add( info );
+
+        resize( width, (int)(info.bottom() + 2) );
+    }
+    protected IconButton noteButton;
 	private void fillFields( Item item ) {
 		
 		int color = TITLE_COLOR;
@@ -98,11 +128,38 @@ public class WndInfoItem extends Window {
 		titlebar.color( color );
 		
 		RenderedTextBlock txtInfo = PixelScene.renderTextBlock( item.info(), 6 );
+        noteButton = new IconButton(Icons.RENAME_ON.get()){
+            @Override
+            protected void onClick() {
+                super.onClick();
+
+                GirlsFrontlinePixelDungeon.scene().addToFront(
+                        new WndTextInput(
+                                Messages.get(WndStartGame.class, "set_seed_title"),
+                                Messages.get(WndStartGame.class, "set_seed_desc"),
+                                item.noted,
+                                20,
+                                false,
+                                Messages.get(WndStartGame.class, "set_seed_confirm"),
+                                Messages.get(WndStartGame.class, "set_seed_cancel")
+                        ){
+                            @Override
+                            public void onSelect(boolean check, String text) {
+                                if(check){
+                                    item.notedSet(text);
+                                    hide();
+                                    Game.scene().add(new WndInfoItem(item));
+                                }
+                            }
+                        }
+                );
+            }
+        };
 		
-		layoutFields(titlebar, txtInfo);
+		layoutFields(titlebar, txtInfo, noteButton);
 	}
 
-	private void layoutFields(IconTitle title, RenderedTextBlock info){
+	private void layoutFields(IconTitle title, RenderedTextBlock info, IconButton noteButton){
 		int width = WIDTH_MIN;
 
 		info.maxWidth(width);
@@ -120,6 +177,9 @@ public class WndInfoItem extends Window {
 
 		info.setPos(title.left(), title.bottom() + GAP);
 		add( info );
+
+        noteButton.setRect(width-16,0,16,16);
+        add(noteButton);
 
 		resize( width, (int)(info.bottom() + 2) );
 	}

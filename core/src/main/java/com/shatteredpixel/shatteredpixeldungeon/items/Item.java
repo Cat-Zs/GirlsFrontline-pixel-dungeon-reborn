@@ -21,9 +21,12 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
+import static com.watabou.utils.Reflection.newInstance;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
@@ -33,8 +36,12 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
+import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
@@ -42,18 +49,22 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
+import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
-import com.watabou.utils.Reflection;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 
 public class Item implements Bundlable {
+    public static ArrayList<Class> itemA = new ArrayList<>();
+    public static ArrayList<String> NOTEA = new ArrayList<>();
 
 	protected static final String TXT_TO_STRING_LVL		= "%s %+d";
 	protected static final String TXT_TO_STRING_X		= "%s x%d";
@@ -79,6 +90,7 @@ public class Item implements Bundlable {
 	public boolean dropsDownHeap = false;
 	
 	private int level = 0;
+    public String noted;
 
 	public boolean levelKnown = false;
 	
@@ -200,13 +212,62 @@ public class Item implements Bundlable {
 			
 		}
 	}
-	
-	protected void onThrow( int cell ) {
+    public void notedSet(String text) {
+        this.noted=text;
+        if(this instanceof Scroll||this instanceof Potion){
+            Item changItem = ScrollOfTransmutation.changeItem(this);
+            NoteItem(this,text);
+            NoteItem(changItem,text);
+        }else if(this.stackable){
+            NoteItem(this,text);
+        }
+    }
+    private void NoteItem(Item item,String text){
+        if(itemA.contains(item.getClass())){
+            int j=0;
+            for(Class i:itemA){
+                if(item.getClass()==i){
+                    break;
+                }else {
+                    j++;
+                }
+            }
+            NOTEA.set(j,text);
+        }else {
+            itemA.add(item.getClass());
+            NOTEA.add(text);
+        }
+        item.noted = text;
+    }
+    public String NoteGet(Item item){
+        String note;
+        if (itemA.contains(item.getClass())) {
+            int j = 0;
+            for (Class i : itemA) {
+                if (item.getClass() == i) {
+                    break;
+                } else {
+                    j++;
+                }
+            }
+            note = NOTEA.get(j);
+            item.noted = NOTEA.get(j);
+        } else {
+            note = item.noted;
+        }
+        if(note!=null&& !note.isEmpty()){
+            note+="\n\n";
+        }
+        return note;
+    }
+
+
+    protected void onThrow( int cell ) {
 		Heap heap = Dungeon.level.drop( this, cell );
 		if (!heap.isEmpty()) {
 			heap.sprite.drop( cell );
 		}
-	}
+    }
 	
 	//takes two items and merges them (if possible)
 	public Item merge( Item other ){
@@ -280,7 +341,7 @@ public class Item implements Bundlable {
 			return null;
 		} else {
 			//pssh, who needs copy constructors?
-			Item split = Reflection.newInstance(getClass());
+			Item split = newInstance(getClass());
 			
 			if (split == null){
 				return null;
@@ -315,6 +376,7 @@ public class Item implements Bundlable {
 			
 			
 			Item detached = split(1);
+            detached.noted=this.noted;
 			updateQuickslot();
 			if (detached != null) detached.onDetach( );
 			return detached;
@@ -469,7 +531,9 @@ public class Item implements Bundlable {
 	public Emitter emitter() { return null; }
 	
 	public String info() {
-		return desc();
+        String info = NoteGet(this);
+        info+=desc();
+		return info;
 	}
 	
 	public String desc() {
@@ -496,7 +560,7 @@ public class Item implements Bundlable {
 	}
 	
 	public Item virtual(){
-		Item item = Reflection.newInstance(getClass());
+		Item item = newInstance(getClass());
 		if (item == null) return null;
 		
 		item.quantity = 0;
@@ -518,17 +582,22 @@ public class Item implements Bundlable {
 	
 	private static final String QUANTITY		= "quantity";
 	private static final String LEVEL			= "level";
+    private static String NOTED			= "noted";
 	private static final String LEVEL_KNOWN		= "levelKnown";
 	private static final String CURSED			= "cursed";
 	private static final String CURSED_KNOWN	= "cursedKnown";
 	private static final String QUICKSLOT		= "quickslotpos";
 	private static final String KEPT_LOST       = "kept_lost";
     private static final String UPGRADEUSED       = "UpgradeUSED";
+    private static final String NOTESAVEA       = "NOTESAVEA";
+    private static final String NOTESAVEB       = "NOTESAVEB";
+
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put( QUANTITY, quantity );
 		bundle.put( LEVEL, level );
+        bundle.put( NOTED, noted );
         bundle.put( UPGRADEUSED, UpgradeUSED );
 		bundle.put( LEVEL_KNOWN, levelKnown );
 		bundle.put( CURSED, cursed );
@@ -537,6 +606,18 @@ public class Item implements Bundlable {
 			bundle.put( QUICKSLOT, Dungeon.quickslot.getSlot(this) );
 		}
 		bundle.put( KEPT_LOST, keptThoughLostInvent );
+        int countA = 0;
+        Class ItemToSave[]= new Class[itemA.size()];
+        for(Class i :itemA){
+            ItemToSave[countA++] = i;
+        }
+        bundle.put(NOTESAVEA,ItemToSave);
+        String NoteToSave[]= new String[NOTEA.size()];
+        int countB = 0;
+        for(String j :NOTEA){
+            NoteToSave[countB++] = j;
+        }
+        bundle.put(NOTESAVEB,NoteToSave);
 	}
 	
 	@Override
@@ -551,6 +632,7 @@ public class Item implements Bundlable {
 		} else if (level < 0) {
 			degrade( -level );
 		}
+        noted = bundle.getString(NOTED);
 		
 		cursed	= bundle.getBoolean( CURSED );
 
@@ -562,6 +644,25 @@ public class Item implements Bundlable {
 		}
 
 		keptThoughLostInvent = bundle.getBoolean( KEPT_LOST );
+        itemA = new ArrayList<>();
+        Class[] ItemToSave = bundle.getClassArray( NOTESAVEA );
+        for(int j = 0; j < ItemToSave.length; j++) {
+            try {
+                itemA.add(ItemToSave[j]);
+            } catch (Exception e) {
+                GirlsFrontlinePixelDungeon.reportException(e);
+            }
+        }
+
+        NOTEA = new ArrayList<>();
+        String[] NoteToSave = bundle.getStringArray( NOTESAVEB );
+        for(int i = 0; i < NoteToSave.length; i++) {
+            try {
+                NOTEA.add(NoteToSave[i]);
+            } catch (Exception e) {
+                GirlsFrontlinePixelDungeon.reportException(e);
+            }
+        }
 	}
 
 	public int targetingPos( Hero user, int dst ){
