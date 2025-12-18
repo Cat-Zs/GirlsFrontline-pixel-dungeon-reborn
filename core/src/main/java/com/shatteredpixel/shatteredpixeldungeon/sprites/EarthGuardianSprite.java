@@ -31,7 +31,7 @@ public class EarthGuardianSprite extends MobSprite {
 
 		texture( Assets.Sprites.GUARDIAN );
 
-		TextureFilm frames = new TextureFilm( texture, 12, 15 );
+		TextureFilm frames = new TextureFilm( texture, 22, 23 );
 
 		idle = new Animation( 2, true );
 		idle.frames( frames, 0, 0, 0, 0, 0, 1, 1 );
@@ -40,10 +40,10 @@ public class EarthGuardianSprite extends MobSprite {
 		run.frames( frames, 2, 3, 4, 5, 6, 7 );
 
 		attack = new Animation( 12, false );
-		attack.frames( frames, 8, 9, 10 );
+		attack.frames( frames, 8, 9, 10,11,10,11 );
 
-		die = new Animation( 5, false );
-		die.frames( frames, 11, 12, 13, 14, 15, 15 );
+		die = new Animation( 10, false );
+		die.frames( frames, 12, 13, 14, 15,16, 16,17,18,18 );
 
 		play( idle );
 	}
