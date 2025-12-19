@@ -161,6 +161,8 @@ public class Dungeon {
 
 	public static Hero hero;
 	public static Level level;
+    public static ArrayList<Class> itemAOfSave = new ArrayList<>();
+    public static ArrayList<String> NOTEAOfSave = new ArrayList<>();
 
 	public static QuickSlot quickslot = new QuickSlot();
 	
@@ -461,6 +463,8 @@ public class Dungeon {
 	private static final String CHAPTERS	    = "chapters";
 	private static final String QUESTS		    = "quests";
 	private static final String BADGES		    = "badges";
+    private static final String NOTESAVEA       = "NOTESAVEA";
+    private static final String NOTESAVEB       = "NOTESAVEB";
 	
 	public static void saveGame( int save ) {
 		try {
@@ -475,7 +479,27 @@ public class Dungeon {
 			bundle.put( HERO, hero );
 			bundle.put( DEPTH, depth );
 
-			bundle.put( GOLD, gold );
+            int countA = 0;
+            Class ItemToSave[]= new Class[itemAOfSave.size()];
+            for(Class i :itemAOfSave){
+                ItemToSave[countA++] = i;
+            }
+            bundle.put(NOTESAVEA,ItemToSave);
+            //物品类型
+            itemAOfSave=new ArrayList<>();
+            Item.itemA=new ArrayList<>();
+
+            int countB = 0;
+            String NoteToSave[]= new String[NOTEAOfSave.size()];
+            for(String j :NOTEAOfSave){
+                NoteToSave[countB++] = j;
+            }
+            bundle.put(NOTESAVEB,NoteToSave);
+            //对应物品类型的标签
+            NOTEAOfSave=new ArrayList<>();
+            Item.NOTEA=new ArrayList<>();
+
+            bundle.put( GOLD, gold );
 			bundle.put( ENERGY, energy );
             //bundle.put( Summoned, ExtractSummoned );保存计数
 
@@ -523,7 +547,7 @@ public class Dungeon {
 			Bundle badges = new Bundle();
 			Badges.saveLocal( badges );
 			bundle.put( BADGES, badges );
-			
+
 			FileUtils.bundleToFile( GamesInProgress.gameFile(save), bundle);
 			
 		} catch (IOException e) {
@@ -561,6 +585,27 @@ public class Dungeon {
 		version = bundle.getInt( VERSION );
 
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
+        itemAOfSave = new ArrayList<>();
+        Class[] ItemToSave = bundle.getClassArray( NOTESAVEA );
+        for(int j = 0; j < ItemToSave.length; j++) {
+            try {
+                itemAOfSave.add(ItemToSave[j]);
+            } catch (Exception e) {
+                GirlsFrontlinePixelDungeon.reportException(e);
+            }
+        }
+        Item.itemA=itemAOfSave;
+
+        NOTEAOfSave = new ArrayList<>();
+        String[] NoteToSave = bundle.getStringArray( NOTESAVEB );
+        for(int i = 0; i < NoteToSave.length; i++) {
+            try {
+                NOTEAOfSave.add(NoteToSave[i]);
+            } catch (Exception e) {
+                GirlsFrontlinePixelDungeon.reportException(e);
+            }
+        }
+        Item.NOTEA=NOTEAOfSave;
 
 		Actor.clear();
 		Actor.restoreNextID( bundle );
@@ -620,7 +665,6 @@ public class Dungeon {
 		
 		hero = null;
 		hero = (Hero)bundle.get( HERO );
-		
 		depth = bundle.getInt( DEPTH );
 
 		gold = bundle.getInt( GOLD );
@@ -654,6 +698,7 @@ public class Dungeon {
 				portedItems.put( i, items );
 			}
 		}
+
 	}
 
 	public static Level tryLoadLevel(int levelId){
