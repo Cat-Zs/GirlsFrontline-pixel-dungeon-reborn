@@ -24,6 +24,8 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
@@ -132,16 +134,24 @@ public class WndInfoItem extends Window {
             @Override
             protected void onClick() {
                 super.onClick();
-
+                String note =Item.ClassNoteToItem(item);
+                String noteAdd="";
+                if(item.stackable){
+                    if(item instanceof Scroll||item instanceof Potion){
+                        noteAdd=Messages.get(Item.class, "noteclassb");
+                    }else {
+                        noteAdd=Messages.get(Item.class, "noteclassa");
+                    }
+                }
                 GirlsFrontlinePixelDungeon.scene().addToFront(
                         new WndTextInput(
-                                Messages.get(WndStartGame.class, "set_seed_title"),
-                                Messages.get(WndStartGame.class, "set_seed_desc"),
-                                item.noted,
-                                20,
+                                item.name(),
+                                Messages.get(Item.class, "note_desc",noteAdd,note),
+                                note,
+                                40,
                                 false,
-                                Messages.get(WndStartGame.class, "set_seed_confirm"),
-                                Messages.get(WndStartGame.class, "set_seed_cancel")
+                                Messages.get(Item.class, "set_note_yes"),
+                                Messages.get(Item.class, "set_note_no")
                         ){
                             @Override
                             public void onSelect(boolean check, String text) {
@@ -155,6 +165,8 @@ public class WndInfoItem extends Window {
                 );
             }
         };
+        noteButton.enable(item.canNote);
+        noteButton.visible=item.canNote;
 		
 		layoutFields(titlebar, txtInfo, noteButton);
 	}

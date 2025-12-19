@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
 import static com.watabou.utils.Reflection.newInstance;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
@@ -37,8 +38,11 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.Brew;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.Elixir;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -63,8 +67,8 @@ import java.util.Comparator;
 import java.util.LinkedHashMap;
 
 public class Item implements Bundlable {
-    public static ArrayList<Class> itemA = new ArrayList<>();
-    public static ArrayList<String> NOTEA = new ArrayList<>();
+    public static ArrayList<Class> itemA = Dungeon.itemAOfSave;
+    public static ArrayList<String> NOTEA = Dungeon.NOTEAOfSave;
 
 	protected static final String TXT_TO_STRING_LVL		= "%s %+d";
 	protected static final String TXT_TO_STRING_X		= "%s x%d";
@@ -90,7 +94,9 @@ public class Item implements Bundlable {
 	public boolean dropsDownHeap = false;
 	
 	private int level = 0;
-    public String noted;
+    public String noted = "";
+    public boolean canNote = true;
+    public boolean canShowNote = true;
 
 	public boolean levelKnown = false;
 	
@@ -213,13 +219,14 @@ public class Item implements Bundlable {
 		}
 	}
     public void notedSet(String text) {
-        this.noted=text;
-        if(this instanceof Scroll||this instanceof Potion){
+        if(this instanceof Scroll||(this instanceof Potion&&!(this instanceof Brew)&&!(this instanceof Elixir))){
             Item changItem = ScrollOfTransmutation.changeItem(this);
             NoteItem(this,text);
             NoteItem(changItem,text);
         }else if(this.stackable){
             NoteItem(this,text);
+        }else {
+            this.noted=text;
         }
     }
     private void NoteItem(Item item,String text){
@@ -233,13 +240,16 @@ public class Item implements Bundlable {
                 }
             }
             NOTEA.set(j,text);
+            Dungeon.NOTEAOfSave.set(j,text);
         }else {
             itemA.add(item.getClass());
+            Dungeon.itemAOfSave.add(item.getClass());
             NOTEA.add(text);
+            Dungeon.NOTEAOfSave.add(text);
         }
         item.noted = text;
     }
-    public String NoteGet(Item item){
+    public static String ClassNoteToItem(Item item){
         String note;
         if (itemA.contains(item.getClass())) {
             int j = 0;
@@ -251,14 +261,25 @@ public class Item implements Bundlable {
                 }
             }
             note = NOTEA.get(j);
-            item.noted = NOTEA.get(j);
         } else {
             note = item.noted;
         }
-        if(note!=null&& !note.isEmpty()){
-            note+="\n\n";
-        }
         return note;
+    }
+    public String NoteGet(Item item){
+        String note=ClassNoteToItem(item);
+        String info = "";
+        if(note!=null&& !note.isEmpty()){
+            if(item.stackable){
+                info =Messages.get(Item.class, "classnote",note)+"\n\n";
+            }else {
+                info =Messages.get(Item.class, "itemnote",note)+"\n\n";
+            }
+        }
+        if(!item.canShowNote){
+            info = "";
+        }
+        return info;
     }
 
 
@@ -307,9 +328,9 @@ public class Item implements Bundlable {
 				if (isSimilar( item )) {
 					item.merge( this );
 					item.updateQuickslot();
-					if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
+					if (hero != null && hero.isAlive()) {
 						Badges.validateItemLevelAquired( this );
-						Talent.onItemCollected(Dungeon.hero, item);
+						Talent.onItemCollected(hero, item);
 						if (isIdentified()) Catalog.setSeen(getClass());
 					}
 					return true;
@@ -317,9 +338,9 @@ public class Item implements Bundlable {
 			}
 		}
 
-		if (Dungeon.hero != null && Dungeon.hero.isAlive()) {
+		if (hero != null && hero.isAlive()) {
 			Badges.validateItemLevelAquired( this );
-			Talent.onItemCollected( Dungeon.hero, this );
+			Talent.onItemCollected( hero, this );
 			if (isIdentified()) Catalog.setSeen(getClass());
 		}
 
@@ -332,7 +353,7 @@ public class Item implements Bundlable {
 	}
 	
 	public boolean collect() {
-		return collect( Dungeon.hero.belongings.backpack );
+		return collect( hero.belongings.backpack );
 	}
 	
 	//returns a new item if the split was sucessful and there are now 2 items, otherwise null
@@ -425,7 +446,7 @@ public class Item implements Bundlable {
 	//returns the level of the item, after it may have been modified by temporary boosts/reductions
 	//note that not all item properties should care about buffs/debuffs! (e.g. str requirement)
 	public int buffedLvl(){
-		if (Dungeon.hero.buff( Degrade.class ) != null) {
+		if (hero.buff( Degrade.class ) != null) {
 			return Degrade.reduceLevel(level());
 		} else {
 			return level();
@@ -500,9 +521,9 @@ public class Item implements Bundlable {
 
 	public Item identify( boolean byHero ) {
 
-		if (byHero && Dungeon.hero != null && Dungeon.hero.isAlive()){
+		if (byHero && hero != null && hero.isAlive()){
 			Catalog.setSeen(getClass());
-			if (!isIdentified()) Talent.onItemIdentified(Dungeon.hero, this);
+			if (!isIdentified()) Talent.onItemIdentified(hero, this);
 		}
 
 		levelKnown = true;
@@ -582,7 +603,6 @@ public class Item implements Bundlable {
 	
 	private static final String QUANTITY		= "quantity";
 	private static final String LEVEL			= "level";
-    private static String NOTED			= "noted";
 	private static final String LEVEL_KNOWN		= "levelKnown";
 	private static final String CURSED			= "cursed";
 	private static final String CURSED_KNOWN	= "cursedKnown";
@@ -591,13 +611,13 @@ public class Item implements Bundlable {
     private static final String UPGRADEUSED       = "UpgradeUSED";
     private static final String NOTESAVEA       = "NOTESAVEA";
     private static final String NOTESAVEB       = "NOTESAVEB";
+    private static String NOTED			= "noted";
 
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put( QUANTITY, quantity );
 		bundle.put( LEVEL, level );
-        bundle.put( NOTED, noted );
         bundle.put( UPGRADEUSED, UpgradeUSED );
 		bundle.put( LEVEL_KNOWN, levelKnown );
 		bundle.put( CURSED, cursed );
@@ -606,18 +626,8 @@ public class Item implements Bundlable {
 			bundle.put( QUICKSLOT, Dungeon.quickslot.getSlot(this) );
 		}
 		bundle.put( KEPT_LOST, keptThoughLostInvent );
-        int countA = 0;
-        Class ItemToSave[]= new Class[itemA.size()];
-        for(Class i :itemA){
-            ItemToSave[countA++] = i;
-        }
-        bundle.put(NOTESAVEA,ItemToSave);
-        String NoteToSave[]= new String[NOTEA.size()];
-        int countB = 0;
-        for(String j :NOTEA){
-            NoteToSave[countB++] = j;
-        }
-        bundle.put(NOTESAVEB,NoteToSave);
+
+        bundle.put(NOTED,noted);
 	}
 	
 	@Override
@@ -632,37 +642,19 @@ public class Item implements Bundlable {
 		} else if (level < 0) {
 			degrade( -level );
 		}
-        noted = bundle.getString(NOTED);
 		
 		cursed	= bundle.getBoolean( CURSED );
 
 		//only want to populate slot on first load.
-		if (Dungeon.hero == null) {
+		if (hero == null) {
 			if (bundle.contains(QUICKSLOT)) {
 				Dungeon.quickslot.setSlot(bundle.getInt(QUICKSLOT), this);
 			}
 		}
 
 		keptThoughLostInvent = bundle.getBoolean( KEPT_LOST );
-        itemA = new ArrayList<>();
-        Class[] ItemToSave = bundle.getClassArray( NOTESAVEA );
-        for(int j = 0; j < ItemToSave.length; j++) {
-            try {
-                itemA.add(ItemToSave[j]);
-            } catch (Exception e) {
-                GirlsFrontlinePixelDungeon.reportException(e);
-            }
-        }
 
-        NOTEA = new ArrayList<>();
-        String[] NoteToSave = bundle.getStringArray( NOTESAVEB );
-        for(int i = 0; i < NoteToSave.length; i++) {
-            try {
-                NOTEA.add(NoteToSave[i]);
-            } catch (Exception e) {
-                GirlsFrontlinePixelDungeon.reportException(e);
-            }
-        }
+        noted = bundle.getString(NOTED);
 	}
 
 	public int targetingPos( Hero user, int dst ){
