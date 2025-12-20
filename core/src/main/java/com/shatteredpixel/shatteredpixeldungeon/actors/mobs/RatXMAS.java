@@ -8,6 +8,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.shatteredpixeldungeon.items.XMasGift;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.XMasSugar;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.RatXMASSprite;
@@ -19,7 +20,21 @@ public class RatXMAS extends Rat{
         spriteClass = RatXMASSprite.class;
         state=PASSIVE;
         lootChance = 0f;
+        EXP = 2;
         maxLvl = Hero.MAX_LEVEL;
+    }
+
+    @Override
+    protected boolean act() {
+        if (Dungeon.hero.armorAbility instanceof Ratmogrify){
+            alignment = Alignment.ALLY;
+            if (state == PASSIVE) state = WANDERING;
+        }else if(alignment != Alignment.ALLY){
+            if(state==HUNTING||state == WANDERING){
+                state=FLEEING;
+            }
+        }
+        return super.act();
     }
 
     @Override

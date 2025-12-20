@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Choco;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.XMasSugar;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfFrost;
@@ -476,8 +477,10 @@ public class Generator {
 					Choco.class,
 					Pasty.class,
 					MysteryMeat.class,
-					Maccol.class};
-			FOOD.probs = new float[]{ 4, 0, 1, 0, 0 };
+					Maccol.class,
+                    XMasSugar.class
+            };
+			FOOD.probs = new float[]{ 4, 0, Dungeon.isXMAS()?0:1, 0, 0, Dungeon.isXMAS()?1:0 };
 			
 			RING.classes = new Class<?>[]{
 					RingOfAccuracy.class,
@@ -550,6 +553,7 @@ public class Generator {
 	public static void reset(Category cat){
 		if (cat.defaultProbs != null) cat.probs = cat.defaultProbs.clone();
 	}
+
 	
 	public static Item random() {
 		Category cat = Random.chances( categoryProbs );
