@@ -56,6 +56,14 @@ public class Food extends Item {
 
 		bones = true;
 	}
+    public static Food SummonPasty(){
+        // 馅饼分割
+        if(Dungeon.isXMAS()){
+            return new XMasSugar();
+        }else {
+            return new Pasty();
+        }
+    }
 	
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
