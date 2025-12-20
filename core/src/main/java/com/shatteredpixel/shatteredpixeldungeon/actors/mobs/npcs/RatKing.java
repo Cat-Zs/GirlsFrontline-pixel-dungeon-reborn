@@ -231,7 +231,7 @@ public class RatKing extends NPC {
 //                }
             }else {
                 // FNC护食哈气了
-                yell(Messages.get(this,"no_more_"+hintCount));
+                yell(Messages.get(this,"argue_"+hintCount));
 //                if (hintCount == 0) {
 //                    yell(Messages.get(this, "no_more"));
 //                } else if (hintCount == 1) {
