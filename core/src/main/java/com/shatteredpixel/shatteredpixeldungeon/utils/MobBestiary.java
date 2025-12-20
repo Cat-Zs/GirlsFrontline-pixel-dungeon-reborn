@@ -59,6 +59,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Necromancer;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Nemeum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RatXMAS;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RipperDemon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RotHeart;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RotLasher;
@@ -228,7 +229,8 @@ public enum MobBestiary {
                 Bandit.class, GolyatPlus.class,
                 ArmoredBrute.class, GnollSWAP.class,
                 Elemental.ChaosElemental.class, Senior.class,
-                CrystalMimic.class, ArmoredStatue.class);
+                CrystalMimic.class, ArmoredStatue.class,
+                RatXMAS.class);
 
         QUEST.addEntities(
                 FetidRat.class, GnollTrickster.class, GreatCrab.class,
