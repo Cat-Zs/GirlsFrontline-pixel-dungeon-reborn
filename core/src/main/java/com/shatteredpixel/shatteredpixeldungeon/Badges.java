@@ -175,7 +175,7 @@ public class Badges {
 		CHAMPION_3                  ( 114 ),
 
 		CRYSTAL_TROPHY					(115,true),
-        XMASGift				(  118);
+        XMASGift				(  119);
 
 		public boolean meta;
 
