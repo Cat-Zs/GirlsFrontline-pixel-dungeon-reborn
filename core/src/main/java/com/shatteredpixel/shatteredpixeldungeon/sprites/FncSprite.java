@@ -43,28 +43,28 @@ public class FncSprite extends MobSprite {
         final Calendar calendar = Calendar.getInstance();
         //once a year the rat king feels a bit festive!
         XMAS = Dungeon.isXMAS()||Dungeon.lockXMAS;
-
-        RatKing.LastTracker trackerA = Dungeon.hero.buff(RatKing.LastTracker.class);
-        boolean Last = (trackerA != null) ;
-
         int id = 0;
-        if(Last){
-            if(trackerA.count()>=2){
-                id = 2;
-            }else if(trackerA.count()>0) {
-                id = 1;
+        if(Dungeon.hero != null){
+            RatKing.LastTracker trackerA = Dungeon.hero.buff(RatKing.LastTracker.class);
+            boolean Last = (trackerA != null) ;
+
+            if(Last){
+                if(trackerA.count()>=2){
+                    id = 2;
+                }else if(trackerA.count()>0) {
+                    id = 1;
+                    if(XMAS)
+                        id = 3;
+                    if (parent != null)
+                        aura(0xFFFF00);
+                }
             }
         }
+
         if(Dungeon.depth==0&&XMAS){
             id = 2;
         }
 
-        if (Dungeon.hero != null && Dungeon.hero.armorAbility instanceof Ratmogrify){
-            if(XMAS)
-                id+=2;
-            if (parent != null)
-                aura(0xFFFF00);
-        }
 
         int c =id*8;
 
