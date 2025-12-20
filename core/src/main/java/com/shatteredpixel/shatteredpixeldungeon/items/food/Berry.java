@@ -28,7 +28,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 
 public class Berry extends Food {
 
@@ -47,6 +49,10 @@ public class Berry extends Food {
 			return 1;
 		}
 	}
+    @Override
+    public void EatText(){
+        GLog.i( Messages.get(this, "eat_msg") );
+    }
 
 	@Override
 	protected void satisfy(Hero hero) {

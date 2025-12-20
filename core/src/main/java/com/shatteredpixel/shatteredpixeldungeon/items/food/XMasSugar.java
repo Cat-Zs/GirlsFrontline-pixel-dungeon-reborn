@@ -21,26 +21,20 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.food;
 
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Barkskin;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
-import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.watabou.utils.Random;
 
 public class XMasSugar extends Food {
 
 	{
 		image = ItemSpriteSheet.CANDY_CANE;
 		energy = Hunger.STARVING;
-        bones = true;
 	}
 	
 	@Override
@@ -49,5 +43,9 @@ public class XMasSugar extends Food {
         Buff.affect( hero, Recharging.class, 2f ); //half of a charge
         ScrollOfRecharging.chargeParticle( hero );
 	}
+    @Override
+    public void EatText(){
+        GLog.i( Messages.get(this, "sweet_msg") );
+    }
 
 }
