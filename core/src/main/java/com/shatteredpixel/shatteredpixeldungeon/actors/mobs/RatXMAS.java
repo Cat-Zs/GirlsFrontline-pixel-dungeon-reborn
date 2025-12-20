@@ -20,6 +20,7 @@ public class RatXMAS extends Rat{
         spriteClass = RatXMASSprite.class;
         state=PASSIVE;
         lootChance = 0f;
+        EXP = 2;
         maxLvl = Hero.MAX_LEVEL;
     }
 
