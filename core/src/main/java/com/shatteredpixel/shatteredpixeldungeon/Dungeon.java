@@ -600,28 +600,34 @@ public class Dungeon {
 		version = bundle.getInt( VERSION );
 
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
+
         itemAOfSave = new ArrayList<>();
-        Class[] ItemToSave = bundle.getClassArray( NOTESAVEA );
-        for(int j = 0; j < ItemToSave.length; j++) {
-            try {
-                itemAOfSave.add(ItemToSave[j]);
-            } catch (Exception e) {
-                GirlsFrontlinePixelDungeon.reportException(e);
+        if(version>643){
+            Class[] ItemToSave = bundle.getClassArray( NOTESAVEA );
+            for(int j = 0; j < ItemToSave.length; j++) {
+                try {
+                    itemAOfSave.add(ItemToSave[j]);
+                } catch (Exception e) {
+                    GirlsFrontlinePixelDungeon.reportException(e);
+                }
             }
         }
         Item.itemA=itemAOfSave;
 
         NOTEAOfSave = new ArrayList<>();
-        String[] NoteToSave = bundle.getStringArray( NOTESAVEB );
-        for(int i = 0; i < NoteToSave.length; i++) {
-            try {
-                NOTEAOfSave.add(NoteToSave[i]);
-            } catch (Exception e) {
-                GirlsFrontlinePixelDungeon.reportException(e);
+        if(version>643){
+            String[] NoteToSave = bundle.getStringArray( NOTESAVEB );
+            for(int i = 0; i < NoteToSave.length; i++) {
+                try {
+                    NOTEAOfSave.add(NoteToSave[i]);
+                } catch (Exception e) {
+                    GirlsFrontlinePixelDungeon.reportException(e);
+                }
             }
         }
         Item.NOTEA=NOTEAOfSave;
         lockXMAS = false;
+        if(version>643)
         lockXMAS = bundle.getBoolean(LOCKXMAS);
 
 		Actor.clear();
