@@ -97,7 +97,7 @@ public class ItemSpriteSheet {
 		assignItemRect(GOLD,        15, 13);
 		assignItemRect(ENERGY,      16, 16);
 
-		assignItemRect(DEWDROP,     10, 10);
+		assignItemRect(DEWDROP,     9, 9);
 		assignItemRect(PETAL,       8,  8);
 		assignItemRect(SANDBAG,     10, 10);
 		assignItemRect(SPIRIT_ARROW,11, 11);
@@ -688,8 +688,8 @@ public class ItemSpriteSheet {
 		assignItemRect(CARPACCIO,    15,11);
 		assignItemRect(BLANDFRUIT,    9,12);
 		assignItemRect(RATION,       16,13);
-		assignItemRect(PASTY,        16,11);
-		assignItemRect(PUMPKIN_PIE,  16,12);
+		assignItemRect(PASTY,        16,13);
+		assignItemRect(PUMPKIN_PIE,  16,13);
 		assignItemRect(CANDY_CANE,   13,16);
 		assignItemRect(MEAT_PIE,     16,11);
 		assignItemRect(BLANDFRUIT,    9,12);
