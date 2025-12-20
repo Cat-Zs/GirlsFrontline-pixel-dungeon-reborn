@@ -83,7 +83,9 @@ import com.watabou.utils.SparseArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.HashSet;
+import java.util.Objects;
 
 public class Dungeon {
 	//enum of items which have limited spawns, records how many have spawned
@@ -109,6 +111,8 @@ public class Dungeon {
 		//Other limited enemy drops
 		SLIME_WEP,
 		SKELE_WEP,
+        XMAS_GIFT,
+        XMAS_SUGAR,
 		THEIF_MISC,
 		GUARD_ARM,
 		SHAMAN_WAND,
@@ -161,6 +165,15 @@ public class Dungeon {
 
 	public static Hero hero;
 	public static Level level;
+    static final Calendar calendar = Calendar.getInstance();
+    public static boolean isXMAS(){
+        if(calendar.get(Calendar.MONTH)==Calendar.DECEMBER&&calendar.get(Calendar.DAY_OF_MONTH)>=17){
+            return true;
+        }else {
+            return false;
+        }
+    }
+    public static boolean lockXMAS;
     public static ArrayList<Class> itemAOfSave = new ArrayList<>();
     public static ArrayList<String> NOTEAOfSave = new ArrayList<>();
 
@@ -465,6 +478,7 @@ public class Dungeon {
 	private static final String BADGES		    = "badges";
     private static final String NOTESAVEA       = "NOTESAVEA";
     private static final String NOTESAVEB       = "NOTESAVEB";
+    private static final String LOCKXMAS       = "LOCKXMAS";
 	
 	public static void saveGame( int save ) {
 		try {
@@ -498,6 +512,7 @@ public class Dungeon {
             //对应物品类型的标签
             NOTEAOfSave=new ArrayList<>();
             Item.NOTEA=new ArrayList<>();
+            bundle.put( LOCKXMAS, lockXMAS );
 
             bundle.put( GOLD, gold );
 			bundle.put( ENERGY, energy );
@@ -606,6 +621,8 @@ public class Dungeon {
             }
         }
         Item.NOTEA=NOTEAOfSave;
+        lockXMAS = false;
+        lockXMAS = bundle.getBoolean(LOCKXMAS);
 
 		Actor.clear();
 		Actor.restoreNextID( bundle );
