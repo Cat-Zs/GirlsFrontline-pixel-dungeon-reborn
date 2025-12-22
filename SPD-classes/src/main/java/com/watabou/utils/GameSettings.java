@@ -134,6 +134,7 @@ public class GameSettings {
 	}
 	
 	public static void put( String key, String value ) {
+		if (value == null) value = "";
 		get().putString(key, value);
 		get().flush();
 	}
