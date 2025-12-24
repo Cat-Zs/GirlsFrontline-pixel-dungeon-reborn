@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.mage.WildM
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.DeathMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.ShadowClone;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.SmokeBomb;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.type561.Type56FourOne;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.HeroicLeap;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Shockwave;
@@ -348,7 +349,7 @@ public enum HeroClass {
 			case HUNTRESS:
 				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
 			case TYPE561:
-				return new ArmorAbility[]{};
+				return new ArmorAbility[]{new Type56FourOne()};
 			case GSH18:
 				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()}; // 使用战士的技能
 	}
