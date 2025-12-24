@@ -61,6 +61,7 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMe
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMissile;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestPotion;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestRing;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.debugBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
@@ -144,9 +145,7 @@ public enum HeroClass {
 			customWeapon.identify().collect();
 			
 			new TestBag().collect();
-            new TestLevelSetting().collect();
-            new TestIdentify().collect();
-            new TestExperience().collect();
+            new debugBook().collect();
             
             new ImmortalShieldAffecter().collect();
             

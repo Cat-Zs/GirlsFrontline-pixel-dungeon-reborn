@@ -164,6 +164,7 @@ public class Dungeon {
 	public static int mobsToChampion;
 
 	public static Hero hero;
+    public static int mobRan = 2;
 	public static Level level;
     static final Calendar calendar = Calendar.getInstance();
     public static boolean isXMAS(){
