@@ -197,11 +197,9 @@ public class TitleScene extends PixelScene {
         btnError.setPos( w-25, version.y-20 );
         add(btnError);
 
-		if (DeviceCompat.isDesktop()) {
-			ExitButton btnExit = new ExitButton();
-			btnExit.setPos( w - btnExit.width(), 0 );
-			add( btnExit );
-		}
+        ExitButton btnExit = new ExitButton();
+        btnExit.setPos(w - 25, 0);
+        add(btnExit);
 
 		fadeIn();
 	}

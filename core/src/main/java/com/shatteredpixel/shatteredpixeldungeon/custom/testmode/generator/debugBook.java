@@ -181,7 +181,6 @@ public class debugBook extends TestItem {
         );
     }
     private void modechange(int mode){
-        GLog.w(String.valueOf(mode));
         if(mode == 1) {
             modeA = 1;
         }
