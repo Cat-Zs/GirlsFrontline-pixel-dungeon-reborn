@@ -48,7 +48,7 @@ public class GolyatFactory extends Mob {
 		
 		HP = HT = 40;
 		defenseSkill = 14;
-		
+		baseSpeed=1;
 		EXP = 7;
 		maxLvl = 14;
 		
