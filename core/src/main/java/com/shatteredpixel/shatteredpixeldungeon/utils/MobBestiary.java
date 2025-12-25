@@ -201,7 +201,7 @@ public enum MobBestiary {
         SEWER.addEntities(
                 Snake.class, Rat.class, Gnoll.class, Crab.class, Swarm.class);
 
-        PRISON.addEntities(Golyat.class,Thief.class,
+        PRISON.addEntities(Golyat.class,GolyatFactory.class,Thief.class,
                 Shaman.RedShaman.class,
                 Shaman.BlueShaman.class,
                 Shaman.PurpleShaman.class,
@@ -267,7 +267,7 @@ public enum MobBestiary {
     static {
         classConversions.put(CorpseDust.DustWraith.class,      Wraith.class);
 
-        classConversions.put(GolyatFactory.FactoryGolyat.class,  Golyat.class);
+        classConversions.put(GolyatFactory.FactoryGolyat.class,  GolyatFactory.class);
 
         classConversions.put(TenguDartTrap.class,              PoisonDartTrap.class);
 
