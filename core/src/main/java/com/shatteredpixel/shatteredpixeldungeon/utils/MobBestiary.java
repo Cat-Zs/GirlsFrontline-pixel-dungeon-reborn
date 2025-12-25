@@ -47,6 +47,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GnollTrickster;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golem;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Golyat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GolyatFactory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GolyatPlus;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GreatCrab;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Guard;
@@ -55,7 +56,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Jupiter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mg5;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Necromancer;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Nemeum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Piranha;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
@@ -66,7 +66,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.RotLasher;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Scorpio;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Senior;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Shaman;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Skeleton;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Spinner;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
@@ -268,7 +267,7 @@ public enum MobBestiary {
     static {
         classConversions.put(CorpseDust.DustWraith.class,      Wraith.class);
 
-        classConversions.put(Necromancer.NecroSkeleton.class,  Skeleton.class);
+        classConversions.put(GolyatFactory.FactoryGolyat.class,  Golyat.class);
 
         classConversions.put(TenguDartTrap.class,              PoisonDartTrap.class);
 

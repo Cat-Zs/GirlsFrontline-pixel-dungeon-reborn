@@ -193,10 +193,11 @@ public class Bestiary {
 //						Shaman.random(),
 //						Mg5.class));
 			case 8:
-                List.addAll(NumMob(Golyat.class,3));
+                List.addAll(NumMob(Golyat.class,2));
                 List.addAll(NumMob(Thief.class,1));
                 List.addAll(NumMob(Shaman.random(),2));
                 List.addAll(NumMob(Mg5.class,2));
+                List.addAll(NumMob(GolyatFactory.class,1));
                 return List;
 //				return new ArrayList<>(Arrays.asList(
 //						Golyat.class, Golyat.class, Golyat.class,
@@ -204,10 +205,11 @@ public class Bestiary {
 //						Shaman.random(), Shaman.random(),
 //						Mg5.class, Mg5.class));
 			case 9:
-                List.addAll(NumMob(Golyat.class,3));
+                List.addAll(NumMob(Golyat.class,1));
                 List.addAll(NumMob(Thief.class,1));
                 List.addAll(NumMob(Shaman.random(),2));
-                List.addAll(NumMob(Mg5.class,3));
+                List.addAll(NumMob(Mg5.class,2));
+                List.addAll(NumMob(GolyatFactory.class,2));
                 return List;
 //                return List;
 //				return new ArrayList<>(Arrays.asList(
