@@ -161,7 +161,7 @@ public class Bestiary {
 //						Rat.class, Rat.class,
 //						Gnoll.class, Gnoll.class, Gnoll.class, Gnoll.class,
 //						Crab.class, Swarm.class));
-			case 4:
+			case 4: case 5:
                 List.addAll(NumMob(Rat.class,1));
                 List.addAll(NumMob(Gnoll.class,2));
                 List.addAll(NumMob(Crab.class,3));
@@ -204,7 +204,7 @@ public class Bestiary {
 //						Thief.class,
 //						Shaman.random(), Shaman.random(),
 //						Mg5.class, Mg5.class));
-			case 9:
+			case 9: case 10:
                 List.addAll(NumMob(Golyat.class,1));
                 List.addAll(NumMob(Thief.class,1));
                 List.addAll(NumMob(Shaman.random(),2));
@@ -246,7 +246,7 @@ public class Bestiary {
 //						Brute.class, Brute.class, Brute.class,
 //						Spinner.class,Spinner.class,
 //						Nemeum.class, Nemeum.class));
-			case 14:
+			case 14: case 15:
                 List.addAll(NumMob(Bat.class,1));
                 List.addAll(NumMob(Brute.class,3));
                 List.addAll(NumMob(Spinner.class,2));
@@ -282,7 +282,7 @@ public class Bestiary {
 //						Monk.class, Monk.class, Monk.class,
 //						Warlock.class, Warlock.class,
 //						Golem.class));
-			case 19:
+			case 19: case 20:
                 List.addAll(NumMob(Monk.class,1));
                 List.addAll(NumMob(Warlock.class,3));
                 List.addAll(NumMob(Golem.class,2));
@@ -314,7 +314,7 @@ public class Bestiary {
 //						Dragun.class, Dragun.class,
 //                        Jupiter.class,
 //						Guard.class, Guard.class, Guard.class, Guard.class));
-			case 24:
+			case 24: case 25:
                 List.addAll(NumMob(Guard.class,4));
                 List.addAll(NumMob(Dragun.class,2));
                 List.addAll(NumMob(Jupiter.class,1));
@@ -355,7 +355,7 @@ public class Bestiary {
 //                        Jupiter.class,
 //						Hydra.class, Hydra.class, Hydra.class,
 //						Hydra.class, Hydra.class, Hydra.class));
-			case 29:
+			case 29: case 30:
                 List.addAll(NumMob(Cyclops.class,1));
                 List.addAll(NumMob(Hydra.class,9));
                 return List;
