@@ -165,7 +165,10 @@ public class Dungeon {
 	public static int mobsToChampion;
 
 	public static Hero hero;
-    public static int mobRan = 2;
+    public static int mobRan;
+    public static void resetTest(){
+        mobRan = 2;
+    }
 	public static Level level;
     static final Calendar calendar = Calendar.getInstance();
     public static boolean isXMAS(){
@@ -221,6 +224,7 @@ public class Dungeon {
 			Scroll.initLabels();
 			Potion.initColors();
 			Ring.initGems();
+            resetTest();
 	
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
@@ -582,7 +586,7 @@ public class Dungeon {
 	
 	public static void saveAll() throws IOException {
 		if (hero != null && (hero.isAlive() || WndResurrect.instance != null)) {
-			
+
 			Actor.fixTime();
 			saveGame( GamesInProgress.curSlot );
 			saveLevel( GamesInProgress.curSlot );
@@ -592,10 +596,12 @@ public class Dungeon {
 	}
 	
 	public static void loadGame( int save ) throws IOException {
+        resetTest();
 		loadGame( save, true );
 	}
 	
 	public static void loadGame( int save, boolean fullLoad ) throws IOException {
+        resetTest();
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.gameFile( save ) );
 
 		levelId = bundle.getInt( LEVEL_ID );

@@ -5,6 +5,7 @@ import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestItem;
@@ -104,22 +105,22 @@ public class debugBook extends TestItem {
                 break;
             case 1:
                 actions.add(AC_EXP);
-                defaultAction=AC_APPLY;
+                defaultAction=AC_EXP;
                 break;
             case 2:
                 actions.add(AC_STR);
-                defaultAction=AC_APPLY;
+                defaultAction=AC_STR;
                 break;
             case 3:
                 actions.add(AC_LVL);
-                defaultAction=AC_APPLY;
+                defaultAction=AC_LVL;
                 break;
             case 4:
                 defaultAction=AC_APPLY;
                 break;
             case 5:
                 actions.add(AC_MOB);
-                defaultAction=AC_APPLY;
+                defaultAction=AC_MOB;
         }
         return actions;
     }
@@ -139,8 +140,6 @@ public class debugBook extends TestItem {
             setMOB();
         }else if(action.equals(AC_APPLY)){
             switch (modeA){
-                case 0: default:
-                    break;
                 case 1:
                     updateEXP();
                     break;
@@ -155,6 +154,8 @@ public class debugBook extends TestItem {
                     break;
                 case 5:
                     mobAPPLY();
+                case 0: default:
+                    break;
             }
         }
     }
@@ -183,18 +184,32 @@ public class debugBook extends TestItem {
     private void modechange(int mode){
         if(mode == 1) {
             modeA = 1;
+            defaultAction = AC_EXP;
+            updateQuickslot();
         }
         else if(mode==2){
             modeA = 2;
+            defaultAction = AC_STR;
+            updateQuickslot();
         }
         else if(mode==3){
             modeA = 3;
+            defaultAction = AC_LVL;
+            updateQuickslot();
         }
         else if(mode==4){
             modeA = 4;
+            defaultAction = AC_APPLY;
+            updateQuickslot();
         }
         else if(mode==5){
             modeA = 5;
+            defaultAction = AC_MOB;
+            updateQuickslot();
+        }else {
+            modeA = 0;
+            defaultAction = AC_SETMODE;
+            updateQuickslot();
         }
     }
 
@@ -213,6 +228,8 @@ public class debugBook extends TestItem {
                     public void onSelect(boolean check, String text){
                         if (check && text.matches("\\d+")){
                             exp = Math.min(Integer.parseInt(text), 40);
+                            defaultAction = AC_APPLY;
+                            updateQuickslot();
                         }
                     }
                 }));
@@ -243,6 +260,8 @@ public class debugBook extends TestItem {
                     public void onSelect(boolean check, String text){
                         if (check && text.matches("\\d+")){
                             str = Integer.parseInt(text);
+                            defaultAction = AC_APPLY;
+                            updateQuickslot();
                         }
                     }
                 }));
@@ -267,6 +286,8 @@ public class debugBook extends TestItem {
                     public void onSelect(boolean check, String text){
                         if (check && text.matches("\\d+")){
                             lvl = Math.min(Integer.parseInt(text), 6666);
+                            defaultAction = AC_APPLY;
+                            updateQuickslot();
                         }
                     }
                 }));
@@ -356,6 +377,8 @@ public class debugBook extends TestItem {
                     public void onSelect(boolean check, String text){
                         if (check && text.matches("\\d+")){
                             mobA = Integer.parseInt(text);
+                            defaultAction = AC_APPLY;
+                            updateQuickslot();
                         }
                     }
                 }));
