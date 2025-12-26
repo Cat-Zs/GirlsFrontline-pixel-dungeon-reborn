@@ -239,6 +239,9 @@ public class Dungeon {
 
 		quickslot.reset();
 		QuickSlotButton.reset();
+        Item.itemA=new ArrayList<>();
+        Item.NOTEA=new ArrayList<>();
+        //在创建游戏处重置
 		
 		depth = 0;
 		gold = 0;
@@ -507,7 +510,6 @@ public class Dungeon {
             bundle.put(NOTESAVEA,ItemToSave);
             //物品类型
             itemAOfSave=new ArrayList<>();
-            Item.itemA=new ArrayList<>();
 
             int countB = 0;
             String NoteToSave[]= new String[NOTEAOfSave.size()];
@@ -517,7 +519,6 @@ public class Dungeon {
             bundle.put(NOTESAVEB,NoteToSave);
             //对应物品类型的标签
             NOTEAOfSave=new ArrayList<>();
-            Item.NOTEA=new ArrayList<>();
             bundle.put( LOCKXMAS, lockXMAS );
 
             bundle.put( GOLD, gold );
