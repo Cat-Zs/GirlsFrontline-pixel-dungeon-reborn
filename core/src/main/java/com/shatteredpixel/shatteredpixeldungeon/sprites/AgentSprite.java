@@ -41,7 +41,7 @@ public class AgentSprite extends FistSprite {
 		idle = new Animation( 3, true );
 		idle.frames( frames, 0, 0, 0, 0, 0, 1, 2 );
 		
-		run = new Animation( 3, true );
+		run = new Animation( 6, true );
 		run.frames( frames, 3, 4, 5, 6, 7, 8 );
 		
 		attack = new Animation( 16, false );
