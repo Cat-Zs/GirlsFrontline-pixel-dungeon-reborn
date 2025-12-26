@@ -106,4 +106,18 @@ public class AgentSprite extends FistSprite {
         return 0xFFFFDD34;
     }
 
+    //用于更新日志显示的代理人的待机动作
+    public static class AgentSpriteRe extends MobSprite {
+        public AgentSpriteRe() {
+            super();
+
+            texture( Assets.AGENT );
+
+            TextureFilm frames = new TextureFilm( texture, 26, 24 );
+
+            idle = new Animation( 3, true );
+            idle.frames( frames, 0, 0, 0, 0, 0, 1, 2 );
+            play( idle );
+        }
+    }
 }
