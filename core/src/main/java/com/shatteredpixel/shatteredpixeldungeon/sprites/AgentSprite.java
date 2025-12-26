@@ -48,7 +48,7 @@ public class AgentSprite extends FistSprite {
 		attack.frames( frames, 9, 9, 10, 10, 13, 11, 11, 12, 11, 12, 13, 13 );
 
         zap = new Animation( 8, false );
-        zap.frames( frames, 11, 12, 13, 14 );
+        zap.frames( frames, 11, 12, 13, 13, 13, 12, 13 );
 
         die = new Animation( 4, false );
 		die.frames( frames, 14, 15, 16, 17, 17 );
