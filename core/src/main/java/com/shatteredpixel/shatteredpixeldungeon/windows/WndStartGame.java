@@ -116,9 +116,9 @@ public class WndStartGame extends Window {
 		totalPages = (int)Math.ceil((float)visibleClasses.size() / ROLES_PER_PAGE);
 
 		// 设置翻页按钮的可见性和激活状态
-		prevButton.visible = totalPages > 1;
+		prevButton.visible = currentPage > 0; // 第一页时隐藏上一页按钮
 		prevButton.active = currentPage > 0;
-		nextButton.visible = totalPages > 1;
+		nextButton.visible = currentPage < totalPages - 1; // 最后一页时隐藏下一页按钮
 		nextButton.active = currentPage < totalPages - 1;
 
 		// 动态计算角色按钮间距
@@ -303,7 +303,9 @@ public class WndStartGame extends Window {
 		}
 
 		// 更新翻页按钮状态
+		prevButton.visible = currentPage > 0; // 第一页时隐藏上一页按钮
 		prevButton.active = currentPage > 0;
+		nextButton.visible = currentPage < totalPages - 1; // 最后一页时隐藏下一页按钮
 		nextButton.active = currentPage < totalPages - 1;
 	}
 
