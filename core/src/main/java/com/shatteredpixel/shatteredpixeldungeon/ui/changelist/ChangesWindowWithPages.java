@@ -41,8 +41,7 @@ public class ChangesWindowWithPages extends Window {
     private RenderedTextBlock contentText;
     private RenderedTextBlock titleText;
     private RenderedTextBlock pageNumberText; // 页面数字显示
-    
-    private ArrayList<ColorBlock> pageIndicators = new ArrayList<>();
+    // 移除页码指示器成员变量
     
     public ChangesWindowWithPages(Image icon, String title, ArrayList<String> pageContents) {
         super();
@@ -74,13 +73,7 @@ public class ChangesWindowWithPages extends Window {
             add(icon);
         }
         
-        // 创建页面指示器
-        for (int i = 0; i < pages.size(); i++) {
-            ColorBlock indicator = new ColorBlock(6, 6, Window.TITLE_COLOR);
-            indicator.alpha(i == currentPage ? 1f : 0.5f);
-            pageIndicators.add(indicator);
-            add(indicator);
-        }
+        // 移除页面指示器创建代码
         
         // 创建翻页按钮（缩小尺寸）
         RedButton btnPrev = new RedButton("<") {
@@ -124,10 +117,7 @@ public class ChangesWindowWithPages extends Window {
         // 更新页面数字显示
         pageNumberText.text((currentPage + 1) + "/" + pages.size());
         
-        // 更新页面指示器
-        for (int i = 0; i < pageIndicators.size(); i++) {
-            pageIndicators.get(i).alpha(i == currentPage ? 1f : 0.5f);
-        }
+        // 移除页面指示器更新代码
         
         layout();
     }
@@ -138,23 +128,12 @@ public class ChangesWindowWithPages extends Window {
     
     // 不再需要@Override注解和super.layout()调用
     protected void layout() {
-        // 设置内容文本最大宽度
-        contentText.maxWidth((int)(PixelScene.uiCamera.width - 120));
+        // 设置内容文本最大宽度（拓宽显示范围）
+        contentText.maxWidth((int)(PixelScene.uiCamera.width - 80)); // 从-150改为-80，增加文本宽度
         
-        // 计算窗口大小
-        float windowWidth = contentText.width() + 40;
-        float windowHeight = 100; // 基础高度
-        
-        // 计算内容总高度
-        float contentHeight = 0;
-        contentHeight += titleText.height() + 10; // 标题
-        if (icon != null) {
-            contentHeight += icon.height + 10; // 图标
-        }
-        contentHeight += contentText.height() + 15; // 内容
-        contentHeight += 20; // 页面指示器和页码
-        
-        windowHeight = Math.max(windowHeight, contentHeight + 20); // 加上边距
+        // 固定窗口大小（替代动态计算）
+        float windowWidth = Math.min(200, (int)(PixelScene.uiCamera.width - 50)); // 固定最大宽度200，最小为屏幕宽度-50
+        float windowHeight = Math.min(100, (int)(PixelScene.uiCamera.height - 100)); // 固定最大高度100，最小为屏幕高度-100
         
         // 调整窗口大小
         resize((int)windowWidth, (int)windowHeight);
@@ -177,47 +156,40 @@ public class ChangesWindowWithPages extends Window {
             );
         }
         
-        // 设置内容文本位置
+        // 设置内容文本位置（从居中改为靠左）
         float contentY = icon != null ? (icon.y + icon.height) + 10 : titleText.bottom() + 15;
         contentText.setPos(
-            (width - contentText.width()) / 2f,
+            20, // 固定左边距，不再居中
             contentY
         );
         
         // 计算底部控制区域的位置（固定居中）
         float controlY = windowHeight - 20; // 固定在底部上方20px处
         
-        // 计算各个底部元素的总宽度
-        float indicatorsWidth = (pageIndicators.size() * 12) - 6; // 每个指示器间距12px
-        float totalControlsWidth = 20 + indicatorsWidth + 10 + pageNumberText.width() + 20; // 左右边距 + 指示器 + 间距 + 页码 + 右边距
+        // 获取翻页按钮对象
+        RedButton btnPrev = (RedButton)members.get(members.size() - 2);
+        RedButton btnNext = (RedButton)members.get(members.size() - 1);
+        
+        // 计算各个底部元素的总宽度（包含页码显示和翻页按钮）
+        float totalControlsWidth = btnPrev.width() + 30 + pageNumberText.width() + 30 + btnNext.width(); // 翻页按钮 + 页码 + 边距
         
         // 计算控制区域的起始X坐标（居中）
         float controlsStartX = (windowWidth - totalControlsWidth) / 2f;
         
-        // 设置翻页按钮位置（固定）
-        RedButton btnPrev = (RedButton)members.get(members.size() - 2);
-        RedButton btnNext = (RedButton)members.get(members.size() - 1);
-        
+        // 设置翻页按钮和页码文本位置（居中显示）
         btnPrev.setPos(
             controlsStartX,
             controlY
         );
         
-        btnNext.setPos(
-            controlsStartX + totalControlsWidth - 10,
-            controlY
+        // 设置页码文本位置（与翻页按钮在同一水平线上）
+        pageNumberText.setPos(
+            btnPrev.x + btnPrev.width() + 40, // 页码显示在翻页按钮右侧
+            controlY // 与翻页按钮在同一水平线上
         );
         
-        // 设置页面指示器位置（固定）
-        float indicatorX = controlsStartX + 20; // 左边距后开始
-        for (int i = 0; i < pageIndicators.size(); i++) {
-            ColorBlock indicator = pageIndicators.get(i);
-            indicator.setPos(indicatorX + (i * 12), controlY + 1); // 调整垂直位置使其与文字对齐
-        }
-        
-        // 设置页码文本位置（固定）
-        pageNumberText.setPos(
-            indicatorX + indicatorsWidth + 10,
+        btnNext.setPos(
+            pageNumberText.x + pageNumberText.width() + 35, // 下一页按钮在页码右侧
             controlY
         );
     }
