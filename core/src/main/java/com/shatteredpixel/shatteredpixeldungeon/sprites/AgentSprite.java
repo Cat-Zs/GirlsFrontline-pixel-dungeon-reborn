@@ -24,12 +24,17 @@ package com.shatteredpixel.shatteredpixeldungeon.sprites;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ShadowParticle;
 import com.watabou.noosa.TextureFilm;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Callback;
 
 public class AgentSprite extends FistSprite {
+
+    {
+        boltType = MagicMissile.SHADOW;
+    }
 
 	public AgentSprite() {
 		super();
@@ -55,56 +60,32 @@ public class AgentSprite extends FistSprite {
 		
 		play( idle );
 	}
-	
-	private int posToShoot;
+
 
 	@Override
 	public void attack( int cell ) {
-		posToShoot = ch.pos;
 		super.attack( cell );
 
         jump(ch.pos, ch.pos, null, 0, 0.34f );
 	}
-	
-	@Override
-	public void onComplete( Animation anim ) {
-		if (anim == attack) {
-
-			Sample.INSTANCE.play( Assets.Sounds.ZAP );
-			MagicMissile.boltFromChar( parent,
-					MagicMissile.SHADOW,
-					this,
-					posToShoot,
-					new Callback() {
-						@Override
-						public void call() {
-							ch.onAttackComplete();
-						}
-					} );
-
-			idle();
-			
-		} else {
-			super.onComplete( anim );
-		}
-	}
 
     @Override
     protected int texOffset() {
-        return 0;
+        return 50;
     }
 
     @Override
     protected Emitter createEmitter() {
         Emitter emitter = emitter();
-        emitter.pour( FlameParticle.FACTORY, 0.06f );
+        emitter.pour(ShadowParticle.MISSILE, 0.06f );
         return emitter;
     }
 
     @Override
     public int blood() {
-        return 0xFFFFDD34;
+        return 0xFF4A2F53;
     }
+
 
     //用于更新日志显示的代理人的待机动作
     public static class AgentSpriteRe extends MobSprite {

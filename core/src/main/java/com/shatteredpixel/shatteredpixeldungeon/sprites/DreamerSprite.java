@@ -30,6 +30,9 @@ import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Callback;
 
 public class DreamerSprite extends FistSprite {
+    {
+        boltType = MagicMissile.FIRE;
+    }
 	
 	public DreamerSprite() {
 		super();
