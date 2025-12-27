@@ -62,10 +62,29 @@ public class v0_5_X_Changes {
         changes.hardlight( CharSprite.WARNING );
         changeInfos.add(changes);
 
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "改动-系统优化",
-        "_-_ 优化小版本的版本号，为A-B-C\n" +
-        "_-_ 文本2\n" +
-        "_-_ 文本3\n"));
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+        changes.hardlight( CharSprite.WARNING );
+        changeInfos.add(changes);
+    
+        // 创建多页面内容
+        ArrayList<String> pageContents = new ArrayList<>();
+        pageContents.add(
+            "_-_ 优化小版本的版本号，为A-B-C\n" +
+            "_-_ 优化了代码结构，提高了系统性能\n" +
+            "_-_ 修复了一些UI显示问题\n"
+        );
+        pageContents.add(
+            "_-_ 改进了游戏平衡性\n" +
+            "_-_ 增加了新的游戏机制\n" +
+            "_-_ 修复了一些已知的bug\n"
+        );
+        pageContents.add(
+            "_-_ 更新了部分游戏资源\n" +
+            "_-_ 优化了玩家体验\n" +
+            "_-_ 增加了新的游戏功能\n"
+        );
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "改动-系统优化", pageContents));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
         changes.hardlight( Window.TITLE_COLOR );
