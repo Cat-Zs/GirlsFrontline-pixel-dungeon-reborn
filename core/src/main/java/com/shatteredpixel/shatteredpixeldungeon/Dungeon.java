@@ -100,6 +100,7 @@ public class Dungeon {
 
 		//Health potion sources
 		//enemies
+        CYCLOPS_HP,
 		GUARD_HP,
 		SWARM_HP,
 		NECRO_HP,

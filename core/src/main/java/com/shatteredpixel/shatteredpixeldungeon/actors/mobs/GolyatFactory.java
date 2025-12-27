@@ -84,7 +84,7 @@ public class GolyatFactory extends Mob {
 	
 	@Override
 	public float lootChance() {
-		return super.lootChance() * ((5f - Dungeon.LimitedDrops.FACTORY_HP.count) / 5f);
+		return super.lootChance() * ((6f - Dungeon.LimitedDrops.FACTORY_HP.count) / 6f);
 	}
 	
 	@Override
