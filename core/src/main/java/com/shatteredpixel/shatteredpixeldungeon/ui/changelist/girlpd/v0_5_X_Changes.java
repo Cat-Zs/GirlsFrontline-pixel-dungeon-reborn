@@ -65,12 +65,10 @@ public class v0_5_X_Changes {
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
         changes.hardlight( CharSprite.WARNING );
         changeInfos.add(changes);
-    
-        // 创建多页面内容
         ArrayList<String> pageContents = new ArrayList<>();
         pageContents.add(
-            "_-_ 优化小版本的版本号，为A-B-C\n" +
-            "_-_ 优化了代码结构，提高了系统性能\n" +
+            "_-_ 优化小版本的版本号，为A-B-C。\n" +
+            "_-_ 写入了新的多页内容，使得文本可阅读性变高。\n" +
             "_-_ 修复了一些UI显示问题\n"
         );
         pageContents.add(
