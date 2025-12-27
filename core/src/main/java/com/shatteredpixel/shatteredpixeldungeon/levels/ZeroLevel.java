@@ -6,13 +6,17 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RatKing;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.SceneSwitcher;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.WindowTrigger;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Tilemap;
@@ -41,6 +45,31 @@ public class ZeroLevel extends Level {
 		}
 	}
 
+	public static class DownStairsTrigger extends Trigger {
+		@Override
+		public boolean canInteract(Char ch) {
+			return Dungeon.hero == ch && Dungeon.level.adjacent(pos, ch.pos);
+		}
+
+		@Override
+		public void activate(Char ch) {
+			try {
+				Dungeon.saveAll();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			InterlevelScene.mode = InterlevelScene.Mode.ACCESS;
+			InterlevelScene.accessLevelId = 1000;
+			InterlevelScene.accessPos = -2;
+			Game.switchScene(InterlevelScene.class);
+		}
+
+		public Trigger create(int pos) {
+			this.pos = pos;
+			return this;
+		}
+	}
+
 	@Override
 	protected boolean build() {
 		setSize(SIZE, SIZE);
@@ -64,6 +93,11 @@ public class ZeroLevel extends Level {
         mobs.add( king );
 
 		placeTrigger(new ComputerTriger().create(title,TitleScene.class));
+
+		// 添加向下的楼梯
+		int stairsDown = (SIZE - 3) * width() + (SIZE - 3);
+		map[stairsDown] = Terrain.DOOR;
+		placeTrigger(new DownStairsTrigger().create(stairsDown));
 
 		//int teleporter=title+2;
 		//map[teleporter]=Terrain.DOOR;
