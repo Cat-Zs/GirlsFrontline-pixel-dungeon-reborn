@@ -2,23 +2,22 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Tilemap;
 import com.watabou.utils.Bundle;
 
-public class ZeroLevelSub extends Level {
-    private static final int SIZE = 17;
-    private static final int TEMP_MIN = 2;
-    private static final int TEMP_MAX = SIZE - 3;
+public class Room404 extends Level {
+    private static final int SIZE = 10;
+    private static final int WIDTH = SIZE;
+    private static final int HEIGHT = SIZE;
+    private static final int TEMP_MIN = 1;
+    private static final int TEMP_MAX = SIZE - 2;
 
     @Override
     public String tilesTex() {
@@ -44,32 +43,7 @@ public class ZeroLevelSub extends Level {
                 e.printStackTrace();
             }
             InterlevelScene.mode = InterlevelScene.Mode.ACCESS;
-            InterlevelScene.accessLevelId = 0;
-            InterlevelScene.accessPos = -2;
-            Game.switchScene(InterlevelScene.class);
-        }
-
-        public Trigger create(int pos) {
-            this.pos = pos;
-            return this;
-        }
-    }
-
-    public static class DownStairsTrigger extends Trigger {
-        @Override
-        public boolean canInteract(Char ch) {
-            return Dungeon.hero == ch && Dungeon.level.adjacent(pos, ch.pos);
-        }
-
-        @Override
-        public void activate(Char ch) {
-            try {
-                Dungeon.saveAll();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            InterlevelScene.mode = InterlevelScene.Mode.ACCESS;
-            InterlevelScene.accessLevelId = 1001;
+            InterlevelScene.accessLevelId = 1000;
             InterlevelScene.accessPos = -2;
             Game.switchScene(InterlevelScene.class);
         }
@@ -82,27 +56,21 @@ public class ZeroLevelSub extends Level {
 
     @Override
     protected boolean build() {
-        setSize(SIZE, SIZE);
+        setSize(WIDTH, HEIGHT);
+        
+        // 使用硬编码的地图
+        map = MAP.clone();
 
-        for (int i = 1; i < SIZE - 1; i++) {
-            for (int j = 1; j < SIZE - 1; j++) {
-                map[i * width() + j] = Terrain.EMPTY;
-            }
-        }
+        buildFlagMaps();
+        cleanWalls();
 
         int center = (TEMP_MAX + TEMP_MIN) / 2;
         entrance = center * width() + center;
         exit = center * width() + center;
 
-        // 添加向上的楼梯
-        int stairsUp = (SIZE - 3) * width() + (SIZE - 3);
-        map[stairsUp] = Terrain.EXIT;
+        // 添加向上的楼梯（连接回ZeroLevelSub）
+        int stairsUp = (SIZE - 1) * width() + (SIZE - 3);
         placeTrigger(new UpStairsTrigger().create(stairsUp));
-
-        // 添加向下的楼梯到404房间（右上角位置）
-        int stairsDown = (TEMP_MIN + 1) * width() + (TEMP_MAX - 1);
-        map[stairsDown] = Terrain.DOOR;
-        placeTrigger(new DownStairsTrigger().create(stairsDown));
 
         CustomTilemap customBottomTile = new CustomBottomTile();
         customBottomTile.setRect(0, 0, width(), height());
@@ -113,7 +81,7 @@ public class ZeroLevelSub extends Level {
 
     public static class CustomBottomTile extends CustomTilemap {
         {
-            texture = Assets.Environment.ZERO_LEVEL;
+            texture = Assets.Environment.ROOM;
             tileW = SIZE;
             tileH = SIZE;
         }
@@ -121,7 +89,12 @@ public class ZeroLevelSub extends Level {
         @Override
         public Tilemap create() {
             super.create();
-            mapSimpleImage(0, 0, 24);
+            if (vis != null) {
+                // 使用mapSimpleImage方法，将texW参数设置为240（10*24）
+                // 这样每个格子会使用room.png中对应的24*24像素贴图
+                int[] data = mapSimpleImage(0, 0, 240);
+                vis.map(data, tileW);
+            }
             return vis;
         }
     }
@@ -152,7 +125,7 @@ public class ZeroLevelSub extends Level {
     // 重写updateFieldOfView方法，实现永久视野
     @Override
     public void updateFieldOfView(Char c, boolean[] fieldOfView) {
-        // 对于0-1层，设置所有单元格为可见
+        // 对于404房间，设置所有单元格为可见
         for (int i = 0; i < fieldOfView.length; i++) {
             fieldOfView[i] = true;
         }
@@ -169,4 +142,24 @@ public class ZeroLevelSub extends Level {
             }
         }
     }
+    
+    // 地形类型常量
+    private static final int W = Terrain.WALL;
+    private static final int e = Terrain.EMPTY;
+    private static final int X = Terrain.EXIT;
+    
+    // 硬编码的地图数组
+    // 10x10的房间，四周是墙，内部是空地，右下角有一个向上的楼梯
+    private static final int[] MAP = {
+        W, W, W, W, W, W, W, W, W, W,
+        W, W, W, W, W, W, W, W, W, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, W, W, e, e, e, e, X, W, W
+    };
 }

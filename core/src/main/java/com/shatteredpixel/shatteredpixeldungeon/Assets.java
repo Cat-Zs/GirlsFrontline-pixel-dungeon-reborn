@@ -93,6 +93,7 @@ public class Assets {
 
 		public static final String WEAK_FLOOR       = "environment/custom_tiles/weak_floor.png";
 		public static final String ZERO_LEVEL       = "environment/custom_tiles/zero_level.png";
+		public static final String ROOM             = "environment/custom_tiles/room.png";
 		public static final String SEWER_BOSS       = "environment/custom_tiles/sewer_boss.png";
 		public static final String PRISON_QUEST     = "environment/custom_tiles/prison_quests.png";
 		public static final String PRISON_EXIT      = "environment/custom_tiles/prison_exit.png";

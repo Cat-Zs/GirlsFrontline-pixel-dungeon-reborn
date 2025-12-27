@@ -64,6 +64,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Room404;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
@@ -328,7 +329,11 @@ public class Dungeon {
 		case 31:
 			level = new LastLevel();break;
 		case 1000:
-			level = new ZeroLevelSub();break;
+			level = new ZeroLevelSub();
+			break;
+		case 1001:
+			level = new Room404();
+			break;
 		default:
 			level = new DeadEndLevel();
 		}
