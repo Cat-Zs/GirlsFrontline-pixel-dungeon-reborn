@@ -21,6 +21,9 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Tilemap;
 import com.watabou.utils.Bundle;
+
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.energy;
+
 import java.io.IOException;
 
 // 零层(ZeroLevel) - 游戏的起始房间或特殊房间
@@ -110,7 +113,7 @@ public class ZeroLevel extends Level {
 		placeTrigger(new ComputerTriger().create(title,TitleScene.class));
 
 		// 添加向下的楼梯触发器
-		int stairsDown = (8) * width() + (13);
+		int stairsDown = (9) * width() + (13);
 		//map[stairsDown] = Terrain.DOOR;
 		placeTrigger(new DownStairsTrigger().create(stairsDown));
 
@@ -126,6 +129,11 @@ public class ZeroLevel extends Level {
 		CustomTilemap customBottomTile=new CustomBottomTile();
 		customBottomTile.setRect(0,0,width(),height());
 		customTiles.add(customBottomTile);
+		
+		// 添加墙体覆盖贴图
+		CustomTilemap customWallTile = new CustomWallTile();
+		customWallTile.setRect(0, 0, width(), height());
+		customWalls.add(customWallTile);
 
 		return true;
 	}
@@ -142,14 +150,14 @@ public class ZeroLevel extends Level {
 	private static final int[] MAP = {
 		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
 		W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
+		W, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, W,
 		W, e, e, Z, Z, Z, Z, Z, e, e, e, e, Z, Z, Z, W,
 		W, e, e, e, e, e, e, e, e, e, e, e, e, Z, Z, W,
-		W, e, C, e, e, e, e, e, e, e, e, e, e, Z, Z, W,
+		W, e, e, e, e, e, e, e, e, e, e, e, e, Z, Z, W,
 		W, e, e, e, Z, Z, Z, Z, Z, Z, Z, e, e, e, e, W,
-		W, Z, Z, e, e, e, Z, Z, Z, e, e, e, e, e, e, W,
-		W, Z, Z, e, e, e, e, e, e, e, e, e, e, e, W, W,
-		W, W, W, W, W, W, W, W, W, W, W, W, W, e, W, W,
-		W, W, W, W, W, W, W, W, W, W, W, W, W, D, W, W
+		W, e, e, e, e, e, Z, Z, Z, e, e, e, e, e, e, W,
+		W, Z, Z, e, e, e, e, e, e, e, e, e, e, e, Z, W,
+		W, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, Z, W
 	};
 
 	// 自定义底部瓦片 - 用于绘制零层的特殊底部纹理
@@ -157,6 +165,29 @@ public class ZeroLevel extends Level {
 		// 初始化纹理和尺寸
 		{
 			texture = Assets.Environment.FORWARD_CAMP;
+			tileW = SIZE;
+			tileH = 10;
+		}
+
+		// 创建瓦片映射
+		@Override
+		public Tilemap create() {
+			super.create();
+			if (vis != null){
+				// 使用mapSimpleImage方法生成数据数组并应用到瓦片映射
+				// texW参数设置为贴图的总宽度（像素）：16*24=384
+				int[] data = mapSimpleImage(0, 0, 384);
+				vis.map(data, tileW);
+			}
+			return vis;
+		}
+	}
+	
+	// 自定义墙体瓦片 - 用于绘制零层的特殊墙体纹理
+	public static class CustomWallTile extends CustomTilemap {
+		// 初始化纹理和尺寸
+		{
+			texture = Assets.Environment.FORWARD_CAMP_1;
 			tileW = SIZE;
 			tileH = 10;
 		}

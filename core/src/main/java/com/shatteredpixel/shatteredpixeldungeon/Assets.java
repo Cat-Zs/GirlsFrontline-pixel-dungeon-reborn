@@ -103,6 +103,7 @@ public class Assets {
 		public static final String CITY_BOSS        = "environment/custom_tiles/city_boss.png";
 		public static final String HALLS_SP         = "environment/custom_tiles/halls_special.png";
 		public static final String FORWARD_CAMP     = "environment/custom_tiles/Forward_Camp.png";
+		public static final String FORWARD_CAMP_1   = "environment/custom_tiles/Forward_Camp-1.png";
 	}
 	
 	//TODO include other font assets here? Some are platform specific though...
