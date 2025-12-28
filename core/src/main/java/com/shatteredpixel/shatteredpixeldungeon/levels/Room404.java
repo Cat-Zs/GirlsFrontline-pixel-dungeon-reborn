@@ -64,9 +64,9 @@ public class Room404 extends Level {
         buildFlagMaps();
         cleanWalls();
 
-        int center = (TEMP_MAX + TEMP_MIN) / 2;
-        entrance = center * width() + center;
-        exit = center * width() + center;
+        entrance = (SIZE - 2) * width() + (SIZE - 3);
+        exit = (SIZE - 2) * width() + (SIZE - 3);
+        //进入404小屋时的位置设置到上楼楼梯处
 
         // 添加向上的楼梯（连接回ZeroLevelSub）
         int stairsUp = (SIZE - 1) * width() + (SIZE - 3);
@@ -146,6 +146,7 @@ public class Room404 extends Level {
     // 地形类型常量
     private static final int W = Terrain.WALL;
     private static final int e = Terrain.EMPTY;
+    private static final int eW = Terrain.ZERO_WALL;
     private static final int X = Terrain.EXIT;
     
     // 硬编码的地图数组
@@ -153,8 +154,8 @@ public class Room404 extends Level {
     private static final int[] MAP = {
         W, W, W, W, W, W, W, W, W, W,
         W, W, W, W, W, W, W, W, W, W,
-        W, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, W,
+        W, eW, eW, eW, eW, eW, eW, eW, eW, W,
+        W, eW, eW, eW, eW, eW, eW, eW, eW, W,
         W, e, e, e, e, e, e, e, e, W,
         W, e, e, e, e, e, e, e, e, W,
         W, e, e, e, e, e, e, e, e, W,

@@ -57,6 +57,7 @@ public class Terrain {
 	public static final int WATER		    = 29;
 	public static final int FURROWED_GRASS	= 30;
 	public static final int CRYSTAL_DOOR	= 31;
+    public static final int ZERO_WALL       = 32;
 	
 	public static final int PASSABLE		= 0x001;
 	public static final int LOS_BLOCKING	= 0x002;
@@ -105,6 +106,7 @@ public class Terrain {
 		flags[STATUE_SP]	= flags[STATUE] | BREAKABLE ;
 		flags[BOOKSHELF]	= flags[BARRICADE] | BREAKABLE ;
 		flags[ALCHEMY]		= SOLID | BREAKABLE ;
+        flags[ZERO_WALL]    = flags[EMPTY]-1 | SOLID;
 
 	}
 
