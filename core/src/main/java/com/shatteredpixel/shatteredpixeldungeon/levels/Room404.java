@@ -72,9 +72,15 @@ public class Room404 extends Level {
         int stairsUp = (SIZE - 1) * width() + (SIZE - 3);
         placeTrigger(new UpStairsTrigger().create(stairsUp));
 
+        // 添加底部覆盖贴图
         CustomTilemap customBottomTile = new CustomBottomTile();
         customBottomTile.setRect(0, 0, width(), height());
         customTiles.add(customBottomTile);
+        
+        // 添加墙体覆盖贴图
+        CustomTilemap customWallTile = new CustomWallTile();
+        customWallTile.setRect(0, 0, width(), height());
+        customWalls.add(customWallTile);
 
         return true;
     }
@@ -92,6 +98,26 @@ public class Room404 extends Level {
             if (vis != null) {
                 // 使用mapSimpleImage方法，将texW参数设置为240（10*24）
                 // 这样每个格子会使用room.png中对应的24*24像素贴图
+                int[] data = mapSimpleImage(0, 0, 240);
+                vis.map(data, tileW);
+            }
+            return vis;
+        }
+    }
+    
+    public static class CustomWallTile extends CustomTilemap {
+        {
+            texture = Assets.Environment.ROOM404_1;
+            tileW = SIZE;
+            tileH = SIZE;
+        }
+
+        @Override
+        public Tilemap create() {
+            super.create();
+            if (vis != null) {
+                // 使用mapSimpleImage方法，将texW参数设置为240（10*24）
+                // 这样每个格子会使用room404-1.png中对应的24*24像素贴图
                 int[] data = mapSimpleImage(0, 0, 240);
                 vis.map(data, tileW);
             }
@@ -152,15 +178,15 @@ public class Room404 extends Level {
     // 硬编码的地图数组
     // 10x10的房间，四周是墙，内部是空地，右下角有一个向上的楼梯
     private static final int[] MAP = {
-        W, W, W, W, W, W, W, W, W, W,
-        W, W, W, W, W, W, W, W, W, W,
-        W, eW, eW, eW, eW, eW, eW, eW, eW, W,
-        W, eW, eW, eW, eW, eW, eW, eW, eW, W,
-        W, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, W,
-        W, W, W, e, e, e, e, X, W, W
+        W,  W,  W,  W,  W,  W,  W,  W,  W,  W,
+        W,  W,  W,  W,  W,  W,  W,  W,  W,  W,
+        W, eW, eW, eW, eW, eW, eW, eW, eW,  W,
+        W, eW, eW, eW, eW,  e, eW, eW, eW,  W,
+        W,  e,  e,  e, eW,  e,  e,  e, eW,  W,
+        W, eW, eW,  e, eW,  e,  e,  e,  e,  W,
+        W, eW, eW,  e,  e,  e,  e,  e,  e,  W,
+        W,  e,  e,  e,  e,  e,  e,  e,  e,  W,
+        W,  e,  e,  e,  e,  e,  e,  e,  e,  W,
+        W,  W,  W,  e,  e,  e,  e,  X,  W,  W
     };
 }
