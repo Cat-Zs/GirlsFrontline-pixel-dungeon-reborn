@@ -92,7 +92,7 @@ public class WndStartGame extends Window {
 				showPreviousPage();
 			}
 		};
-		prevButton.setRect(0, 0, 10, 10); // 固定在左上角，大小10x10
+		prevButton.setRect(1, 2, 12, 12); // 固定在左上角，大小10x10
 		add(prevButton);
 
 		nextButton = new RedButton(">") {
@@ -101,7 +101,7 @@ public class WndStartGame extends Window {
 				showNextPage();
 			}
 		};
-		nextButton.setRect(WIDTH - 10, 0, 10, 10); // 固定在右上角，大小10x10
+		nextButton.setRect(WIDTH - 11, 2, 12, 12); // 固定在右上角，大小10x10
 		add(nextButton);
 
 		// 收集所有可见角色（排除NONE）
@@ -134,6 +134,7 @@ public class WndStartGame extends Window {
 			HeroBtn button = new HeroBtn(cl);
 			button.setRect(curX, title.height() + 4, HeroBtn.WIDTH, HeroBtn.HEIGHT); // 角色按钮在标题下方
 			curX += HeroBtn.WIDTH + heroBtnSpacing;
+            button.enable = true;
 			add(button);
 			heroButtons.add(button);
 		}
@@ -280,6 +281,7 @@ public class WndStartGame extends Window {
 	private void updateHeroButtons() {
 		// 移除所有现有角色按钮
 		for (HeroBtn button : heroButtons) {
+            button.enable = false;
 			remove(button);
 		}
 		heroButtons.clear();
@@ -298,6 +300,7 @@ public class WndStartGame extends Window {
 			HeroBtn button = new HeroBtn(cl);
 			button.setRect(curX, 14, HeroBtn.WIDTH, HeroBtn.HEIGHT); // y坐标与原代码保持一致
 			curX += HeroBtn.WIDTH + heroBtnSpacing;
+            button.enable = true;
 			add(button);
 			heroButtons.add(button);
 		}
@@ -314,6 +317,7 @@ public class WndStartGame extends Window {
 		private HeroClass cl;
 
 		private Image heroIcon;
+        private boolean enable = false;
 
 		private static final int WIDTH = HeroSprite.FRAME_WIDTH;
 		private static final int HEIGHT = HeroSprite.FRAME_HEIGHT;
@@ -353,14 +357,15 @@ public class WndStartGame extends Window {
 		@Override
 		protected void onClick() {
 			super.onClick();
-
-			if( !cl.isUnlocked() ){
-				GirlsFrontlinePixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
-			} else if (GamesInProgress.selectedClass == cl) {
-				GirlsFrontlinePixelDungeon.scene().add(new WndHeroInfo(cl));
-			} else {
-				GamesInProgress.selectedClass = cl;
-			}
+            if(enable){
+                if( !cl.isUnlocked() ){
+                    GirlsFrontlinePixelDungeon.scene().addToFront( new WndMessage(cl.unlockMsg()));
+                } else if (GamesInProgress.selectedClass == cl) {
+                    GirlsFrontlinePixelDungeon.scene().add(new WndHeroInfo(cl));
+                } else {
+                    GamesInProgress.selectedClass = cl;
+                }
+            }
 		}
 	}
 
