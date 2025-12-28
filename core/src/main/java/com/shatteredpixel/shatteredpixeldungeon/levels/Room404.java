@@ -187,6 +187,6 @@ public class Room404 extends Level {
         W, eW, eW,  e,  e,  e,  e,  e,  e,  W,
         W,  e,  e,  e,  e,  e,  e,  e,  e,  W,
         W,  e,  e,  e,  e,  e,  e,  e,  e,  W,
-        W,  W,  W,  e,  e,  e,  e,  X,  W,  W
+        W,  W,  W,  W,  W,  W,  W,  X,  W,  W
     };
 }
