@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.type561;
 
 import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -30,24 +31,31 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Bleeding;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Wound;
 import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfForce;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
+import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.audio.Sample;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
 
 public class Type56FourOne extends ArmorAbility {
 
 	{
-		baseChargeUse = 5f;
+		baseChargeUse = 60f;
 	}
 
 
@@ -82,17 +90,20 @@ public class Type56FourOne extends ArmorAbility {
 			GLog.w(Messages.get(this, "too_strong"));
 			return;
 		}*/ else {
-            int dmg = damageRoll()*(1+hero.pointsInTalent(Talent.Type56FourOneTwo));
-            int time = 4+ hero.pointsInTalent(Talent.Type56FourOneTwo);
+            if(Dungeon.level.distance(hero.pos, target)>1){
+                tpTarget(target);
+            }
+
+            int time = 1+ hero.pointsInTalent(Talent.Type56FourOneTwo);
             Wound.hit( ch );
-            ch.damage(2*damageRoll(),this);
-            Buff.affect( ch, Bleeding.class ).set( dmg>>1 );
+            ch.damage(damageRoll(),this);
+            Buff.affect( ch, Bleeding.class ).set( 5*(1+time) );
             Buff.prolong( ch, Cripple.class, time );
 		}
         if(hero.pointsInTalent(Talent.Type56FourOneThree)>0){
-            if(Random.Int(5-hero.pointsInTalent(Talent.Type56FourOneThree))<1){
-                ch.damage(10*hero.pointsInTalent(Talent.Type56FourOneThree),this);
-                Buff.affect( ch, Terror.class, 10 ).object = hero.id();
+            if(Random.Int(100)<(5+10*hero.pointsInTalent(Talent.Type56FourOneThree))){
+                ch.damage(3*hero.pointsInTalent(Talent.Type56FourOneThree),this);
+//                Buff.affect( ch, Terror.class, 10 ).object = hero.id();
             }
         }
 		armor.charge -= chargeUse(hero);
@@ -101,14 +112,17 @@ public class Type56FourOne extends ArmorAbility {
         //更新快捷栏
 		Invisibility.dispel();
         //去除隐形
-		hero.spendAndNext(Actor.TICK);
+		hero.spendAndNext(0);
         //消耗回合
 	}
     private int damageRoll() {
+        KindOfWeapon type562 = hero.belongings.getItem(Gun562.class);
         KindOfWeapon wep = hero.belongings.weapon();
         int dmg;
-
-        if (wep != null) {
+        if(type562!=null){
+            dmg = type562.damageRoll( hero );
+        }
+        else if (wep != null) {
             dmg = wep.damageRoll( hero);
         } else {
             dmg = RingOfForce.damageRoll(hero);
@@ -116,6 +130,44 @@ public class Type56FourOne extends ArmorAbility {
         if (dmg < 0) dmg = 0;
 
         return dmg;
+    }
+    private void tpTarget(int cell){
+
+        PathFinder.buildDistanceMap(Dungeon.hero.pos, BArray.not(Dungeon.level.solid, null), 1+ hero.pointsInTalent(Talent.Type56FourOneOne));
+        int dest = -1;
+        for (int i : PathFinder.NEIGHBOURS8){
+            //cannot blink into a cell that's occupied or impassable, only over them
+            if (Actor.findChar(cell+i) != null)     continue;
+            if (!Dungeon.level.passable[cell+i])    continue;
+
+            if (dest == -1 || PathFinder.distance[dest] > PathFinder.distance[cell+i]){
+                dest = cell+i;
+                //if two cells have the same pathfinder distance, prioritize the one with the closest true distance to the hero
+            } else if (PathFinder.distance[dest] == PathFinder.distance[cell+i]){
+                if (Dungeon.level.trueDistance(Dungeon.hero.pos, dest) > Dungeon.level.trueDistance(Dungeon.hero.pos, cell+i)){
+                    dest = cell+i;
+                }
+            }
+
+        }
+
+        if (dest == -1 || PathFinder.distance[dest] == Integer.MAX_VALUE || Dungeon.hero.rooted){
+            GLog.w(Messages.get(this, "out_of_reach"));
+            return;
+        }
+
+        Dungeon.hero.pos = dest;
+        Dungeon.level.occupyCell(Dungeon.hero);
+        //prevents the hero from being interrupted by seeing new enemies
+        Dungeon.observe();
+        GameScene.updateFog();
+        Dungeon.hero.checkVisibleMobs();
+
+        Dungeon.hero.sprite.place( Dungeon.hero.pos );
+        Dungeon.hero.sprite.turnTo( Dungeon.hero.pos, cell);
+        CellEmitter.get( Dungeon.hero.pos ).burst( Speck.factory( Speck.WOOL ), 6 );
+        Sample.INSTANCE.play( Assets.Sounds.PUFF );
+
     }
 
 	@Override
