@@ -242,7 +242,9 @@ public class Tilemap extends Visual {
 			buffer.delete();
 	}
 
+	//检查指定位置的瓦片是否需要渲染
 	protected boolean needsRender(int pos){
-		return data[pos] >= 0;
+		//添加空值检查，防止data数组为null时的空指针异常
+		return data != null && pos >= 0 && pos < data.length && data[pos] >= 0;
 	}
-}
+}
