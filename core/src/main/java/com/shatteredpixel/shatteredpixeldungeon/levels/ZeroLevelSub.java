@@ -2,8 +2,9 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Room404;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
-import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -17,8 +18,13 @@ import com.watabou.utils.Bundle;
 
 public class ZeroLevelSub extends Level {
     private static final int SIZE = 17;
+    private static final int WIDTH = SIZE;
+    private static final int HEIGHT = SIZE;
     private static final int TEMP_MIN = 2;
     private static final int TEMP_MAX = SIZE - 3;
+
+    public static final int toForwardCamp = (TEMP_MIN + 1) * WIDTH + (SIZE - 3);
+    public static final int toRoom404     = (TEMP_MIN + 1) * WIDTH + (TEMP_MAX - 1);
 
     @Override
     public String tilesTex() {
@@ -30,53 +36,25 @@ public class ZeroLevelSub extends Level {
         return Assets.Environment.WATER_HALLS;
     }
 
-    public static class UpStairsTrigger extends Trigger {
-        @Override
-        public boolean canInteract(Char ch) {
-            return Dungeon.hero == ch && Dungeon.level.adjacent(pos, ch.pos);
-        }
-
-        @Override
-        public void activate(Char ch) {
-            try {
-                Dungeon.saveAll();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            InterlevelScene.mode = InterlevelScene.Mode.ACCESS;
-            InterlevelScene.accessLevelId = 0;
-            InterlevelScene.accessPos = -2;
-            Game.switchScene(InterlevelScene.class);
-        }
-
-        public Trigger create(int pos) {
-            this.pos = pos;
-            return this;
+    // 获取地块的名字
+    @Override
+    public String tileName(int tile) {
+        switch (tile) {
+            case Terrain.SIGN:
+                return "";
+            default:
+                return super.tileName( tile );
         }
     }
 
-    public static class DownStairsTrigger extends Trigger {
-        @Override
-        public boolean canInteract(Char ch) {
-            return Dungeon.hero == ch && Dungeon.level.adjacent(pos, ch.pos);
-        }
-
-        @Override
-        public void activate(Char ch) {
-            try {
-                Dungeon.saveAll();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            InterlevelScene.mode = InterlevelScene.Mode.ACCESS;
-            InterlevelScene.accessLevelId = 1001;
-            InterlevelScene.accessPos = -2;
-            Game.switchScene(InterlevelScene.class);
-        }
-
-        public Trigger create(int pos) {
-            this.pos = pos;
-            return this;
+    // 获取地块的描述
+    @Override
+    public String tileDesc(int tile) {
+        switch (tile) {
+            case Terrain.SIGN:
+                return "";
+            default:
+                return super.tileDesc( tile );
         }
     }
 
@@ -95,14 +73,12 @@ public class ZeroLevelSub extends Level {
         exit = center * width() + center;
 
         // 添加向上的楼梯
-        int stairsUp = (SIZE - 3) * width() + (SIZE - 3);
-        map[stairsUp] = Terrain.EXIT;
-        placeTrigger(new UpStairsTrigger().create(stairsUp));
+        map[toForwardCamp] = Terrain.DOOR;
+        placeTrigger(new Teleporter().create(toForwardCamp,ZeroLevel.toZeroLevelSub,0));
 
-        // 添加向下的楼梯到404房间（右上角位置）
-        int stairsDown = (TEMP_MIN + 1) * width() + (TEMP_MAX - 1);
-        map[stairsDown] = Terrain.DOOR;
-        placeTrigger(new DownStairsTrigger().create(stairsDown));
+        // 添加向下的楼梯到404房间(右上角位置)
+        map[toRoom404] = Terrain.DOOR;
+        placeTrigger(new Teleporter().create(toRoom404,Room404.toZeroLevelSub,2000));
 
         CustomTilemap customBottomTile = new CustomBottomTile();
         customBottomTile.setRect(0, 0, width(), height());

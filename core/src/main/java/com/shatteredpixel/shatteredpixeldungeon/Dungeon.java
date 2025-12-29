@@ -332,7 +332,7 @@ public class Dungeon {
 		case 1000:
 			level = new ZeroLevelSub();
 			break;
-		case 1001:
+		case 2000:
 			level = new Room404();
 			break;
 		default:

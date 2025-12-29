@@ -2,7 +2,8 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -13,11 +14,11 @@ import com.watabou.noosa.Tilemap;
 import com.watabou.utils.Bundle;
 
 public class Room404 extends Level {
-    private static final int SIZE = 10;
-    private static final int WIDTH = SIZE;
-    private static final int HEIGHT = SIZE;
-    private static final int TEMP_MIN = 1;
-    private static final int TEMP_MAX = SIZE - 2;
+    private static final int WIDTH = 10;
+    private static final int HEIGHT = 11;
+
+    // 定义了传送触发器的位置
+    public static final int toZeroLevelSub = (HEIGHT-2)*WIDTH+(WIDTH-3);
 
     @Override
     public String tilesTex() {
@@ -29,28 +30,25 @@ public class Room404 extends Level {
         return Assets.Environment.WATER_HALLS;
     }
 
-    public static class UpStairsTrigger extends Trigger {
-        @Override
-        public boolean canInteract(Char ch) {
-            return Dungeon.hero == ch && Dungeon.level.adjacent(pos, ch.pos);
+    // 获取地块的名字
+    @Override
+    public String tileName(int tile) {
+        switch (tile) {
+            case Terrain.SIGN:
+                return "";
+            default:
+                return super.tileName( tile );
         }
+    }
 
-        @Override
-        public void activate(Char ch) {
-            try {
-                Dungeon.saveAll();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-            InterlevelScene.mode = InterlevelScene.Mode.ACCESS;
-            InterlevelScene.accessLevelId = 1000;
-            InterlevelScene.accessPos = -2;
-            Game.switchScene(InterlevelScene.class);
-        }
-
-        public Trigger create(int pos) {
-            this.pos = pos;
-            return this;
+    // 获取地块的描述
+    @Override
+    public String tileDesc(int tile) {
+        switch (tile) {
+            case Terrain.SIGN:
+                return "";
+            default:
+                return super.tileDesc( tile );
         }
     }
 
@@ -64,13 +62,12 @@ public class Room404 extends Level {
         buildFlagMaps();
         cleanWalls();
 
-        entrance = (SIZE - 2) * width() + (SIZE - 3);
-        exit = (SIZE - 2) * width() + (SIZE - 3);
+        entrance = (HEIGHT - 2) * width() + (WIDTH - 3);
+        exit = entrance;
         //进入404小屋时的位置设置到上楼楼梯处
 
-        // 添加向上的楼梯（连接回ZeroLevelSub）
-        int stairsUp = (SIZE - 1) * width() + (SIZE - 3);
-        placeTrigger(new UpStairsTrigger().create(stairsUp));
+        // 添加向上的楼梯(连接回ZeroLevelSub)
+        placeTrigger(new Teleporter().create(toZeroLevelSub,ZeroLevelSub.toRoom404,1000));
 
         // 添加底部覆盖贴图
         CustomTilemap customBottomTile = new CustomBottomTile();
@@ -88,8 +85,8 @@ public class Room404 extends Level {
     public static class CustomBottomTile extends CustomTilemap {
         {
             texture = Assets.Environment.ROOM;
-            tileW = SIZE;
-            tileH = SIZE;
+            tileW = HEIGHT;
+            tileH = WIDTH;
         }
 
         @Override
@@ -108,8 +105,8 @@ public class Room404 extends Level {
     public static class CustomWallTile extends CustomTilemap {
         {
             texture = Assets.Environment.ROOM404_1;
-            tileW = SIZE;
-            tileH = SIZE;
+            tileW = HEIGHT;
+            tileH = WIDTH;
         }
 
         @Override
@@ -172,21 +169,20 @@ public class Room404 extends Level {
     // 地形类型常量
     private static final int W = Terrain.WALL;
     private static final int e = Terrain.EMPTY;
-    private static final int eW = Terrain.ZERO_WALL;
-    private static final int X = Terrain.EXIT;
+    private static final int Z = Terrain.SIGN;
     
     // 硬编码的地图数组
-    // 10x10的房间，四周是墙，内部是空地，右下角有一个向上的楼梯
     private static final int[] MAP = {
-        W,  W,  W,  W,  W,  W,  W,  W,  W,  W,
-        W,  W,  W,  W,  W,  W,  W,  W,  W,  W,
-        W, eW, eW, eW, eW, eW, eW, eW, eW,  W,
-        W, eW, eW, eW, eW,  e, eW, eW, eW,  W,
-        W,  e,  e,  e, eW,  e,  e,  e, eW,  W,
-        W, eW, eW,  e, eW,  e,  e,  e,  e,  W,
-        W, eW, eW,  e,  e,  e,  e,  e,  e,  W,
-        W,  e,  e,  e,  e,  e,  e,  e,  e,  W,
-        W,  e,  e,  e,  e,  e,  e,  e,  e,  W,
-        W,  W,  W,  W,  W,  W,  W,  X,  W,  W
+        W, W, W, W, W, W, W, W, W, W,
+        W, W, W, W, W, W, W, W, W, W,
+        W, Z, Z, Z, Z, Z, Z, Z, Z, W,
+        W, Z, Z, Z, Z, e, Z, Z, Z, W,
+        W, e, e, e, Z, e, e, e, Z, W,
+        W, Z, Z, e, Z, e, e, e, e, W,
+        W, Z, Z, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, W, W, W, W, W, W, e, W, W,
+        W, W, W, W, W, W, W, Z, W, W
     };
 }
