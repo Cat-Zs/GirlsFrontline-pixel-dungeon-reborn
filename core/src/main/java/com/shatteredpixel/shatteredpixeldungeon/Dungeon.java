@@ -169,8 +169,14 @@ public class Dungeon {
 
 	public static Hero hero;
     public static int mobRan;
+    public static boolean ArmorLock;
+    public static boolean ArtifactLock;
+    public static boolean WandLock;
     public static void resetTest(){
         mobRan = 2;
+        ArmorLock = false;
+        ArtifactLock = false;
+        WandLock = false;
     }
 	public static Level level;
     static final Calendar calendar = Calendar.getInstance();

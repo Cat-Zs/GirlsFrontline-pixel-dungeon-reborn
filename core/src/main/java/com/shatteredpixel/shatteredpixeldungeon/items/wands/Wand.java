@@ -71,7 +71,8 @@ public abstract class Wand extends Item {
 	public int maxCharges = initialCharges();
 	public int curCharges = maxCharges;
 	public float partialCharge = 0f;
-	
+    public int chargeRem = 0;
+	public boolean lockcharge;
 	protected Charger charger;
 	
 	public boolean curChargeKnown = false;
@@ -258,6 +259,12 @@ public abstract class Wand extends Item {
 		if (Dungeon.hero.subClass == HeroSubClass.BATTLEMAGE){
 			desc += "\n\n" + Messages.get(this, "bmage_desc");
 		}
+        if(Dungeon.WandLock||lockcharge)
+            desc += "\n";
+        if(Dungeon.WandLock)
+            desc += "\n所有子弹充能已被锁定为满充能。";
+        if(lockcharge)
+            desc += "\n该子弹充能已被锁定为_ " + chargeRem + " _点。";
 
 		return desc;
 	}
@@ -666,7 +673,11 @@ public abstract class Wand extends Item {
 			}
 			
 			spend( TICK );
-			
+
+            if(Dungeon.WandLock)
+                curCharges = maxCharges;
+            if(lockcharge)
+                curCharges = chargeRem;
 			return true;
 		}
 
