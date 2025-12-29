@@ -27,6 +27,9 @@ import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.energy;
 
 import java.io.IOException;
 
+// 导入Messages类
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+
 // 零层(ZeroLevel) - 游戏的起始房间或特殊房间
 public class ZeroLevel extends Level {
 	// 房间尺寸常量，宽16格，高10格
@@ -66,7 +69,7 @@ public class ZeroLevel extends Level {
 		W, e, e, e, Z, Z, C, C, C, Z, Z, e, e, e, e, W,
 		W, e, e, e, e, e, C, C, C, e, e, e, e, e, e, W,
 		W, Z, Z, e, e, e, e, e, e, e, e, e, e, e, Z, W,
-		W, W, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, Z, W,
+		W, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, Z, W,
 		W, W, W, W, W, W, W, W, W, W, W, W, W, Z, W, W,
 	};
 
@@ -184,17 +187,17 @@ public class ZeroLevel extends Level {
 		@Override
 		public String name(int tileX, int tileY) {
 			if      ((tileY*WIDTH+tileX)==computerPos0){
-				return "电脑";
+				return Messages.get(this, "computer0.name");
 			}else if((tileY*WIDTH+tileX)==computerPos1){
-				return "电脑";
+				return Messages.get(this, "computer1.name");
 			}else if((tileY*WIDTH+tileX)==computerPos2){
-				return "电脑";
+				return Messages.get(this, "computer2.name");
 			}else if((tileY*WIDTH+tileX)==computerPos3){
-				return "电脑";
+				return Messages.get(this, "computer3.name");
 			}else if((tileY*WIDTH+tileX)==computerPos4){
-				return "电脑";
+				return Messages.get(this, "computer4.name");
 			}else if((tileY*WIDTH+tileX)==computerPos5){
-				return "电脑";
+				return Messages.get(this, "computer5.name");
 			}
 
 			return super.name(tileX, tileY);
@@ -204,17 +207,17 @@ public class ZeroLevel extends Level {
 		@Override
 		public String desc(int tileX, int tileY) {
 			if      ((tileY*WIDTH+tileX)==computerPos0){
-				return "电脑的左上角";
+				return Messages.get(this, "computer0.desc");
 			}else if((tileY*WIDTH+tileX)==computerPos1){
-				return "电脑的正上方";
+				return Messages.get(this, "computer1.desc");
 			}else if((tileY*WIDTH+tileX)==computerPos2){
-				return "电脑的右上角";
+				return Messages.get(this, "computer2.desc");
 			}else if((tileY*WIDTH+tileX)==computerPos3){
-				return "电脑的左下角";
+				return Messages.get(this, "computer3.desc");
 			}else if((tileY*WIDTH+tileX)==computerPos4){
-				return "电脑的正下方";
+				return Messages.get(this, "computer4.desc");
 			}else if((tileY*WIDTH+tileX)==computerPos5){
-				return "电脑的右下角";
+				return Messages.get(this, "computer5.desc");
 			}
 
 			return super.desc(tileX, tileY);
