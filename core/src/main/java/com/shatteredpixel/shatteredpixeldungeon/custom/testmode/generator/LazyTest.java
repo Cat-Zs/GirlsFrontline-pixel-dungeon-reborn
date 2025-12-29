@@ -151,6 +151,8 @@ public class LazyTest extends TestGenerator {
             hero.STR=16;
             new PotionOfExperience().apply(hero);
             hero.lvl=40;
+            hero.attackSkill = 10+40-1;
+            hero.defenseSkill = 5+40-1;
             hero.updateHT( true );
 
             RingOfAccuracy roa = new RingOfAccuracy();
