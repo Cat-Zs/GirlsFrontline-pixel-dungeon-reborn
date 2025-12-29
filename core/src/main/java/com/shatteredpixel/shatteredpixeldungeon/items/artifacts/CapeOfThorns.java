@@ -78,6 +78,7 @@ public class CapeOfThorns extends Artifact {
 
 		@Override
 		public boolean act(){
+            lockcha();
 			if (cooldown > 0) {
 				cooldown--;
 				if (cooldown == 0) {

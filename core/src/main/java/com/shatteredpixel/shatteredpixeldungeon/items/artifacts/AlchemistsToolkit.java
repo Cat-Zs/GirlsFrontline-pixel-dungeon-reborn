@@ -212,7 +212,7 @@ public class AlchemistsToolkit extends Artifact {
 
 		@Override
 		public boolean act() {
-
+            lockcha();
 			if (warmUpDelay > 0){
 				if (level() == 10){
 					warmUpDelay = 0;

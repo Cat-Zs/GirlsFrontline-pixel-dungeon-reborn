@@ -252,6 +252,7 @@ public class TalismanOfForesight extends Artifact {
 
 		@Override
 		public boolean act() {
+            lockcha();
 			spend( TICK );
 
 			boolean smthFound = false;

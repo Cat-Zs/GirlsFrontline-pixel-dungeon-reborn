@@ -288,6 +288,8 @@ public class EtherealChains extends Artifact {
 		@Override
 		public boolean act() {
 			int chargeTarget = 5+(level()*2);
+            chargeMax = chargeTarget;
+            lockcha();
 			LockedFloor lock = target.buff(LockedFloor.class);
 			if (charge < chargeTarget && !cursed && (lock == null || lock.regenOn())) {
 				//gains a charge in 40 - 2*missingCharge turns

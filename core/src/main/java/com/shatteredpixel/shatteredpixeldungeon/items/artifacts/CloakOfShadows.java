@@ -218,6 +218,7 @@ public class CloakOfShadows extends Artifact {
 	public class cloakRecharge extends ArtifactBuff{
 		@Override
 		public boolean act() {
+            lockcha();
 			if (charge < chargeCap) {
 				LockedFloor lock = target.buff(LockedFloor.class);
 				if (activeBuff == null && (lock == null || lock.regenOn())) {
@@ -295,6 +296,7 @@ public class CloakOfShadows extends Artifact {
 
 		@Override
 		public boolean act(){
+            lockcha();
 			turnsToCost--;
 
 			//barrier every 2/1 turns, to a max of 3/5

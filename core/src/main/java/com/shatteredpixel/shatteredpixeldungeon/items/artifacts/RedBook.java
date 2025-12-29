@@ -211,6 +211,7 @@ public class RedBook extends Artifact{
     public class BookRecharge extends ArtifactBuff{
         @Override
         public boolean act() {
+            lockcha();
             LockedFloor lock = target.buff(LockedFloor.class);
             if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
                 //110 turns to charge at full, 30 turns to charge at 0/10

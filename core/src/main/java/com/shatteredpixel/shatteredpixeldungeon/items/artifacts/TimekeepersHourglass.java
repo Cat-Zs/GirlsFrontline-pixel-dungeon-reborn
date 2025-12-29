@@ -220,6 +220,7 @@ public class TimekeepersHourglass extends Artifact {
 	public class hourglassRecharge extends ArtifactBuff {
 		@Override
 		public boolean act() {
+            lockcha();
 
 			LockedFloor lock = target.buff(LockedFloor.class);
 			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
@@ -322,6 +323,7 @@ public class TimekeepersHourglass extends Artifact {
 		ArrayList<Integer> presses = new ArrayList<>();
 
 		public void processTime(float time){
+            lockcha();
 			turnsToCost -= time;
 
 			//use 1/1,000 to account for rounding errors
