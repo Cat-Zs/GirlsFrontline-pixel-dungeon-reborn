@@ -359,6 +359,10 @@ public class GolyatFactory extends Mob {
 		}
 		
 		public static class FactoryGolyatSprite extends GolyatSprite{
+            {
+                resizing = Random.Float(0.5f,1.5f);
+                scale.set((float) Math.sqrt(resizing));
+            }
 			
 			public FactoryGolyatSprite(){
 				super();
