@@ -73,6 +73,7 @@ public class RedBook extends Artifact{
             updateQuickslot();
             // 不消耗回合
         }
+        lockchB();
     }
 
     private CellSelector.Listener targeter = new CellSelector.Listener(){

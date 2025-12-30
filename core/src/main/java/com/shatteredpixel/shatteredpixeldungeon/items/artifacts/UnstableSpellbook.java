@@ -173,6 +173,7 @@ public class UnstableSpellbook extends Artifact {
 		} else if (action.equals( AC_ADD )) {
 			GameScene.selectItem(itemSelector);
 		}
+        lockchB();
 	}
 
 	//forces the reading of a regular scroll if the player tried to exploit by quitting the game when the menu was up

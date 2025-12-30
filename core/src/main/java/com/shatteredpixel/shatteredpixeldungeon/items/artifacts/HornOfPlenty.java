@@ -139,6 +139,7 @@ public class HornOfPlenty extends Artifact {
 			GameScene.selectItem(itemSelector);
 
 		}
+        lockchB();
 	}
 
 	@Override

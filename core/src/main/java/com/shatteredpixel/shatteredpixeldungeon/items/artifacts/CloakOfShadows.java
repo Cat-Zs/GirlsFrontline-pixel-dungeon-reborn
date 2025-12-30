@@ -105,6 +105,7 @@ public class CloakOfShadows extends Artifact {
 			}
 
 		}
+        lockchB();
 	}
 
 	@Override

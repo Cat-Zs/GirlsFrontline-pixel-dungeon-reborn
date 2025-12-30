@@ -133,6 +133,7 @@ public class AlchemistsToolkit extends Artifact {
 				});
 			}
 		}
+        lockchB();
 
 		updateQuickslot();
 	}

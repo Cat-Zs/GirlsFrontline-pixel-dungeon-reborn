@@ -103,6 +103,7 @@ public class EtherealChains extends Artifact {
 			}
 
 		}
+        lockchB();
 	}
 
 	private CellSelector.Listener caster = new CellSelector.Listener(){

@@ -97,6 +97,7 @@ public class MasterThievesArmband extends Artifact {
 			}
 
 		}
+        lockchB();
 	}
 
 	private CellSelector.Listener targeter = new CellSelector.Listener(){

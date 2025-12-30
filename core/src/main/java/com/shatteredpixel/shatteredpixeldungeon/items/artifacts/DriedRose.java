@@ -195,6 +195,7 @@ public class DriedRose extends Artifact {
 		} else if (action.equals(AC_OUTFIT)){
 			GameScene.show( new WndGhostHero(this) );
 		}
+        lockchB();
 	}
 	
 	public int ghostStrength(){

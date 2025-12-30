@@ -220,6 +220,25 @@ public class Artifact extends KindofMisc {
 	public void charge(Hero target, float amount){
 		//do nothing by default;
 	}
+    public void lockchB() {
+        if(Dungeon.ArtifactLock){
+            if(Artifact.this.chargeCap>0){
+                Artifact.this.charge=Artifact.this.chargeCap;
+            }
+            if(Artifact.this.chargeMax>0){
+                Artifact.this.charge=Artifact.this.chargeMax;
+            }
+        }
+        if(lockcharge){
+            Artifact.this.charge=Artifact.this.chargeRem;
+        }
+        updateQuickslot();
+    }
+    @Override
+    public void execute( Hero hero, String action ) {
+        super.execute( hero, action );
+        lockchB();
+    }
 
 	public class ArtifactBuff extends Buff {
 
@@ -235,17 +254,7 @@ public class Artifact extends KindofMisc {
 			Artifact.this.charge(target, amount);
 		}
         public void lockcha() {
-            if(Dungeon.ArtifactLock){
-                if(Artifact.this.chargeCap>0){
-                    Artifact.this.charge=Artifact.this.chargeCap;
-                }
-                if(Artifact.this.chargeMax>0){
-                    Artifact.this.charge=Artifact.this.chargeMax;
-                }
-            }
-            if(lockcharge){
-                Artifact.this.charge=Artifact.this.chargeRem;
-            }
+            lockchB();
         }
 
 	}

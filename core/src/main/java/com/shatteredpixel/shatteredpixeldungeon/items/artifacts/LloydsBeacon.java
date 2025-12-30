@@ -189,6 +189,7 @@ public class LloydsBeacon extends Artifact {
 			
 			
 		}
+        lockchB();
 	}
 
 	protected CellSelector.Listener zapper = new  CellSelector.Listener() {

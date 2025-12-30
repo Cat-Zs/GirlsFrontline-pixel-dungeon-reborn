@@ -122,6 +122,7 @@ public class TimekeepersHourglass extends Artifact {
 						}
 				);
 		}
+        lockchB();
 	}
 
 	@Override

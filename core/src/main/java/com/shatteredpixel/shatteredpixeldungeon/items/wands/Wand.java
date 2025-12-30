@@ -114,6 +114,7 @@ public abstract class Wand extends Item {
 			GameScene.selectCell( zapper );
 			
 		}
+        WandLock();
 	}
 
 	@Override
@@ -557,6 +558,13 @@ public abstract class Wand extends Item {
 			return "";
 		}
 	}
+    public void WandLock(){
+        if(Dungeon.WandLock)
+            curCharges = maxCharges;
+        if(lockcharge)
+            curCharges = chargeRem;
+        updateQuickslot();
+    }
 	
 	protected static CellSelector.Listener zapper = new  CellSelector.Listener() {
 		
@@ -673,11 +681,7 @@ public abstract class Wand extends Item {
 			}
 			
 			spend( TICK );
-
-            if(Dungeon.WandLock)
-                curCharges = maxCharges;
-            if(lockcharge)
-                curCharges = chargeRem;
+            WandLock();
 			return true;
 		}
 
