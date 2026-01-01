@@ -214,6 +214,10 @@ public class Dungeon {
 	}
 
 	public static void init(String seedCode,int paramChallenges) {
+        if(Game.lockXMAS){
+            Game.lockXMAS = false;
+            lockXMAS = true;
+        }
 
 		version = Game.versionCode;
 		challenges = paramChallenges;
