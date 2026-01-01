@@ -25,11 +25,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -41,6 +43,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
@@ -60,12 +64,12 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.LastLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Room404;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.SewerLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Room404;
-import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SpecialRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -87,7 +91,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashSet;
-import java.util.Objects;
 
 public class Dungeon {
 	//enum of items which have limited spawns, records how many have spawned
@@ -177,6 +180,7 @@ public class Dungeon {
         ArmorLock = false;
         ArtifactLock = false;
         WandLock = false;
+        Hunger.minlevel = 0;
     }
 	public static Level level;
     static final Calendar calendar = Calendar.getInstance();
@@ -276,7 +280,14 @@ public class Dungeon {
 		Generator.fullReset();
 		hero = new Hero();
 		hero.live();
-		
+        if(hero.heroClass==HeroClass.TYPE561) {
+            Hunger.minlevel = -100;
+            for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
+                if (Generator.Category.FOOD.classes[j] == Food.class || Generator.Category.FOOD.classes[j] == SaltyZongzi.class) {
+                    Generator.Category.FOOD.probs[j] = 2;
+                }
+            }
+        }
 		Badges.reset();
 		
 		GamesInProgress.selectedClass.initHero( hero );
@@ -712,9 +723,17 @@ public class Dungeon {
 		}
 		
 		Notes.restoreFromBundle( bundle );
-		
+
 		hero = null;
 		hero = (Hero)bundle.get( HERO );
+        if(hero.heroClass== HeroClass.TYPE561){
+            Hunger.minlevel = -100;
+            for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
+                if (Generator.Category.FOOD.classes[j] == Food.class || Generator.Category.FOOD.classes[j] == SaltyZongzi.class) {
+                    Generator.Category.FOOD.probs[j] = 2;
+                }
+            }
+        }
 		depth = bundle.getInt( DEPTH );
 
 		gold = bundle.getInt( GOLD );

@@ -49,6 +49,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.MysteryMeat;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Choco;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.XMasSugar;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
@@ -478,9 +479,10 @@ public class Generator {
 					Pasty.class,
 					MysteryMeat.class,
 					Maccol.class,
-                    XMasSugar.class
+                    XMasSugar.class,
+                    SaltyZongzi.class
             };
-			FOOD.probs = new float[]{ 4, 0, Dungeon.isXMAS()?0:1, 0, 0, Dungeon.isXMAS()?1:0 };
+			FOOD.probs = new float[]{ 4, 0, HolidayDiff(Pasty.class), 0, 0, HolidayDiff(XMasSugar.class) ,0};
 			
 			RING.classes = new Class<?>[]{
 					RingOfAccuracy.class,
@@ -515,6 +517,11 @@ public class Generator {
 			ARTIFACT.probs = ARTIFACT.defaultProbs.clone();
 		}
 	}
+    private static int HolidayDiff(Class food){
+        if(food == Food.SummonPasty().getClass())
+            return 1;
+        else return 0;
+    }
 
 	private static final float[][] WeaponTierProbs = new float[][]{
 			{0, 63, 20, 12,  2,  3},

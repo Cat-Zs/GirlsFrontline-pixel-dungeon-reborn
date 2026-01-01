@@ -264,8 +264,12 @@ public class Hero extends Char {
 		}
 		
 		Hunger hunger = buff(Hunger.class);
-		if (hunger != null && hunger.isStarving() && heroClass == HeroClass.TYPE561 && STR >= 13){
-			strBonus -= 1;
+		if (hunger != null && heroClass == HeroClass.TYPE561 ){
+            if( !hunger.isHungry()){
+                strBonus +=1;
+            }else if (hunger.isStarving() && STR >= 13) {
+                strBonus -= 1;
+            }
 		}
 
 
