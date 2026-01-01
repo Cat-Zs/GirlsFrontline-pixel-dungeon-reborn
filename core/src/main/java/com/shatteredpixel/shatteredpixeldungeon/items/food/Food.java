@@ -140,7 +140,20 @@ public class Food extends Item {
 
 		Buff.affect(hero, Hunger.class).satisfy(buffedEnergy);
 	}
-	
+
+    public static void satisfy( Hero hero ,float buffedEnergy ,boolean ign_NICE_FOOD){
+
+        if (!ign_NICE_FOOD && hero.hasTalent(Talent.NICE_FOOD) && hero.isStarving()) {
+            buffedEnergy += 50f * hero.pointsInTalent(Talent.NICE_FOOD);
+        }
+
+        if (Dungeon.isChallenged(Challenges.NO_FOOD)){
+            buffedEnergy/=3f;
+        }
+
+        Buff.affect(hero, Hunger.class).satisfy(buffedEnergy);
+    }
+
 	@Override
 	public boolean isUpgradable() {
 		return false;

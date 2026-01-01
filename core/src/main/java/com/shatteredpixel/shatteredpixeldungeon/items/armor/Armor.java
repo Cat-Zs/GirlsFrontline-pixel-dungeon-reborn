@@ -21,16 +21,21 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.armor;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EquipLevelUp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.type561.Type56FourTwo;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
@@ -386,7 +391,10 @@ public class Armor extends EquipableItem {
 	@Override
 	public int buffedLvl() {
 		if (isEquipped( Dungeon.hero ) || Dungeon.hero.belongings.contains( this )){
-			return super.buffedLvl();
+            int lvl = super.buffedLvl();
+            if (hero!=null&&hero.buff(EquipLevelUp.class) != null)
+                lvl += 1+Dungeon.hero.pointsInTalent(Talent.Type56FourTwoTwo);
+			return lvl;
 		} else {
 			return level();
 		}

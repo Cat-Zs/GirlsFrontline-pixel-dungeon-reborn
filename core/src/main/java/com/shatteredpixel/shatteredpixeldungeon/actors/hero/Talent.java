@@ -54,6 +54,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
@@ -165,6 +166,8 @@ public enum Talent {
 	SEARCH_ARMY(137, 3), ELITE_ARMY(138, 3),
     //type561 T4-1
     Type56FourOneOne(137, 4), Type56FourOneTwo(137, 4),Type56FourOneThree(137, 4),
+    //type561 T4-2
+    Type56FourTwoOne(137, 4), Type56FourTwoTwo(137, 4),Type56FourTwoThree(137, 4),
 	//pulseTrooper T3
 	SIMPLE_RELOAD(139, 3), MORE_POWER(140, 3), ENDURE_EMP(141, 3),
 	//modernReborner T3
@@ -213,7 +216,7 @@ public enum Talent {
 		public String desc() { return Messages.get(this, "desc"); }
 	};
 
-	public static class GSH18EnergizingMealTracker extends FlavourBuff{
+	public static class GSH18EnergizingMealTracker extends CounterBuff{
 		{// 设置为不会随时间自然消失，只在攻击后被移除
 			revivePersists = true;
             //这个是爆了保修后是否保留buff
@@ -344,77 +347,81 @@ public enum Talent {
 	public static class CachedRationsDropped extends CounterBuff{{revivePersists = true;}};
 	public static class NatureBerriesAvailable extends CounterBuff{{revivePersists = true;}};
 
-	public static void onFoodEaten(Hero hero,float foodVal,Item foodSource){
-		if(hero.hasTalent(HEARTY_MEAL)){
-			//3/5 HP healed, when hero is below 25% health
-			if (hero.HP <= hero.HT/4) {
-				hero.HP = Math.min(hero.HP + 1 + 2 * hero.pointsInTalent(HEARTY_MEAL), hero.HT);
-				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1+hero.pointsInTalent(HEARTY_MEAL));
-			//2/3 HP healed, when hero is below 50% health
-			} else if (hero.HP <= hero.HT/2){
-				hero.HP = Math.min(hero.HP + 1 + hero.pointsInTalent(HEARTY_MEAL), hero.HT);
-				hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), hero.pointsInTalent(HEARTY_MEAL));
-			}
-		}
-		if(hero.hasTalent(IRON_STOMACH)){
-			if (hero.cooldown() > 0) {
-				Buff.affect(hero, WarriorFoodImmunity.class, hero.cooldown());
-			}
-		}
-		if(hero.hasTalent(EMPOWERING_MEAL)){
-			//2/3 bonus wand damage for next 3 zaps
-			Buff.affect( hero, WandEmpower.class).set(1 + hero.pointsInTalent(EMPOWERING_MEAL), 3);
-			ScrollOfRecharging.chargeParticle( hero );
-		}
-		if(hero.hasTalent(ENERGIZING_MEAL)){
-			//5/8 turns of recharging
-			Buff.prolong( hero, Recharging.class, 2 + 3*(hero.pointsInTalent(ENERGIZING_MEAL)) );
-			ScrollOfRecharging.chargeParticle( hero );
-		}
-		if(hero.hasTalent(MYSTICAL_MEAL)){
-			//3/5 turns of recharging
-			ArtifactRecharge buff = Buff.affect( hero, ArtifactRecharge.class);
-			if (buff.left() < 1 + 2*(hero.pointsInTalent(MYSTICAL_MEAL))){
-				Buff.affect( hero, ArtifactRecharge.class).set(1 + 2*(hero.pointsInTalent(MYSTICAL_MEAL))).ignoreHornOfPlenty = foodSource instanceof HornOfPlenty;
-			}
-			ScrollOfRecharging.chargeParticle( hero );
-		}
-		if(hero.hasTalent(INVIGORATING_MEAL)){
-		//effectively 1/2 turns of haste
-		Buff.prolong( hero, Haste.class, 0.67f+hero.pointsInTalent(INVIGORATING_MEAL));
-	}
-	
-	// GSH18天赋：疗养一餐
-	if(hero.hasTalent(GSH18_MEAL_TREATMENT)){
-		// +1:进食恢复2点生命
-		if(hero.pointsInTalent(GSH18_MEAL_TREATMENT) >= 1){
-			hero.HP = Math.min(hero.HP + 2, hero.HT);
-			if (hero.sprite != null) {
-				Emitter e = hero.sprite.emitter();
-				if (e != null) e.burst(Speck.factory(Speck.HEALING), 2);
-			}
-		}
-		// +2:进食获得2点星之护盾值
-		if(hero.pointsInTalent(GSH18_MEAL_TREATMENT) >= 2){
-			StarShield starShield = hero.buff(StarShield.class);
-			if (starShield == null) {
-				// 如果角色还没有星之护盾buff，创建一个新的
-				starShield = Buff.affect(hero, StarShield.class);
-			}
-			starShield.incShield(2);
-			if (hero.sprite != null) {
-				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
-			}
-		}
-	}
-	// GSH18天赋：元气一餐
-	if(hero.hasTalent(GSH18_ENERGIZING_MEAL)){
-		// 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
-		if(hero.buff(Talent.GSH18EnergizingMealTracker.class) == null){
-            Buff.affect(hero, GSH18EnergizingMealTracker.class, 6666666f);
+	public static void onFoodEaten(Hero hero, float foodVal, Item foodSource) {
+        if (hero.hasTalent(HEARTY_MEAL)) {
+            //3/5 HP healed, when hero is below 25% health
+            if (hero.HP <= hero.HT / 4) {
+                hero.HP = Math.min(hero.HP + 1 + 2 * hero.pointsInTalent(HEARTY_MEAL), hero.HT);
+                hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), 1 + hero.pointsInTalent(HEARTY_MEAL));
+                //2/3 HP healed, when hero is below 50% health
+            } else if (hero.HP <= hero.HT / 2) {
+                hero.HP = Math.min(hero.HP + 1 + hero.pointsInTalent(HEARTY_MEAL), hero.HT);
+                hero.sprite.emitter().burst(Speck.factory(Speck.HEALING), hero.pointsInTalent(HEARTY_MEAL));
+            }
         }
-	}
-	}
+        if (hero.hasTalent(IRON_STOMACH)) {
+            if (hero.cooldown() > 0) {
+                Buff.affect(hero, WarriorFoodImmunity.class, hero.cooldown());
+            }
+        }
+        if (hero.hasTalent(EMPOWERING_MEAL)) {
+            //2/3 bonus wand damage for next 3 zaps
+            Buff.affect(hero, WandEmpower.class).set(1 + hero.pointsInTalent(EMPOWERING_MEAL), 3);
+            ScrollOfRecharging.chargeParticle(hero);
+        }
+        if (hero.hasTalent(ENERGIZING_MEAL)) {
+            //5/8 turns of recharging
+            Buff.prolong(hero, Recharging.class, 2 + 3 * (hero.pointsInTalent(ENERGIZING_MEAL)));
+            ScrollOfRecharging.chargeParticle(hero);
+        }
+        if (hero.hasTalent(MYSTICAL_MEAL)) {
+            //3/5 turns of recharging
+            ArtifactRecharge buff = Buff.affect(hero, ArtifactRecharge.class);
+            if (buff.left() < 1 + 2 * (hero.pointsInTalent(MYSTICAL_MEAL))) {
+                Buff.affect(hero, ArtifactRecharge.class).set(1 + 2 * (hero.pointsInTalent(MYSTICAL_MEAL))).ignoreHornOfPlenty = foodSource instanceof HornOfPlenty;
+            }
+            ScrollOfRecharging.chargeParticle(hero);
+        }
+        if (hero.hasTalent(INVIGORATING_MEAL)) {
+            //effectively 1/2 turns of haste
+            Buff.prolong(hero, Haste.class, 0.67f + hero.pointsInTalent(INVIGORATING_MEAL));
+        }
+
+        // GSH18天赋：疗养一餐
+        if (hero.hasTalent(GSH18_MEAL_TREATMENT)) {
+            // +1:进食恢复2点生命
+            if (hero.pointsInTalent(GSH18_MEAL_TREATMENT) >= 1) {
+                hero.HP = Math.min(hero.HP + 2, hero.HT);
+                if (hero.sprite != null) {
+                    Emitter e = hero.sprite.emitter();
+                    if (e != null) e.burst(Speck.factory(Speck.HEALING), 2);
+                }
+            }
+            // +2:进食获得2点星之护盾值
+            if (hero.pointsInTalent(GSH18_MEAL_TREATMENT) >= 2) {
+                StarShield starShield = hero.buff(StarShield.class);
+                if (starShield == null) {
+                    // 如果角色还没有星之护盾buff，创建一个新的
+                    starShield = Buff.affect(hero, StarShield.class);
+                }
+                starShield.incShield(2);
+                if (hero.sprite != null) {
+                    hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
+                }
+            }
+        }
+        // GSH18天赋：元气一餐
+        if (hero.hasTalent(GSH18_ENERGIZING_MEAL)) {
+            // 进食后添加buff，用于跟踪下次攻击必定命中和增加攻击范围
+            if (hero.buff(Talent.GSH18EnergizingMealTracker.class) == null) {
+                Buff.count(hero, GSH18EnergizingMealTracker.class, 1);
+            }
+        }
+        //561二阶吃饭天赋
+        if(Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS))
+            Food.satisfy(hero , 10+20*Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS) ,true);
+
+    }
 
 	public static class WarriorFoodImmunity extends FlavourBuff{
 		{ actPriority = HERO_PRIO+1; }
