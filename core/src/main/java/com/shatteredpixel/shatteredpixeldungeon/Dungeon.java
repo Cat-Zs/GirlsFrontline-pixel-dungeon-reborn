@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Awareness;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
@@ -182,6 +183,15 @@ public class Dungeon {
         WandLock = false;
         Hunger.minlevel = 0;
     }
+    public static void resetGenerator(){
+        for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
+            if (Generator.Category.FOOD.classes[j] == Food.class ) {
+                Generator.Category.FOOD.probs[j] = 4;
+            }else if( Generator.Category.FOOD.classes[j] == SaltyZongzi.class){
+                Generator.Category.FOOD.probs[j] = 0;
+            }
+        }
+    }
 	public static Level level;
     static final Calendar calendar = Calendar.getInstance();
     public static boolean isXMAS(){
@@ -235,14 +245,18 @@ public class Dungeon {
 	
 		Actor.clear();
 		Actor.resetNextID();
-		
+
+        resetGenerator();
+        //按理说这种权重会变动的生成表，理应在生成器中设置成标准表，然后再进行复制的，
+        //但考虑到节日食物的生成权重会跟随日期动态变化，终归还是要有一个来到这里在创建/读取存档的时机重置
+        //重置节日食物要在创建、读取的时候修改，而重置受影响食物只需要在创建处修改，所以选择重置受影响食物
 		Random.pushGenerator( seed );
 	
 			Scroll.initLabels();
 			Potion.initColors();
 			Ring.initGems();
             resetTest();
-	
+
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
 	
@@ -280,6 +294,9 @@ public class Dungeon {
 		Generator.fullReset();
 		hero = new Hero();
 		hero.live();
+		Badges.reset();
+		
+		GamesInProgress.selectedClass.initHero( hero );
         if(hero.heroClass==HeroClass.TYPE561) {
             Hunger.minlevel = -100;
             for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
@@ -287,10 +304,8 @@ public class Dungeon {
                     Generator.Category.FOOD.probs[j] = 2;
                 }
             }
+            Buff.affect(hero, Hunger.class).satisfy(100);
         }
-		Badges.reset();
-		
-		GamesInProgress.selectedClass.initHero( hero );
 	}
 
 	public static boolean isChallenged( int mask ) {
