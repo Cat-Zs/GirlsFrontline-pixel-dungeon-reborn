@@ -42,6 +42,13 @@ public class Hunger extends Buff implements Hero.Doom {
 
 	public static final float HUNGRY	= 300f;
 	public static final float STARVING	= 450f;
+    private static float minlevel(){
+        if(Dungeon.hero.heroClass == HeroClass.TYPE561)
+            return -100;
+        else
+            return 0;
+    }
+    public static float fullHunger = STARVING-minlevel();
 
 	private float level;
 	private float partialDamage;
@@ -146,8 +153,8 @@ public class Hunger extends Buff implements Hero.Doom {
 		}
 
 		level -= energy;
-		if (level < 0 && !overrideLimits) {
-			level = 0;
+		if (level < minlevel() && !overrideLimits) {
+			level = minlevel();
 		} else if (level > STARVING) {
 			float excess = level - STARVING;
 			level = STARVING;
@@ -160,6 +167,9 @@ public class Hunger extends Buff implements Hero.Doom {
 	public boolean isStarving() {
 		return level >= STARVING;
 	}
+    public boolean isHungry() {
+        return level >= HUNGRY;
+    }
 
 	public float hunger() {
 		return level;
