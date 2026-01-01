@@ -13,6 +13,7 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.EquipableItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.ClassArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.ChaliceOfBlood;
@@ -31,6 +32,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
 import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextNumberInput;
@@ -74,6 +76,8 @@ public class debugBook extends TestItem {
                 return "-"+Messages.get(this, "ac_mob");
             case 6:
                 return "-"+Messages.get(this, "ac_cha");
+            case 7:
+                return "-"+Messages.get(this, "ac_reset");
             default:
                 return "";
         }
@@ -93,6 +97,8 @@ public class debugBook extends TestItem {
                 return Messages.get(this, "mob");
             case 6:
                 return Messages.get(this, "cha",chadesc());
+            case 7:
+                return Messages.get(this, "reset");
             default:
                 return "";
         }
@@ -145,6 +151,10 @@ public class debugBook extends TestItem {
             case 6:
                 actions.add(AC_CHA);
                 defaultAction=AC_CHA;
+            case 7:
+                defaultAction=AC_APPLY;
+                break;
+
         }
         return actions;
     }
@@ -180,8 +190,12 @@ public class debugBook extends TestItem {
                     break;
                 case 5:
                     mobAPPLY();
+                    break;
                 case 6:
                     GameScene.selectItem(itemCHA);
+                    break;
+                case 7:
+                    resetLevel();
                     break;
                 case 0: default:
                     break;
@@ -245,6 +259,12 @@ public class debugBook extends TestItem {
             modeA = 6;
             defaultAction = AC_CHA;
             GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_cha")));
+            updateQuickslot();
+        }
+        else if(mode == 7){
+            modeA = 7;
+            defaultAction = AC_APPLY;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_reset")));
             updateQuickslot();
         }
         else {
@@ -602,5 +622,10 @@ public class debugBook extends TestItem {
             }
         }
         updateQuickslot();
+    }
+    private void resetLevel(){
+        InterlevelScene.returnDepth = Dungeon.depth;
+        InterlevelScene.mode = InterlevelScene.Mode.RESET;
+        Game.switchScene( InterlevelScene.class );
     }
 }
