@@ -600,8 +600,12 @@ public class Dungeon {
 	public static void saveLevel( int save ) throws IOException {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
-		
-		FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId),bundle);
+
+        if(level.FirstSave){
+            level.FirstSave = false;
+            FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId+10000),bundle);
+        }
+        FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId),bundle);
 	}
 	
 	public static void saveAll() throws IOException {
