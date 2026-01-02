@@ -44,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corrosion;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Dread;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Empulse;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FireImbue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FrostImbue;
@@ -550,6 +551,9 @@ public abstract class Char extends Actor {
 	}
 
 	public void damage( int dmg, Object src ) {
+        if (buff(Empulse.class) != null){
+            dmg+= dmg*hero.pointsInTalent(Talent.EMP_Two)/10;
+        }
 
 		if (!isAlive() || dmg < 0) {
 			return;

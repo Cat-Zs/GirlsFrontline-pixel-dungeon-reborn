@@ -23,7 +23,6 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.hero;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -32,10 +31,8 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FoodShield;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
@@ -54,17 +51,15 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun561;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Gun562;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -157,19 +152,18 @@ public enum Talent {
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
 	//Ratmogrify T4
 	RATSISTANCE(124, 4), RATLOMACY(125, 4), RATFORCEMENTS(126, 4),
-
-	//type561 T1
-	NICE_FOOD(128), OLD_SOLDIER(129), FAST_RELOAD(130), BETTER_FOOD(131),
-	//type561 T2
-	BARGAIN_SKILLS(132),TRAP_EXPERT(133),HOW_DARE_YOU(134),JIEFANGCI(135),NIGHT_EXPERT(136),
-	//type561 T3
-	SEARCH_ARMY(137, 3), ELITE_ARMY(138, 3),
+    //type561 T1
+    Type56One_FOOD(128), Type56One_Identify(129), Type56One_Heal(130), Type56One_Armor(131),
+    //type561 T2
+    Type56Two_FOOD(132),Type56Two_Upgrade(133),Type56Two_Item(134),Type56Two_Sight(135),Type56Two_Exclusive(136),
+    //type561 T3
+    Type56Three_Bomb(137, 3), Type56Three_Book(138, 3),
     //type561 T4-1
     Type56FourOneOne(137, 4), Type56FourOneTwo(137, 4),Type56FourOneThree(137, 4),
     //type561 T4-2
     Type56FourTwoOne(137, 4), Type56FourTwoTwo(137, 4),Type56FourTwoThree(137, 4),
-	//pulseTrooper T3
-	SIMPLE_RELOAD(139, 3), MORE_POWER(140, 3), ENDURE_EMP(141, 3),
+	//type561 T3-1 EMP
+	EMP_One(139, 3), EMP_Two(140, 3), EMP_Three(141, 3),
 	//modernReborner T3
 	NEWLIFE(142, 3), MORE_ACCURATE(143, 3), ENHANCE_GRENADE(144, 3),
 	
@@ -314,6 +308,14 @@ public enum Talent {
 				}
 			}
 		}
+        if (talent == Type56One_Identify && hero.pointsInTalent(Type56One_Identify) == 2){
+            for (Item item : Dungeon.hero.belongings){
+                if (item instanceof MeleeWeapon||item instanceof Armor){
+                    item.cursedKnown=true;
+                    item.updateQuickslot();
+                }
+            }
+        }
 		if (talent == THIEFS_INTUITION && hero.pointsInTalent(THIEFS_INTUITION) == 1){
 			if (hero.belongings.ring instanceof Ring) hero.belongings.ring.setKnown();
 			if (hero.belongings.misc instanceof Ring) ((Ring) hero.belongings.misc).setKnown();
@@ -328,16 +330,15 @@ public enum Talent {
 				}
 			}
 		}
-
-		if (talent == OLD_SOLDIER && hero.pointsInTalent(OLD_SOLDIER) == 2){
-			if (hero.belongings.weapon() != null) hero.belongings.weapon().identify();
-			for (Item item : Dungeon.hero.belongings){
-				if(item instanceof MeleeWeapon){
-					item.cursedKnown=true;
-					item.updateQuickslot();
-				}
-			}
-		}
+        if (talent == Type56Three_Book && hero.pointsInTalent(Type56Three_Book) == 1){
+            for (Item item : Dungeon.hero.belongings.backpack){
+                if (item instanceof RedBook){
+                    if (hero.buff(LostInventory.class) == null || item.keptThoughLostInvent) {
+                        ((RedBook) item).activate(Dungeon.hero);
+                    }
+                }
+            }
+        }
 
 		if (talent == HEIGHTENED_SENSES || talent == FARSIGHT){
 			Dungeon.observe();
@@ -345,6 +346,7 @@ public enum Talent {
 	}
 
 	public static class CachedRationsDropped extends CounterBuff{{revivePersists = true;}};
+    public static class ZongziDropped extends CounterBuff{{revivePersists = true;}};
 	public static class NatureBerriesAvailable extends CounterBuff{{revivePersists = true;}};
 
 	public static void onFoodEaten(Hero hero, float foodVal, Item foodSource) {
@@ -418,9 +420,17 @@ public enum Talent {
             }
         }
         //561二阶吃饭天赋
-        if(Dungeon.hero.hasTalent(Talent.BARGAIN_SKILLS))
-            Food.satisfy(hero , 10+20*Dungeon.hero.pointsInTalent(Talent.BARGAIN_SKILLS) ,true);
+        if(Dungeon.hero.hasTalent(Talent.Type56Two_FOOD))
+            Food.satisfy(hero , 10+20*Dungeon.hero.pointsInTalent(Talent.Type56Two_FOOD));
 
+        if(Dungeon.hero.hasTalent(Talent.Type56One_Armor)){
+            FoodShield FoodShield = hero.buff(FoodShield.class);
+            if (FoodShield == null) {
+                // 复制的星盾
+                FoodShield = Buff.affect(hero, FoodShield.class);
+            }
+            FoodShield.incShield(1+Dungeon.hero.pointsInTalent(Talent.Type56One_Armor));
+        }
     }
 
 	public static class WarriorFoodImmunity extends FlavourBuff{
@@ -433,6 +443,7 @@ public enum Talent {
 
 		// 2x/instant for Warrior (see onItemEquipped)
 		if (item instanceof MeleeWeapon || item instanceof Armor){
+            factor=1f+hero.pointsInTalent(Type56One_Identify)*0.75f;
 			factor*=1f+hero.pointsInTalent(ARMSMASTERS_INTUITION);
 		}
 		// 3x/instant for mage (see Wand.wandUsed())
@@ -442,9 +453,6 @@ public enum Talent {
 		// 2x/instant for rogue (see onItemEqupped), also id's type on equip/on pickup
 		if (item instanceof Ring){
 			factor*=1f+hero.pointsInTalent(THIEFS_INTUITION);
-		}
-		if(item instanceof MeleeWeapon){
-			factor*=1f+2*hero.pointsInTalent(OLD_SOLDIER);
 		}
 
 		return factor;
@@ -527,6 +535,15 @@ public enum Talent {
 				SpellSprite.show( hero, SpellSprite.CHARGE );
 			}
 		}
+        if (hero.hasTalent(Type56Two_Upgrade)){
+            RedBook redbook = hero.belongings.getItem(RedBook.class);
+            if (redbook != null){
+                redbook.overCharge(1 + hero.pointsInTalent(Type56Two_Upgrade), true);
+                //复制的盗贼，下面两行是粒子特效
+                ScrollOfRecharging.chargeParticle( Dungeon.hero );
+                SpellSprite.show( hero, SpellSprite.CHARGE );
+            }
+        }
 	}
 
 	public static void onArtifactUsed( Hero hero ){
@@ -546,21 +563,18 @@ public enum Talent {
 				((Ring) item).setKnown();
 			}
 		}
-		if(hero.pointsInTalent(OLD_SOLDIER)==2&&(item instanceof MeleeWeapon)){
-			item.identify();
-		}
 	}
 
 	public static void onItemCollected( Hero hero, Item item ){
 		if(hero.pointsInTalent(THIEFS_INTUITION) == 2){
 			if(item instanceof Ring) ((Ring) item).setKnown();
 		}
-		if(hero.pointsInTalent(OLD_SOLDIER)==2){
-			if(item instanceof MeleeWeapon){
-				item.cursedKnown=true;
-				item.updateQuickslot();
-			}
-		}
+        if(hero.pointsInTalent(Type56One_Identify)==2){
+            if(item instanceof MeleeWeapon||item instanceof Armor){
+                item.cursedKnown=true;
+                item.updateQuickslot();
+            }
+        }
 	}
 
 	//note that IDing can happen in alchemy scene, so be careful with VFX here
@@ -578,6 +592,10 @@ public enum Talent {
 			Buff.affect(hero, Recharging.class, 1f + hero.pointsInTalent(TESTED_HYPOTHESIS));
 			ScrollOfRecharging.chargeParticle(hero);
 		}
+        if (hero.hasTalent(Type56One_Heal)){
+            Food.satisfy(hero, 10+10*hero.pointsInTalent(Type56One_Heal));
+            Sample.INSTANCE.play( Assets.Sounds.EAT );
+        }
 	}
 
 	public static int onAttackProc( Hero hero, Char enemy, int dmg ){
@@ -597,42 +615,6 @@ public enum Talent {
 					Sample.INSTANCE.play(Assets.Sounds.HIT_STRONG, 0.75f, 1.2f);
 				}
 				enemy.buff(FollowupStrikeTracker.class).detach();
-			}
-		}
-
-		if(hero.hasTalent(HOW_DARE_YOU)){
-			float chance  =0.15f;
-			float duration=5.01f;
-
-			if(hero.pointsInTalent(HOW_DARE_YOU)>=2){
-				float enemyHealthRate=((float)enemy.HP)/((float)enemy.HT);
-				chance+=0.1f*enemyHealthRate;
-				duration+=10f*enemyHealthRate;
-			}
-
-			if(Random.Float()<chance){
-				Buff.affect(enemy,Terror.class,duration);
-			}
-		}
-
-		if(hero.hasTalent(JIEFANGCI)){
-			if(Dungeon.level.adjacent(hero.pos,enemy.pos)
-			&&(hero.belongings.weapon() instanceof Gun561
-			|| hero.belongings.weapon() instanceof Gun562)){
-				dmg+=1+4*hero.pointsInTalent(JIEFANGCI);
-				float chance=0.05f+0.1f*hero.pointsInTalent(JIEFANGCI);
-				if(Random.Float()<chance){
-					Buff.affect(enemy,Cripple.class,2f);
-				}
-			}
-		}
-
-		if(hero.hasTalent(SEARCH_ARMY)
-		&& enemy instanceof Mob){
-			if(enemy.paralysed>0){
-				dmg*=1f+(0.4f/3f)*hero.pointsInTalent(SEARCH_ARMY);
-			}else if(((Mob) enemy).surprisedBy(hero)){
-				dmg*=1f+0.1f*hero.pointsInTalent(SEARCH_ARMY);
 			}
 		}
 
@@ -747,7 +729,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, NATURES_BOUNTY, SURVIVALISTS_INTUITION, FOLLOWUP_STRIKE, NATURES_AID);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, NICE_FOOD , OLD_SOLDIER, FAST_RELOAD, BETTER_FOOD);
+				Collections.addAll(tierTalents, Type56One_FOOD , Type56One_Identify, Type56One_Heal, Type56One_Armor);
 				break;
 			case GSH18:
 				Collections.addAll(tierTalents, GSH18_MEAL_TREATMENT, GSH18_DOCTOR_INTUITION, GSH18_CLOSE_COMBAT, GSH18_STAR_SHIELD);
@@ -776,7 +758,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, RESTORED_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, BARGAIN_SKILLS, TRAP_EXPERT, HOW_DARE_YOU, JIEFANGCI, NIGHT_EXPERT);
+				Collections.addAll(tierTalents, Type56Two_FOOD, Type56Two_Upgrade, Type56Two_Item, Type56Two_Sight, Type56Two_Exclusive);
 				break;
 			case GSH18:
 				Collections.addAll(tierTalents, GSH18_ENERGIZING_MEAL, GSH18_CHAIN_SHOCK, GSH18_LOGISTICS_SUPPORT, GSH18_COMIC_HEART, GSH18_MEDICAL_COMPATIBILITY
@@ -806,7 +788,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, POINT_BLANK, SEER_SHOT);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, SEARCH_ARMY, ELITE_ARMY);
+				Collections.addAll(tierTalents, Type56Three_Bomb, Type56Three_Book);
 				break;
 			case GSH18:
 				Collections.addAll(tierTalents,GSH18_INTELLIGENCE_AWARENESS,GSH18_AGILE_MOVEMENT);
@@ -863,10 +845,10 @@ public enum Talent {
 			case WARDEN:
 				Collections.addAll(tierTalents, DURABLE_TIPS, BARKSKIN, SHIELDING_DEW);
 				break;
-			case PULSETROOPER:
-				Collections.addAll(tierTalents, SIMPLE_RELOAD, MORE_POWER, ENDURE_EMP);
+			case EMP_BOMB:
+				Collections.addAll(tierTalents, EMP_One, EMP_Two, EMP_Three);
 				break;
-			case MODERN_REBORNER:
+			case GUN_MASTER:
 				Collections.addAll(tierTalents, NEWLIFE, MORE_ACCURATE, ENHANCE_GRENADE);
 				break;
 			case THE_HEART_OF_SIRIUS:

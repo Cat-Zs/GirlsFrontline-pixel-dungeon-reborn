@@ -327,6 +327,9 @@ public class Dungeon {
 			}
 		}
 
+        if(hero.hasTalent(Talent.Type56Two_Sight)&&Random.Int(1)<1) {
+            Buff.affect(hero, MindVision.class, 3 * hero.pointsInTalent(Talent.Type56Two_Sight));
+        }
 		level.create(depth,id);
 		Statistics.qualifiedForNoKilling = !bossLevel();
 		return level;

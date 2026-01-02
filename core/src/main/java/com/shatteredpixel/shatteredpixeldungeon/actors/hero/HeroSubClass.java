@@ -42,8 +42,8 @@ public enum HeroSubClass {
 	SNIPER(HeroIcon.SNIPER),
 	WARDEN(HeroIcon.WARDEN),
 
-	PULSETROOPER(HeroIcon.PULSETROOPER),
-	MODERN_REBORNER(HeroIcon.MODERN_REBORNER),
+    EMP_BOMB(HeroIcon.EMP_BOMB),
+    GUN_MASTER(HeroIcon.GUN_MASTER),
 	
 	// GSH18子职业
 	THE_HEART_OF_SIRIUS(HeroIcon.BERSERKER), // 天狼星心脏

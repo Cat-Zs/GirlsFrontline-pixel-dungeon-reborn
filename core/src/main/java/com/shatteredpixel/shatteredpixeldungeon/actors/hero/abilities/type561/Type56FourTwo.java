@@ -47,9 +47,9 @@ public class Type56FourTwo extends ArmorAbility {
 
 	@Override
 	protected void activate(ClassArmor armor, Hero hero, Integer target) {
-        Food.satisfy(hero, 150, false);
+        Food.satisfy(hero, 150);
         if (hero.hasTalent(Talent.Type56FourTwoOne))
-            Food.satisfy(hero, 10 + 10 * hero.pointsInTalent(Talent.Type56FourTwoOne), false);
+            Food.satisfy(hero, 10 + 10 * hero.pointsInTalent(Talent.Type56FourTwoOne));
 
         int left = 50+10*hero.pointsInTalent(Talent.Type56FourTwoOne);
         if (Dungeon.isChallenged(Challenges.NO_FOOD)){

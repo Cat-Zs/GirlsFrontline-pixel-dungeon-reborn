@@ -50,6 +50,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ShieldBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StarShield;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
@@ -60,6 +61,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.ImmortalShieldAffecter;
 import com.shatteredpixel.shatteredpixeldungeon.custom.utils.Constants;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CheckedCell;
@@ -85,6 +87,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.EtherealChains;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TimekeepersHourglass;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
@@ -539,9 +542,6 @@ public class Hero extends Char {
 	
 	@Override
 	public int defenseSkill( Char enemy ) {
-		if(pointsInTalent(Talent.NIGHT_EXPERT)>=2){
-			Buff.append(this,TalismanOfForesight.CharAwareness.class,2f).charID=enemy.id();
-		}
 
 		if (buff(Combo.ParryTracker.class) != null){
 			if (canAttack(enemy)){
@@ -1659,13 +1659,15 @@ public class Hero extends Char {
 	}
 	
 	public void earnExp( int exp, Class source ) {
-		exp*=1f+2f/3f*pointsInTalent(Talent.ELITE_ARMY);
 		this.exp += exp;
 
 		float percent = exp/(float)maxExp();
 
 		EtherealChains.chainsRecharge chains = buff(EtherealChains.chainsRecharge.class);
 		if (chains != null) chains.gainExp(percent);
+
+        RedBook.BookRecharge redbook = buff(RedBook.BookRecharge.class);
+        if (redbook != null) redbook.gainExp(percent);
 
 		HornOfPlenty.hornRecharge horn = buff(HornOfPlenty.hornRecharge.class);
 		if (horn != null) horn.gainCharge(percent);
@@ -2165,13 +2167,6 @@ public class Hero extends Char {
 						//unintentional trap detection scales from 40% at floor 0 to 30% at floor 30
 						} else if (Dungeon.level.map[curr] == Terrain.SECRET_TRAP) {
 							chance=0.3f+0.1f*(1f-Dungeon.depth/30f);
-							
-							if(hasTalent(Talent.TRAP_EXPERT)){
-								chance*=1.5f;
-								if(pointsInTalent(Talent.TRAP_EXPERT)>=2){
-									chance=0.99f+chance/100f;
-								}
-							}
 						//unintentional door detection scales from 20% at floor 0 to 0% at floor 25
 						} else {
 							chance=     0.2f*(1f-Dungeon.depth/25f);
@@ -2248,7 +2243,9 @@ public class Hero extends Char {
 				((EquipableItem) i).activate(this);
 			} else if (i instanceof CloakOfShadows && i.keptThoughLostInvent && hasTalent(Talent.LIGHT_CLOAK)){
 				((CloakOfShadows) i).activate(this);
-			} else if (i instanceof Wand && i.keptThoughLostInvent){
+			} else if (i instanceof RedBook && i.keptThoughLostInvent && hasTalent(Talent.Type56Three_Book)){
+                ((RedBook) i).activate(this);
+            } else if (i instanceof Wand && i.keptThoughLostInvent){
 				if (holster != null && holster.contains(i)){
 					((Wand) i).charge(this, MagicalHolster.HOLSTER_SCALE_FACTOR);
 				} else {
