@@ -22,6 +22,8 @@
 package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
@@ -188,11 +190,7 @@ public class WndTradeItem extends WndInfoItem {
 		}
 		item.detachAll( hero.belongings.backpack );
 
-        int ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
-        if (!item.selled&&!Dungeon.level.solid[hero.pos + ofs]&&Dungeon.level.heaps.get( hero.pos + ofs ) == null && Dungeon.level.passable[hero.pos + ofs]) {
-            Dungeon.level.drop(item, hero.pos + ofs).type = Heap.Type.FOR_SALE;
-            item.selled = true;
-        }
+        SellItemPlace(item);
 
 		//selling items in the sell interface doesn't spend time
 		hero.spend(-hero.cooldown());
@@ -209,18 +207,25 @@ public class WndTradeItem extends WndInfoItem {
 			Hero hero = Dungeon.hero;
 			
 			item = item.detach( hero.belongings.backpack );
-
-            int ofs = PathFinder.NEIGHBOURS9[Random.Int(9)];
-            if (!item.selled&&!Dungeon.level.solid[hero.pos + ofs]&&Dungeon.level.heaps.get( hero.pos + ofs ) == null && Dungeon.level.passable[hero.pos + ofs]) {
-                Dungeon.level.drop(item, hero.pos + ofs).type = Heap.Type.FOR_SALE;
-                item.selled = true;
-            }
+            SellItemPlace(item);
 			//selling items in the sell interface doesn't spend time
 			hero.spend(-hero.cooldown());
 
 			new Gold( item.value() ).doPickUp( hero );
 		}
 	}
+    public static void SellItemPlace(Item item){
+        Hero hero = Dungeon.hero;
+        for(int ofs : PathFinder.NEIGHBOURS9) {
+            Char target = Actor.findChar(hero.pos + ofs);
+            if(target!=null&&target.getClass()== Shopkeeper.class)
+                continue;
+            if (!item.selled && !Dungeon.level.solid[hero.pos + ofs] && Dungeon.level.heaps.get(hero.pos + ofs) == null && Dungeon.level.passable[hero.pos + ofs]) {
+                Dungeon.level.drop(item, hero.pos + ofs).type = Heap.Type.FOR_SALE;
+                item.selled = true;
+            }
+        }
+    }
 	
 	private void buy( Heap heap ) {
 		
