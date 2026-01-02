@@ -376,16 +376,10 @@ public class debugBook extends TestItem {
         @Override
         public void onSelect( Item item ) {
             if(item != null){
-                int levela = item.level();
                 if(!(lvl > 0)){
                     lvl = 0;
                 }
-                if(levela>lvl){
-                    item.degrade(levela-lvl);
-                }
-                if(levela<lvl){
-                    item.upgrade(lvl - levela);
-                }
+                item.level(lvl);
                 Sample.INSTANCE.play( Assets.Sounds.READ );
             }
         }
