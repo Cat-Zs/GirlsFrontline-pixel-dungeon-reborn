@@ -2,30 +2,23 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
-import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevel;
-import com.shatteredpixel.shatteredpixeldungeon.levels.Room404;
+import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Tilemap;
 import com.watabou.utils.Bundle;
 
-public class ZeroLevelSub extends Level {
-    private static final int SIZE = 17;
-    private static final int WIDTH = SIZE;
-    private static final int HEIGHT = SIZE;
-    private static final int TEMP_MIN = 2;
-    private static final int TEMP_MAX = SIZE - 3;
+public class SnakeRoom extends Level {
+    private static final int WIDTH = 10;
+    private static final int HEIGHT = 10;
 
-    public static final int toForwardCamp = (TEMP_MIN + 1) * WIDTH + (SIZE - 3);
-    public static final int toRoom404     = (TEMP_MIN + 1) * WIDTH + (TEMP_MAX - 1);
-    public static final int toSnakeRoom   = toRoom404 - WIDTH;
+    // 定义了传送触发器的位置（左下角）
+    public static final int toZeroLevelSub = (HEIGHT-1)*WIDTH+1;
 
     @Override
     public String tilesTex() {
@@ -61,48 +54,69 @@ public class ZeroLevelSub extends Level {
 
     @Override
     protected boolean build() {
-        setSize(SIZE, SIZE);
+        setSize(WIDTH, HEIGHT);
+        
+        // 使用硬编码的地图
+        map = MAP.clone();
 
-        for (int i = 1; i < SIZE - 1; i++) {
-            for (int j = 1; j < SIZE - 1; j++) {
-                map[i * width() + j] = Terrain.EMPTY;
-            }
-        }
+        buildFlagMaps();
+        cleanWalls();
 
-        int center = (TEMP_MAX + TEMP_MIN) / 2;
-        entrance = center * width() + center;
-        exit = center * width() + center;
+        entrance = toZeroLevelSub;
+        exit = entrance;
 
-        // 添加向上的楼梯
-        map[toForwardCamp] = Terrain.DOOR;
-        placeTrigger(new Teleporter().create(toForwardCamp,ZeroLevel.toZeroLevelSub,0));
+        // 添加向上的楼梯(连接回ZeroLevelSub，在404传送器上方)
+        placeTrigger(new Teleporter().create(toZeroLevelSub,ZeroLevelSub.toSnakeRoom,1000));
 
-        // 添加向下的楼梯到404房间(右上角位置)
-        map[toRoom404] = Terrain.DOOR;
-        placeTrigger(new Teleporter().create(toRoom404,Room404.toZeroLevelSub,2000));
-
-        // 添加向下的楼梯到SnakeRoom(在404传送器上方)
-        map[toSnakeRoom] = Terrain.DOOR;
-        placeTrigger(new Teleporter().create(toSnakeRoom,SnakeRoom.toZeroLevelSub,3000));
-
+        // 添加底部覆盖贴图
         CustomTilemap customBottomTile = new CustomBottomTile();
         customBottomTile.setRect(0, 0, width(), height());
         customTiles.add(customBottomTile);
+        
+        // 添加墙体覆盖贴图
+        CustomTilemap customWallTile = new CustomWallTile();
+        customWallTile.setRect(0, 0, width(), height());
+        customWalls.add(customWallTile);
 
         return true;
     }
 
     public static class CustomBottomTile extends CustomTilemap {
         {
-            texture = Assets.Environment.ZERO_LEVEL;
-            tileW = SIZE;
-            tileH = SIZE;
+            texture = Assets.Environment.ROOM;
+            tileW = HEIGHT;
+            tileH = WIDTH;
         }
 
         @Override
         public Tilemap create() {
             super.create();
-            mapSimpleImage(0, 0, 24);
+            if (vis != null) {
+                // 使用mapSimpleImage方法，将texW参数设置为240（10*24）
+                // 这样每个格子会使用room.png中对应的24*24像素贴图
+                int[] data = mapSimpleImage(0, 0, 240);
+                vis.map(data, tileW);
+            }
+            return vis;
+        }
+    }
+    
+    public static class CustomWallTile extends CustomTilemap {
+        {
+            texture = Assets.Environment.ROOM404_1;
+            tileW = HEIGHT;
+            tileH = WIDTH;
+        }
+
+        @Override
+        public Tilemap create() {
+            super.create();
+            if (vis != null) {
+                // 使用mapSimpleImage方法，将texW参数设置为240（10*24）
+                // 这样每个格子会使用room404-1.png中对应的24*24像素贴图
+                int[] data = mapSimpleImage(0, 0, 240);
+                vis.map(data, tileW);
+            }
             return vis;
         }
     }
@@ -133,7 +147,7 @@ public class ZeroLevelSub extends Level {
     // 重写updateFieldOfView方法，实现永久视野
     @Override
     public void updateFieldOfView(Char c, boolean[] fieldOfView) {
-        // 对于0-1层，设置所有单元格为可见
+        // 对于SnakeRoom，设置所有单元格为可见
         for (int i = 0; i < fieldOfView.length; i++) {
             fieldOfView[i] = true;
         }
@@ -150,4 +164,28 @@ public class ZeroLevelSub extends Level {
             }
         }
     }
+    
+    // 地形类型常量
+    private static final int W = Terrain.WALL;
+    private static final int e = Terrain.EMPTY;
+    private static final int Z = Terrain.SIGN;
+    
+    // 硬编码的地图数组（10*10）
+    private static final int[] MAP = {
+        W, W, W, W, W, W, W, W, W, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, e, e, e, e, e, e, e, W,
+        W, e, W, W, W, W, W, W, W, W
+    };
 }
+
+
+
+
+
