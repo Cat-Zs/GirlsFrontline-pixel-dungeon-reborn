@@ -155,7 +155,7 @@ public class AlchemistsToolkit extends Artifact {
 	@Override
 	public void charge(Hero target, float amount) {
 		partialCharge += 0.25f*amount;
-		if (partialCharge >= 1){
+		while (partialCharge >= 1){
 			partialCharge--;
 			charge++;
 			updateQuickslot();
