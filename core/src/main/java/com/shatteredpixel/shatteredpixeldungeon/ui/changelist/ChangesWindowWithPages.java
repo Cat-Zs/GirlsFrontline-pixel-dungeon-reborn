@@ -36,7 +36,9 @@ import java.util.ArrayList;
 public class ChangesWindowWithPages extends ChangesWindow {
     public ChangesWindowWithPages(Image iconA, String title, ArrayList<String> pageContents, int page) {
         super(iconA, title, pageContents.get(page));
-
+        //给窗口增加高度以放置按钮而不遮挡原来的文本
+        height += 10;
+        resize(width, height);
         RenderedTextBlock pageNumberText; // 页面数字显示
         // 创建页面数字显示
         pageNumberText = PixelScene.renderTextBlock(page + 1 + "/" + pageContents.size(), 8);
@@ -59,7 +61,7 @@ public class ChangesWindowWithPages extends ChangesWindow {
         };
         btnPrev.setSize(10, 10); // 调整界面尺寸的位置
         // 设置翻页按钮和页码文本位置（居中显示）
-        btnPrev.setPos(10, height - 10);
+        btnPrev.setPos(0, height - 10);
         add(btnPrev);
 
         RedButton btnNext = new RedButton(">") {
