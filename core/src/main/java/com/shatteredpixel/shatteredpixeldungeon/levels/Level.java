@@ -190,6 +190,7 @@ public abstract class Level implements Bundlable {
 	private static final String MOBS		= "mobs";
 	private static final String BLOBS		= "blobs";
 	private static final String FEELING		= "feeling";
+    private static final String FIRSTSAVE   = "firstsave";
 
 	public void create(int levelDepth,int levelId){
 		this.levelDepth=levelDepth;
@@ -335,6 +336,7 @@ public abstract class Level implements Bundlable {
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
+        FirstSave =bundle.getBoolean(FIRSTSAVE);
 		levelDepth=bundle.getInt(LEVEL_DEPTH);
 		levelId   =bundle.getInt(LEVEL_ID   );
 		version   =bundle.getInt(VERSION    );
@@ -458,6 +460,7 @@ public abstract class Level implements Bundlable {
 		bundle.put(FEELING, feeling );
 		bundle.put("mobs_to_spawn", mobsToSpawn.toArray(new Class[0]));
 		bundle.put("respawner", respawner );
+        bundle.put(FIRSTSAVE, FirstSave);
 	}
 	
 	public int tunnelTile() {
