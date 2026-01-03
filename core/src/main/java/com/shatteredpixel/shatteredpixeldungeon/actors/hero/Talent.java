@@ -164,16 +164,16 @@ public enum Talent {
     Type56FourTwoOne(137, 4), Type56FourTwoTwo(137, 4),Type56FourTwoThree(137, 4),
 	//type561 T3-1 EMP
 	EMP_One(139, 3), EMP_Two(140, 3), EMP_Three(141, 3),
-	//modernReborner T3
-	NEWLIFE(142, 3), MORE_ACCURATE(143, 3), ENHANCE_GRENADE(144, 3),
-	
-	//GSH18 T1 
+	//type561 T3-2 GUN
+	GUN_One(142, 3), GUN_Two(143, 3), GUN_Three(144, 3),
+
+	//GSH18 T1
 	GSH18_MEAL_TREATMENT(160), GSH18_DOCTOR_INTUITION(161), GSH18_CLOSE_COMBAT(162), GSH18_STAR_SHIELD(163),
 	//GSH18 T2
 	GSH18_ENERGIZING_MEAL(164), GSH18_CHAIN_SHOCK(165), GSH18_LOGISTICS_SUPPORT(166), GSH18_COMIC_HEART(167), GSH18_MEDICAL_COMPATIBILITY(168),
 	//GSH18 T3
 	GSH18_INTELLIGENCE_AWARENESS(169, 3), GSH18_AGILE_MOVEMENT(170, 3);//GSH18_LIGHTWEIGHT(171);
-	
+
 
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
 		public int icon() { return BuffIndicator.TIME; }
@@ -849,7 +849,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, EMP_One, EMP_Two, EMP_Three);
 				break;
 			case GUN_MASTER:
-				Collections.addAll(tierTalents, NEWLIFE, MORE_ACCURATE, ENHANCE_GRENADE);
+				Collections.addAll(tierTalents, GUN_One, GUN_Two, GUN_Three);
 				break;
 			case THE_HEART_OF_SIRIUS:
 				Collections.addAll(tierTalents, GSH18_INTELLIGENCE_AWARENESS);

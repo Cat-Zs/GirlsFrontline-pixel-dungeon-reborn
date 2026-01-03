@@ -19,6 +19,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EnergyParticle
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
@@ -222,9 +223,12 @@ public class ShootGun extends MeleeWeapon {
             }
         }
         if (attack>0){
-            attack = Math.min(attack, 5);
-            Buff.affect(Dungeon.hero, Recharging.class, attack);
-            Buff.affect(Dungeon.hero, ArtifactRecharge.class).prolong( attack ).ignoreHornOfPlenty = false;
+            attack = Math.min(attack, 6);
+            for (Buff b : Dungeon.hero.buffs()){
+                if (b instanceof Artifact.ArtifactBuff){
+                    if (!((Artifact.ArtifactBuff) b).isCursed()) ((Artifact.ArtifactBuff) b).charge(Dungeon.hero, attack);
+                }
+            }
             ScrollOfRecharging.chargeParticle(Dungeon.hero);
         }
     }

@@ -503,12 +503,6 @@ public class Hero extends Char {
 		
 		float accuracy = 1;
 		accuracy *= RingOfAccuracy.accuracyMultiplier( this );
-		switch(pointsInTalent(Talent.MORE_ACCURATE)){
-			case 0:default:break;
-			case 1:accuracy*=1.3f;break;
-			case 2:accuracy*=1.6f;break;
-			case 3:accuracy*=2f;break;
-		}
 		
 		// GSH18天赋：短线作战
 		if (hasTalent(Talent.GSH18_CLOSE_COMBAT) && Dungeon.level.adjacent(pos, target.pos)) {
@@ -1671,16 +1665,16 @@ public class Hero extends Char {
 
 		HornOfPlenty.hornRecharge horn = buff(HornOfPlenty.hornRecharge.class);
 		if (horn != null) horn.gainCharge(percent);
-		
+
 		AlchemistsToolkit.kitEnergy kit = buff(AlchemistsToolkit.kitEnergy.class);
 		if (kit != null) kit.gainCharge(percent);
 
 		MasterThievesArmband.Thievery armband = buff(MasterThievesArmband.Thievery.class);
 		if (armband != null) armband.gainCharge(percent);
-		
+
 		Berserk berserk = buff(Berserk.class);
 		if (berserk != null) berserk.recover(percent);
-		
+
 		if (source != PotionOfExperience.class) {
 			for (Item i : belongings) {
 				i.onHeroGainExp(percent, this);
@@ -1692,18 +1686,18 @@ public class Hero extends Char {
 				}
 			}
 		}
-		
+
 		boolean levelUp = false;
 		while (this.exp >= maxExp()) {
 			this.exp -= maxExp();
 			if (lvl < MAX_LEVEL) {
 				lvl++;
 				levelUp = true;
-				
+
 				if (buff(ElixirOfMight.HTBoost.class) != null){
 					buff(ElixirOfMight.HTBoost.class).onLevelUp();
 				}
-				
+
 				updateHT( true );
 				attackSkill++;
 				defenseSkill++;
@@ -1716,11 +1710,11 @@ public class Hero extends Char {
 				GLog.p( Messages.get(this, "level_cap"));
 				Sample.INSTANCE.play( Assets.Sounds.LEVELUP );
 			}
-			
+
 		}
-		
+
 		if (levelUp) {
-			
+
 			if (sprite != null) {
 				GLog.newLine();
 				GLog.p( Messages.get(this, "new_level") );
@@ -1733,25 +1727,25 @@ public class Hero extends Char {
 					WndHero.lastIdx = 1;
 				}
 			}
-			
+
 			Item.updateQuickslot();
-			
+
 			Badges.validateLevelReached();
 		}
 	}
-	
+
 	public int maxExp() {
 		return maxExp( lvl );
 	}
-	
+
 	public static int maxExp( int lvl ){
 		return 5 + lvl * 5;
 	}
-	
+
 	public boolean isStarving() {
 		return Buff.affect(this, Hunger.class).isStarving();
 	}
-	
+
 	@Override
 	public void add( Buff buff ) {
 
@@ -1771,31 +1765,31 @@ public class Hero extends Char {
 			}
 
 		}
-		
+
 		BuffIndicator.refreshHero();
 	}
-	
+
 	@Override
 	public void remove( Buff buff ) {
 		super.remove( buff );
 
 		BuffIndicator.refreshHero();
 	}
-	
+
 	@Override
 	public float stealth() {
 		float stealth = super.stealth();
-		
+
 		if (belongings.armor() != null){
 			stealth = belongings.armor().stealthFactor(this, stealth);
 		}
-		
+
 		return stealth;
 	}
-	
+
 	@Override
 	public void die( Object cause ) {
-		
+
 		curAction = null;
 
 		Ankh ankh = null;
@@ -1810,20 +1804,6 @@ public class Hero extends Char {
 		if (ankh != null) {
 			interrupt();
 			resting = false;
-
-			if(hasTalent(Talent.NEWLIFE)){
-				if(ankh.isBlessed()){
-					new PotionOfHealing().apply(this);
-				}
-				
-				if(pointsInTalent(Talent.NEWLIFE)>=2){
-					new PotionOfStrength().apply(this);
-				}
-
-				if(pointsInTalent(Talent.NEWLIFE)>=3){
-					new ScrollOfUpgrade().collect();
-				}
-			}
 
 			if (ankh.isBlessed()) {
 				this.HP = HT / 4;
@@ -1863,37 +1843,37 @@ public class Hero extends Char {
 			}
 			return;
 		}
-		
+
 		Actor.fixTime();
 		super.die( cause );
 		reallyDie( cause );
 	}
-	
+
 	public static void reallyDie( Object cause ) {
-		
+
 		int length = Dungeon.level.length();
 		int[] map = Dungeon.level.map;
 		boolean[] visited = Dungeon.level.visited;
 		boolean[] discoverable = Dungeon.level.discoverable;
-		
+
 		for (int i=0; i < length; i++) {
-			
+
 			int terr = map[i];
-			
+
 			if (discoverable[i]) {
-				
+
 				visited[i] = true;
 				if ((Terrain.flags[terr] & Terrain.SECRET) != 0) {
 					Dungeon.level.discover( i );
 				}
 			}
 		}
-		
+
 		Bones.leave();
-		
+
 		Dungeon.observe();
 		GameScene.updateFog();
-				
+
 		Dungeon.hero.belongings.identify();
 
 		int pos = Dungeon.hero.pos;
@@ -1931,11 +1911,11 @@ public class Hero extends Char {
 				Sample.INSTANCE.play(Assets.Sounds.DEATH);
 			}
 		});
-		
+
 		if (cause instanceof Hero.Doom) {
 			((Hero.Doom)cause).onDeath();
 		}
-		
+
 		Dungeon.deleteGame( GamesInProgress.curSlot, true );
 	}
 
@@ -1946,7 +1926,7 @@ public class Hero extends Char {
 
 	@Override
 	public boolean isAlive() {
-		
+
 		if (HP <= 0){
 			if (berserk == null) berserk = buff(Berserk.class);
 			return berserk != null && berserk.berserking();
@@ -1961,7 +1941,7 @@ public class Hero extends Char {
 		boolean wasHighGrass = Dungeon.level.map[step] == Terrain.HIGH_GRASS;
 
 		super.move( step, travelling);
-		
+
 		if (!flying && travelling) {
 			if (Dungeon.level.water[pos]) {
 				Sample.INSTANCE.play( Assets.Sounds.WATER, 1, Random.Float( 0.8f, 1.25f ) );
@@ -1980,21 +1960,21 @@ public class Hero extends Char {
 			}
 		}
 	}
-	
+
 	@Override
 	public void onAttackComplete() {
-		
+
 		AttackIndicator.target(enemy);
-		
+
 		boolean hit = attack( enemy );
-		
+
 		Invisibility.dispel();
 		spend( attackDelay() );
 
 		if (hit && subClass == HeroSubClass.GLADIATOR){
 			Buff.affect( this, Combo.class ).hit( enemy );
 		}
-		
+
 		// GSH18天赋：元气一餐 - 攻击后移除buff
 		if (hit&&(buff(Talent.GSH18EnergizingMealTracker.class) != null)) {
 			buff(Talent.GSH18EnergizingMealTracker.class).detach();
@@ -2004,20 +1984,20 @@ public class Hero extends Char {
 
 		super.onAttackComplete();
 	}
-	
+
 	@Override
 	public void onMotionComplete() {
 		GameScene.checkKeyHold();
 	}
-	
+
 	@Override
 	public void onOperateComplete() {
-		
+
 		if (curAction instanceof HeroAction.Unlock) {
 
 			int doorCell = ((HeroAction.Unlock)curAction).dst;
 			int door = Dungeon.level.map[doorCell];
-			
+
 			if (Dungeon.level.distance(pos, doorCell) <= 1) {
 				boolean hasKey = true;
 				if (door == Terrain.LOCKED_DOOR) {
@@ -2034,18 +2014,18 @@ public class Hero extends Char {
 					hasKey = Notes.remove(new SkeletonKey(Dungeon.depth));
 					if (hasKey) Level.set(doorCell, Terrain.UNLOCKED_EXIT);
 				}
-				
+
 				if (hasKey) {
 					GameScene.updateKeyDisplay();
 					GameScene.updateMap(doorCell);
 					spend(Key.TIME_TO_UNLOCK);
 				}
 			}
-			
+
 		} else if (curAction instanceof HeroAction.OpenChest) {
-			
+
 			Heap heap = Dungeon.level.heaps.get( ((HeroAction.OpenChest)curAction).dst );
-			
+
 			if (Dungeon.level.distance(pos, heap.pos) <= 1){
 				boolean hasKey = true;
 				if (heap.type == Type.SKELETON || heap.type == Type.REMAINS) {
@@ -2055,14 +2035,14 @@ public class Hero extends Char {
 				} else if (heap.type == Type.CRYSTAL_CHEST){
 					hasKey = Notes.remove(new CrystalKey(Dungeon.depth));
 				}
-				
+
 				if (hasKey) {
 					GameScene.updateKeyDisplay();
 					heap.open(this);
 					spend(Key.TIME_TO_UNLOCK);
 				}
 			}
-			
+
 		}
 		curAction = null;
 
@@ -2085,15 +2065,15 @@ public class Hero extends Char {
 	}
 
 	public boolean search( boolean intentional ) {
-		
+
 		if (!isAlive()) return false;
-		
+
 		boolean smthFound = false;
 
 		boolean circular = pointsInTalent(Talent.WIDE_SEARCH) == 1;
 		int distance = heroClass == HeroClass.ROGUE ? 2 : 1;
 		if (hasTalent(Talent.WIDE_SEARCH)) distance++;
-		
+
 		boolean foresight = buff(Foresight.class) != null;
 		boolean foresightScan = foresight && !Dungeon.level.mapped[pos];
 
@@ -2142,9 +2122,9 @@ public class Hero extends Char {
 					if (foresight){
 						Dungeon.level.mapped[curr] = true;
 					}
-					
+
 					if (Dungeon.level.secret[curr]){
-						
+
 						Trap trap = Dungeon.level.traps.get( curr );
 						float chance;
 
@@ -2159,11 +2139,11 @@ public class Hero extends Char {
 						//intentional searches always succeed against regular traps and doors
 						} else if (intentional){
 							chance = 1f;
-						
+
 						//unintentional searches always fail with a cursed talisman
 						} else if (cursed) {
 							chance = 0f;
-						
+
 						//unintentional trap detection scales from 40% at floor 0 to 30% at floor 30
 						} else if (Dungeon.level.map[curr] == Terrain.SECRET_TRAP) {
 							chance=0.3f+0.1f*(1f-Dungeon.depth/30f);
@@ -2171,19 +2151,19 @@ public class Hero extends Char {
 						} else {
 							chance=     0.2f*(1f-Dungeon.depth/25f);
 						}
-						
+
 						if (Random.Float() < chance) {
-						
+
 							int oldValue = Dungeon.level.map[curr];
-							
+
 							GameScene.discoverTile( curr, oldValue );
-							
+
 							Dungeon.level.discover( curr );
-							
+
 							ScrollOfMagicMapping.discover( curr );
-							
+
 							if (fieldOfView[curr]) smthFound = true;
-	
+
 							if (talisman != null){
 								if (oldValue == Terrain.SECRET_TRAP){
 									talisman.charge(2);
@@ -2196,7 +2176,7 @@ public class Hero extends Char {
 				}
 			}
 		}
-		
+
 		if (intentional) {
 			sprite.showStatus( CharSprite.DEFAULT, Messages.get(this, "search") );
 			sprite.operate( pos );
@@ -2209,9 +2189,9 @@ public class Hero extends Char {
 				}
 			}
 			spendAndNext(TIME_TO_SEARCH);
-			
+
 		}
-		
+
 		if (smthFound) {
 			GLog.w( Messages.get(this, "noticed_smth") );
 			Sample.INSTANCE.play( Assets.Sounds.SECRET );
@@ -2221,10 +2201,10 @@ public class Hero extends Char {
 		if (foresight){
 			GameScene.updateFog(pos, Foresight.DISTANCE+1);
 		}
-		
+
 		return smthFound;
 	}
-	
+
 	public void resurrect() {
 		HP = HT;
 		live();
