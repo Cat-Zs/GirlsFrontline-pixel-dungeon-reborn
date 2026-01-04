@@ -33,7 +33,7 @@ import java.util.ArrayList;
 
 public class RedBook extends Artifact{
     public static final String AC_CAST="CAST";
-    public static final float[] LEVEL_TO_DAMAGE ={0.05f,0.1f,0.2f,0.3f,0.45f,0.65f};
+    public static final float[] LEVEL_TO_DAMAGE ={0.1f,0.2f,0.3f,0.4f,0.5f,0.6f};
 
     {
         image = ItemSpriteSheet.REDBOOK;
@@ -118,7 +118,26 @@ public class RedBook extends Artifact{
                 Buff.affect(target, Bless.class, 5f);
                 Buff.affect(Dungeon.hero, Light.class, 10f);
                 if(Dungeon.hero.hasTalent(Talent.Type56Two_Exclusive)){
-                    Buff.affect(Dungeon.hero, Barrier.class).setShield(5+5*Dungeon.hero.pointsInTalent(Talent.Type56Two_Exclusive));
+                    int shield = 5 + 5 * Dungeon.hero.pointsInTalent(Talent.Type56Two_Exclusive);
+                    if(target == Dungeon.hero) {
+                        //目标是自身，则自身获得护盾
+                        Buff.affect(Dungeon.hero, Barrier.class).setShield(shield);
+                    }else {
+                        if(Dungeon.hero.shielding()<5){
+                            shield-=5-Dungeon.hero.shielding();
+                            Buff.affect(Dungeon.hero, Barrier.class).setShield(5);
+                        }
+                        //作用在友方其他单位，则玩家先获得最多5点盾，然后目标获得收益
+                        if(shield<=target.HT-target.HP) {
+                            //已损失血量大于护盾值，则护盾值转为治疗
+                            target.HP += shield;
+                        }else {
+                            //治疗后溢出的数值转化为盾
+                            shield-=target.HT-target.HP;
+                            target.HP=target.HT;
+                            Buff.affect(target, Barrier.class).setShield(shield);
+                        }
+                    }
                 }
             }else if(target.alignment==Char.Alignment.ENEMY){
                 deadBomb(target);
@@ -157,7 +176,7 @@ public class RedBook extends Artifact{
         Sample.INSTANCE.play( Assets.Sounds.READ );
         Invisibility.dispel();
 
-        int damage = Math.round(target.HP * LEVEL_TO_DAMAGE[level()]);
+        int damage = (int) Math.ceil(target.HP * LEVEL_TO_DAMAGE[level()]);
         if (target.properties().contains(Mob.Property.MINIBOSS)) {
             damage = Math.min(damage, (int) (target.HP * 0.5f));
         } else if (target.properties().contains(Mob.Property.BOSS)) {
@@ -189,7 +208,7 @@ public class RedBook extends Artifact{
 
     @Override
     public Item upgrade() {
-        chargeCap=3+level();
+        chargeCap++;
         if      (level() <= 2) image = ItemSpriteSheet.REDBOOK;
         else if (level() <= 4) image = ItemSpriteSheet.REDBOOK2;
         else if (level() >= 5) image = ItemSpriteSheet.REDBOOK3;
@@ -259,6 +278,7 @@ public class RedBook extends Artifact{
                 exp -= (level()+1)*per_exp;
                 GLog.p( Messages.get(this, "levelup") );
                 upgrade();
+                chargeCap = 3+level();
             }
 
         }
