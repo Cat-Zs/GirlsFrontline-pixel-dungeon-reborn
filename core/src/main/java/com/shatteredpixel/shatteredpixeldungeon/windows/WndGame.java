@@ -95,8 +95,6 @@ public class WndGame extends Window {
 				@Override
 				protected void onClick() {
 					try{Dungeon.saveAll();
-                        Item.itemA=new ArrayList<>();
-                        Item.NOTEA=new ArrayList<>();
 					}catch(IOException e){Game.reportException(e);}
 					Game.switchScene(TitleScene.class);
 				}
