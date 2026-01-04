@@ -307,6 +307,8 @@ public class WndRanking extends WndTabbed {
 		}
 		
 		private void addItem( Item item ) {
+            item.canNote =false;
+            item.showSelf = true;
 			ItemButton slot = new ItemButton( item );
 			slot.setRect( 0, pos, width, ItemButton.HEIGHT );
 			add( slot );
@@ -417,6 +419,8 @@ public class WndRanking extends WndTabbed {
 		QuickSlotButton(Item item){
 			super(item);
 			this.item = item;
+            this.item.canNote = false;
+            this.item.showSelf = true;
 
 			if (item.cursed && item.cursedKnown) {
 				bg.ra = +0.2f;

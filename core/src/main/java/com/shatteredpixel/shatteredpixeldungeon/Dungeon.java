@@ -202,8 +202,8 @@ public class Dungeon {
         }
     }
     public static boolean lockXMAS;
-    public static ArrayList<Class> itemAOfSave = new ArrayList<>();
-    public static ArrayList<String> NOTEAOfSave = new ArrayList<>();
+    public static ArrayList<Class> itemAOfSave ;
+    public static ArrayList<String> NOTEAOfSave ;
 
 	public static QuickSlot quickslot = new QuickSlot();
 	
@@ -232,7 +232,10 @@ public class Dungeon {
             Game.lockXMAS = false;
             lockXMAS = true;
         }
-
+        itemAOfSave = new ArrayList<>();
+        NOTEAOfSave = new ArrayList<>();
+        Item.itemA = new ArrayList<>();
+        Item.NOTEA = new ArrayList<>();
 		version = Game.versionCode;
 		challenges = paramChallenges;
 		mobsToChampion = -1;
@@ -270,9 +273,6 @@ public class Dungeon {
 
 		quickslot.reset();
 		QuickSlotButton.reset();
-        Item.itemA=new ArrayList<>();
-        Item.NOTEA=new ArrayList<>();
-        //在创建游戏处重置
 		
 		depth = 0;
 		gold = 0;
@@ -557,7 +557,6 @@ public class Dungeon {
             }
             bundle.put(NOTESAVEA,ItemToSave);
             //物品类型
-            itemAOfSave=new ArrayList<>();
 
             int countB = 0;
             String NoteToSave[]= new String[NOTEAOfSave.size()];
@@ -566,7 +565,6 @@ public class Dungeon {
             }
             bundle.put(NOTESAVEB,NoteToSave);
             //对应物品类型的标签
-            NOTEAOfSave=new ArrayList<>();
             bundle.put( LOCKXMAS, lockXMAS );
 
             bundle.put( GOLD, gold );
@@ -671,7 +669,7 @@ public class Dungeon {
                 GirlsFrontlinePixelDungeon.reportException(e);
             }
         }
-        Item.itemA=itemAOfSave;
+        Item.itemA = itemAOfSave;
 
         NOTEAOfSave = new ArrayList<>();
         String[] NoteToSave = bundle.getStringArray(NOTESAVEB);
@@ -682,7 +680,7 @@ public class Dungeon {
                 GirlsFrontlinePixelDungeon.reportException(e);
             }
         }
-        Item.NOTEA=NOTEAOfSave;
+        Item.NOTEA = NOTEAOfSave;
         lockXMAS = false;
         lockXMAS = bundle.getBoolean(LOCKXMAS);
 
