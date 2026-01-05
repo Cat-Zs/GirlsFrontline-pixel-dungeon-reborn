@@ -101,9 +101,11 @@ public class MapEditor extends TestItem {
                     int x = (Integer)MapEditor.this.X.get(terrain) % 16;
                     int y = (Integer)MapEditor.this.X.get(terrain) / 16;
                     this.icon(new Image(Dungeon.level.tilesTex(), x * 24, y * 24, 24, 24));
+                    this.icon.scale.set((float) 2 /3);
                     break;
                 case 29:
                     this.icon(new Image(Dungeon.level.waterTex(), 0, 0, 24, 24));
+                    this.icon.scale.set((float) 2 /3);
             }
 
         }
