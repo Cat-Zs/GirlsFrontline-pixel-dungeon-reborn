@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
@@ -81,6 +82,7 @@ public class WndRanking extends WndTabbed {
 					Rankings.INSTANCE.loadGameData( rec );
 				} catch ( Exception e ) {
 					error = Messages.get(WndRanking.class, "error");
+                    error += String.valueOf(e);
 				}
 			}
 		};
