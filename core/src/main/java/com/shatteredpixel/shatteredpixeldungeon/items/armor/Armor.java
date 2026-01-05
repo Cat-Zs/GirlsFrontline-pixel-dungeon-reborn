@@ -189,10 +189,13 @@ public class Armor extends EquipableItem {
 				if (hero.lvl>=6&&hero.hasTalentA(Talent.RUNIC_TRANSFERENCE)
 						&& (Arrays.asList(Glyph.common).contains(detaching.getGlyph().getClass())
 							|| Arrays.asList(Glyph.uncommon).contains(detaching.getGlyph().getClass()))){
+                    //+0时检测天赋、携带的刻印稀有度
 					inscribe(null);
 				} else if (hero.pointsInTalent(Talent.RUNIC_TRANSFERENCE) >= 1){
+                    //+1时直接携带
 					inscribe(null);
 				} else {
+                    //没有天赋时直接令袖章刻印清除
 					detaching.setGlyph(null);
 				}
 			}
