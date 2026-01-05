@@ -169,21 +169,21 @@ public class TitleScene extends PixelScene {
 		final int GAP = 2;
 
 		if (landscape()) {
-			btnZeroLevel.setRect(title.x - 50, topRegion + GAP, title.width() + 100 - 1, BTN_HEIGHT);
-			align(btnZeroLevel);
-			btnPlay    .setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
-			btnRankings.setRect(btnPlay.left()     ,btnPlay.bottom()+GAP     ,btnPlay.width()/2f    ,BTN_HEIGHT);
+			btnPlay    .setRect(title.x - 50, topRegion + GAP, title.width() + 100 - 1, BTN_HEIGHT);
+			align(btnPlay);
+			btnZeroLevel.setRect(btnPlay.left(),btnPlay.bottom()+GAP,btnPlay.width()  ,BTN_HEIGHT);
+			btnRankings.setRect(btnPlay.left()     ,btnZeroLevel.bottom()+GAP     ,btnPlay.width()/2f    ,BTN_HEIGHT);
 			btnBadges  .setRect(btnRankings.left() ,btnRankings.bottom()+GAP ,btnPlay.width()/2f    ,BTN_HEIGHT);
 			btnSettings.setRect(btnBadges.right()+2,btnRankings.top()        ,btnPlay.width()/2f-GAP,BTN_HEIGHT);
 			btnAbout   .setRect(btnSettings.left() ,btnSettings.bottom()+GAP ,btnPlay.width()/2f-GAP,BTN_HEIGHT);
 		} else {
-			btnZeroLevel.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
-			align(btnZeroLevel);
-			btnPlay    .setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
-			btnRankings.setRect(btnPlay.left(),btnPlay    .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
-			btnBadges  .setRect(btnPlay.left(),btnRankings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
-			btnSettings.setRect(btnPlay.left(),btnBadges  .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
-			btnAbout   .setRect(btnPlay.left(),btnSettings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnPlay    .setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
+			align(btnPlay);
+			btnZeroLevel.setRect(btnPlay.left(),btnPlay.bottom()+GAP,btnPlay.width()  ,BTN_HEIGHT);
+			btnRankings.setRect(btnZeroLevel.left(),btnZeroLevel    .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnBadges  .setRect(btnZeroLevel.left(),btnRankings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnSettings.setRect(btnZeroLevel.left(),btnBadges  .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnAbout   .setRect(btnZeroLevel.left(),btnSettings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
 		}
 
 		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
