@@ -44,6 +44,7 @@ public class MapEditor extends TestItem {
                     if (MapEditor.this.chosen != 17 && MapEditor.this.chosen != 18 && MapEditor.this.chosen != 19 && cell != null) {
                         Level.set(cell, MapEditor.this.chosen);
                         GameScene.updateMap(cell);
+                        Dungeon.observe();
                     }
 
                     MapEditor.curUser.next();

@@ -4,14 +4,16 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.RatKing;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
-import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.SceneSwitcher;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.WindowTrigger;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.SnakeScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
@@ -22,8 +24,6 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Tilemap;
 import com.watabou.utils.Bundle;
-
-import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.energy;
 
 import java.io.IOException;
 
@@ -108,11 +108,58 @@ public class ZeroLevel extends Level {
 	}
 	
 	// 电脑触发器 - 用于切换到标题场景
-	public static class ComputerTriger extends SceneSwitcher{
+	public static class ComputerTriger extends WindowTrigger{
 		// 检查角色是否可以与电脑交互
 		@Override
 		public boolean canInteract(Char ch){
 			return Dungeon.hero==ch && Dungeon.level.adjacent(pos,ch.pos);
+		}
+
+		public class WndComputer extends Window {
+			private static final int WIDTH		= 120;
+			private static final int BTN_HEIGHT	= 20;
+			private static final int GAP		= 2;
+			
+			private int pos;
+			
+			public WndComputer() {
+				//settings
+				RedButton curBtn;
+
+				addButton(curBtn = new RedButton("贪吃蛇"){/*mark*/
+					@Override
+					protected void onClick() {
+						try{Dungeon.saveAll();
+						}catch(IOException e){Game.reportException(e);}
+						Game.switchScene(SnakeScene.class);
+					}
+				});
+				curBtn.icon(Icons.get(Icons.DISPLAY));
+
+
+				addButton(curBtn = new RedButton("主菜单"){/*mark*/
+					@Override
+					protected void onClick() {
+						try{Dungeon.saveAll();
+						}catch(IOException e){Game.reportException(e);}
+						Game.switchScene(TitleScene.class);
+					}
+				});
+				curBtn.icon(Icons.get(Icons.DISPLAY));
+
+				resize( WIDTH, pos );
+			}
+			
+			private void addButton( RedButton btn ) {
+				add( btn );
+				btn.setRect( 0, pos > 0 ? pos += GAP : 0, WIDTH, BTN_HEIGHT );
+				pos += BTN_HEIGHT;
+			}
+		}
+
+		@Override
+		protected Window getWindow(){
+			return new WndComputer();
 		}
 	}
 
@@ -138,12 +185,12 @@ public class ZeroLevel extends Level {
         mobs.add( king );
 
 		// 放置电脑触发器(用于回到标题页面)
-		placeTrigger(new ComputerTriger().create(computerPos0,TitleScene.class));
-		placeTrigger(new ComputerTriger().create(computerPos1,TitleScene.class));
-		placeTrigger(new ComputerTriger().create(computerPos2,TitleScene.class));
-		placeTrigger(new ComputerTriger().create(computerPos3,TitleScene.class));
-		placeTrigger(new ComputerTriger().create(computerPos4,TitleScene.class));
-		placeTrigger(new ComputerTriger().create(computerPos5,TitleScene.class));
+		placeTrigger(new ComputerTriger().create(computerPos0));
+		placeTrigger(new ComputerTriger().create(computerPos1));
+		placeTrigger(new ComputerTriger().create(computerPos2));
+		placeTrigger(new ComputerTriger().create(computerPos3));
+		placeTrigger(new ComputerTriger().create(computerPos4));
+		placeTrigger(new ComputerTriger().create(computerPos5));
 
 		// 添加向下的楼梯触发器
 		placeTrigger(new Teleporter().create(toZeroLevelSub,ZeroLevelSub.toForwardCamp,1000));
