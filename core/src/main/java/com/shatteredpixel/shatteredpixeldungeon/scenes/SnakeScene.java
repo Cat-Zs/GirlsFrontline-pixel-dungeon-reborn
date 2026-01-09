@@ -14,7 +14,6 @@ import com.watabou.input.GameAction;
 import com.watabou.input.KeyBindings;
 import com.watabou.input.KeyEvent;
 import com.watabou.utils.Signal;
-import com.watabou.utils.PointF;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -240,7 +239,8 @@ public class SnakeScene extends PixelScene {
 		float widthScale  = snakeTileMap.width /uiCamera.width;
 		float heightScale = snakeTileMap.height/uiCamera.height;
 		float scale = 1/(widthScale>heightScale?widthScale:heightScale);
-		snakeTileMap.scale = new PointF(scale,scale);
+		snakeTileMap.scale.x = scale;
+		snakeTileMap.scale.y = scale;
 		add(snakeTileMap);
 	}
 	private void renderTick(){
@@ -263,6 +263,7 @@ public class SnakeScene extends PixelScene {
 		super.create();
 
 		gameInit();
+		renderTick();
 
 		fadeIn();
 	}
@@ -273,7 +274,7 @@ public class SnakeScene extends PixelScene {
 		Game.switchScene( InterlevelScene.class );
 	}
 
-	private float timer = 0.33f;
+	private float timer = 1f;
 	@Override
 	public void update() {
 		super.update();
