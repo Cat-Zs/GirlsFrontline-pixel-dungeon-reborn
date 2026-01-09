@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SnakeScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.SavesScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
@@ -42,13 +43,15 @@ public class ZeroLevel extends Level {
 	// 定义了传送触发器的位置
 	public static final int toZeroLevelSub = 9*WIDTH+13;
 
-	//定义了六个电脑地块的位置
+	// 定义了六个电脑地块的位置
 	private static final int computerPos0 = 6*WIDTH+6;
 	private static final int computerPos1 = 6*WIDTH+7;
 	private static final int computerPos2 = 6*WIDTH+8;
 	private static final int computerPos3 = 7*WIDTH+6;
 	private static final int computerPos4 = 7*WIDTH+7;
 	private static final int computerPos5 = 7*WIDTH+8;
+	// 定义了消毒通道的位置
+	private static final int decontaminationCorridorPos = 5*WIDTH+13;
 
 	// 定义地形常量，用于构建硬编码地图
 	private static final int W = Terrain.WALL;      // 墙
@@ -163,6 +166,51 @@ public class ZeroLevel extends Level {
 		}
 	}
 
+	// 消毒通道 - 用于展示存档页面
+	public static class DecontaminationCorridor extends WindowTrigger{
+		@Override
+		public boolean canInteract(Char ch){
+			//仅在左边才能触发
+			return Dungeon.hero==ch && Dungeon.level.adjacent(pos,ch.pos) && (ch.pos+1)==pos;
+		}
+
+		public class WndDecontaminationCorridor extends Window {
+			private static final int WIDTH		= 120;
+			private static final int BTN_HEIGHT	= 20;
+			private static final int GAP		= 2;
+			
+			private int pos;
+			
+			public WndDecontaminationCorridor() {
+				//settings
+				RedButton curBtn;
+
+				addButton(curBtn = new RedButton("进入"){/*mark*/
+					@Override
+					protected void onClick() {
+						try{Dungeon.saveAll();
+						}catch(IOException e){Game.reportException(e);}
+						Game.switchScene(SavesScene.class);
+					}
+				});
+				curBtn.icon(Icons.get(Icons.DISPLAY));
+
+				resize( WIDTH, pos );
+			}
+			
+			private void addButton( RedButton btn ) {
+				add( btn );
+				btn.setRect( 0, pos > 0 ? pos += GAP : 0, WIDTH, BTN_HEIGHT );
+				pos += BTN_HEIGHT;
+			}
+		}
+
+		@Override
+		protected Window getWindow(){
+			return new WndDecontaminationCorridor();
+		}
+	}
+
 	// 构建零层房间
 	@Override
 	protected boolean build() {
@@ -191,6 +239,9 @@ public class ZeroLevel extends Level {
 		placeTrigger(new ComputerTriger().create(computerPos3));
 		placeTrigger(new ComputerTriger().create(computerPos4));
 		placeTrigger(new ComputerTriger().create(computerPos5));
+
+		// 放置消毒通道触发器
+		placeTrigger(new DecontaminationCorridor().create(decontaminationCorridorPos));
 
 		// 添加向下的楼梯触发器
 		placeTrigger(new Teleporter().create(toZeroLevelSub,ZeroLevelSub.toForwardCamp,1000));
