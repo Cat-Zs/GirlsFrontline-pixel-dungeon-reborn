@@ -14,6 +14,7 @@ import com.watabou.input.GameAction;
 import com.watabou.input.KeyBindings;
 import com.watabou.input.KeyEvent;
 import com.watabou.utils.Signal;
+import com.watabou.utils.PointF;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -157,39 +158,43 @@ public class SnakeScene extends PixelScene {
 		KeyEvent.addKeyListener( keyListener );
 
 		//控制上下左右的四个按钮
-		float buttonSize = Camera.main.width<Camera.main.height ? Camera.main.width/6 : Camera.main.height/6;
+		float buttonSize = uiCamera.width<uiCamera.height ? uiCamera.width/6 : uiCamera.height/6;
 		StyledButton btnRight  = new StyledButton(Chrome.Type.TOAST_TR, "", 9){
 			@Override
 			protected void onClick() {
-				inputQueue.offer('d'); 
+				inputQueue.offer('d');
 			}
 		};
 		StyledButton btnLeft   = new StyledButton(Chrome.Type.TOAST_TR, "", 9){
 			@Override
 			protected void onClick() {
-				inputQueue.offer('a'); 
+				inputQueue.offer('a');
 			}
 		};
 		StyledButton btnTop    = new StyledButton(Chrome.Type.TOAST_TR, "", 9){
 			@Override
 			protected void onClick() {
-				inputQueue.offer('w'); 
+				inputQueue.offer('w');
 			}
 		};
 		StyledButton btnBottom = new StyledButton(Chrome.Type.TOAST_TR, "", 9){
 			@Override
 			protected void onClick() {
-				inputQueue.offer('s'); 
+				inputQueue.offer('s');
 			}
 		};
 		btnRight .setSize(buttonSize, buttonSize);
 		btnLeft  .setSize(buttonSize, buttonSize);
 		btnTop   .setSize(buttonSize, buttonSize);
 		btnBottom.setSize(buttonSize, buttonSize);
-		btnRight .setPos (Camera.main.width -   buttonSize, Camera.main.height - 2*buttonSize);
-		btnLeft  .setPos (Camera.main.width - 3*buttonSize, Camera.main.height - 2*buttonSize);
-		btnTop   .setPos (Camera.main.width - 2*buttonSize, Camera.main.height - 3*buttonSize);
-		btnBottom.setPos (Camera.main.width - 2*buttonSize, Camera.main.height -   buttonSize);
+		btnRight .setPos (uiCamera.width -   buttonSize, uiCamera.height - 2*buttonSize);
+		btnLeft  .setPos (uiCamera.width - 3*buttonSize, uiCamera.height - 2*buttonSize);
+		btnTop   .setPos (uiCamera.width - 2*buttonSize, uiCamera.height - 3*buttonSize);
+		btnBottom.setPos (uiCamera.width - 2*buttonSize, uiCamera.height -   buttonSize);
+		btnRight .camera=uiCamera;
+		btnLeft  .camera=uiCamera;
+		btnTop   .camera=uiCamera;
+		btnBottom.camera=uiCamera;
 		add(btnRight );
 		add(btnLeft  );
 		add(btnTop   );
@@ -231,6 +236,11 @@ public class SnakeScene extends PixelScene {
 		renderMap = new int[HEIGHT*WIDTH];
 
 		snakeTileMap = new SnakeTileMap();
+		snakeTileMap.camera = uiCamera;
+		float widthScale  = snakeTileMap.width /uiCamera.width;
+		float heightScale = snakeTileMap.height/uiCamera.height;
+		float scale = 1/(widthScale>heightScale?widthScale:heightScale);
+		snakeTileMap.scale = new PointF(scale,scale);
 		add(snakeTileMap);
 	}
 	private void renderTick(){
