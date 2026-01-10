@@ -13,6 +13,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SnakeScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SavesScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.BadgesScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.RankingsScene;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
@@ -133,7 +134,7 @@ private static final int achievementButtonPos = 2*WIDTH+11;
 				//settings
 				RedButton curBtn;
 
-				addButton(curBtn = new RedButton("贪吃蛇"){/*mark*/
+				addButton(curBtn = new RedButton("贪吃蛇-DEMO"){/*mark*/
 					@Override
 					protected void onClick() {
 						try{Dungeon.saveAll();
@@ -243,6 +244,16 @@ public static class AchievementButton extends WindowTrigger{
 					}
 				});
 				curBtn.icon(Icons.get(Icons.BADGES));
+
+				addButton(curBtn = new RedButton("排行榜"){/*mark*/
+					@Override
+					protected void onClick() {
+						try{Dungeon.saveAll();
+						}catch(IOException e){Game.reportException(e);}
+						GirlsFrontlinePixelDungeon.switchNoFade(RankingsScene.class);
+					}
+				});
+				curBtn.icon(Icons.get(Icons.RANKINGS));
 
 				resize( WIDTH, pos );
 			}

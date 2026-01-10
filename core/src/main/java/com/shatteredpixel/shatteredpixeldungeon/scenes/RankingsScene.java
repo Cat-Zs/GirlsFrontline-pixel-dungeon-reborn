@@ -37,6 +37,8 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndRanking;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
@@ -132,11 +134,32 @@ public class RankingsScene extends PixelScene {
 			
 		}
 
-		ExitButton btnExit = new ExitButton();
+		//自定义退出按钮，使用与onBackPressed相同的返回逻辑
+		ExitButton btnExit = new ExitButton() {
+			@Override
+			protected void onClick() {
+				//如果上一个场景是游戏场景，返回到游戏场景，否则返回到标题场景
+				if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class) {
+					GirlsFrontlinePixelDungeon.switchNoFade(GameScene.class);
+				} else {
+					GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
+				}
+			}
+		};
 		btnExit.setPos( Camera.main.width - btnExit.width(), 0 );
 		add( btnExit );
 
 		fadeIn();
+	}
+	
+	@Override
+	protected void onBackPressed() {
+		//如果上一个场景是游戏场景，返回到游戏场景，否则返回到标题场景
+		if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class) {
+			GirlsFrontlinePixelDungeon.switchNoFade(GameScene.class);
+		} else {
+			GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
+		}
 	}
 	
 	public static class Record extends Button {
