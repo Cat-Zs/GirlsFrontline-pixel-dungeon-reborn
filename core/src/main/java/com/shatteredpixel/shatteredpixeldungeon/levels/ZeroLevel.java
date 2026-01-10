@@ -348,6 +348,10 @@ public static class AchievementButton extends WindowTrigger{
 				return Messages.get(this, "computer4.name");
 			}else if((tileY*WIDTH+tileX)==computerPos5){
 				return Messages.get(this, "computer5.name");
+			}else if((tileY*WIDTH+tileX)==decontaminationCorridorPos){
+				return Messages.get(this, "decontamination_corridor.name");
+			}else if((tileY*WIDTH+tileX)==achievementButtonPos){
+				return Messages.get(this, "achievement_button.name");
 			}
 
 			return super.name(tileX, tileY);
@@ -368,6 +372,10 @@ public static class AchievementButton extends WindowTrigger{
 				return Messages.get(this, "computer4.desc");
 			}else if((tileY*WIDTH+tileX)==computerPos5){
 				return Messages.get(this, "computer5.desc");
+			}else if((tileY*WIDTH+tileX)==decontaminationCorridorPos){
+				return Messages.get(this, "decontamination_corridor.desc");
+			}else if((tileY*WIDTH+tileX)==achievementButtonPos){
+				return Messages.get(this, "achievement_button.desc");
 			}
 
 			return super.desc(tileX, tileY);
