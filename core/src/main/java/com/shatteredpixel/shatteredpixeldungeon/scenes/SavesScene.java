@@ -17,16 +17,16 @@ public class SavesScene extends PixelScene {
 		if (GamesInProgress.checkAll().isEmpty()){
 			add( new WndStartGame(1){
 				@Override
-				public void destroy() {
-					super.destroy();
+				public void onBackPressed() {
+					super.onBackPressed();
 					SavesScene.this.onBackPressed();
 				}
 			});
 		} else {
 			add( new WndSelectGameInProgress(){
 				@Override
-				public void destroy() {
-					super.destroy();
+				public void onBackPressed() {
+					super.onBackPressed();
 					SavesScene.this.onBackPressed();
 				}
 			});
