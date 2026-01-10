@@ -662,22 +662,26 @@ public class Dungeon {
 
         itemAOfSave = new ArrayList<>();
         Class[] ItemToSave = bundle.getClassArray(NOTESAVEA);
-        for (int j = 0; j < ItemToSave.length; j++) {
-            try {
-                itemAOfSave.add(ItemToSave[j]);
-            } catch (Exception e) {
-                GirlsFrontlinePixelDungeon.reportException(e);
+        if (ItemToSave != null) {
+            for (int j = 0; j < ItemToSave.length; j++) {
+                try {
+                    itemAOfSave.add(ItemToSave[j]);
+                } catch (Exception e) {
+                    GirlsFrontlinePixelDungeon.reportException(e);
+                }
             }
         }
         Item.itemA = itemAOfSave;
 
         NOTEAOfSave = new ArrayList<>();
         String[] NoteToSave = bundle.getStringArray(NOTESAVEB);
-        for (int i = 0; i < NoteToSave.length; i++) {
-            try {
-                NOTEAOfSave.add(NoteToSave[i]);
-            } catch (Exception e) {
-                GirlsFrontlinePixelDungeon.reportException(e);
+        if (NoteToSave != null) {
+            for (int i = 0; i < NoteToSave.length; i++) {
+                try {
+                    NOTEAOfSave.add(NoteToSave[i]);
+                } catch (Exception e) {
+                    GirlsFrontlinePixelDungeon.reportException(e);
+                }
             }
         }
         Item.NOTEA = NOTEAOfSave;
