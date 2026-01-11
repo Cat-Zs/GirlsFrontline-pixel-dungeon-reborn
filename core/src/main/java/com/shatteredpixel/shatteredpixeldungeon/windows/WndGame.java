@@ -103,7 +103,7 @@ public class WndGame extends Window {
 		}
 
 		// 重建0层(自杀) 和 主菜单（0层）
-		if(0==GamesInProgress.curSlot){
+		if(0==GamesInProgress.curSlot && !heroDied){
 			// 重置楼层按钮
 			RedButton resetBtn = new RedButton( Messages.get(this, "kill") ) {
 				@Override
