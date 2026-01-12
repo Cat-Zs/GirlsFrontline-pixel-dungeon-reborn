@@ -350,6 +350,8 @@ public class ShootGun extends MeleeWeapon {
                 if (cooldownLeft>0){
                     cooldownLeft--;
                 }
+                if (cooldownLeft==0)
+                    cooldown = false;
 
                 if (0==cooldownLeft && !needReload){
                     hasCharge=true;
