@@ -21,10 +21,14 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.levels.features;
 
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -40,6 +44,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.Berry;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 public class HighGrass {
@@ -122,9 +127,40 @@ public class HighGrass {
 			//Camouflage
 			if (ch instanceof Hero) {
 				Hero hero = (Hero) ch;
-				if (hero.belongings.armor() != null && hero.belongings.armor().hasGlyph(Camouflage.class, hero)) {
-					Camouflage.activate(hero, hero.belongings.armor.buffedLvl());
-				}
+                float time = 0;
+                boolean TalentAdd = false;
+                int ExtraSTR = 0;
+				if (hero.belongings.armor() != null ) {
+                    if (hero.belongings.armor().hasGlyph(Camouflage.class, hero)) {
+                        time += Camouflage.HeroActivate(hero.belongings.armor.buffedLvl());
+                    }
+                    if (hero.belongings.armor().STRReq()<=Dungeon.hero.STR()){
+                        TalentAdd = true;
+                        ExtraSTR = Dungeon.hero.STR()-hero.belongings.armor().STRReq();
+                    }
+				}else {
+                    TalentAdd = true;
+                }//装了护甲不超力或者不装护甲时允许天赋给予隐身
+
+                Hunger hunger = Dungeon.hero.buff(Hunger.class);
+                if (hunger != null && hunger.isStarving()){
+                    TalentAdd = false;
+                }//处于极度饥饿时截停天赋给予隐身
+
+                if (TalentAdd && Dungeon.hero.hasTalent(Talent.Type56Two_Grass)) {
+                    time += 1 + Dungeon.hero.pointsInTalent(Talent.Type56Two_Grass);
+                }
+
+                int timeV2 = 0;
+                if (Dungeon.hero.hasTalent(Talent.Type56Two_Grass)){
+                    timeV2 += ExtraSTR*Dungeon.hero.pointsInTalent(Talent.Type56Two_GrassV2);
+                    timeV2 = Math.max(4+2*Dungeon.hero.pointsInTalent(Talent.Type56Two_GrassV2), timeV2);
+                }
+                time = Math.max(timeV2, time);
+                if (time != 0) {
+                    Sample.INSTANCE.play(Assets.Sounds.MELD);
+                    Buff.prolong(hero, Invisibility.class, time);
+                }
 			} else if (ch instanceof DriedRose.GhostHero){
 				DriedRose.GhostHero ghost = (DriedRose.GhostHero) ch;
 				if (ghost.armor() != null && ghost.armor().hasGlyph(Camouflage.class, ghost)){

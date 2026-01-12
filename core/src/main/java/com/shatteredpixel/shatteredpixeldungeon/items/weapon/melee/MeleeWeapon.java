@@ -26,12 +26,14 @@ import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.Random;
 
 public class MeleeWeapon extends Weapon {
-	
+
 	public int tier;
 
 	@Override
@@ -49,10 +51,21 @@ public class MeleeWeapon extends Weapon {
 	public int STRReq(int lvl){
 		return STRReq(tier, lvl);
 	}
-	
+
 	@Override
 	public int damageRoll(Char owner) {
-		int damage = augment.damageFactor(super.damageRoll( owner ));
+        int dmg = super.damageRoll( owner );
+        if (owner instanceof Hero) {
+            Hero heroA = (Hero)owner;
+            Char enemyA = heroA.enemy();
+            if (enemyA instanceof Mob && ((Mob) enemyA).surprisedBy(heroA)) {
+                if (hero.hasTalent(Talent.Type56Two_Damage)) {
+                    int diff = max() - min();
+                    dmg = Random.NormalIntRange(min() + Math.round(0.2f * hero.pointsInTalent(Talent.Type56Two_Damage) * diff), max());
+                }
+            }
+        }
+		int damage = augment.damageFactor(dmg);
 
 		if (owner instanceof Hero) {
 			int exStr = ((Hero)owner).STR() - STRReq();

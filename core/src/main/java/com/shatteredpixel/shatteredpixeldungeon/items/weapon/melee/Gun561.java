@@ -56,12 +56,12 @@ public class Gun561 extends ShootGun {
 	}
 	@Override
 	public int max(int lvl) {
-		return hasCharge ? 2 :8+lvl*2;
-        //初始8成长2
+		return hasCharge ? 2 :10+lvl*2;
+        //初始10成长2
 	}
     @Override
     protected int BombDamage(int lvl){
-        return Random.NormalIntRange(2+lvl,16+2*lvl);
+        return Random.NormalIntRange(2+lvl,20+2*lvl);
     }
 
 	@Override

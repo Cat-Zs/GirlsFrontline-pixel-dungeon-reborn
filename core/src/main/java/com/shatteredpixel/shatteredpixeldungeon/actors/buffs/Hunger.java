@@ -163,6 +163,7 @@ public class Hunger extends Buff implements Hero.Doom {
     public boolean isHungry() {
         return level >= HUNGRY;
     }
+    public boolean isFull(){ return level == 0; }
 
 	public float hunger() {
 		return level;

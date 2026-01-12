@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EquipLevelUp;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -393,10 +394,17 @@ public class Armor extends EquipableItem {
 	//other things can equip these, for now we assume only the hero can be affected by levelling debuffs
 	@Override
 	public int buffedLvl() {
-		if (isEquipped( Dungeon.hero ) || Dungeon.hero.belongings.contains( this )){
+		if (isEquipped( hero ) || hero.belongings.contains( this )){
             int lvl = super.buffedLvl();
-            if (hero!=null&&hero.buff(EquipLevelUp.class) != null)
-                lvl += 1+Dungeon.hero.pointsInTalent(Talent.Type56FourTwoTwo);
+            if (hero != null) {
+                if (hero.buff(EquipLevelUp.class) != null) {
+                    lvl += 1 + hero.pointsInTalent(Talent.Type56FourTwoTwo);
+                }
+                Hunger hunger = hero.buff(Hunger.class);
+                if (hunger != null && hunger.isFull()) {
+                    lvl += hero.pointsInTalent(Talent.Type56Two_Armor);
+                }
+            }
 			return lvl;
 		} else {
 			return level();

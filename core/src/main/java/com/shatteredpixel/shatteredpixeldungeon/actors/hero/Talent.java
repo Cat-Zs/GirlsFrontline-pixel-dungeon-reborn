@@ -31,7 +31,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EnhancedRings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FoodShield;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Haste;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
@@ -60,6 +59,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ShootGun;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -67,6 +67,7 @@ import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
@@ -153,9 +154,9 @@ public enum Talent {
 	//Ratmogrify T4
 	RATSISTANCE(124, 4), RATLOMACY(125, 4), RATFORCEMENTS(126, 4),
     //type561 T1
-    Type56One_FOOD(128), Type56One_Identify(129), Type56One_Heal(130), Type56One_Armor(131),
+    Type56One_FOOD(128), Type56One_Identify(129), Type56One_Damage(130), Type56One_Armor(131),
     //type561 T2
-    Type56Two_FOOD(132),Type56Two_Upgrade(133),Type56Two_Item(134),Type56Two_Sight(135),Type56Two_Exclusive(136),
+    Type56Two_FOOD(132),Type56Two_Armor(133),Type56Two_Grass(134),Type56Two_Sight(135),Type56Two_Damage(136),Type56Two_GrassV2(134),
     //type561 T3
     Type56Three_Bomb(137, 3), Type56Three_Book(138, 3),
     //type561 T4-1
@@ -426,14 +427,6 @@ public enum Talent {
         if(Dungeon.hero.hasTalent(Talent.Type56Two_FOOD))
             Food.satisfy(hero , 10+20*Dungeon.hero.pointsInTalent(Talent.Type56Two_FOOD));
 
-        if(Dungeon.hero.hasTalent(Talent.Type56One_Armor)){
-            FoodShield FoodShield = hero.buff(FoodShield.class);
-            if (FoodShield == null) {
-                // 复制的星盾
-                FoodShield = Buff.affect(hero, FoodShield.class);
-            }
-            FoodShield.incShield(1+Dungeon.hero.pointsInTalent(Talent.Type56One_Armor));
-        }
     }
 
 	public static class WarriorFoodImmunity extends FlavourBuff{
@@ -538,15 +531,6 @@ public enum Talent {
 				SpellSprite.show( hero, SpellSprite.CHARGE );
 			}
 		}
-        if (hero.hasTalent(Type56Two_Upgrade)){
-            RedBook redbook = hero.belongings.getItem(RedBook.class);
-            if (redbook != null){
-                redbook.overCharge(1 + hero.pointsInTalent(Type56Two_Upgrade), true);
-                //复制的盗贼，下面两行是粒子特效
-                ScrollOfRecharging.chargeParticle( Dungeon.hero );
-                SpellSprite.show( hero, SpellSprite.CHARGE );
-            }
-        }
 	}
 
 	public static void onArtifactUsed( Hero hero ){
@@ -595,10 +579,6 @@ public enum Talent {
 			Buff.affect(hero, Recharging.class, 1f + hero.pointsInTalent(TESTED_HYPOTHESIS));
 			ScrollOfRecharging.chargeParticle(hero);
 		}
-        if (hero.hasTalent(Type56One_Heal)){
-            Food.satisfy(hero, 10+10*hero.pointsInTalent(Type56One_Heal));
-            Sample.INSTANCE.play( Assets.Sounds.EAT );
-        }
 	}
 
 	public static int onAttackProc( Hero hero, Char enemy, int dmg ){
@@ -608,6 +588,22 @@ public enum Talent {
 			dmg += Random.IntRange(hero.pointsInTalent(SUCKER_PUNCH) , 2);
 			Buff.affect(enemy, SuckerPunchTracker.class);
 		}
+
+        if(hero.hasTalent(Type56One_Damage)){
+            ShootGun Gun = hero.belongings.getItem(ShootGun.class);
+            boolean add = false;
+            if (Gun == null && !(hero.belongings.weapon instanceof ShootGun)) {
+                //背包不存在榴弹且也没有装备榴弹的情况下
+                add = true;
+            }else {
+                add = ShootGun.cooldown;
+            }
+            if (add){
+                int a = Random.IntRange(hero.pointsInTalent(Type56One_Damage)-1 , 2);
+                GLog.p(String.valueOf(a));
+                dmg+=a;
+            }
+        }
 
 		if(hero.hasTalent(FOLLOWUP_STRIKE)) {
 			if (hero.belongings.weapon() instanceof MissileWeapon) {
@@ -732,7 +728,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, NATURES_BOUNTY, SURVIVALISTS_INTUITION, FOLLOWUP_STRIKE, NATURES_AID);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, Type56One_FOOD , Type56One_Identify, Type56One_Heal, Type56One_Armor);
+				Collections.addAll(tierTalents, Type56One_FOOD , Type56One_Identify, Type56One_Damage, Type56One_Armor);
 				break;
 			case GSH18:
 				Collections.addAll(tierTalents, GSH18_MEAL_TREATMENT, GSH18_DOCTOR_INTUITION, GSH18_CLOSE_COMBAT, GSH18_STAR_SHIELD);
@@ -761,7 +757,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, RESTORED_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, Type56Two_FOOD, Type56Two_Upgrade, Type56Two_Item, Type56Two_Sight, Type56Two_Exclusive);
+				Collections.addAll(tierTalents, Type56Two_FOOD, Type56Two_Armor, Type56Two_Grass,Type56Two_GrassV2, Type56Two_Sight, Type56Two_Damage);
 				break;
 			case GSH18:
 				Collections.addAll(tierTalents, GSH18_ENERGIZING_MEAL, GSH18_CHAIN_SHOCK, GSH18_LOGISTICS_SUPPORT, GSH18_COMIC_HEART, GSH18_MEDICAL_COMPATIBILITY

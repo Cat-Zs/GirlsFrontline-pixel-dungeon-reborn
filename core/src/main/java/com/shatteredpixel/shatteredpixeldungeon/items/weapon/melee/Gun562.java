@@ -37,12 +37,12 @@ public class Gun562 extends ShootGun {
     }
     @Override
     public int max(int lvl) {
-        return 12+lvl*3;
-        //初始12成长3
+        return 24+lvl*3;
+        //初始24成长3
     }
     @Override
     protected int BombDamage(int lvl){
-        return Random.NormalIntRange(6+lvl,24+3*lvl);
+        return Random.NormalIntRange(6+lvl,48+3*lvl);
     }
     @Override
     public void onShootComplete(int cell, int lvl) {

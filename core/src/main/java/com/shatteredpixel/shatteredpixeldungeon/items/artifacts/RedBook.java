@@ -96,6 +96,9 @@ public class RedBook extends Artifact{
             else if (charge <= 0)  GLog.i( Messages.get(this, "no_charge") );
             else {
                 GameScene.selectCell(targeter);
+                if (Dungeon.hero.hasTalent(Talent.Type56One_Armor)){
+                    Buff.affect(Dungeon.hero, Barrier.class).setShield(3+2*Dungeon.hero.pointsInTalent(Talent.Type56One_Armor));
+                }
             }
         }
         lockchB();
@@ -117,28 +120,6 @@ public class RedBook extends Artifact{
                 // 如果目标是友方，则目标添加祝福、自身获得照明
                 Buff.affect(target, Bless.class, 5f);
                 Buff.affect(Dungeon.hero, Light.class, 10f);
-                if(Dungeon.hero.hasTalent(Talent.Type56Two_Exclusive)){
-                    int shield = 5 + 5 * Dungeon.hero.pointsInTalent(Talent.Type56Two_Exclusive);
-                    if(target == Dungeon.hero) {
-                        //目标是自身，则自身获得护盾
-                        Buff.affect(Dungeon.hero, Barrier.class).setShield(shield);
-                    }else {
-                        if(Dungeon.hero.shielding()<5){
-                            shield-=5-Dungeon.hero.shielding();
-                            Buff.affect(Dungeon.hero, Barrier.class).setShield(5);
-                        }
-                        //作用在友方其他单位，则玩家先获得最多5点盾，然后目标获得收益
-                        if(shield<=target.HT-target.HP) {
-                            //已损失血量大于护盾值，则护盾值转为治疗
-                            target.HP += shield;
-                        }else {
-                            //治疗后溢出的数值转化为盾
-                            shield-=target.HT-target.HP;
-                            target.HP=target.HT;
-                            Buff.affect(target, Barrier.class).setShield(shield);
-                        }
-                    }
-                }
             }else if(target.alignment==Char.Alignment.ENEMY){
                 deadBomb(target);
             }else if(target.alignment==Char.Alignment.NEUTRAL&&(target instanceof Mimic||target instanceof Bee)){
@@ -168,10 +149,6 @@ public class RedBook extends Artifact{
             return;
         }
 
-        if (Dungeon.hero.hasTalent(Talent.Type56Two_Item)) {
-            int dur = 5 + 5*Dungeon.hero.pointsInTalent(Talent.Type56Two_Item);
-            Buff.append(Dungeon.hero, TalismanOfForesight.CharAwareness.class, dur).charID = target.id();
-        }
         new Flare( 5, 32 ).color( 0xFF0000, true ).show(target.sprite,2f);
         Sample.INSTANCE.play( Assets.Sounds.READ );
         Invisibility.dispel();

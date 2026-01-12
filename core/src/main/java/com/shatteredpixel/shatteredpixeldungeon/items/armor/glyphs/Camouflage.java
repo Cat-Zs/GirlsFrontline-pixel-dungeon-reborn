@@ -46,6 +46,9 @@ public class Camouflage extends Armor.Glyph {
 			Sample.INSTANCE.play( Assets.Sounds.MELD );
 		}
 	}
+    public static float HeroActivate(int level) {
+        return 3 + level / 2;
+    }
 
 	@Override
 	public ItemSprite.Glowing glowing() {

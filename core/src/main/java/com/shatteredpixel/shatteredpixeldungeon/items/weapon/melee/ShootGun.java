@@ -4,11 +4,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Empulse;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -18,21 +17,20 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EnergyParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRecharging;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
+import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.watabou.noosa.Image;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
@@ -50,17 +48,20 @@ public class ShootGun extends MeleeWeapon {
     protected boolean hasCharge     = true;
     protected int cooldownTurns = 200;
     private   int     cooldownLeft  = 0;
+    public static boolean cooldown = false;
     protected float rate = 1;
     protected float EMPduration = 0;
 
     private static final String HAS_CHARGE    = "hasCharge";
     private static final String COOLDOWN_LEFT = "cooldownLeft";
+    private static final String COOLDOWN = "cooldown";
 
     @Override
     public void storeInBundle( Bundle bundle ) {
         super.storeInBundle(bundle);
         bundle.put(HAS_CHARGE   ,hasCharge   );
         bundle.put(COOLDOWN_LEFT,cooldownLeft);
+        bundle.put(COOLDOWN, cooldown);
     }
     
     @Override
@@ -68,6 +69,7 @@ public class ShootGun extends MeleeWeapon {
         super.restoreFromBundle(bundle);
         hasCharge    = bundle.getBoolean(HAS_CHARGE   );
         cooldownLeft = bundle.getInt    (COOLDOWN_LEFT);
+        cooldown = bundle.getBoolean(COOLDOWN);
     }
 
     {
@@ -158,6 +160,7 @@ public class ShootGun extends MeleeWeapon {
             }
         }
         cooldownLeft=cooldownTurns-down;
+        cooldown = true;
         updateQuickslot();
         curUser.spendAndNext(1f);
     }
@@ -238,6 +241,11 @@ public class ShootGun extends MeleeWeapon {
             if(Dungeon.hero.hasTalent(Talent.EMP_One)){
                 EMPduration+=Dungeon.hero.pointsInTalent(Talent.EMP_One);
             }
+        }
+    }
+    protected void EMPCharge(){
+        if (Dungeon.hero.hasTalent(Talent.EMP_Two)){
+            Buff.affect(Dungeon.hero, EMPCharge.class, 5+5*Dungeon.hero.pointsInTalent(Talent.EMP_Two));
         }
     }
     protected int BombDamage(int lvl){
@@ -351,6 +359,27 @@ public class ShootGun extends MeleeWeapon {
             
             spend( TICK );
             return true;
+        }
+    }
+    public static class EMPCharge extends FlavourBuff {
+        public static float DURATION = 10.0F;
+
+        public EMPCharge() {
+            this.type = buffType.POSITIVE;
+        }
+
+        public int icon() {
+            return BuffIndicator.INVISIBLE;
+        }
+
+        public void proc(Char enemy){
+            if (Random.Int(2) == 0) {
+                Buff.affect(enemy, Empulse.class, 2);
+                enemy.sprite.emitter().burst(EnergyParticle.FACTORY, 10);
+            }
+        }
+        public void tintIcon(Image icon) {
+            icon.hardlight(1.0F, 1.0F, 0.0F);
         }
     }
 }

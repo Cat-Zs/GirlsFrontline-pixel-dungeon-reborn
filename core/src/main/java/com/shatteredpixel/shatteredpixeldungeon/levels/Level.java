@@ -121,6 +121,9 @@ public abstract class Level implements Bundlable {
 	protected static final float TIME_TO_RESPAWN	= 50;
 
 	public int levelDepth;
+    public boolean FirstSight = true;
+    public boolean SecondSight = true;
+
 	public int levelId;
 	public int version;
 	
@@ -191,6 +194,8 @@ public abstract class Level implements Bundlable {
 	private static final String BLOBS		= "blobs";
 	private static final String FEELING		= "feeling";
     private static final String FIRSTSAVE   = "firstsave";
+    private static final String FIRSTSIGHT   = "FIRSTSIGHT";
+    private static final String SECONDSIGHT   = "SECONDSIGHT";
 
 	public void create(int levelDepth,int levelId){
 		this.levelDepth=levelDepth;
@@ -337,6 +342,8 @@ public abstract class Level implements Bundlable {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
         FirstSave =bundle.getBoolean(FIRSTSAVE);
+        FirstSight=bundle.getBoolean(FIRSTSAVE);
+        SecondSight=bundle.getBoolean(SECONDSIGHT);
 		levelDepth=bundle.getInt(LEVEL_DEPTH);
 		levelId   =bundle.getInt(LEVEL_ID   );
 		version   =bundle.getInt(VERSION    );
@@ -366,7 +373,8 @@ public abstract class Level implements Bundlable {
 		exit		= bundle.getInt( EXIT );
 
 		locked      = bundle.getBoolean( LOCKED );
-		
+
+
 		Collection<Bundlable> collection = bundle.getCollection( HEAPS );
 		for (Bundlable h : collection) {
 			Heap heap = (Heap)h;
@@ -461,6 +469,8 @@ public abstract class Level implements Bundlable {
 		bundle.put("mobs_to_spawn", mobsToSpawn.toArray(new Class[0]));
 		bundle.put("respawner", respawner );
         bundle.put(FIRSTSAVE, FirstSave);
+        bundle.put(FIRSTSIGHT,FirstSight);
+        bundle.put(SECONDSIGHT,SecondSight);
 	}
 	
 	public int tunnelTile() {

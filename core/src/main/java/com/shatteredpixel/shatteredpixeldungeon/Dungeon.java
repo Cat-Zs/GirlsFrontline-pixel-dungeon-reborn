@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TalentSecondSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -78,6 +79,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.utils.Gregorian;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndResurrect;
 import com.watabou.noosa.Game;
@@ -327,9 +329,6 @@ public class Dungeon {
 			}
 		}
 
-        if(hero.hasTalent(Talent.Type56Two_Sight)&&Random.Int(1)<1) {
-            Buff.affect(hero, MindVision.class, 3 * hero.pointsInTalent(Talent.Type56Two_Sight));
-        }
 		level.create(depth,id);
 		Statistics.qualifiedForNoKilling = !bossLevel();
 		return level;
@@ -789,6 +788,33 @@ public class Dungeon {
 		}
 
 	}
+    public static void GetSight(){
+        if (Dungeon.hero!=null){
+            if(Dungeon.hero.hasTalent(Talent.Type56Two_Sight)) {
+                TalentSecondSight Sec = Dungeon.hero.buff(TalentSecondSight.class);
+                if (Sec==null){
+                    Buff.affect( Dungeon.hero, TalentSecondSight.class).Set(0, 0);
+                    Sec = Dungeon.hero.buff(TalentSecondSight.class);
+                    GLog.p("重新赋予");
+                }
+                if (Dungeon.level.FirstSight){
+                    Dungeon.level.FirstSight = false;
+                    Buff.affect(Dungeon.hero, MindVision.class, 3);
+                    //首次进入获得三回合灵视
+
+                    if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2) {
+                        Sec.Set(Dungeon.levelId, 25);
+                        //天赋2级时才会计时25回合
+                    }
+                }
+
+                if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2 && Sec.EndCD(Dungeon.levelId)&&Dungeon.level.SecondSight) {
+                    Dungeon.level.SecondSight = false;
+                    Buff.affect(Dungeon.hero, MindVision.class, 3);
+                }//计时结束后进入该楼层
+            }
+        }
+    }
 
 	public static Level tryLoadLevel(int levelId){
 		final int save=GamesInProgress.curSlot;
@@ -796,6 +822,7 @@ public class Dungeon {
 		if(FileUtils.fileExists(fileName)){
 			//file may be deleted between fileExists and loadLevel,who knows.
 			try{
+                GetSight();
 				return loadLevel(save,levelId);
 			}catch(IOException e){
 				Game.reportException(e);
