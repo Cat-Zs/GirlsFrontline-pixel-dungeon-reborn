@@ -61,6 +61,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ShootGun;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -469,8 +470,8 @@ public enum Talent {
 				starShield = Buff.affect(hero, StarShield.class);
 			}
 			// 计算应回复的护盾层数：治疗药水恢复量的20%/50%
-			float healAmount = 0.8f * hero.HT + 14; // 基础治疗量
-			float shieldPercent = 0.2f * hero.pointsInTalent(GSH18_MEDICAL_COMPATIBILITY);
+			int healAmount = PotionOfHealing.getHealAmount(hero.HT);
+			float shieldPercent = -0.1f + 0.3f * hero.pointsInTalent(GSH18_MEDICAL_COMPATIBILITY);
 			int shieldToAdd = Math.round(healAmount * shieldPercent);
 			starShield.incShield(shieldToAdd);
 			if (hero.sprite != null) {

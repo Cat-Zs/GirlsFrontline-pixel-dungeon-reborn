@@ -30,131 +30,124 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 
 public class StarShield extends ShieldBuff {
-    
-    {
-        type = buffType.POSITIVE;
-    }
+	
+	{
+		type = buffType.POSITIVE;
+	}
 
-    private int turnsPassed = 0;
+	private int turnsPassed = 0;
 
-    @Override
-    public void incShield(int amt) {
-        //对非GSH18角色添加30点上限限制
-        if (target instanceof Hero) {
-            Hero hero = (Hero) target;
-            // 如果不是GSH18角色且当前护盾加上新增量超过30，则只加到30
-            if (hero.heroClass != HeroClass.GSH18 && shielding() + amt > 30) {
-                amt = 30 - shielding();
-                if (amt <= 0) return; // 已经达到上限，不再增加
-            }
-        }
-        
-        super.incShield(amt);
-        
-        // 当护盾超过30层时，每获得1点护盾，同时回复1点血量
-        if (shielding() - amt >= 30) {
-            //计算新增的护盾中超过30层的部分
-            if (target instanceof Hero) {
-                // 使用Healing buff进行治疗
-                Buff.affect(target, Healing.class).setHeal(amt, 1f, 0);
-                target.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "heal", amt));
-            }
-        } else if (shielding() > 30) {
-            // 计算从低于30层到超过30层的部分
-            int overThirty = shielding() - 30;
-            if (overThirty > 0) {
-                if (target instanceof Hero) {
-                    // 使用Healing buff进行治疗
-                    Buff.affect(target, Healing.class).setHeal(overThirty, 1f, 0);
-                    target.sprite.showStatus(CharSprite.POSITIVE, Messages.get(this, "heal", overThirty));
-                }
-            }
-        }
-    }
+	@Override
+	public void incShield(int addAmount) {
+		//对非GSH18角色添加30点上限限制
+		int curAmount = shielding();
+		int newAmount = addAmount + curAmount;
+		if(!(target instanceof Hero) || ((Hero)target).heroClass!=HeroClass.GSH18){
+			if(newAmount > 30){
+				newAmount = 30;
+			}
+		}
 
-    @Override
-    public boolean act() {
-        turnsPassed++;
-        
-        int shieldingValue = shielding();
-        int heroLevel = 0;
-        if(target instanceof Hero){
-            heroLevel = ((Hero)target).lvl;
-        }
-        
-        // 根据护盾值范围设置不同的衰减频率
-        if(shieldingValue <= 0) {
-            detach();
-        } else if (shieldingValue > 30*heroLevel) {
-            decShield(2);
-            turnsPassed=0;
-        } else if (shieldingValue >= 30) {
-            // 30-5000护盾每2回合减少1点
-            if (turnsPassed >= 2) {
-                decShield(1);
-                turnsPassed = 0;
-            }
-        } else if (shieldingValue >= 10) {
-            // 10-30区间每3回合减少1点
-            if (turnsPassed >= 3) {
-                decShield(1);
-                turnsPassed = 0;
-            }
-        } else if (shieldingValue < 10) {
-            // 10护盾以下时，每5回合衰减1点
-            if (turnsPassed >= 5) {
-                decShield(1);
-                turnsPassed = 0;
-            }
-        }
-        
-        spend(TICK);
-        
-        return true;
-    }
-    
-    @Override
-    public void fx(boolean on) {
-        if (on) target.sprite.add(CharSprite.State.SHIELDED);
-        else target.sprite.remove(CharSprite.State.SHIELDED);
-    }
-    
-    @Override
-    public int icon() {
-        return BuffIndicator.STAR_SHIELD;
-    }
-    
-    @Override
-    public void tintIcon(Image icon) {
-        icon.hardlight(1f, 1f, 1f); //白色
-    }
+		int incAmount = newAmount - curAmount;
+		if(incAmount <= 0){
+			return;
+		}
+		
+		int baseAmount = curAmount>30?curAmount:30;
+		int overShielding = newAmount - baseAmount;
+		if(overShielding > 0){
+			Healing healing = target.buff(Healing.class);
+			if(healing == null){
+				Buff.affect(target, Healing.class).setHeal(overShielding, 0.0f, 1);
+			}else{
+				healing.increaseHeal(overShielding);
+			}
+		}
 
-    @Override
-    public String iconTextDisplay() {
-        return Integer.toString(shielding());
-    }
-    
-    @Override
-    public String toString() {
-        return Messages.get(this, "name");
-    }
-    
-    @Override
-    public String desc() {
-        return Messages.get(this, "desc", shielding());
-    }
+		super.incShield(incAmount);
+	}
 
-    private static final String TURNS_PASSED = "turns_passed";
+	@Override
+	public boolean act() {
+		int shieldingValue = shielding();
+		int heroLevel = 0;
+		if(target instanceof Hero){
+			heroLevel = ((Hero)target).lvl;
+		}
+		
+		// 根据护盾值范围设置不同的衰减频率
+		turnsPassed++;
+		if(shieldingValue <= 0) {
+			detach();
+		} else if (shieldingValue > 30*heroLevel) {
+			decShield(2);
+			turnsPassed=0;
+		} else if (shieldingValue >= 30) {
+			// 30-5000护盾每2回合减少1点
+			if (turnsPassed >= 2) {
+				decShield(1);
+				turnsPassed = 0;
+			}
+		} else if (shieldingValue >= 10) {
+			// 10-30区间每3回合减少1点
+			if (turnsPassed >= 3) {
+				decShield(1);
+				turnsPassed = 0;
+			}
+		} else if (shieldingValue < 10) {
+			// 10护盾以下时，每5回合衰减1点
+			if (turnsPassed >= 5) {
+				decShield(1);
+				turnsPassed = 0;
+			}
+		}
+		
+		spend(TICK);
+		return true;
+	}
+	
+	@Override
+	public void fx(boolean on) {
+		if (on) target.sprite.add(CharSprite.State.SHIELDED);
+		else target.sprite.remove(CharSprite.State.SHIELDED);
+	}
+	
+	@Override
+	public int icon() {
+		return BuffIndicator.STAR_SHIELD;
+	}
+	
+	@Override
+	public void tintIcon(Image icon) {
+		icon.hardlight(1f, 1f, 1f); //白色
+	}
 
-    @Override
-    public void storeInBundle(Bundle bundle) {
-        super.storeInBundle(bundle);
-        bundle.put(TURNS_PASSED, turnsPassed);
-    }
+	@Override
+	public String iconTextDisplay() {
+		return Integer.toString(shielding());
+	}
+	
+	@Override
+	public String toString() {
+		return Messages.get(this, "name");
+	}
+	
+	@Override
+	public String desc() {
+		return Messages.get(this, "desc", shielding());
+	}
 
-    @Override
-    public void restoreFromBundle(Bundle bundle) {
-        super.restoreFromBundle(bundle);
-        turnsPassed = bundle.getInt(TURNS_PASSED);
-    }
+	private static final String TURNS_PASSED = "turns_passed";
+
+	@Override
+	public void storeInBundle(Bundle bundle) {
+		super.storeInBundle(bundle);
+		bundle.put(TURNS_PASSED, turnsPassed);
+	}
+
+	@Override
+	public void restoreFromBundle(Bundle bundle) {
+		super.restoreFromBundle(bundle);
+		turnsPassed = bundle.getInt(TURNS_PASSED);
+	}
 }
