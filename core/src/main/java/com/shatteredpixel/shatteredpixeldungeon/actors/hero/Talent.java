@@ -672,12 +672,7 @@ public enum Talent {
 			}
 		}
 		
-
-		return dmg;
-	}
-	
-	// GSH18天赋：双星守护
-	public static void onAttackHit( Hero hero, Char enemy ){
+		// GSH18天赋：双星守护
 		if(hero.hasTalent(GSH18_STAR_SHIELD)){
 			StarShieldTracker tracker = Buff.affect(hero, StarShieldTracker.class);
 			int shieldPerHit = hero.pointsInTalent(GSH18_STAR_SHIELD); // +1回1点，+2回2点
@@ -706,6 +701,8 @@ public enum Talent {
 			}
 			}
 		}
+
+		return dmg;
 	}
 
 	public static void onShielding(Hero hero){

@@ -432,10 +432,6 @@ public abstract class Char extends Actor {
 				}
 			}
 
-			// 触发攻击命中后的天赋效果，如双星守护
-			if (this instanceof Hero) {
-				Talent.onAttackHit((Hero)this, enemy);
-			}
 			return true;
 
 		} else {
