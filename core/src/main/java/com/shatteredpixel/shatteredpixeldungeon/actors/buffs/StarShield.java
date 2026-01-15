@@ -29,7 +29,6 @@ import com.watabou.utils.Bundle;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 
-
 public class StarShield extends ShieldBuff {
     
     {
@@ -78,13 +77,17 @@ public class StarShield extends ShieldBuff {
         turnsPassed++;
         
         int shieldingValue = shielding();
+        int heroLevel = 0;
+        if(target instanceof Hero){
+            heroLevel = ((Hero)target).lvl;
+        }
         
         // 根据护盾值范围设置不同的衰减频率
-        if (shieldingValue <= 0) {
+        if(shieldingValue <= 0) {
             detach();
-        } else if (shieldingValue > 5000) {
-            // 超过5000护盾时，每1回合减少1点
-            decShield(1);
+        } else if (shieldingValue > 30*heroLevel) {
+            decShield(2);
+            turnsPassed=0;
         } else if (shieldingValue >= 30) {
             // 30-5000护盾每2回合减少1点
             if (turnsPassed >= 2) {
