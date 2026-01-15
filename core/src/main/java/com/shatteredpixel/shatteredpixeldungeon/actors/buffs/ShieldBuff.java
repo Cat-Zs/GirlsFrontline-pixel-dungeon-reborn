@@ -21,7 +21,9 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.watabou.utils.Bundle;
 
 public abstract class ShieldBuff extends Buff {
@@ -59,6 +61,11 @@ public abstract class ShieldBuff extends Buff {
 
 	public void incShield( int amt ){
 		shielding += amt;
+
+		if(target instanceof Hero){
+			Talent.onShielding((Hero)target);
+		}
+		
 		if (target != null) target.needsShieldUpdate = true;
 	}
 	

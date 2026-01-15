@@ -538,12 +538,25 @@ public class Hero extends Char {
 	
 	@Override
 	public int defenseSkill( Char enemy ) {
-
 		if (buff(Combo.ParryTracker.class) != null){
 			if (canAttack(enemy)){
 				Buff.affect(this, Combo.RiposteTracker.class).enemy = enemy;
 			}
 			return INFINITE_EVASION;
+		}
+
+		if(buff(Talent.AgileMovement.class) != null){
+			int level = pointsInTalent(Talent.GSH18_AGILE_MOVEMENT);
+			float chance = 0.15f;
+			if(level >= 3){
+				chance = 0.4f;
+			}else if(level >= 2){
+				chance = 0.25f;
+			}
+
+			if(Random.Float() < chance){
+				return INFINITE_EVASION;
+			}
 		}
 		
 		float evasion = defenseSkill;

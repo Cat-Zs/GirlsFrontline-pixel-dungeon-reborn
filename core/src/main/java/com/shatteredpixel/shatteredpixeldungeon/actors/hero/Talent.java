@@ -37,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.WandEmpower;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -207,14 +208,12 @@ public enum Talent {
 		public String toString() { return Messages.get(this, "name"); }
 		public String desc() { return Messages.get(this, "desc", dispTurns(visualcooldown())); }
 	};
-
 	public static class GSH18MealTreatmentTracker extends FlavourBuff{
 		public int icon() { return BuffIndicator.HEALING; }
 		public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.6f, 0.2f); }
 		public String toString() { return Messages.get(this, "name"); }
 		public String desc() { return Messages.get(this, "desc"); }
 	};
-
 	public static class GSH18EnergizingMealTracker extends CounterBuff{
 		{// 设置为不会随时间自然消失，只在攻击后被移除
 			revivePersists = true;
@@ -225,23 +224,38 @@ public enum Talent {
 		public String toString() { return Messages.get(this, "name"); }
 		public String desc() { return Messages.get(this, "desc"); }
 	}
-	
-	// GSH18护盾恢复追踪器
-	public static class StarShieldTracker extends CounterBuff{
-	{
-		revivePersists = true;
+	public static class StarShieldTracker extends CounterBuff{// GSH18护盾恢复追踪器
+		{
+			revivePersists = true;
+		}
+		
+		// 回合结束时重置计数器，实现每回合限制
+		@Override
+		public boolean act() {
+			// 每回合开始时重置计数器
+			countDown(count());
+			spend(TICK); // 等待下一回合
+			return true;
+		}
 	}
-	
-	// 回合结束时重置计数器，实现每回合限制
-	@Override
-	public boolean act() {
-		// 每回合开始时重置计数器
-		countDown(count());
-		spend(TICK); // 等待下一回合
-		return true;
-	}
-	}
+	public static class IntelligenceAwarenessCooldown extends FlavourBuff{
+		public int icon() { return BuffIndicator.TIME; }
+		public void tintIcon(Image icon) { icon.hardlight(0.15f, 0.0f, 0.5f); }
+		public float iconFadePercent() { return Math.max(0, visualcooldown() / 50); }
+		public String toString() { return Messages.get(this, "name"); }
+		public String desc() { return Messages.get(this, "desc", dispTurns(visualcooldown())); }
+	};
+	public static class AgileMovement extends FlavourBuff{};
+	public static class AgileMovementCooldown extends FlavourBuff{
+		public int icon() { return BuffIndicator.TIME; }
+		public void tintIcon(Image icon) { icon.hardlight(0.15f, 0.2f, 0.7f); }
+		public float iconFadePercent() { return Math.max(0, visualcooldown() / 50); }
+		public String toString() { return Messages.get(this, "name"); }
+		public String desc() { return Messages.get(this, "desc", dispTurns(visualcooldown())); }
+	};
 	public static class SpiritBladesTracker extends FlavourBuff{};
+	public static class SuckerPunchTracker extends Buff{};
+	public static class FollowupStrikeTracker extends Buff{};
 
 	int icon;
 	int maxPoints;
@@ -661,9 +675,6 @@ public enum Talent {
 
 		return dmg;
 	}
-
-	public static class SuckerPunchTracker extends Buff{};
-	public static class FollowupStrikeTracker extends Buff{};
 	
 	// GSH18天赋：双星守护
 	public static void onAttackHit( Hero hero, Char enemy ){
@@ -693,6 +704,26 @@ public enum Talent {
 			if (hero.sprite != null) {
 				hero.sprite.centerEmitter().burst(MagicMissile.WardParticle.FACTORY, 2);
 			}
+			}
+		}
+	}
+
+	public static void onShielding(Hero hero){
+		if(hero.hasTalent(GSH18_INTELLIGENCE_AWARENESS)){
+			IntelligenceAwarenessCooldown cooldownBuff = hero.buff(IntelligenceAwarenessCooldown.class);
+			if(cooldownBuff == null){
+				float cooldownTurns = 125.0f-25.0f*hero.pointsInTalent(GSH18_INTELLIGENCE_AWARENESS);
+				Buff.affect(hero, IntelligenceAwarenessCooldown.class, cooldownTurns);
+				int distance = -1+3*hero.pointsInTalent(GSH18_INTELLIGENCE_AWARENESS);
+				((MindVision)(Buff.affect(hero, MindVision.class, 1.0f))).distance = distance;
+			}
+		}
+
+		if(hero.hasTalent(GSH18_AGILE_MOVEMENT)){
+			AgileMovementCooldown cooldownBuff = hero.buff(AgileMovementCooldown.class);
+			if(cooldownBuff == null){
+				Buff.affect(hero, AgileMovementCooldown.class, 50.0f);
+				Buff.affect(hero, AgileMovement.class, 1.0f);
 			}
 		}
 	}

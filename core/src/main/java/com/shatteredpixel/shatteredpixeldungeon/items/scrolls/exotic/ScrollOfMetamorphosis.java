@@ -176,6 +176,7 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 		//TODO could some of these be made more generic?
 		private static HashMap<Talent, HeroClass> restrictedTalents = new HashMap<>();
 		static {
+            // 从蜕变池子移除以下天赋
 			restrictedTalents.put(Talent.IRON_WILL, HeroClass.WARRIOR);
 			restrictedTalents.put(Talent.RESTORED_WILLPOWER, HeroClass.WARRIOR);
 			restrictedTalents.put(Talent.RUNIC_TRANSFERENCE, HeroClass.WARRIOR);
@@ -189,9 +190,9 @@ public class ScrollOfMetamorphosis extends ExoticScroll {
 			restrictedTalents.put(Talent.LIGHT_CLOAK, HeroClass.ROGUE);
 
 			restrictedTalents.put(Talent.SEER_SHOT, HeroClass.HUNTRESS);
+			
             restrictedTalents.put(Talent.Type56Three_Bomb, HeroClass.TYPE561);
             restrictedTalents.put(Talent.Type56Three_Book, HeroClass.TYPE561);
-            //从蜕变池子移除
 		}
 
 		public static WndMetamorphReplace INSTANCE;
