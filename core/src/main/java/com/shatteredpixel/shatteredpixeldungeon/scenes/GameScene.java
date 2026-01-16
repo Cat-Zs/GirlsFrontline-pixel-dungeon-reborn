@@ -527,7 +527,28 @@ public class GameScene extends PixelScene {
 			} else if (InterlevelScene.mode == InterlevelScene.Mode.RESURRECT) {
 				GLog.h(Messages.get(this, "resurrect"), Dungeon.depth);
 			} else {
-				GLog.h(Messages.get(this, "return"), Dungeon.depth);
+				// 根据当前levelId显示不同的进入消息
+				if (InterlevelScene.mode == InterlevelScene.Mode.ACCESS) {
+					switch (Dungeon.level.levelId) {
+						case 0: // ZeroLevel
+							GLog.h(Messages.get(InterlevelScene.class, "access_zero_level"));
+							break;
+						case 1000: // ZeroLevelSub
+							GLog.h(Messages.get(InterlevelScene.class, "access_zero_level_sub"));
+							break;
+						case 2000: // Room404
+							GLog.h(Messages.get(InterlevelScene.class, "access_room404"));
+							break;
+						case 3000: // CoffeeRoom
+							GLog.h(Messages.get(InterlevelScene.class, "access_coffee_room"));
+							break;
+						default:
+							GLog.h(Messages.get(this, "return"), Dungeon.depth);
+							break;
+					}
+				} else {
+					GLog.h(Messages.get(this, "return"), Dungeon.depth);
+				}
 			}
 
 			if (Dungeon.hero.hasTalent(Talent.ROGUES_FORESIGHT)
