@@ -58,6 +58,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.CavesLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.DeadEndLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.CoffeeRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.DeepCaveBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.DeepCaveLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.HallsBossLevel;
@@ -372,6 +373,9 @@ public class Dungeon {
 			break;
 		case 2000:
 			level = new Room404();
+			break;
+		case 3000:
+			level = new CoffeeRoom();
 			break;
 		default:
 			level = new DeadEndLevel();

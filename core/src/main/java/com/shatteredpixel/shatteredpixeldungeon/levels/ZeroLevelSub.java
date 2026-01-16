@@ -25,7 +25,7 @@ public class ZeroLevelSub extends Level {
 
     public static final int toForwardCamp = (TEMP_MIN + 1) * WIDTH + (SIZE - 3);
     public static final int toRoom404     = (TEMP_MIN + 1) * WIDTH + (TEMP_MAX - 1);
-    public static final int toSnakeRoom   = toRoom404 - WIDTH;
+    public static final int toCoffeeRoom   = toRoom404 - WIDTH;
 
     @Override
     public String tilesTex() {
@@ -81,9 +81,9 @@ public class ZeroLevelSub extends Level {
         map[toRoom404] = Terrain.DOOR;
         placeTrigger(new Teleporter().create(toRoom404,Room404.toZeroLevelSub,2000));
 
-        // 添加向下的楼梯到SnakeRoom(在404传送器上方)
-        map[toSnakeRoom] = Terrain.DOOR;
-        placeTrigger(new Teleporter().create(toSnakeRoom,SnakeRoom.toZeroLevelSub,3000));
+        // 添加向下的楼梯到CoffeeRoom(在404传送器上方)
+        map[toCoffeeRoom] = Terrain.DOOR;
+        placeTrigger(new Teleporter().create(toCoffeeRoom,CoffeeRoom.toZeroLevelSub,3000));
 
         CustomTilemap customBottomTile = new CustomBottomTile();
         customBottomTile.setRect(0, 0, width(), height());
