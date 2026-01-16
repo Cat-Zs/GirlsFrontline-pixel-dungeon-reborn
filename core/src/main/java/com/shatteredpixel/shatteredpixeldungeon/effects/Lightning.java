@@ -31,6 +31,7 @@ import com.watabou.utils.PointF;
 import com.watabou.utils.Random;
 
 import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 public class Lightning extends Group {
@@ -60,10 +61,9 @@ public class Lightning extends Group {
 	}
 	
 	public Lightning( List<Arc> arcs, Callback callback ) {
-		
 		super();
 
-		this.arcs = arcs;
+		this.arcs = new ArrayList<>(arcs);
 		for (Arc arc : this.arcs)
 			add(arc);
 
