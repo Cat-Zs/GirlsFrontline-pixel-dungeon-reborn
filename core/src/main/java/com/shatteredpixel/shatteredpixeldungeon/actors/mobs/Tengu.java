@@ -319,7 +319,7 @@ public class Tengu extends Mob {
 				Game.runOnRenderThread(new Callback() {
 					@Override
 					public void call() {
-						GameScene.scene.add(new WndDialog(new Uroboros_Plot()));
+						GameScene.show(new WndDialog(new Uroboros_Plot()));
 					}
 				});
 			}

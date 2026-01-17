@@ -431,18 +431,12 @@ public class CellSelector extends ScrollArea {
 	public void processKeyHold() {
 		//prioritize moving by controller stick over moving via keys
 		if (directionFromAction(leftStickAction) != 0 && heldDelay < 0) {
-			enabled = Dungeon.hero.ready = true;
-			Dungeon.observe();
-			if (moveFromActions(leftStickAction)) {
-				Dungeon.hero.ready = false;
-			}
+			enabled = true;
+			moveFromActions(leftStickAction);
 		} else if (directionFromAction(heldAction1) + directionFromAction(heldAction2) != 0
 				&& heldDelay <= 0){
-			enabled = Dungeon.hero.ready = true;
-			Dungeon.observe();
-			if (moveFromActions(heldAction1, heldAction2)) {
-				Dungeon.hero.ready = false;
-			}
+			enabled = true;
+			moveFromActions(heldAction1, heldAction2);
 		}
 	}
 	

@@ -137,7 +137,7 @@ public class Elphelt extends Mob {
 				phase = 1;
 			}
 
-			Game.runOnRenderThread(()->GameScene.scene.add(new WndDialog(new Elphelt_Plot())));
+			Game.runOnRenderThread(()->GameScene.show(new WndDialog(new Elphelt_Plot())));
 		}
 	}
 
@@ -377,7 +377,7 @@ public class Elphelt extends Mob {
 		GameScene.bossSlain();
 		super.die( cause );
 
-		Game.runOnRenderThread(()->GameScene.scene.add(new WndDialog(new Elphelt_Plot.End())));
+		Game.runOnRenderThread(()->GameScene.show(new WndDialog(new Elphelt_Plot.End())));
 
 		yell( Messages.get(this, "defeated") );
 	}

@@ -134,7 +134,7 @@ public class Wandmaker extends NPC {
 				Game.runOnRenderThread(new Callback() {
 					@Override
 					public void call() {
-						GameScene.scene.add(new WndDialog(msg));
+						GameScene.show(new WndDialog(msg));
 					}
 				});
 			}
@@ -159,7 +159,7 @@ public class Wandmaker extends NPC {
 			Game.runOnRenderThread(new Callback() {
 				@Override
 				public void call() {
-					GameScene.scene.add(new WndDialog(dialog));
+					GameScene.show(new WndDialog(dialog));
 				}
 			});
 
