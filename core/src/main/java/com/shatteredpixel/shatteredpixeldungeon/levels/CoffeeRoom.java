@@ -20,32 +20,32 @@ public class CoffeeRoom extends Level {
     private static final int W = Terrain.WALL;
     private static final int e = Terrain.EMPTY;
     private static final int D = Terrain.DOOR;
-
-    // 硬编码的地图数组（24x24）
+    private static final int Z = Terrain.SIGN;
+    // 硬编码的地图数组（24x24）我去大地图也太难写了
     private static final int[] MAP = {
         W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, D, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
-        W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
+        W, W, Z, Z, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, D, W, W,
+        Z, Z, D, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
+        W, W, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
+        W, W, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
+        W, W, e, e, e, e, Z, e, e, e, Z, Z, Z, Z, e, Z, Z, e, Z, e, Z, e, W, W,
+        W, W, e, Z, e, e, e, e, e, e, e, Z, Z, Z, e, e, e, e, e, e, Z, e, W, W,
+        W, W, e, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, e, e, e, e, e, Z, e, Z, e, W, W,
+        W, W, e, Z, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, Z, e, W, W,
+        W, W, e, Z, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, Z, e, W, W,
+        W, W, e, Z, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, Z, e, W, W,
+        W, W, e, Z, e, e, e, e, e, e, e, Z, e, e, e, e, Z, e, e, e, Z, e, W, W,
+        W, W, e, Z, Z, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
+        W, W, e, Z, Z, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
+        W, W, e, Z, Z, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
+        W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
+        W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
+        W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
+        W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
+        W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
+        W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
+        W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
+        W, W, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, W, W,
         W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W
     };
 
@@ -124,7 +124,16 @@ public class CoffeeRoom extends Level {
             return vis;
         }
     }
-
+    // 获取地块的描述
+    @Override
+    public String tileDesc(int tile) {
+        switch (tile) {
+            case Terrain.SIGN:
+                return "";
+            default:
+                return super.tileDesc( tile );
+        }
+    }
     @Override
     public Mob createMob() {
         return null;
