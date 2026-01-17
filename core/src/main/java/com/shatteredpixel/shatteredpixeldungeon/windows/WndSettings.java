@@ -375,6 +375,7 @@ public class WndSettings extends WndTabbed {
 		CheckBox chkFlipTags;
 		ColorBlock sep2;
 		CheckBox chkFont;
+		RedButton btnStatusPaneStyle;
 		ColorBlock sep3;
 		RedButton btnKeyBindings;
 
@@ -500,6 +501,21 @@ public class WndSettings extends WndTabbed {
 			chkFont.checked(SPDSettings.systemFont());
 			add(chkFont);
 
+			// 状态面板风格切换按钮
+			btnStatusPaneStyle = new RedButton(Messages.get(this, "status_pane_style")){
+				@Override
+				protected void onClick() {
+					super.onClick();
+					// 切换状态面板风格
+					int currentStyle = SPDSettings.statusPaneStyle();
+					int newStyle = (currentStyle + 1) % 3; // 现在有三种风格，循环切换
+					SPDSettings.statusPaneStyle(newStyle);
+					// 重启场景以应用新设置
+					GirlsFrontlinePixelDungeon.seamlessResetScene();
+				}
+			};
+			add(btnStatusPaneStyle);
+
 			if (DeviceCompat.hasHardKeyboard()){
 
 				sep3 = new ColorBlock(1, 1, 0xFF000000);
@@ -557,20 +573,36 @@ public class WndSettings extends WndTabbed {
 
 			if (btnKeyBindings != null){
 				if (width > 200){
-					chkFont.setSize(width/2-1, BTN_HEIGHT);
+					// 大屏幕：并排显示三个选项
+					chkFont.setSize(width/3-1, BTN_HEIGHT);
+					btnStatusPaneStyle.setRect(chkFont.right()+2, chkFont.top(), width/3-1, BTN_HEIGHT);
 					sep3.size(1, BTN_HEIGHT + 2*GAP);
-					sep3.x = chkFont.right() + 0.5f;
+					sep3.x = btnStatusPaneStyle.right() + 0.5f;
 					sep3.y = sep2.y+1;
 					PixelScene.align(sep3);
-					btnKeyBindings.setRect(chkFont.right()+2, chkFont.top(), width/2 - 1, BTN_HEIGHT);
+					btnKeyBindings.setRect(btnStatusPaneStyle.right()+2, chkFont.top(), width/3 - 1, BTN_HEIGHT);
 				} else {
+					// 小屏幕：垂直排列
 					sep3.size(width, 1);
 					sep3.y = chkFont.bottom() + 2;
+					btnStatusPaneStyle.setRect(0, sep3.y + 1 + GAP, width, BTN_HEIGHT);
+					sep3.size(width, 1);
+					sep3.y = btnStatusPaneStyle.bottom() + 2;
 					btnKeyBindings.setRect(0, sep3.y + 1 + GAP, width, BTN_HEIGHT);
 				}
 				height = btnKeyBindings.bottom();
 			} else {
-				height = chkFont.bottom();
+				// 没有键盘绑定按钮的情况
+				if (width > 200){
+					// 大屏幕：并排显示两个选项
+					chkFont.setSize(width/2-1, BTN_HEIGHT);
+					btnStatusPaneStyle.setRect(chkFont.right()+2, chkFont.top(), width/2-1, BTN_HEIGHT);
+					height = chkFont.bottom();
+				} else {
+					// 小屏幕：垂直排列
+					btnStatusPaneStyle.setRect(0, chkFont.bottom() + 2 + GAP, width, BTN_HEIGHT);
+					height = btnStatusPaneStyle.bottom();
+				}
 			}
 		}
 

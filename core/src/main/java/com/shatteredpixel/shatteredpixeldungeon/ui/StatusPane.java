@@ -28,6 +28,7 @@ import static com.shatteredpixel.shatteredpixeldungeon.update.GDChangesButton.up
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CircleArc;
@@ -79,7 +80,19 @@ public class StatusPane extends Component {
 	private BusyIndicator busy;
 	private CircleArc counter;
 
-	private static String asset = Assets.Interfaces.STATUS;
+	private static String getStatusAsset() {
+		// 根据整数设置返回对应的贴图
+		switch (SPDSettings.statusPaneStyle()) {
+			case 1: // 新版UI
+				return Assets.Interfaces.STATUS_1;
+			case 2: // 第三种UI风格
+				return Assets.Interfaces.STATUS_2;
+			default: // 默认/旧版UI
+				return Assets.Interfaces.STATUS;
+		}
+	}
+
+	private String asset;
 
 	private boolean large;
 
@@ -87,6 +100,7 @@ public class StatusPane extends Component {
 		super();
 
 		this.large = large;
+		this.asset = getStatusAsset();
 
 		if (large)  bg = new NinePatch( asset, 0, 64, 41, 39, 33, 0, 4, 0 );
 		else        bg = new NinePatch( asset, 0, 0, 128, 36, 85, 0, 45, 0 );

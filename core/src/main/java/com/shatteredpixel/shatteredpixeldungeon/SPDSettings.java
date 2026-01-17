@@ -133,6 +133,7 @@ public class SPDSettings extends GameSettings {
 	public static final String KEY_FLIPTOOLBAR	= "flipped_ui";
 	public static final String KEY_FLIPTAGS 	= "flip_tags";
 	public static final String KEY_BARMODE		= "toolbar_mode";
+	public static final String KEY_STATUS_PANE_STYLE = "status_pane_style";
 
 	//0 = mobile, 1 = mixed (large without inventory in main UI), 2 = large
 	public static void interfaceSize( int value ){
@@ -171,11 +172,20 @@ public class SPDSettings extends GameSettings {
 	public static void toolbarMode( String value ) {
 		put( KEY_BARMODE, value );
 	}
-	
+
 	public static String toolbarMode() {
 		return getString(KEY_BARMODE, PixelScene.landscape() ? "GROUP" : "SPLIT");
 	}
-	
+
+	// 状态面板风格：0=默认(旧版), 1=新版, 2=第三种风格
+	public static void statusPaneStyle( int value ) {
+		put( KEY_STATUS_PANE_STYLE, value );
+	}
+
+	public static int statusPaneStyle() {
+		return getInt( KEY_STATUS_PANE_STYLE, 0 );
+	}
+
 	//Game State
 	
 	public static final String KEY_LAST_CLASS	= "last_class";
