@@ -411,32 +411,32 @@ public class GameScene extends PixelScene {
 				switch (Dungeon.depth) {
 					case 1:
 						if(Script.checkChapter(Script.ID_SEWERS)) {
-							GameScene.show(new WndDialog(new LevelPlot_P1()));
+							GameScene.scene.add(new WndDialog(new LevelPlot_P1()));
 						}
 						break;
 					case 6:
 						if(Script.checkChapter(Script.ID_PRISON)) {
-							GameScene.show(new WndDialog(new LevelPlot_P2()));
+							GameScene.scene.add(new WndDialog(new LevelPlot_P2()));
 						}
 						break;
 					case 11:
 						if(Script.checkChapter(Script.ID_CAVES)) {
-							GameScene.show(new WndDialog(new LevelPlot_P3()));
+							GameScene.scene.add(new WndDialog(new LevelPlot_P3()));
 						}
 						break;
 					case 16:
 						if(Script.checkChapter(Script.ID_CITY)) {
-							GameScene.show(new WndDialog(new LevelPlot_P4()));
+							GameScene.scene.add(new WndDialog(new LevelPlot_P4()));
 						}
 						break;
 					case 21:
 						if(Script.checkChapter(Script.ID_RECAVES)) {
-							GameScene.show(new WndDialog(new LevelPlot_P5()));
+							GameScene.scene.add(new WndDialog(new LevelPlot_P5()));
 						}
 						break;
 					case 26:
 						if(Script.checkChapter(Script.ID_HALLS)) {
-							GameScene.show(new WndDialog(new LevelPlot_P6()));
+							GameScene.scene.add(new WndDialog(new LevelPlot_P6()));
 						}
 						break;
 				}

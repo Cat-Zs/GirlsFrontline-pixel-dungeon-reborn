@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.watabou.utils.Bundlable;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.FileUtils;
@@ -49,7 +50,7 @@ public enum Rankings {
 	
 	INSTANCE;
 	
-	public static final int TABLE_SIZE	= 21;
+	public static final int TABLE_SIZE	= 30;
 	
 	public static final String RANKINGS_FILE = "rankings.dat";
 	
@@ -74,6 +75,8 @@ public enum Rankings {
 		rec.armorTier = Dungeon.hero.tier();
 		rec.herolevel = Dungeon.hero.lvl;
 		rec.seed      = Dungeon.seed;
+		// 检查是否使用了自定义种子
+		rec.customSeed = !SPDSettings.seedCode().equals(SPDSettings.SEED_CODE_RANDOM);
 		rec.depth     = Dungeon.curDepth();
 		rec.score     = score( win );
 		
@@ -262,6 +265,7 @@ public enum Rankings {
 		private static final String TIER	= "tier";
 		private static final String LEVEL	= "level";
 		private static final String SEED	= "seed";
+		private static final String CUSTOM_SEED = "custom_seed";
 		private static final String DEPTH	= "depth";
 		private static final String DATA	= "gameData";
 		private static final String ID      = "gameID";
@@ -272,6 +276,7 @@ public enum Rankings {
 		public int armorTier;
 		public int herolevel;
 		public long seed;
+		public boolean customSeed; // 是否使用了自定义种子
 		public int depth;
 		
 		public Bundle gameData;
@@ -313,6 +318,7 @@ public enum Rankings {
 			if (gameID == null) gameID = UUID.randomUUID().toString();
 
 			seed=bundle.getLong(SEED);
+			customSeed = bundle.contains(CUSTOM_SEED) ? bundle.getBoolean(CUSTOM_SEED) : false;
 			depth = bundle.getInt( DEPTH );
 			herolevel = bundle.getInt( LEVEL );
 
@@ -330,6 +336,7 @@ public enum Rankings {
 			bundle.put( TIER, armorTier );
 			bundle.put( LEVEL, herolevel );
 			bundle.put( SEED, seed );
+			bundle.put( CUSTOM_SEED, customSeed );
 			bundle.put( DEPTH, depth );
 			
 			if (gameData != null) bundle.put( DATA, gameData );

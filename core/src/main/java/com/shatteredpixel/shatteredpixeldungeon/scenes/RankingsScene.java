@@ -236,25 +236,27 @@ public class RankingsScene extends PixelScene {
 	}
 	
 	public static class Record extends Button {
-		
-		private static final float GAP	= 4;
-		
-		private static final int[] TEXT_WIN	= {0xFFFF88, 0xB2B25F};
-		private static final int[] TEXT_LOSE= {0xDDDDDD, 0x888888};
-		private static final int FLARE_WIN	= 0x888866;
-		private static final int FLARE_LOSE	= 0x666666;
-		
-		private Rankings.Record rec;
-		
-		protected ItemSprite shield;
-		private Flare flare;
-		private BitmapText position;
-		private RenderedTextBlock desc;
-		private Image steps;
-		private BitmapText depth;
-		private Image classIcon;
-		private BitmapText level;
-		
+			private static final float GAP	= 4;
+			// 默认记录颜色
+			private static final int[] TEXT_WIN	= {0xFFFF88, 0xB2B25F};
+			private static final int[] TEXT_LOSE= {0xDDDDDD, 0x888888};
+			private static final int FLARE_WIN	= 0x888866;
+			private static final int FLARE_LOSE	= 0x666666;
+			// 使用自定义种子的记录颜色
+			private static final int[] TEXT_WIN_SEED	= {0xFFBFFF, 0xA292BF};
+			private static final int[] TEXT_LOSE_SEED= {0xCCCCFF, 0x8888CC};
+			private static final int FLARE_WIN_SEED	= 0x8866CC;
+			private static final int FLARE_LOSE_SEED	= 0x6666CC;
+			private Rankings.Record rec;
+			protected ItemSprite shield;
+			private Flare flare;
+			private BitmapText position;
+			private RenderedTextBlock desc;
+			private Image steps;
+			private BitmapText depth;
+			private Image classIcon;
+			private BitmapText level;
+			private ItemSprite seedIcon; // 种子图标，用于标识自定义种子记录
 		public Record( int pos, boolean latest, Rankings.Record rec ) {
 			super();
 			
@@ -263,7 +265,12 @@ public class RankingsScene extends PixelScene {
 			if (latest) {
 				flare = new Flare( 6, 24 );
 				flare.angularSpeed = 90;
-				flare.color( rec.win ? FLARE_WIN : FLARE_LOSE );
+				// 根据是否使用自定义种子设置不同的flare颜色
+				if (rec.customSeed) {
+					flare.color( rec.win ? FLARE_WIN_SEED : FLARE_LOSE_SEED );
+				} else {
+					flare.color( rec.win ? FLARE_WIN : FLARE_LOSE );
+				}
 				addToBack( flare );
 			}
 
@@ -277,27 +284,55 @@ public class RankingsScene extends PixelScene {
 
 			int odd = pos % 2;
 			
-			if (rec.win) {
-				shield.view( ItemSpriteSheet.AMULET, null );
-				position.hardlight( TEXT_WIN[odd] );
-				desc.hardlight( TEXT_WIN[odd] );
-				depth.hardlight( TEXT_WIN[odd] );
-				level.hardlight( TEXT_WIN[odd] );
-			} else {
-				position.hardlight( TEXT_LOSE[odd] );
-				desc.hardlight( TEXT_LOSE[odd] );
-				depth.hardlight( TEXT_LOSE[odd] );
-				level.hardlight( TEXT_LOSE[odd] );
+			// 根据是否使用自定义种子设置不同的文本颜色
+			if (rec.customSeed) {
+				// 使用自定义种子的颜色
+				if (rec.win) {
+					shield.view( ItemSpriteSheet.AMULET, null );
+					position.hardlight( TEXT_WIN_SEED[odd] );
+					desc.hardlight( TEXT_WIN_SEED[odd] );
+					depth.hardlight( TEXT_WIN_SEED[odd] );
+					level.hardlight( TEXT_WIN_SEED[odd] );
+				} else {
+					position.hardlight( TEXT_LOSE_SEED[odd] );
+					desc.hardlight( TEXT_LOSE_SEED[odd] );
+					depth.hardlight( TEXT_LOSE_SEED[odd] );
+					level.hardlight( TEXT_LOSE_SEED[odd] );
 
-				if (rec.depth != 0){
-					depth.text( Integer.toString(rec.depth) );
-					depth.measure();
-					steps.copy(Icons.STAIRS.get());
+					if (rec.depth != 0){
+						depth.text( Integer.toString(rec.depth) );
+						depth.measure();
+						steps.copy(Icons.STAIRS.get());
 
-					add(steps);
-					add(depth);
+						add(steps);
+						add(depth);
+					}
 				}
+				// 添加种子图标
+				add(seedIcon);
+			} else {
+				// 默认颜色
+				if (rec.win) {
+					shield.view( ItemSpriteSheet.AMULET, null );
+					position.hardlight( TEXT_WIN[odd] );
+					desc.hardlight( TEXT_WIN[odd] );
+					depth.hardlight( TEXT_WIN[odd] );
+					level.hardlight( TEXT_WIN[odd] );
+				} else {
+					position.hardlight( TEXT_LOSE[odd] );
+					desc.hardlight( TEXT_LOSE[odd] );
+					depth.hardlight( TEXT_LOSE[odd] );
+					level.hardlight( TEXT_LOSE[odd] );
 
+					if (rec.depth != 0){
+						depth.text( Integer.toString(rec.depth) );
+						depth.measure();
+						steps.copy(Icons.STAIRS.get());
+
+						add(steps);
+						add(depth);
+					}
+				}
 			}
 
 			if (rec.herolevel != 0){
@@ -315,62 +350,60 @@ public class RankingsScene extends PixelScene {
 		
 		@Override
 		protected void createChildren() {
-			
 			super.createChildren();
-			
 			shield = new ItemSprite( ItemSpriteSheet.TOMB, null );
 			add( shield );
-			
 			position = new BitmapText( PixelScene.pixelFont);
 			add( position );
-			
 			desc = renderTextBlock( 7 );
 			add( desc );
-
 			depth = new BitmapText( PixelScene.pixelFont);
-
 			steps = new Image();
-			
 			classIcon = new Image();
 			add( classIcon );
-
 			level = new BitmapText( PixelScene.pixelFont);
+			// 使用ItemSprite代替Image来显示种子图标
+			seedIcon = new ItemSprite( ItemSpriteSheet.SEED_SUNGRASS, null );
+			seedIcon.scale.set(0.75f);
 		}
 		
 		@Override
 		protected void layout() {
-			
 			super.layout();
-			
 			shield.x = x;
 			shield.y = y + (height - shield.height) / 2f;
 			align(shield);
-			
 			position.x = shield.x + (shield.width - position.width()) / 2f;
 			position.y = shield.y + (shield.height - position.height()) / 2f + 1;
 			align(position);
-			
 			if (flare != null) {
 				flare.point( shield.center() );
 			}
-
 			classIcon.x = x + width - 16 + (16 - classIcon.width())/2f;
 			classIcon.y = shield.y + (16 - classIcon.height())/2f;
 			align(classIcon);
-
 			level.x = classIcon.x + (classIcon.width - level.width()) / 2f;
 			level.y = classIcon.y + (classIcon.height - level.height()) / 2f + 1;
 			align(level);
-
 			steps.x = x + width - 32 + (16 - steps.width())/2f;
 			steps.y = shield.y + (16 - steps.height())/2f;
 			align(steps);
-
 			depth.x = steps.x + (steps.width - depth.width()) / 2f;
 			depth.y = steps.y + (steps.height - depth.height()) / 2f + 1;
 			align(depth);
-
-			desc.maxWidth((int)(steps.x - (shield.x + shield.width + GAP)));
+			// 根据是否显示种子图标调整描述文本的最大宽度
+			float descMaxWidth;
+			if (rec.customSeed) {
+				// 显示种子图标，调整文本宽度
+				descMaxWidth = steps.x - (shield.x + shield.width + GAP) - 16;
+				// 设置种子图标位置
+				seedIcon.x = steps.x - 16;
+				seedIcon.y = shield.y;
+				// ItemSprite不需要align，它会自动处理位置
+			} else {
+				descMaxWidth = steps.x - (shield.x + shield.width + GAP);
+			}
+			desc.maxWidth((int)descMaxWidth);
 			desc.setPos(shield.x + shield.width + GAP, shield.y + (shield.height - desc.height()) / 2f + 1);
 			align(desc);
 		}
