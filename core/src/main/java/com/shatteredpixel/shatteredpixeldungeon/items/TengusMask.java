@@ -106,6 +106,9 @@ public class TengusMask extends Item {
 		Talent.initSubclassTalents(curUser);
         if (way == HeroSubClass.ASSASSIN && curUser.invisible > 0) {
             Buff.affect(curUser, Preparation.class);
+        } else if (way == HeroSubClass.FUTURE_STAR) {
+            // 当转职为未来之星时，自动附加天狼星心脏buff
+            Buff.affect(curUser, com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SiriusHeart.class);
         }
 
 		curUser.sprite.operate( curUser.pos );

@@ -46,7 +46,7 @@ public enum HeroSubClass {
     EMP_BOMB(HeroIcon.EMP_BOMB), PULSETROOPER(HeroIcon.EMP_BOMB),
     GUN_MASTER(HeroIcon.GUN_MASTER), MODERN_REBORNER(HeroIcon.GUN_MASTER),
 	// GSH18子职业
-	THE_HEART_OF_SIRIUS(HeroIcon.BERSERKER), // 天狼星心脏
+	FUTURE_STAR(HeroIcon.BERSERKER), // 未来之星
 	MOBILE_MEDICALTABLE(HeroIcon.GLADIATOR); // 行走手术台
 
 	int icon;

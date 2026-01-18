@@ -344,6 +344,11 @@ public class Hero extends Char {
 		
 		STR = bundle.getInt( STRENGTH );
 		belongings.restoreFromBundle( bundle );
+		
+		// 如果是未来之星职业，自动添加天狼星心脏buff
+		if (subClass == HeroSubClass.FUTURE_STAR && buff(com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SiriusHeart.class) == null) {
+			Buff.affect(this, com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SiriusHeart.class);
+		}
 	}
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
@@ -1994,6 +1999,11 @@ public class Hero extends Char {
 		// GSH18天赋：元气一餐 - 攻击后移除buff
 		if (hit&&(buff(Talent.GSH18EnergizingMealTracker.class) != null)) {
 			buff(Talent.GSH18EnergizingMealTracker.class).detach();
+		}
+		
+		// GSH18天赋：天狼星心脏 - 攻击时附加伤害
+		if (hit&&(buff(Talent.SiriushHeartTracker.class) != null)) {
+			com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SiriusHeart.onAttack(this, enemy);
 		}
 
 		curAction = null;

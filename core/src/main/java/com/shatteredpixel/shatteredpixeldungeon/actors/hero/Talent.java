@@ -178,7 +178,9 @@ public enum Talent {
 	//GSH18 T2
 	GSH18_ENERGIZING_MEAL(164), GSH18_CHAIN_SHOCK(165), GSH18_LOGISTICS_SUPPORT(166), GSH18_COMIC_HEART(167), GSH18_MEDICAL_COMPATIBILITY(168),
 	//GSH18 T3
-	GSH18_INTELLIGENCE_AWARENESS(169, 3), GSH18_AGILE_MOVEMENT(170, 3);//GSH18_LIGHTWEIGHT(171);
+	GSH18_INTELLIGENCE_AWARENESS(169, 3), GSH18_AGILE_MOVEMENT(170, 3),
+	//GSH18未来之星专属天赋 - 天狼星心脏
+	GSH18_SIRIUS_HEART(171, 3);
 
 
 	public static class ImprovisedProjectileCooldown extends FlavourBuff{
@@ -214,16 +216,20 @@ public enum Talent {
 		public String toString() { return Messages.get(this, "name"); }
 		public String desc() { return Messages.get(this, "desc"); }
 	};
-	public static class GSH18EnergizingMealTracker extends CounterBuff{
-		{// 设置为不会随时间自然消失，只在攻击后被移除
-			revivePersists = true;
+	public static class GSH18EnergizingMealTracker extends CounterBuff{};
+    
+    //天狼星心脏 buff
+    public static class SiriushHeartTracker extends FlavourBuff {
+        {
+            // 设置为不会随时间自然消失，只在攻击后被移除
+            revivePersists = true;
             //这个是爆了保修后是否保留buff
         }
-		public int icon() { return BuffIndicator.WELL_FED; }
-		public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.6f, 0.2f); }
-		public String toString() { return Messages.get(this, "name"); }
-		public String desc() { return Messages.get(this, "desc"); }
-	}
+        public int icon() { return BuffIndicator.MOMENTUM; }
+        public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.2f, 0.8f); }
+        public String toString() { return Messages.get(this, "sirius_heart_name"); }
+        public String desc() { return Messages.get(this, "sirius_heart_desc"); }
+    };
 	public static class StarShieldTracker extends CounterBuff{// GSH18护盾恢复追踪器
 		{
 			revivePersists = true;
@@ -879,8 +885,8 @@ public enum Talent {
 			case GUN_MASTER: case MODERN_REBORNER:
 				Collections.addAll(tierTalents, GUN_One, GUN_Two, GUN_Three);
 				break;
-			case THE_HEART_OF_SIRIUS:
-				Collections.addAll(tierTalents, GSH18_INTELLIGENCE_AWARENESS);
+			case FUTURE_STAR:
+				Collections.addAll(tierTalents, GSH18_INTELLIGENCE_AWARENESS, GSH18_SIRIUS_HEART);
 				break;
 			case MOBILE_MEDICALTABLE:
 				Collections.addAll(tierTalents, GSH18_AGILE_MOVEMENT);
