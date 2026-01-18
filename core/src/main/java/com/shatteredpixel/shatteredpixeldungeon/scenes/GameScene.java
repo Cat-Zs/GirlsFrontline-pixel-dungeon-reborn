@@ -1217,6 +1217,10 @@ public class GameScene extends PixelScene {
 	}
 
 	public static void gameOver() {
+		// 显示游戏结束横幅
+		Banner gameOver = new Banner( BannerSprites.get( BannerSprites.Type.GAME_OVER ) );
+		gameOver.show( 0xFFFFFF, 0.3f, 5f );
+		scene.showBanner( gameOver );
 		scene.add(new WndGame());
 	}
 	
