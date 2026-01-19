@@ -1,0 +1,585 @@
+package com.shatteredpixel.shatteredpixeldungeon.scenes;
+
+import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Chrome;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
+import com.watabou.input.PointerEvent;
+import com.watabou.noosa.Camera;
+import com.watabou.noosa.Game;
+import com.watabou.noosa.Image;
+import com.watabou.noosa.PointerArea;
+import com.watabou.noosa.ui.Component;
+import com.watabou.utils.Random;
+
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+public class MatchThreeScene extends PixelScene {
+    // 游戏常量定义
+    private static final int BOARD_WIDTH = 12;
+    private static final int BOARD_HEIGHT = 12;
+    private static final int EMPTY = 0;
+    private static final int BORDER = 1;
+    private static final int CELL_SIZE = 24;
+    
+    // 植物类型（使用ItemSpriteSheet中的SEEDS常量）
+    private static final int[] PLANT_TYPES = {
+        ItemSpriteSheet.SEED_ROTBERRY,
+        ItemSpriteSheet.SEED_FIREBLOOM,
+        ItemSpriteSheet.SEED_SWIFTTHISTLE,
+        ItemSpriteSheet.SEED_SUNGRASS,
+        ItemSpriteSheet.SEED_ICECAP
+    };
+    
+    // 游戏状态变量
+    private int[][] gameBoard;
+    private boolean gameRunning;
+    
+    // 选择状态
+    private int selectedRow = -1;
+    private int selectedCol = -1;
+    private Image selectionIndicator;
+    
+    // 渲染组件
+    private Image background;
+    private Component boardContainer;
+    private StyledButton[][] plantButtons;
+    private StyledButton restartButton;
+    private StyledButton exitButton;
+    
+    @Override
+    public void create() {
+        super.create();
+        
+        // 1. 设置背景 - 确保最先添加，在最底层
+        setupBackground();
+        
+        // 2. 初始化游戏
+        initGame();
+        
+        // 3. 创建游戏板视觉组件
+        createBoardVisual();
+        
+        // 4. 添加控制按钮 - 确保最后添加，在最上层
+        addControlButtons();
+        
+        // 5. 添加选择指示器
+        createSelectionIndicator();
+        
+        // 6. 初始化游戏状态
+        gameRunning = true;
+        
+        fadeIn();
+    }
+    
+    // 设置背景
+    private void setupBackground() {
+        background = new Image(Assets.Interfaces.LOADING_PRISON);
+        background.camera = uiCamera;
+        
+        // 计算缩放比例，使背景填满整个屏幕
+        float scaleX = uiCamera.width / (float) background.width;
+        float scaleY = uiCamera.height / (float) background.height;
+        background.scale.set(scaleX, scaleY);
+        
+        // 确保背景在最底层
+        add(background);
+    }
+    
+    // 初始化游戏
+    private void initGame() {
+        // 创建游戏板
+        gameBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
+        
+        // 填充游戏板
+        for (int row = 0; row < BOARD_HEIGHT; row++) {
+            for (int col = 0; col < BOARD_WIDTH; col++) {
+                // 设置边框
+                if (row == 0 || row == BOARD_HEIGHT - 1 || col == 0 || col == BOARD_WIDTH - 1) {
+                    gameBoard[row][col] = BORDER;
+                } else {
+                    // 填充随机植物，确保没有初始匹配
+                    do {
+                        gameBoard[row][col] = getRandomPlant();
+                    } while (hasInitialMatch(row, col));
+                }
+            }
+        }
+    }
+    
+    // 检查初始匹配
+    private boolean hasInitialMatch(int row, int col) {
+        int plant = gameBoard[row][col];
+        
+        // 检查水平匹配
+        if (col >= 2 && gameBoard[row][col-1] == plant && gameBoard[row][col-2] == plant) {
+            return true;
+        }
+        
+        // 检查垂直匹配
+        if (row >= 2 && gameBoard[row-1][col] == plant && gameBoard[row-2][col] == plant) {
+            return true;
+        }
+        
+        return false;
+    }
+    
+    // 获取随机植物类型
+    private int getRandomPlant() {
+        return PLANT_TYPES[Random.Int(PLANT_TYPES.length)];
+    }
+    
+    // 创建游戏板视觉组件
+    private void createBoardVisual() {
+        // 创建游戏板容器
+        boardContainer = new Component();
+        boardContainer.camera = uiCamera;
+        
+        // 设置游戏板大小（12*12）
+        float totalWidth = CELL_SIZE * BOARD_WIDTH;
+        float totalHeight = CELL_SIZE * BOARD_HEIGHT;
+        
+        boardContainer.setSize(totalWidth, totalHeight);
+        boardContainer.setPos(
+            (uiCamera.width - boardContainer.width()) / 2,
+            (uiCamera.height - boardContainer.height()) / 2
+        );
+        
+        add(boardContainer);
+        
+        // 创建植物按钮数组
+        plantButtons = new StyledButton[BOARD_HEIGHT][BOARD_WIDTH];
+        
+        // 创建每个植物按钮
+        for (int row = 0; row < BOARD_HEIGHT; row++) {
+            for (int col = 0; col < BOARD_WIDTH; col++) {
+                final int finalRow = row;
+                final int finalCol = col;
+                
+                // 创建植物按钮
+                plantButtons[row][col] = new StyledButton(Chrome.Type.GREY_BUTTON, "") {
+                    @Override
+                    protected void onClick() {
+                        handlePlantClick(finalRow, finalCol);
+                    }
+                };
+                
+                // 设置按钮大小和位置
+                plantButtons[row][col].setSize(CELL_SIZE, CELL_SIZE);
+                plantButtons[row][col].setPos(col * CELL_SIZE, row * CELL_SIZE);
+                plantButtons[row][col].camera = uiCamera;
+                
+                // 添加按钮到容器
+                boardContainer.add(plantButtons[row][col]);
+                
+                // 设置按钮背景为透明
+                plantButtons[row][col].text("");
+            }
+        }
+        
+        // 更新按钮状态
+        updatePlantButtons();
+    }
+    
+    // 处理植物按钮点击
+    private void handlePlantClick(int row, int col) {
+        if (!gameRunning) return;
+        
+        // 检查点击位置是否在有效区域内（排除边框）
+        if (row < 1 || row >= BOARD_HEIGHT - 1 || col < 1 || col >= BOARD_WIDTH - 1) {
+            return;
+        }
+        
+        if (selectedRow == -1 && selectedCol == -1) {
+            // 第一次选择
+            selectedRow = row;
+            selectedCol = col;
+            updateSelectionIndicator();
+        } else {
+            // 第二次选择，检查是否相邻
+            if (isAdjacent(selectedRow, selectedCol, row, col)) {
+                // 交换植物
+                swapPlants(selectedRow, selectedCol, row, col);
+                
+                // 检查是否有匹配
+                List<int[]> matches = findMatches();
+                if (!matches.isEmpty()) {
+                    // 处理匹配
+                    processMatches(matches);
+                } else {
+                    // 没有匹配，交换回来
+                    swapPlants(row, col, selectedRow, selectedCol);
+                }
+                
+                // 清除选择
+                clearSelection();
+            } else {
+                // 选择新的单元格
+                selectedRow = row;
+                selectedCol = col;
+                updateSelectionIndicator();
+            }
+        }
+    }
+    
+    // 检查两个单元格是否相邻
+    private boolean isAdjacent(int row1, int col1, int row2, int col2) {
+        int rowDiff = Math.abs(row1 - row2);
+        int colDiff = Math.abs(col1 - col2);
+        return (rowDiff == 1 && colDiff == 0) || (rowDiff == 0 && colDiff == 1);
+    }
+    
+    // 更新植物按钮状态
+    private void updatePlantButtons() {
+        for (int row = 0; row < BOARD_HEIGHT; row++) {
+            for (int col = 0; col < BOARD_WIDTH; col++) {
+                StyledButton button = plantButtons[row][col];
+                int plantType = gameBoard[row][col];
+                
+                // 设置按钮内容
+                if (plantType != EMPTY && plantType != BORDER) {
+                    // 创建植物图像
+                    Image plantImg = new Image(Assets.Sprites.ITEMS);
+                    plantImg.frame(ItemSpriteSheet.film.get(plantType));
+                    
+                    // 设置图像大小
+                    float scale = (CELL_SIZE - 4) / plantImg.width;
+                    plantImg.scale.set(scale);
+                    
+                    // 设置按钮图标
+                    button.icon(plantImg);
+                    
+                    // 启用按钮
+                    button.enable(true);
+                } else {
+                    // 清除图标
+                    button.icon(null);
+                    // 禁用按钮
+                    button.enable(false);
+                }
+            }
+        }
+    }
+    
+    // 交换两个植物
+    private void swapPlants(int row1, int col1, int row2, int col2) {
+        int temp = gameBoard[row1][col1];
+        gameBoard[row1][col1] = gameBoard[row2][col2];
+        gameBoard[row2][col2] = temp;
+        updatePlantButtons();
+    }
+    
+    // 查找所有匹配
+    private List<int[]> findMatches() {
+        List<int[]> matches = new ArrayList<>();
+        boolean[][] visited = new boolean[BOARD_HEIGHT][BOARD_WIDTH];
+        
+        // 检查水平匹配
+        for (int row = 1; row < BOARD_HEIGHT - 1; row++) {
+            int count = 1;
+            for (int col = 2; col < BOARD_WIDTH - 1; col++) {
+                if (gameBoard[row][col] == gameBoard[row][col-1] && gameBoard[row][col] != EMPTY) {
+                    count++;
+                } else {
+                    if (count >= 3) {
+                        for (int c = col - count; c < col; c++) {
+                            if (!visited[row][c]) {
+                                visited[row][c] = true;
+                                matches.add(new int[]{row, c});
+                            }
+                        }
+                    }
+                    count = 1;
+                }
+            }
+            // 检查行尾的匹配
+            if (count >= 3) {
+                for (int c = BOARD_WIDTH - 1 - count; c < BOARD_WIDTH - 1; c++) {
+                    if (!visited[row][c]) {
+                        visited[row][c] = true;
+                        matches.add(new int[]{row, c});
+                    }
+                }
+            }
+        }
+        
+        // 检查垂直匹配
+        for (int col = 1; col < BOARD_WIDTH - 1; col++) {
+            int count = 1;
+            for (int row = 2; row < BOARD_HEIGHT - 1; row++) {
+                if (gameBoard[row][col] == gameBoard[row-1][col] && gameBoard[row][col] != EMPTY) {
+                    count++;
+                } else {
+                    if (count >= 3) {
+                        for (int r = row - count; r < row; r++) {
+                            if (!visited[r][col]) {
+                                visited[r][col] = true;
+                                matches.add(new int[]{r, col});
+                            }
+                        }
+                    }
+                    count = 1;
+                }
+            }
+            // 检查列尾的匹配
+            if (count >= 3) {
+                for (int r = BOARD_HEIGHT - 1 - count; r < BOARD_HEIGHT - 1; r++) {
+                    if (!visited[r][col]) {
+                        visited[r][col] = true;
+                        matches.add(new int[]{r, col});
+                    }
+                }
+            }
+        }
+        
+        return matches;
+    }
+    
+    // 处理匹配
+    private void processMatches(List<int[]> matches) {
+        // 移除匹配的植物
+        for (int[] match : matches) {
+            gameBoard[match[0]][match[1]] = EMPTY;
+        }
+        
+        // 植物下落
+        dropPlants();
+        
+        // 生成新植物
+        generateNewPlants();
+        
+        // 更新游戏板显示
+        updateBoardVisual();
+        
+        // 检查是否有新的匹配
+        List<int[]> newMatches = findMatches();
+        if (!newMatches.isEmpty()) {
+            processMatches(newMatches);
+        }
+    }
+    
+    // 植物下落
+    private void dropPlants() {
+        for (int col = 1; col < BOARD_WIDTH - 1; col++) {
+            int emptyRow = BOARD_HEIGHT - 2;
+            
+            // 从下往上处理每一列
+            for (int row = BOARD_HEIGHT - 2; row >= 1; row--) {
+                if (gameBoard[row][col] != EMPTY) {
+                    if (emptyRow != row) {
+                        gameBoard[emptyRow][col] = gameBoard[row][col];
+                        gameBoard[row][col] = EMPTY;
+                    }
+                    emptyRow--;
+                }
+            }
+        }
+    }
+    
+    // 生成新植物
+    private void generateNewPlants() {
+        for (int col = 1; col < BOARD_WIDTH - 1; col++) {
+            for (int row = 1; row < BOARD_HEIGHT - 1; row++) {
+                if (gameBoard[row][col] == EMPTY) {
+                    gameBoard[row][col] = getRandomPlant();
+                }
+            }
+        }
+    }
+    
+    // 更新游戏板显示
+    private void updateBoardVisual() {
+        if (boardContainer != null) {
+            updatePlantButtons();
+        }
+    }
+    
+    // 添加控制按钮
+    private void addControlButtons() {
+        float buttonWidth = uiCamera.width * 0.2f;
+        float buttonHeight = uiCamera.height * 0.05f;
+        float margin = 20;
+        
+        // 重启按钮
+        restartButton = new StyledButton(Chrome.Type.TOAST_TR, "重启") {
+            @Override
+            protected void onClick() {
+                restartGame();
+            }
+        };
+        restartButton.setSize(buttonWidth, buttonHeight);
+        restartButton.setPos(
+            (uiCamera.width - buttonWidth * 2 - margin) / 2,
+            uiCamera.height - buttonHeight - margin
+        );
+        restartButton.camera = uiCamera;
+        add(restartButton);
+        
+        // 退出按钮
+        exitButton = new StyledButton(Chrome.Type.TOAST_TR, "退出") {
+            @Override
+            protected void onClick() {
+                onBackPressed();
+            }
+        };
+        exitButton.setSize(buttonWidth, buttonHeight);
+        exitButton.setPos(
+            restartButton.right() + margin,
+            uiCamera.height - buttonHeight - margin
+        );
+        exitButton.camera = uiCamera;
+        add(exitButton);
+    }
+    
+    // 创建选择指示器
+    private void createSelectionIndicator() {
+        // 使用一个简单的Image作为选择指示器，而不是临时的TargetedCell
+        selectionIndicator = new Image(Icons.get(Icons.TARGET));
+        selectionIndicator.hardlight(0xFFFFFF); // 设置颜色为白色
+        selectionIndicator.visible = false;
+        selectionIndicator.camera = uiCamera;
+        
+        // 设置选择指示器的大小，使其适合24*24的单元格
+        float scale = CELL_SIZE / selectionIndicator.width();
+        selectionIndicator.scale.set(scale);
+        
+        add(selectionIndicator);
+    }
+    
+    // 更新选择指示器位置
+    private void updateSelectionIndicator() {
+        if (selectedRow == -1 || selectedCol == -1) {
+            selectionIndicator.visible = false;
+            return;
+        }
+        
+        // 计算选择指示器的位置（基于按钮位置）
+        float cellX = boardContainer.x + selectedCol * CELL_SIZE;
+        float cellY = boardContainer.y + selectedRow * CELL_SIZE;
+        
+        // 计算缩放后的选择指示器尺寸
+        float scaledWidth = selectionIndicator.width() * selectionIndicator.scale.x;
+        float scaledHeight = selectionIndicator.height() * selectionIndicator.scale.y;
+        
+        // 设置选择指示器的位置，使其居中于选中的单元格
+        selectionIndicator.setPos(
+            cellX + (CELL_SIZE - scaledWidth) / 2,
+            cellY + (CELL_SIZE - scaledHeight) / 2
+        );
+        selectionIndicator.visible = true;
+    }
+    
+    // 清除选择
+    private void clearSelection() {
+        selectedRow = -1;
+        selectedCol = -1;
+        selectionIndicator.visible = false;
+    }
+    
+    // 重启游戏
+    private void restartGame() {
+        // 重置游戏状态
+        clearSelection();
+        
+        // 重新初始化游戏
+        initGame();
+        
+        // 更新游戏板显示
+        updateBoardVisual();
+        
+        gameRunning = true;
+    }
+    
+    // 处理返回键
+    @Override
+    protected void onBackPressed() {
+        // 保存游戏进度
+        try {
+            Dungeon.saveAll();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        
+        // 返回上一个场景
+        InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
+        Game.switchScene(InterlevelScene.class);
+    }
+    
+    // 游戏板视觉组件
+    private class BoardVisual extends Component {
+        private List<Image> plantImages;
+        
+        public BoardVisual() {
+            plantImages = new ArrayList<>();
+        }
+        
+        @Override
+        protected void layout() {
+            updateVisual();
+        }
+        
+        public void updateVisual() {
+            // 清除旧的植物图像
+            for (Image img : plantImages) {
+                img.killAndErase();
+            }
+            plantImages.clear();
+            
+            // 创建新的植物图像
+            for (int row = 0; row < BOARD_HEIGHT; row++) {
+                for (int col = 0; col < BOARD_WIDTH; col++) {
+                    int cellType = gameBoard[row][col];
+                    
+                    if (cellType != EMPTY && cellType != BORDER) {
+                        // 使用ItemSpriteSheet中的种子贴图
+                        Image plantImg = new Image(Assets.Sprites.ITEMS);
+                        
+                        // 设置植物贴图的正确区域（使用ItemSpriteSheet的film）
+                        plantImg.frame(ItemSpriteSheet.film.get(cellType));
+                        
+                        // 设置位置和大小
+                        float x = col * CELL_SIZE;
+                        float y = row * CELL_SIZE;
+                        plantImg.setPos(x, y);
+                        
+                        // 确保植物贴图大小为24*24
+                        plantImg.scale.set(CELL_SIZE / plantImg.width);
+                        
+                        add(plantImg);
+                        plantImages.add(plantImg);
+                    }
+                }
+            }
+        }
+    }
+    
+    @Override
+    public void destroy() {
+        // 清理资源
+        if (selectionIndicator != null) {
+            selectionIndicator.killAndErase();
+        }
+        
+        if (boardContainer != null) {
+            boardContainer.killAndErase();
+        }
+        
+        if (restartButton != null) {
+            restartButton.killAndErase();
+        }
+        
+        if (exitButton != null) {
+            exitButton.killAndErase();
+        }
+        
+        if (background != null) {
+            background.killAndErase();
+        }
+        
+        super.destroy();
+    }
+}
