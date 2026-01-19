@@ -53,32 +53,52 @@ public class v0_5_X_Changes {
         changes.hardlight( CharSprite.POSITIVE );
         changeInfos.add(changes);
 
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CROWN, null), "增强-平衡性调整",
-        "_-_ 文本1\n" +
-        "_-_ 文本2\n" +
-        "_-_ 文本3\n"));
+        changes.addButton( new ChangeButton(Icons.SETTINGS.get(), "增强-优化体验",
+        "_-_ 提高了排行榜可被显示的最大记录为_30_\n（原最大记录为11），增加了排行榜的翻页功能。\n\n" +
+        "_-_ 交换了主界面中_进入游戏_和_进入零层_的交互按钮位置。\n\n"+
+        "_-_ 启用_种子系统_后，将会在排行榜标注显示出来。\n\n" +
+        "_-_ 创建存档的角色选择界面单页上限调整为_4个_，添加了_翻页功能_，并优化了交互按钮的显示。\n\n"+
+        "_-_ 修复了角色死亡后，_战役失败_不被显示的bug。\n\n"+
+        "_-_ 修复了pc端_角色点击交换按钮_时，角色_异常移动_的bug。\n\n"+
+        "_-_ 修复了地图编辑器中_图块过大_的问题。\n\n"+
+        "_-_ 更改了部分文本错误或优化了不合理的内容。\n"));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
         changes.hardlight( Window.TITLE_COLOR );
         changeInfos.add(changes);
 
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.EXOTIC_CRIMSON, null), "新内容",
-        "_-_ 文本1\n" +
-        "_-_ 文本2\n" +
-        "_-_ 文本3\n"));
+        Image gun561 = new Image(HeroSprite.avatar(HeroClass.TYPE561, 5));
+		gun561.scale.set(0.75f);
+		changes.addButton( new ChangeButton(gun561, "角色重置：56-1式",
+        "_-_ 重置561角色，并且初步完善护甲技能。\n" +
+        "_-_ 重置type 56-1武器的榴弹伤害计算，现在榴弹伤害与等级相关。\n" +
+        "_-_ 重置袖珍本的功能。\n"+
+        "_-_ _描述不够详细，内容还需补充_\n" ));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_BEACON, null), "完善0层",
+        "_-_ 完善前进营地，绘制了贴图，并且将主界面的部分功能复现至前进营地中。\n" +
+        "_-_ 在前进营地中，加入了简单小游戏。\n\n" +
+        "_-_ 在0层中优化了交互按钮、可以直接重置0层存档以防止未经测试的功能导致其卡死。\n" +
+        "_-_ 完善圣诞节彩蛋开启条件。\n\n" +
+        "_-_ 增加了串联层格里芬走廊,但暂时没有绘制贴图。\n" +
+        "_-_ 加入了原049南希的404小屋。\n" +
+        "_-_ 加入了咖啡厅，但功能尚未完善。\n"));
         AgentSprite.AgentSpriteRe agent = new AgentSprite.AgentSpriteRe();
         agent.scale.set(PixelScene.align(0.6f));
-        changes.addButton(new ChangeButton(agent, "代理人",
-        "_-_ 加入代理人贴图\n" ));
+        changes.addButton(new ChangeButton(agent, "贴图改动",
+        "_-_ 加入代理人贴图（原贴图为破碎暗影之拳）。\n"+
+        "_-_ 将_歌莉娅工厂_生产的歌莉娅大小改为_随机_但数值不会改变。\n"+
+        "_-_ 优化了pc端光标贴图使其更加少前化。\n"+
+        "_-_ 绘制了新的UI界面，现在可以自由切换UI风格。\n"));
 
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
 		changes.hardlight( CharSprite.NEGATIVE );
 		changeInfos.add(changes);
 
 		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "削弱-平衡性调整",
-        "_-_ 削弱了_水晶房间_的奖励：如经验药水和嬗变磁盘已被鉴定；则不会同时出现在渐进水晶房内\n" +
-        "_-_ 文本2\n" +
-        "_-_ 文本3\n"));
+        "_-_ 削弱了_水晶房间_的奖励：如经验药水和嬗变磁盘已被鉴定；则不会同时出现在渐进水晶房内。\n\n" +
+        "_-_ 将空降妖精的_自然生成_权重改为0，仅能通过_嬗变和击败行裁者概率获得_。\n\n" +
+        "_-_ _提丰_瞄准时，会加入瞄准路径的标记，以防止玩家在黑暗挑战中被莫名其妙秒杀。\n\n"));
     }
 
 	public static void add_0_5_6_Changes( ArrayList<ChangeInfo> changeInfos ){
@@ -101,14 +121,14 @@ public class v0_5_X_Changes {
         Image ump9 = new Image(HeroSprite.avatar(HeroClass.ROGUE, 4));
 		ump9.scale.set(0.8f);
         changes.addButton( new ChangeButton(ump9, "天赋强化",
-        	"_-_ 角色_UMP9_的天赋_行窃预知_获得强化\n"+
-            "_-_ 该天赋+1时发现隐藏房间的概率提高为_67%_，+2时的概率提高为_100%_"
+        	"_-_ 角色_UMP9_的天赋_行窃预知_获得强化。\n"+
+            "_-_ 该天赋+1时发现隐藏房间的概率提高为_67%_，+2时的概率提高为_100%_。"
         ));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CROWN, null), "新型火控元件",
-		"_-_ 可以将外骨骼进行升级的_新型火控元件_现在可以在不同的外骨骼间进行转移\n" +
-		"_-_ 转移后原外骨骼将直接被_销毁_，而新外骨骼成为_人形专属配件_\n"+
-		"_-_ 将_新型火控元件_进行转移时，被加强的外骨骼将直接被鉴定"
+		"_-_ 可以将外骨骼进行升级的_新型火控元件_现在可以在不同的外骨骼间进行转移。\n" +
+		"_-_ 转移后原外骨骼将直接被_销毁_，而新外骨骼成为_人形专属配件_。\n"+
+		"_-_ 将_新型火控元件_进行转移时，被加强的外骨骼将直接被鉴定。"
 		));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
@@ -119,16 +139,16 @@ public class v0_5_X_Changes {
         ep.scale.x=0.8f;
         ep.scale.y=0.8f;
         changes.addButton(new ChangeButton(ep,"艾尔菲尔特",
-        	"_-_ 修复了BOSS_艾尔菲尔特_战斗地图中的_无敌点位_\n"+
-        	"_-_ 艾尔菲尔特在遇见特殊的_无法接近玩家_的情况时，将会进行_穿墙索敌_，请避免故意卡_无敌点位_"
+        	"_-_ 修复了BOSS_艾尔菲尔特_战斗地图中的_无敌点位_。\n"+
+        	"_-_ 艾尔菲尔特在遇见特殊的_无法接近玩家_的情况时，将会进行_穿墙索敌_请避免故意卡_无敌点位_。"
         ));
 
         Image gm = new Image(Assets.Sprites.MANTI, 0 ,0 ,48 ,40);
         gm.scale.x=0.5f;
         gm.scale.y=0.5f;
-        changes.addButton(new ChangeButton(gm, "蝎甲兽", 
+        changes.addButton(new ChangeButton(gm, "蝎甲兽加强", 
         "_-_ 敌人_蝎甲兽_的生命值上限提高，且对单次高额伤害获得伤害阈值。\n" +
-		"_-_ 这意味着蝎甲兽将强制性需要多次攻击才能击败"
+		"_-_ 这意味着蝎甲兽将强制性需要多次攻击才能击败。"
 		));
 
 		Image imageTemp = new Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
@@ -168,8 +188,8 @@ public class v0_5_X_Changes {
         ));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY,null), "水晶房间",
-        "_-_ 需要三把钥匙才能完全开启的_水晶房间_增新了变体\n"+
-        "_-_ 此类房间将有概率变体为共有6个小间，玩家可以进行6选3猜选奖励的特殊房间"
+        "_-_ 需要三把钥匙才能完全开启的_水晶房间_增新了变体。\n"+
+        "_-_ 此类房间将有概率变体为共有6个小间，玩家可以进行6选3猜选奖励的特殊房间。"
         ));
 
 		changes = new ChangeInfo("0.5.6-A", false, null);
@@ -177,19 +197,20 @@ public class v0_5_X_Changes {
         changeInfos.add(changes);
         ArrayList<String> pageContents = new ArrayList<>();
         pageContents.add(
-            "_-_ 优化小版本的版本号，为A-B-C。\n" +
+            "_-_ 优化小版本的版本号在更新界面的显示。\n" +
             "_-_ 写入了新的多页内容，使得文本可阅读性变高。\n" +
-            "_-_ 修复了一些UI显示问题\n"
+            "_-_ 修复了一些UI显示问题。\n"+
+			"_-_ 新加入了2区怪物：_歌莉娅工厂_(原破碎_骷髅法师_)。\n"
         );
         pageContents.add(
-            "_-_ 改进了游戏平衡性\n" +
-            "_-_ 增加了新的游戏机制\n" +
-            "_-_ 修复了一些已知的bug\n"
+            "_-_ 交互优化：将主界面的退出按键添加回来。\n" +
+            "_-_ 新增测试道具：_测试书_可以在测试模式下使用，用于测试游戏的功能。\n" +
+            "_-_ 优化测试书，完善功能性。\n"
         );
         pageContents.add(
-            "_-_ 更新了部分游戏资源\n" +
-            "_-_ 优化了玩家体验\n" +
-            "_-_ 增加了新的游戏功能\n"
+            "_-_ 调整：削弱了烈焰精英怪物的强度。\n" +
+            "_-_ 补充各个boss层的刷怪列表。\n" +
+            "_-_ 兼容了彩蛋武器的旧存档，防止崩溃。\n"
         );
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "改动-系统优化", pageContents));
