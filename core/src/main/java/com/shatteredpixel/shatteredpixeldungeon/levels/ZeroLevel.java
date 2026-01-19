@@ -12,6 +12,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SnakeScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.MatchThreeScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.ChessScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.SavesScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.BadgesScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.RankingsScene;
@@ -135,7 +136,7 @@ private static final int achievementButtonPos = 2*WIDTH+11;
 				//settings
 				RedButton curBtn;
 
-				addButton(curBtn = new RedButton("贪吃蛇-DEMO"){/*mark*/
+				addButton(curBtn = new RedButton("贪吃蛇"){/*mark*/
 					@Override
 					protected void onClick() {
 						try{Dungeon.saveAll();
@@ -151,6 +152,16 @@ private static final int achievementButtonPos = 2*WIDTH+11;
 						try{Dungeon.saveAll();
 						}catch(IOException e){Game.reportException(e);}
 						Game.switchScene(MatchThreeScene.class);
+					}
+				});
+				curBtn.icon(Icons.get(Icons.DISPLAY));
+
+				addButton(curBtn = new RedButton("国际象棋"){/*mark*/
+					@Override
+					protected void onClick() {
+						try{Dungeon.saveAll();
+						}catch(IOException e){Game.reportException(e);}
+						Game.switchScene(ChessScene.class);
 					}
 				});
 				curBtn.icon(Icons.get(Icons.DISPLAY));
