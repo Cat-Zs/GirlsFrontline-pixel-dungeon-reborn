@@ -258,10 +258,6 @@ public class SnakeScene extends PixelScene {
 		snakeTileMap.updateMap();
 	}
 
-	{
-		inGameScene = true;
-	}
-
 	@Override
 	public void create() {
 		super.create();
