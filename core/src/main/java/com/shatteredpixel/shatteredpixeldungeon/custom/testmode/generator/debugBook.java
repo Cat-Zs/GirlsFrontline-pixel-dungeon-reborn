@@ -617,7 +617,7 @@ public class debugBook extends TestItem {
         }
         updateQuickslot();
     }
-    private void resetLevel(){
+    private void resetLevel(){//mark
         InterlevelScene.returnDepth = Dungeon.depth;
         InterlevelScene.mode = InterlevelScene.Mode.RESET;
         Game.switchScene( InterlevelScene.class );

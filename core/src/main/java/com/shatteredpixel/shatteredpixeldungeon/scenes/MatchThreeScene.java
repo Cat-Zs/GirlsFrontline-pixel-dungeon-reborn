@@ -19,6 +19,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MatchThreeScene extends PixelScene {
+    {
+        inGameScene = true;
+    }
+
     // 游戏常量定义
     private static final int BOARD_WIDTH = 12;
     private static final int BOARD_HEIGHT = 12;
@@ -497,14 +501,6 @@ public class MatchThreeScene extends PixelScene {
     // 处理返回键
     @Override
     protected void onBackPressed() {
-        // 保存游戏进度
-        try {
-            Dungeon.saveAll();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-        
-        // 返回上一个场景
         InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
         Game.switchScene(InterlevelScene.class);
     }
@@ -555,31 +551,5 @@ public class MatchThreeScene extends PixelScene {
                 }
             }
         }
-    }
-    
-    @Override
-    public void destroy() {
-        // 清理资源
-        if (selectionIndicator != null) {
-            selectionIndicator.killAndErase();
-        }
-        
-        if (boardContainer != null) {
-            boardContainer.killAndErase();
-        }
-        
-        if (restartButton != null) {
-            restartButton.killAndErase();
-        }
-        
-        if (exitButton != null) {
-            exitButton.killAndErase();
-        }
-        
-        if (background != null) {
-            background.killAndErase();
-        }
-        
-        super.destroy();
     }
 }

@@ -18,6 +18,10 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 public class SnakeScene extends PixelScene {
+	{
+		inGameScene = true;
+	}
+
 	//贪吃蛇所用到的变量(不要问为什么变量命名这么抽象,从自己n年前的C代码抄的,能用就行)
 	public static final int WIDTH  = 13;
 	public static final int HEIGHT = 13;
