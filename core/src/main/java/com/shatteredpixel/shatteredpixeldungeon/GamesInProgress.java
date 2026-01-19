@@ -131,7 +131,7 @@ public class GamesInProgress {
 		
 		info.depth = depth;
 		info.challenges = challenges;
-		
+		info.version = Dungeon.version;
 		info.level = hero.lvl;
 		info.str = hero.STR;
 		info.strBonus = hero.STR() - hero.STR;
