@@ -16,6 +16,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ChessScene extends PixelScene {
+    {
+        inGameScene = true;
+    }
+
     // 游戏常量定义
     private static final int BOARD_WIDTH = 8;
     private static final int BOARD_HEIGHT = 8;
