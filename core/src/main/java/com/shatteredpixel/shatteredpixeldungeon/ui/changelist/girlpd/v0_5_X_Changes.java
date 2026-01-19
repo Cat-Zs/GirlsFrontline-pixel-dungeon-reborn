@@ -61,6 +61,7 @@ public class v0_5_X_Changes {
         "_-_ 修复了角色死亡后，_战役失败_不被显示的bug。\n\n"+
         "_-_ 修复了pc端_角色点击交换按钮_时，角色_异常移动_的bug。\n\n"+
         "_-_ 修复了地图编辑器中_图块过大_的问题。\n\n"+
+		"_-_ 地图编辑器现在总是更新视野，而非一团黑色。\n\n"+
         "_-_ 更改了部分文本错误或优化了不合理的内容。\n"));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
@@ -209,7 +210,7 @@ public class v0_5_X_Changes {
         );
         pageContents.add(
             "_-_ 调整：削弱了烈焰精英怪物的强度。\n" +
-            "_-_ 补充各个boss层的刷怪列表。\n" +
+            "_-_ 补充各个boss层的召唤陷阱的刷怪列表。\n" +
             "_-_ 兼容了彩蛋武器的旧存档，防止崩溃。\n"
         );
 
