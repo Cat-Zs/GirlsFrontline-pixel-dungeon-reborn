@@ -38,12 +38,13 @@ public class SnakeScene extends PixelScene {
 	private int _x;
 	private int _x2;
 	private int _x3;
-	private char[][] map;
+	private char[][] map = new char[HEIGHT][WIDTH];
 	private int hY;
 	private int hX;
 	private int tY;
 	private int tX;
 
+	private float timer;
 	private boolean gameRunning = false;
 	private int snakeLength;
 	private int score; // 计分变量
@@ -53,10 +54,8 @@ public class SnakeScene extends PixelScene {
 	private RenderedTextBlock gameOverText; // 游戏结束文本
 	private RenderedTextBlock finalScoreText; // 最终分数文本
 
-	//贪吃蛇初始化函数
-	private void gameInit(){
-		map = new char[HEIGHT][WIDTH];
-
+	//贪吃蛇重置函数
+	private void gameReset(){
 		for(_x=0;_x<HEIGHT;_x++){
 			for(_x2=0;_x2<WIDTH;_x2++){
 				map[_x][_x2]=BORDER;
@@ -88,8 +87,11 @@ public class SnakeScene extends PixelScene {
 		snakeLength = 2;
 		score = 0; // 先初始化分数为0
 		timer = 1.0f; // 重置定时器，确保开局减速效果
-		
-		// 然后再渲染界面
+	}
+
+	//贪吃蛇初始化函数
+	private void gameInit(){
+		gameReset();
 		renderInit();
 		inputInit();
 	}
@@ -275,10 +277,6 @@ public class SnakeScene extends PixelScene {
 		snakeTileMap.updateMap();
 	}
 
-	{
-		inGameScene = true;
-	}
-
 	@Override
 	public void create() {
 		super.create();
@@ -295,7 +293,6 @@ public class SnakeScene extends PixelScene {
 		Game.switchScene( InterlevelScene.class );
 	}
 
-	private float timer = 1f;
 	@Override
 	public void update() {
 		super.update();
@@ -423,8 +420,8 @@ public class SnakeScene extends PixelScene {
 			returnButton = null;
 		}
 		
-		// 重新初始化游戏
-		gameInit();
+		// 重置游戏
+		gameReset();
 		renderTick();
 	}
 }
