@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
@@ -34,6 +35,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BadgesGrid;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BadgesList;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
@@ -45,10 +48,12 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.TalentButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentsPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
+import com.watabou.input.PointerEvent;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.TextInput;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
 
@@ -234,6 +239,7 @@ public class WndRanking extends WndTabbed {
 			else                    pos = statSlot(this, Messages.get(this, "str"), Integer.toString(Dungeon.hero.STR), pos);
 			pos = statSlot( this, Messages.get(this, "health"), Integer.toString( Dungeon.hero.HT ), pos );
 			pos = statSlot( this, Messages.get(this, "duration"), Integer.toString( (int)Statistics.duration ), pos );
+            setButton(pos);
 			pos = statSlot( this, Messages.get(this, "seed"), DungeonSeed.convertToCode(Dungeon.seed) ,pos);
 			pos = statSlot( this, Messages.get(this, "depth"), Integer.toString( Statistics.deepestFloor ), pos );
 			pos = statSlot( this, Messages.get(this, "enemies"), Integer.toString( Statistics.enemiesSlain ), pos );
@@ -256,6 +262,45 @@ public class WndRanking extends WndTabbed {
 			
 			return pos + GAP + txt.height();
 		}
+        private void setButton(float pos){
+            RedButton btnCopy = new RedButton(""){
+                @Override
+                protected void onPointerDown() {
+                    super.onPointerDown();
+                    PointerEvent.clearKeyboardThisPress = false;
+                }
+
+                @Override
+                protected void onPointerUp() {
+                    super.onPointerUp();
+                    PointerEvent.clearKeyboardThisPress = false;
+                }
+
+                @Override
+                protected void onClick() {
+                    super.onClick();
+                    GirlsFrontlinePixelDungeon.scene().addToFront(
+                            new WndOptions(new Image(new ItemSprite(ItemSpriteSheet.SEED_HOLDER)),
+                                    Messages.get(WndSettings.class, "copy_title"),
+                                    Messages.get(WndSettings.class, "copy_body"),
+                                    Messages.get(WndSettings.class, "copy_yes"),
+                                    Messages.get(WndSettings.class, "copy_no")) {
+
+                        protected void onSelect(int index) {
+                            super.onSelect(index);
+                            if (index == 0) {
+                                SPDSettings.seedCode(DungeonSeed.convertToCode(Dungeon.seed));
+                            }
+
+                        }
+                    });
+                }
+            };
+            btnCopy.icon(Icons.RENAME_ON.get());
+            btnCopy.enable(true);
+            add(btnCopy);
+            btnCopy.setRect(WIDTH * 0.7f-18,pos-GAP,16,16);
+        }
 	}
 	
 	private class ItemsTab extends Group {
