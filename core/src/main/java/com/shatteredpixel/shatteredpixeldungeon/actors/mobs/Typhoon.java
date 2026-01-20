@@ -96,7 +96,6 @@ public class Typhoon extends Hydra {
         if (beamCharged &&beamTime>0){
             beamTime--;
             spend(TICK);
-            GLog.p(String.valueOf(beamTime));
             updateTNT();
             return true;
         }

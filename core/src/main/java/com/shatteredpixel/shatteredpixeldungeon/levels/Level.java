@@ -145,6 +145,7 @@ public abstract class Level implements Bundlable {
 	public boolean[] water;
 	public boolean[] pit;
     public boolean[] breakable;
+    public boolean[] special;
 
 	public boolean[] openSpace;
 	
@@ -319,6 +320,7 @@ public abstract class Level implements Bundlable {
 		water		= new boolean[length];
 		pit			= new boolean[length];
         breakable	= new boolean[length];
+        special     = new boolean[length];
 
 		openSpace   = new boolean[length];
 		
@@ -722,6 +724,7 @@ public abstract class Level implements Bundlable {
 			water[i]		= (flags & Terrain.LIQUID) != 0;
 			pit[i]			= (flags & Terrain.PIT) != 0;
             breakable[i]	= (flags & Terrain.BREAKABLE) != 0;
+            special[i]   	= (flags & Terrain.SPECIAL) != 0;
 		}
 
 		for (Blob b : blobs.values()){
@@ -820,7 +823,8 @@ public abstract class Level implements Bundlable {
 	public static void set( int cell, int terrain, Level level ) {
 		Painter.set( level, cell, terrain );
 
-		if (terrain != Terrain.TRAP && terrain != Terrain.SECRET_TRAP && terrain != Terrain.INACTIVE_TRAP){
+        if (terrain != Terrain.TRAP && terrain != Terrain.SECRET_TRAP
+                && terrain != Terrain.INACTIVE_TRAP && terrain != Terrain.TRAP_GRASS){
 			level.traps.remove( cell );
 		}
 
@@ -834,6 +838,7 @@ public abstract class Level implements Bundlable {
 		level.pit[cell]			    = (flags & Terrain.PIT) != 0;
 		level.water[cell]			= terrain == Terrain.WATER;
         level.breakable[cell]		= (flags & Terrain.BREAKABLE) != 0;
+        level.special[cell]		    = (flags & Terrain.SPECIAL) != 0;
 
 		for (int i : PathFinder.NEIGHBOURS9){
 			i = cell + i;
@@ -999,7 +1004,7 @@ public abstract class Level implements Bundlable {
 			GameScene.updateMap(cell);
 			return true;
 		} else if (includeTraps && (terr == Terrain.SECRET_TRAP ||
-				terr == Terrain.TRAP || terr == Terrain.INACTIVE_TRAP)){
+				terr == Terrain.TRAP || terr == Terrain.INACTIVE_TRAP ||terr == Terrain.TRAP_GRASS )){
 			set(cell, Terrain.WATER);
 			Dungeon.level.traps.remove(cell);
 			GameScene.updateMap(cell);
@@ -1083,7 +1088,7 @@ public abstract class Level implements Bundlable {
 			}
 			break;
 			
-		case Terrain.TRAP:
+		case Terrain.TRAP: case Terrain.TRAP_GRASS:
 			trap = traps.get( cell );
 			break;
 			

@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.actors.buffs;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -64,15 +65,22 @@ public class MagicalSleep extends Buff {
 			detach();
 			return true;
 		}
+        float step = STEP;
 		if (target.alignment == Char.Alignment.ALLY) {
 			target.HP = Math.min(target.HP+1, target.HT);
-			if (target instanceof  Hero) ((Hero) target).resting = true;
+			if (target instanceof  Hero) {
+                ((Hero) target).resting = true;
+
+                if (Dungeon.hero.buff(ActHPtoGetFood.LockReg.class)!=null){
+                    step = 10;
+                }
+            }
 			if (target.HP == target.HT) {
 				if (target instanceof  Hero) GLog.p(Messages.get(this, "wakeup"));
 				detach();
 			}
 		}
-		spend( STEP );
+		spend( step );
 		return true;
 	}
 

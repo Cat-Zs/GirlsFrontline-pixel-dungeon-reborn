@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Grim;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Vampiric;
@@ -81,11 +82,12 @@ public class Nemeum extends Mob {
     private int beamTarget = -1;
     private int beamCooldown;
     public boolean beamCharged;
+    private float beamTime;
 
     @Override
     protected boolean canAttack( Char enemy ) {
 
-        if (beamCooldown == 0) {
+        if (beamTime <= 0 && beamCooldown == 0) {
             Ballistica aim = new Ballistica(pos, enemy.pos, Ballistica.STOP_TARGET);
 
             if (enemy.invisible == 0 && !isCharmedBy(enemy) && fieldOfView[enemy.pos] && aim.subPath(1, aim.dist).contains(enemy.pos)){
@@ -101,7 +103,7 @@ public class Nemeum extends Mob {
 
     @Override
     protected boolean act() {
-        if (beamCharged && state != HUNTING){
+        if (beamTime <= 0 && beamCharged && state != HUNTING){
             beamCharged = false;
             sprite.idle();
         }
@@ -111,17 +113,28 @@ public class Nemeum extends Mob {
         }
         if (beamCooldown > 0)
             beamCooldown--;
+        if (beamCharged &&beamTime>0){
+            beamTime--;
+            spend(TICK);
+            updateTNT();
+            return true;
+        }
         return super.act();
     }
 
     @Override
     protected boolean doAttack( Char enemy ) {
 
-        if (beamCooldown > 1) {
+        if (beamTime>0){
+            spend(attackDelay());
+            return true;
+        }else if (beamCooldown > 1) {
             return super.doAttack(enemy);
         } else if (!beamCharged){
             ((NemeumSprite)sprite).charge( enemy.pos );
-            spend( attackDelay()*4f );
+            TNTFindHero();
+            beamTime = attackDelay()*4f;
+            spend( attackDelay() );
             beamCharged = true;
             return true;
         } else {
@@ -139,6 +152,25 @@ public class Nemeum extends Mob {
             }
         }
 
+    }
+    public void updateTNT(){
+        Ballistica b = new Ballistica(pos, Dungeon.hero.pos, Ballistica.STOP_SOLID);
+        for (int p : b.path) {
+            Char ch = Actor.findChar( p );
+            if (ch == Dungeon.hero) {
+                TNTFindHero();
+            }
+            if (p == b.collisionPos)
+                break;
+        }
+    }
+    public void TNTFindHero(){
+        Ballistica b = new Ballistica(pos, Dungeon.hero.pos, Ballistica.STOP_SOLID);
+        for (int p : b.path) {
+            sprite.parent.add(new TargetedCell(p, 0xFF0000));
+            if (p == b.collisionPos)
+                break;
+        }
     }
 
     // Reduce damage during charge. Nerf this 4 to 2.
@@ -201,10 +233,13 @@ public class Nemeum extends Mob {
     private static final String BEAM_COOLDOWN   = "beamCooldown";
     private static final String BEAM_CHARGED    = "beamCharged";
 
+    private static final String BEAM_TIME    = "beamTime";
+
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put( BEAM_TARGET, beamTarget);
+        bundle.put( BEAM_TIME, beamTime);
         bundle.put( BEAM_COOLDOWN, beamCooldown );
         bundle.put( BEAM_CHARGED, beamCharged );
     }
@@ -212,8 +247,10 @@ public class Nemeum extends Mob {
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
-        if (bundle.contains(BEAM_TARGET))
+        if (bundle.contains(BEAM_TARGET)) {
             beamTarget = bundle.getInt(BEAM_TARGET);
+            beamTime = bundle.getFloat(BEAM_TIME);
+        }
         beamCooldown = bundle.getInt(BEAM_COOLDOWN);
         beamCharged = bundle.getBoolean(BEAM_CHARGED);
     }

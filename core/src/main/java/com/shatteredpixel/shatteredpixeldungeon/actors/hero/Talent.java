@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Recharging;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.RevealedArea;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Roots;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TalentSecondSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.WandEmpower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
@@ -156,19 +157,27 @@ public enum Talent {
 	//Ratmogrify T4
 	RATSISTANCE(124, 4), RATLOMACY(125, 4), RATFORCEMENTS(126, 4),
     //type561 T1
-    Type56One_FOOD(128), Type56One_Identify(129), Type56One_Damage(130), Type56One_Armor(131),
+    Type56One_FOOD(128), Type56One_Identify(129), Type56One_Damage(130), Type56_14(131),
     //type561 T2
-    Type56Two_FOOD(132),Type56Two_Armor(133),Type56Two_Grass(134),Type56Two_Sight(135),Type56Two_Damage(136),Type56Two_GrassV2(134),
+    Type56Two_FOOD(132),Type56Two_Armor(133),Type56Two_Grass(134),Type56Two_Sight(135),Type56Two_Damage(136),
+
+    //争议内容
+    Type56_14V2(131),
+    Type56_21V2(132),Type56_21V3(132),Type56_22V2(133),Type56_23V2(134),Type56_23V3(134),Type56_23V4(134),
+    GUN_1V2(142, 3), GUN_1V3(142, 3), GUN_2V2(143, 3),
+
     //type561 T3
     Type56Three_Bomb(137, 3), Type56Three_Book(138, 3),
+	//type561 T3-1 EMP
+	EMP_One(139, 3), EMP_Two(140, 3), EMP_Three(141, 3),
+	//type561 T3-2 GUN
+	GUN_1(142, 3), GUN_2(143, 3), GUN_3(144, 3),
     //type561 T4-1
     Type56FourOneOne(137, 4), Type56FourOneTwo(137, 4),Type56FourOneThree(137, 4),
     //type561 T4-2
     Type56FourTwoOne(137, 4), Type56FourTwoTwo(137, 4),Type56FourTwoThree(137, 4),
-	//type561 T3-1 EMP
-	EMP_One(139, 3), EMP_Two(140, 3), EMP_Three(141, 3),
-	//type561 T3-2 GUN
-	GUN_One(142, 3), GUN_Two(143, 3), GUN_Three(144, 3),
+    //type561 T4-3
+    Type56_431(137, 4), Type56_432(137, 4),Type56_433(137, 4),
 
     //留作旧版本561天赋的接口
     NICE_FOOD(128), OLD_SOLDIER(129), FAST_RELOAD(130), BETTER_FOOD(131), BARGAIN_SKILLS(132),TRAP_EXPERT(133),HOW_DARE_YOU(134),JIEFANGCI(135),NIGHT_EXPERT(136), SEARCH_ARMY(137, 3), ELITE_ARMY(138, 3),
@@ -216,7 +225,7 @@ public enum Talent {
 		public String toString() { return Messages.get(this, "name"); }
 		public String desc() { return Messages.get(this, "desc"); }
 	};
-	public static class GSH18EnergizingMealTracker extends CounterBuff{};
+	public static class GSH18EnergizingMealTracker extends CounterBuff{}
     
     //天狼星心脏 buff
     public static class SiriushHeartTracker extends FlavourBuff {
@@ -229,7 +238,12 @@ public enum Talent {
         public void tintIcon(Image icon) { icon.hardlight(0.8f, 0.2f, 0.8f); }
         public String toString() { return Messages.get(this, "sirius_heart_name"); }
         public String desc() { return Messages.get(this, "sirius_heart_desc"); }
-    };
+    }
+    public static class Type56BookTracker extends CounterBuff{
+        {
+            revivePersists = true;
+        }
+    }
 	public static class StarShieldTracker extends CounterBuff{// GSH18护盾恢复追踪器
 		{
 			revivePersists = true;
@@ -368,6 +382,16 @@ public enum Talent {
 		if (talent == HEIGHTENED_SENSES || talent == FARSIGHT){
 			Dungeon.observe();
 		}
+        if (talent == Type56Two_Sight){
+            Buff.affect( Dungeon.hero, TalentSecondSight.class).Set(Dungeon.levelId, 0);
+            if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 1){
+                Dungeon.level.FirstSight = false;
+                Buff.affect(Dungeon.hero, MindVision.class, 3);
+            }else if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2) {
+                Dungeon.level.SecondSight = false;
+                Buff.affect(Dungeon.hero, MindVision.class, 3);
+            }
+        }
 	}
 
 	public static class CachedRationsDropped extends CounterBuff{{revivePersists = true;}};
@@ -444,10 +468,6 @@ public enum Talent {
                 Buff.count(hero, GSH18EnergizingMealTracker.class, 1);
             }
         }
-        //561二阶吃饭天赋
-        if(Dungeon.hero.hasTalent(Talent.Type56Two_FOOD))
-            Food.satisfy(hero , 10+20*Dungeon.hero.pointsInTalent(Talent.Type56Two_FOOD));
-
     }
 
 	public static class WarriorFoodImmunity extends FlavourBuff{
@@ -460,7 +480,7 @@ public enum Talent {
 
 		// 2x/instant for Warrior (see onItemEquipped)
 		if (item instanceof MeleeWeapon || item instanceof Armor){
-            factor=1f+hero.pointsInTalent(Type56One_Identify)*0.75f;
+            factor=1.25f+hero.pointsInTalent(Type56One_Identify)*0.75f;
 			factor*=1f+hero.pointsInTalent(ARMSMASTERS_INTUITION);
 		}
 		// 3x/instant for mage (see Wand.wandUsed())
@@ -621,7 +641,6 @@ public enum Talent {
             }
             if (add){
                 int a = Random.IntRange(hero.pointsInTalent(Type56One_Damage)-1 , 2);
-                GLog.p(String.valueOf(a));
                 dmg+=a;
             }
         }
@@ -763,7 +782,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, NATURES_BOUNTY, SURVIVALISTS_INTUITION, FOLLOWUP_STRIKE, NATURES_AID);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, Type56One_FOOD , Type56One_Identify, Type56One_Damage, Type56One_Armor);
+				Collections.addAll(tierTalents, Type56One_FOOD , Type56One_Identify, Type56One_Damage, Type56_14);
 				break;
 			case GSH18:
 				Collections.addAll(tierTalents, GSH18_MEAL_TREATMENT, GSH18_DOCTOR_INTUITION, GSH18_CLOSE_COMBAT, GSH18_STAR_SHIELD);
@@ -792,7 +811,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, RESTORED_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, Type56Two_FOOD, Type56Two_Armor, Type56Two_Grass,Type56Two_GrassV2, Type56Two_Sight, Type56Two_Damage);
+				Collections.addAll(tierTalents, Type56Two_FOOD, Type56Two_Armor, Type56Two_Grass, Type56Two_Sight, Type56Two_Damage);
 				break;
 			case GSH18:
 				Collections.addAll(tierTalents, GSH18_ENERGIZING_MEAL, GSH18_CHAIN_SHOCK, GSH18_LOGISTICS_SUPPORT, GSH18_COMIC_HEART, GSH18_MEDICAL_COMPATIBILITY
@@ -883,7 +902,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, EMP_One, EMP_Two, EMP_Three);
 				break;
 			case GUN_MASTER: case MODERN_REBORNER:
-				Collections.addAll(tierTalents, GUN_One, GUN_Two, GUN_Three);
+				Collections.addAll(tierTalents, GUN_1, GUN_2, GUN_3);
 				break;
 			case FUTURE_STAR:
 				Collections.addAll(tierTalents, GSH18_INTELLIGENCE_AWARENESS, GSH18_SIRIUS_HEART);

@@ -3,6 +3,7 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.TierOfTalent;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
@@ -103,6 +104,7 @@ public class TitleScene extends PixelScene {
 		StyledButton btnPlay = new StyledButton(GREY_BUTTON,"进入游戏"){
 			@Override
 			protected void onClick() {
+                TierOfTalent.ResetAllTalentList();
 				if (GamesInProgress.checkAll().isEmpty()){
 					TitleScene.this.add( new WndStartGame(1) );
 				} else {

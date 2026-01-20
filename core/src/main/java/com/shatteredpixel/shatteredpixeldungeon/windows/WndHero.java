@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
@@ -31,10 +32,13 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.IconButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StatusPane;
@@ -42,6 +46,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.TalentButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentsPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
+import com.watabou.input.PointerEvent;
 import com.watabou.noosa.Gizmo;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
@@ -186,16 +191,56 @@ public class WndHero extends WndTabbed {
 
 			statSlot( Messages.get(this, "gold"), Statistics.goldCollected );
 			statSlot( Messages.get(this, "depth"), Statistics.deepestFloor );
+            setButton(pos);
 			statSlot( Messages.get(this, "seed"), DungeonSeed.convertToCode(Dungeon.seed));
 
 			// 添加饱食度显示
 			Hunger hunger = Dungeon.hero.buff(Hunger.class);
 			if (hunger != null) {
-			    statSlot( Messages.get(this, "hunger"), String.format("%.0f/%.0f", hunger.hunger()-Hunger.minlevel, Hunger.STARVING-Hunger.minlevel) );
+			    statSlot( Messages.get(this, "hunger"), String.format("%.0f/%.0f", hunger.hunger(), Hunger.STARVING-Hunger.minlevel) );
 			}
 			
 			pos += GAP;
 		}
+        private void setButton(float pos){
+            RedButton btnCopy = new RedButton(""){
+                @Override
+                protected void onPointerDown() {
+                    super.onPointerDown();
+                    PointerEvent.clearKeyboardThisPress = false;
+                }
+
+                @Override
+                protected void onPointerUp() {
+                    super.onPointerUp();
+                    PointerEvent.clearKeyboardThisPress = false;
+                }
+
+                @Override
+                protected void onClick() {
+                    super.onClick();
+                    GirlsFrontlinePixelDungeon.scene().addToFront(
+                            new WndOptions(new Image(new ItemSprite(ItemSpriteSheet.SEED_HOLDER)),
+                                    Messages.get(WndSettings.class, "copy_title"),
+                                    Messages.get(WndSettings.class, "copy_body"),
+                                    Messages.get(WndSettings.class, "copy_yes"),
+                                    Messages.get(WndSettings.class, "copy_no")) {
+
+                                protected void onSelect(int index) {
+                                    super.onSelect(index);
+                                    if (index == 0) {
+                                        SPDSettings.seedCode(DungeonSeed.convertToCode(Dungeon.seed));
+                                    }
+
+                                }
+                            });
+                }
+            };
+            btnCopy.icon(Icons.RENAME_ON.get());
+            btnCopy.enable(true);
+            add(btnCopy);
+            btnCopy.setRect(WIDTH * 0.6f-18,pos-GAP,16,16);
+        }
 
 		private void statSlot( String label, String value ) {
 			

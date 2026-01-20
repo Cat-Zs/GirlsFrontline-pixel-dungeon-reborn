@@ -21,12 +21,15 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.utils.BArray;
@@ -102,7 +105,18 @@ abstract public class KindOfWeapon extends EquipableItem {
 	abstract public int max(int lvl);
 
 	public int damageRoll( Char owner ) {
-		return Random.NormalIntRange( min(), max() );
+        int dmg = Random.NormalIntRange( min(), max() );
+        if (owner instanceof Hero) {
+            Hero heroA = (Hero)owner;
+            Char enemyA = heroA.enemy();
+            if (enemyA instanceof Mob && ((Mob) enemyA).surprisedBy(heroA)) {
+                if (hero.hasTalent(Talent.Type56Two_Damage)) {
+                    int diff = max() - min();
+                    dmg = Random.NormalIntRange(min() + Math.round(0.2f * hero.pointsInTalent(Talent.Type56Two_Damage) * diff), max());
+                }
+            }
+        }
+		return dmg;
 	}
 	
 	public float accuracyFactor( Char owner ) {

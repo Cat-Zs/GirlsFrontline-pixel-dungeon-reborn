@@ -22,7 +22,7 @@ public class SaltyZongzi extends Food {
 	}
     @Override
     protected void satisfy( Hero hero ){
-        energy+=60;
+        energy+=100;
         super.satisfy(hero);
         energy = Hunger.HUNGRY;
         //仅在进食前改变提供饱食度，进食后恢复，以实现不对号角生效

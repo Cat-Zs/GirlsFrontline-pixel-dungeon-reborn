@@ -633,9 +633,9 @@ public class Dungeon {
 
         if(level.FirstSave){//mark
             level.FirstSave = false;
-            FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId+10000),bundle);
+            FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId, 1),bundle);
         }
-        FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId),bundle);
+        FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId, 0),bundle);
 	}
 	
 	public static void saveAll() throws IOException {
@@ -664,32 +664,43 @@ public class Dungeon {
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
 
         itemAOfSave = new ArrayList<>();
-        Class[] ItemToSave = bundle.getClassArray(NOTESAVEA);
-        if (ItemToSave != null) {
-            for (int j = 0; j < ItemToSave.length; j++) {
-                try {
-                    itemAOfSave.add(ItemToSave[j]);
-                } catch (Exception e) {
-                    GirlsFrontlinePixelDungeon.reportException(e);
+        if (bundle.contains(NOTESAVEA)) {
+            Class[] ItemToSave = bundle.getClassArray(NOTESAVEA);
+            if (ItemToSave != null) {
+                for (int j = 0; j < ItemToSave.length; j++) {
+                    try {
+                        itemAOfSave.add(ItemToSave[j]);
+                    } catch (Exception e) {
+                        GirlsFrontlinePixelDungeon.reportException(e);
+                    }
                 }
             }
+            Item.itemA = itemAOfSave;
+        }else {
+            Item.itemA = new ArrayList<>();
         }
-        Item.itemA = itemAOfSave;
 
         NOTEAOfSave = new ArrayList<>();
-        String[] NoteToSave = bundle.getStringArray(NOTESAVEB);
-        if (NoteToSave != null) {
-            for (int i = 0; i < NoteToSave.length; i++) {
-                try {
-                    NOTEAOfSave.add(NoteToSave[i]);
-                } catch (Exception e) {
-                    GirlsFrontlinePixelDungeon.reportException(e);
+        if (bundle.contains(NOTESAVEB)) {
+            String[] NoteToSave = bundle.getStringArray(NOTESAVEB);
+            if (NoteToSave != null) {
+                for (int i = 0; i < NoteToSave.length; i++) {
+                    try {
+                        NOTEAOfSave.add(NoteToSave[i]);
+                    } catch (Exception e) {
+                        GirlsFrontlinePixelDungeon.reportException(e);
+                    }
                 }
             }
+            Item.NOTEA = NOTEAOfSave;
+        }else {
+            Item.NOTEA = new ArrayList<>();
         }
-        Item.NOTEA = NOTEAOfSave;
+
         lockXMAS = false;
-        lockXMAS = bundle.getBoolean(LOCKXMAS);
+        if (bundle.contains(LOCKXMAS)) {
+            lockXMAS = bundle.getBoolean(LOCKXMAS);
+        }
 
 		Actor.clear();
 		Actor.restoreNextID( bundle );
@@ -820,14 +831,14 @@ public class Dungeon {
         }
     }
 
-	public static Level tryLoadLevel(int levelId){//mark
+	public static Level tryLoadLevel(int levelId, int copy){//mark
 		final int save=GamesInProgress.curSlot;
-		final String fileName=GamesInProgress.depthFile(save,levelId);
+		final String fileName=GamesInProgress.depthFile(save,levelId,copy);
 		if(FileUtils.fileExists(fileName)){
 			//file may be deleted between fileExists and loadLevel,who knows.
 			try{
                 GetSight();
-				return loadLevel(save,levelId);
+				return loadLevel(save,levelId,copy);
 			}catch(IOException e){
 				Game.reportException(e);
 			}
@@ -836,11 +847,11 @@ public class Dungeon {
 		return null;
 	}
 	
-	public static Level loadLevel(int save,int levelId) throws IOException {
+	public static Level loadLevel(int save,int levelId, int copy) throws IOException {
 		Dungeon.level = null;
 		Actor.clear();
 		
-		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId));
+		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId, copy));
 		
 		Level level = (Level)bundle.get( LEVEL );
 		
@@ -1022,6 +1033,9 @@ public class Dungeon {
 			System.arraycopy( pass, 0, passable, 0, Dungeon.level.length() );
 		}
 
+        if (!(ch instanceof Hero)){
+            BArray.or( pass, Dungeon.level.special, passable );
+        }
 		if (chars && Char.hasProp(ch, Char.Property.LARGE)){
 			BArray.and( passable, Dungeon.level.openSpace, passable );
 		}
@@ -1051,6 +1065,10 @@ public class Dungeon {
 			System.arraycopy( pass, 0, passable, 0, Dungeon.level.length() );
 		}
 
+        if (!(ch instanceof Hero)){
+            BArray.or( pass, Dungeon.level.special, passable );
+        }
+
 		if (Char.hasProp(ch, Char.Property.LARGE)){
 			BArray.and( passable, Dungeon.level.openSpace, passable );
 		}
@@ -1075,7 +1093,9 @@ public class Dungeon {
 		} else {
 			System.arraycopy( pass, 0, passable, 0, Dungeon.level.length() );
 		}
-
+        if (!(ch instanceof Hero)){
+            BArray.or( pass, Dungeon.level.special, passable );
+        }
 		if (Char.hasProp(ch, Char.Property.LARGE)){
 			BArray.and( passable, Dungeon.level.openSpace, passable );
 		}

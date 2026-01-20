@@ -332,7 +332,7 @@ public class CloakOfShadows extends Artifact {
 						exp += Math.round(10f * Math.pow(0.75f, -lvlDiffFromTarget));
 					}
 					
-					if (exp >= (level() + 1) * 50 && level() < levelCap) {
+					while (exp >= (level() + 1) * 50 && level() < levelCap) {
 						upgrade();
 						exp -= level() * 50;
 						GLog.p(Messages.get(this, "levelup"));

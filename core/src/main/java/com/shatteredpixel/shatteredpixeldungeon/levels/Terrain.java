@@ -57,6 +57,7 @@ public class Terrain {
 	public static final int WATER		    = 29;
 	public static final int FURROWED_GRASS	= 30;
 	public static final int CRYSTAL_DOOR	= 31;
+    public static final int TRAP_GRASS      = 32;
 	
 	public static final int PASSABLE		= 0x001;
 	public static final int LOS_BLOCKING	= 0x002;
@@ -67,9 +68,10 @@ public class Terrain {
 	public static final int LIQUID			= 0x040;
 	public static final int PIT				= 0x080;
     public static final int BREAKABLE       = 0x100;
+    public static final int SPECIAL         = 0x200;
 
 	
-	public static final int[] flags = new int[512];
+	public static final int[] flags = new int[1024];
 	static {
 		flags[CHASM]		= AVOID	| PIT;
 		flags[EMPTY]		= PASSABLE | BREAKABLE ;
@@ -105,17 +107,18 @@ public class Terrain {
 		flags[STATUE_SP]	= flags[STATUE] | BREAKABLE ;
 		flags[BOOKSHELF]	= flags[BARRICADE] | BREAKABLE ;
 		flags[ALCHEMY]		= SOLID | BREAKABLE ;
+        flags[TRAP_GRASS]	= AVOID | SPECIAL | BREAKABLE ;
 	}
 
 	public static int discover( int terr ) {
 		switch (terr) {
-		case SECRET_DOOR:
-			return DOOR;
-		case SECRET_TRAP:
-			return TRAP;
-		default:
-			return terr;
-		}
+            case SECRET_DOOR:
+                return DOOR;
+            case SECRET_TRAP: case TRAP_GRASS:
+                return TRAP;
+            default:
+                return terr;
+        }
 	}
 
 	//removes signs, places floors instead

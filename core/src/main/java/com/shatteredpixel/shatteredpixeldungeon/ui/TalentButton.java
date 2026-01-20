@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndInfoTalent;
+import com.shatteredpixel.shatteredpixeldungeon.windows.debugSelectTalent;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.PointerArea;
@@ -58,7 +59,8 @@ public class TalentButton extends Button {
 		INFO,
 		UPGRADE,
 		METAMORPH_CHOOSE,
-		METAMORPH_REPLACE
+		METAMORPH_REPLACE,
+        debug_replace
 	}
 
 	public TalentButton(int tier, Talent talent, int points, Mode mode){
@@ -199,7 +201,60 @@ public class TalentButton extends Button {
 
 				}
 			});
-		} else {
+		} else if (mode == Mode.debug_replace && Dungeon.hero != null && Dungeon.hero.isAlive()) {
+            toAdd = new WndInfoTalent(talent, pointsInTalent, new WndInfoTalent.TalentButtonCallback() {
+
+                @Override
+                public String prompt() {
+                    return Messages.titleCase(Messages.get(ScrollOfMetamorphosis.class, "metamorphose_talent"));
+                }
+
+                @Override
+                public void call() {
+                    Talent replacing = debugSelectTalent.debugTalent.INSTANCE.replacing;
+
+                    for (LinkedHashMap<Talent, Integer> tier : Dungeon.hero.talents){
+                        if (tier.containsKey(replacing)){
+                            LinkedHashMap<Talent, Integer> newTier = new LinkedHashMap<>();
+                            for (Talent t : tier.keySet()){
+                                if (t == replacing){
+                                    newTier.put(talent, tier.get(replacing));
+
+                                    if (!Dungeon.hero.metamorphedTalents.containsValue(replacing)){
+                                        Dungeon.hero.metamorphedTalents.put(replacing, talent);
+
+                                        //if what we're replacing is already a value, we need to simplify the data structure
+                                    } else {
+                                        //a->b->a, we can just remove the entry entirely
+                                        if (Dungeon.hero.metamorphedTalents.get(talent) == replacing){
+                                            Dungeon.hero.metamorphedTalents.remove(talent);
+
+                                            //a->b->c, we need to simplify to a->c
+                                        } else {
+                                            for (Talent t2 : Dungeon.hero.metamorphedTalents.keySet()){
+                                                if (Dungeon.hero.metamorphedTalents.get(t2) == replacing){
+                                                    Dungeon.hero.metamorphedTalents.put(t2, talent);
+                                                }
+                                            }
+                                        }
+                                    }
+
+                                } else {
+                                    newTier.put(t, tier.get(t));
+                                }
+                            }
+                            Dungeon.hero.talents.set(debugSelectTalent.debugTalent.INSTANCE.tier-1, newTier);
+                            break;
+                        }
+                    }
+
+                    if (debugSelectTalent.debugTalent.INSTANCE != null){
+                        debugSelectTalent.debugTalent.INSTANCE.hide();
+                    }
+
+                }
+            });
+        } else {
 			toAdd = new WndInfoTalent(talent, pointsInTalent, null);
 		}
 
@@ -247,4 +302,40 @@ public class TalentButton extends Button {
 			emitter.burst(Speck.factory(Speck.STAR), 12);
 		}
 	}
+    public static void DebugTalent(Talent old, Talent replacing, int Tier){
+        for (LinkedHashMap<Talent, Integer> tier : Dungeon.hero.talents){
+            if (tier.containsKey(replacing)){
+                LinkedHashMap<Talent, Integer> newTier = new LinkedHashMap<>();
+                for (Talent t : tier.keySet()){
+                    if (t == replacing){
+                        newTier.put(old, tier.get(replacing));
+
+                        if (!Dungeon.hero.metamorphedTalents.containsValue(replacing)){
+                            Dungeon.hero.metamorphedTalents.put(replacing, old);
+
+                            //if what we're replacing is already a value, we need to simplify the data structure
+                        } else {
+                            //a->b->a, we can just remove the entry entirely
+                            if (Dungeon.hero.metamorphedTalents.get(old) == replacing){
+                                Dungeon.hero.metamorphedTalents.remove(old);
+
+                                //a->b->c, we need to simplify to a->c
+                            } else {
+                                for (Talent t2 : Dungeon.hero.metamorphedTalents.keySet()){
+                                    if (Dungeon.hero.metamorphedTalents.get(t2) == replacing){
+                                        Dungeon.hero.metamorphedTalents.put(t2, old);
+                                    }
+                                }
+                            }
+                        }
+
+                    } else {
+                        newTier.put(t, tier.get(t));
+                    }
+                }
+                Dungeon.hero.talents.set(Tier-1, newTier);
+                break;
+            }
+        }
+    }
 }

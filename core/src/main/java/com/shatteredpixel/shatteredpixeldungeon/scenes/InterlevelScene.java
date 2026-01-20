@@ -422,7 +422,7 @@ public class InterlevelScene extends PixelScene {
 		try{Dungeon.saveAll();}
 		catch(IOException e){Game.reportException(e);}
 
-		Level level=Dungeon.tryLoadLevel(accessLevelId);
+		Level level=Dungeon.tryLoadLevel(accessLevelId,0);
 		if(null==level){
 			level=Dungeon.newLevel(accessLevelId);
 		}
@@ -446,7 +446,7 @@ public class InterlevelScene extends PixelScene {
 			level = Dungeon.newLevel(Dungeon.depth+1);
 		} else {
 			Dungeon.depth++;
-			level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth);
+			level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
 		}
 		Dungeon.switchLevel( level, level.entrance );
 	}
@@ -463,15 +463,17 @@ public class InterlevelScene extends PixelScene {
 			level = Dungeon.newLevel(Dungeon.depth+1);
 		} else {
 			Dungeon.depth++;
-			level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth);
+			level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
 		}
 		Dungeon.switchLevel( level, level.fallCell( fallIntoPit ));
 	}
     private void reset() throws IOException {
         Actor.fixTime();
-        Level copyLevel = Dungeon.tryLoadLevel(Dungeon.depth+10000);
+        Level copyLevel = Dungeon.tryLoadLevel(Dungeon.depth,1);
         if (copyLevel == null) {
-            GLog.n("未读取到复制存档");
+            GLog.n("未读取到复制存档，即将重新保存");
+            Dungeon.level.FirstSave = true;
+            Dungeon.saveAll();
         } else
             Dungeon.switchLevel(copyLevel,copyLevel.entrance);
     }
@@ -482,7 +484,7 @@ public class InterlevelScene extends PixelScene {
 
 		Dungeon.saveAll();
 		Dungeon.depth--;
-		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth);
+		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
 		Dungeon.switchLevel( level, level.exit );
 	}
 	
@@ -492,7 +494,7 @@ public class InterlevelScene extends PixelScene {
 
 		Dungeon.saveAll();
 		Dungeon.depth = returnDepth;
-		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth);
+		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
 		Dungeon.switchLevel( level, returnPos );
 	}
 	
@@ -502,7 +504,7 @@ public class InterlevelScene extends PixelScene {
 		GameLog.wipe();
 
 		Dungeon.loadGame( GamesInProgress.curSlot );
-		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.levelId);
+		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.levelId,0);
 		Dungeon.switchLevel(level,Dungeon.hero.pos);
 	}
 	

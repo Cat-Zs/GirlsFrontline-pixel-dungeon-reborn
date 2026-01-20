@@ -81,8 +81,8 @@ public class DungeonTileSheet {
 			Terrain.EMPTY, Terrain.GRASS, Terrain.EMPTY_WELL,
 			Terrain.ENTRANCE, Terrain.EXIT, Terrain.EMBERS,
 			Terrain.BARRICADE, Terrain.HIGH_GRASS, Terrain.FURROWED_GRASS, Terrain.SECRET_TRAP,
-			Terrain.TRAP, Terrain.INACTIVE_TRAP, Terrain.EMPTY_DECO,
-			Terrain.SIGN, Terrain.WELL, Terrain.STATUE, Terrain.ALCHEMY,
+			Terrain.TRAP, Terrain.INACTIVE_TRAP, Terrain.EMPTY_DECO, Terrain.TRAP_GRASS,
+            Terrain.SIGN, Terrain.WELL, Terrain.STATUE, Terrain.ALCHEMY,
 			Terrain.DOOR, Terrain.OPEN_DOOR, Terrain.LOCKED_DOOR, Terrain.CRYSTAL_DOOR
 	));
 
@@ -131,6 +131,7 @@ public class DungeonTileSheet {
 		chasmStitcheable.put( Terrain.SECRET_TRAP,  CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.INACTIVE_TRAP,CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.TRAP,         CHASM_FLOOR );
+        chasmStitcheable.put( Terrain.TRAP_GRASS,   CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.BOOKSHELF,    CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.BARRICADE,    CHASM_FLOOR );
 		chasmStitcheable.put( Terrain.PEDESTAL,     CHASM_FLOOR );
@@ -362,6 +363,7 @@ public class DungeonTileSheet {
 
 		directVisuals.put(Terrain.SECRET_TRAP,      directVisuals.get(Terrain.EMPTY));
 		directVisuals.put(Terrain.TRAP,             directVisuals.get(Terrain.EMPTY));
+        directVisuals.put(Terrain.TRAP_GRASS,       directVisuals.get(Terrain.PEDESTAL));
 		directVisuals.put(Terrain.INACTIVE_TRAP,    directVisuals.get(Terrain.EMPTY));
 
 		directVisuals.put(Terrain.EMPTY_DECO,       FLOOR_DECO);
