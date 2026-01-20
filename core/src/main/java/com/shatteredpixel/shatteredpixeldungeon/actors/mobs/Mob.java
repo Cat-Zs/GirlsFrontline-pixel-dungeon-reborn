@@ -735,7 +735,6 @@ public abstract class Mob extends Char {
 		}
 
 		boolean soulMarked = buff(SoulMark.class) != null;
-        boolean EMP = buff(Empulse.class) != null;
 
 		super.die( cause );
 
@@ -752,16 +751,6 @@ public abstract class Mob extends Char {
 				}
 			}
 		}
-        int Ran = Dungeon.hero.pointsInTalent(Talent.EMP_Two);
-        if(EMP&&Random.Int(10)<Ran){
-            RedBook redbook = Dungeon.hero.belongings.getItem(RedBook.class);
-            if (redbook != null){
-                redbook.overCharge(1, false);
-                //复制的盗贼，下面两行是粒子特效
-                ScrollOfRecharging.chargeParticle( Dungeon.hero );
-                SpellSprite.show( Dungeon.hero, SpellSprite.CHARGE );
-            }
-        }
 	}
 
 	public float lootChance(){
