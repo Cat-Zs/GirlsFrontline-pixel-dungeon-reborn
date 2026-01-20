@@ -111,7 +111,7 @@ public class CapeOfThorns extends Artifact {
 
 				exp+= deflected;
 
-				if (exp >= (level()+1)*5 && level() < levelCap){
+				while (exp >= (level()+1)*5 && level() < levelCap){
 					exp -= (level()+1)*5;
 					upgrade();
 					GLog.p( Messages.get(this, "levelup") );

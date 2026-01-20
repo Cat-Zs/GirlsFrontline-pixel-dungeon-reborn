@@ -194,7 +194,7 @@ public class TalismanOfForesight extends Artifact {
 				}
 
 				exp += earnedExp;
-				if (exp >= 100 + 50*level() && level() < levelCap) {
+				while (exp >= 100 + 50*level() && level() < levelCap) {
 					exp -= 100 + 50*level();
 					upgrade();
 					GLog.p( Messages.get(TalismanOfForesight.class, "levelup") );

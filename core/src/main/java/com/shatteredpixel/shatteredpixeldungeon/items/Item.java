@@ -411,6 +411,16 @@ public class Item implements Bundlable {
 			
 		}
 	}
+    protected final Item detach( Bag container, int rem ){
+        if (this.quantity<=rem){
+            return this.detachAll(container);
+        }else {
+            for (int i = 0; i<rem; i++){
+                this.detach(container);
+            }
+        }
+        return this;
+    }
 	
 	public final Item detachAll( Bag container ) {
 		Dungeon.quickslot.clearItem( this );
