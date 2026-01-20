@@ -29,6 +29,8 @@ public class MatchThreeScene extends PixelScene {
     private static final int EMPTY = 0;
     private static final int BORDER = 1;
     private static final int CELL_SIZE = 24;
+    private static final int PLANT_IMAGE_SIZE = 20;//CELL_SIZE - 4
+    private static final float SIZE_BUTTON_TO_IMAGE = PLANT_IMAGE_SIZE / (float)CELL_SIZE;
     
     // 植物类型（使用ItemSpriteSheet中的SEEDS常量）
     private static final int[] PLANT_TYPES = {
@@ -50,7 +52,7 @@ public class MatchThreeScene extends PixelScene {
     
     // 渲染组件
     private Image background;
-    private Component boardContainer;
+    private float adjustedCellSize;
     private StyledButton[][] plantButtons;
     private StyledButton restartButton;
     private StyledButton exitButton;
@@ -59,23 +61,22 @@ public class MatchThreeScene extends PixelScene {
     public void create() {
         super.create();
         
-        // 1. 设置背景 - 确保最先添加，在最底层
-        setupBackground();
-        
-        // 2. 初始化游戏
+        // 初始化游戏
         initGame();
-        
-        // 3. 创建游戏板视觉组件
-        createBoardVisual();
-        
-        // 4. 添加控制按钮 - 确保最后添加，在最上层
-        addControlButtons();
-        
-        // 5. 添加选择指示器
-        createSelectionIndicator();
-        
-        // 6. 初始化游戏状态
+        // 初始化游戏状态
         gameRunning = true;
+
+        // 设置背景 - 确保最先添加，在最底层
+        setupBackground();
+        // 创建植物按钮组件
+        createPlantButtons();
+        // 添加选择指示器
+        createSelectionIndicator();
+        // 添加控制按钮 - 确保最后添加，在最上层
+        addControlButtons();
+
+        // 更新按钮状态(初次渲染)
+        updatePlantButtons();
         
         fadeIn();
     }
@@ -138,7 +139,7 @@ public class MatchThreeScene extends PixelScene {
     }
     
     // 创建游戏板视觉组件
-    private void createBoardVisual() {
+    private void createPlantButtons() {
         // 计算合适的单元格大小，使游戏板能够适应屏幕大小
         float availableWidth = uiCamera.width * 0.9f; // 留出边距
         float availableHeight = uiCamera.height * 0.9f; // 留出边距
@@ -148,25 +149,7 @@ public class MatchThreeScene extends PixelScene {
         float maxCellSizeHeight = availableHeight / BOARD_HEIGHT;
         
         // 选择较小的那个作为实际的单元格大小
-        float adjustedCellSize = Math.min(maxCellSizeWidth, maxCellSizeHeight);
-        
-        // 创建游戏板容器
-        boardContainer = new Component();
-        boardContainer.camera = uiCamera;
-        
-        // 设置游戏板大小（基于调整后的单元格大小）
-        float totalWidth = adjustedCellSize * BOARD_WIDTH;
-        float totalHeight = adjustedCellSize * BOARD_HEIGHT;
-        
-        boardContainer.setSize(totalWidth, totalHeight);
-        
-        // 计算游戏板位置，确保居中
-        boardContainer.setPos(
-            PixelScene.align((uiCamera.width - totalWidth) / 2),
-            PixelScene.align((uiCamera.height - totalHeight) / 2)
-        );
-        
-        add(boardContainer);
+        adjustedCellSize = Math.min(maxCellSizeWidth, maxCellSizeHeight);
         
         // 创建植物按钮数组
         plantButtons = new StyledButton[BOARD_HEIGHT][BOARD_WIDTH];
@@ -191,18 +174,12 @@ public class MatchThreeScene extends PixelScene {
                 plantButtons[row][col].camera = uiCamera;
                 
                 // 添加按钮到容器
-                boardContainer.add(plantButtons[row][col]);
+                add(plantButtons[row][col]);
                 
                 // 设置按钮背景为透明
                 plantButtons[row][col].text("");
             }
         }
-        
-        // 更新选择指示器的大小，以适应新的单元格大小
-        updateSelectionIndicatorSize(adjustedCellSize);
-        
-        // 更新按钮状态
-        updatePlantButtons();
     }
     
     // 处理植物按钮点击
@@ -267,7 +244,7 @@ public class MatchThreeScene extends PixelScene {
                     plantImg.frame(ItemSpriteSheet.film.get(plantType));
                     
                     // 设置图像大小
-                    float scale = (CELL_SIZE - 4) / plantImg.width;
+                    float scale = SIZE_BUTTON_TO_IMAGE*adjustedCellSize / plantImg.width;
                     plantImg.scale.set(scale);
                     
                     // 设置按钮图标
@@ -372,8 +349,8 @@ public class MatchThreeScene extends PixelScene {
         // 生成新植物
         generateNewPlants();
         
-        // 更新游戏板显示
-        updateBoardVisual();
+        // 更新显示
+        updatePlantButtons();
         
         // 检查是否有新的匹配
         List<int[]> newMatches = findMatches();
@@ -408,13 +385,6 @@ public class MatchThreeScene extends PixelScene {
                     gameBoard[row][col] = getRandomPlant();
                 }
             }
-        }
-    }
-    
-    // 更新游戏板显示
-    private void updateBoardVisual() {
-        if (boardContainer != null) {
-            updatePlantButtons();
         }
     }
     
@@ -463,26 +433,11 @@ public class MatchThreeScene extends PixelScene {
         selectionIndicator.visible = false;
         selectionIndicator.camera = uiCamera;
         
-        // 确保选择指示器的原点是左上角
-        selectionIndicator.origin.set(0, 0);
-        
-        // 设置选择指示器的大小，使其完全覆盖24x24的单元格
-        // Icons.TARGET的实际尺寸是16x16，所以需要缩放1.5倍
-        float scale = CELL_SIZE / 16f; // 16是Icons.TARGET的实际宽度
+        // 设置选择指示器的大小，使其完全覆盖单元格
+        float scale = adjustedCellSize / selectionIndicator.width;
         selectionIndicator.scale.set(scale);
         
         add(selectionIndicator);
-    }
-    
-    // 更新选择指示器大小
-    private void updateSelectionIndicatorSize(float cellSize) {
-        if (selectionIndicator == null) {
-            createSelectionIndicator();
-        }
-        
-        // 设置选择指示器的大小，使其完全覆盖单元格
-        float scale = cellSize / 16f; // 16是Icons.TARGET的实际宽度
-        selectionIndicator.scale.set(scale);
     }
     
     // 更新选择指示器位置
@@ -492,20 +447,9 @@ public class MatchThreeScene extends PixelScene {
             return;
         }
         
-        // 获取当前单元格大小
-        float cellSize = boardContainer.width() / BOARD_WIDTH;
-        
-        // 计算选中单元格的位置
-        float cellX = selectedCol * cellSize;
-        float cellY = selectedRow * cellSize;
-        
-        // 按照用户要求调整位置：向左偏移4个格子，向上偏移0.5个格子
-        cellX -= 4 * cellSize;
-        cellY -= 0.5 * cellSize;
-        
         // 设置选择指示器的位置，使其与选中的单元格精确对齐
-        float x = boardContainer.x + cellX;
-        float y = boardContainer.y + cellY;
+        float x = selectedCol * adjustedCellSize;
+        float y = selectedRow * adjustedCellSize;
         
         // 使用PixelScene.align确保像素对齐
         selectionIndicator.setPos(PixelScene.align(x), PixelScene.align(y));
@@ -527,8 +471,8 @@ public class MatchThreeScene extends PixelScene {
         // 重新初始化游戏
         initGame();
         
-        // 更新游戏板显示
-        updateBoardVisual();
+        // 更新显示
+        updatePlantButtons();
         
         gameRunning = true;
     }
@@ -538,53 +482,5 @@ public class MatchThreeScene extends PixelScene {
     protected void onBackPressed() {
         InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
         Game.switchScene(InterlevelScene.class);
-    }
-    
-    // 游戏板视觉组件
-    private class BoardVisual extends Component {
-        private List<Image> plantImages;
-        
-        public BoardVisual() {
-            plantImages = new ArrayList<>();
-        }
-        
-        @Override
-        protected void layout() {
-            updateVisual();
-        }
-        
-        public void updateVisual() {
-            // 清除旧的植物图像
-            for (Image img : plantImages) {
-                img.killAndErase();
-            }
-            plantImages.clear();
-            
-            // 创建新的植物图像
-            for (int row = 0; row < BOARD_HEIGHT; row++) {
-                for (int col = 0; col < BOARD_WIDTH; col++) {
-                    int cellType = gameBoard[row][col];
-                    
-                    if (cellType != EMPTY && cellType != BORDER) {
-                        // 使用ItemSpriteSheet中的种子贴图
-                        Image plantImg = new Image(Assets.Sprites.ITEMS);
-                        
-                        // 设置植物贴图的正确区域（使用ItemSpriteSheet的film）
-                        plantImg.frame(ItemSpriteSheet.film.get(cellType));
-                        
-                        // 设置位置和大小
-                        float x = col * CELL_SIZE;
-                        float y = row * CELL_SIZE;
-                        plantImg.setPos(x, y);
-                        
-                        // 确保植物贴图大小为24*24
-                        plantImg.scale.set(CELL_SIZE / plantImg.width);
-                        
-                        add(plantImg);
-                        plantImages.add(plantImg);
-                    }
-                }
-            }
-        }
     }
 }
