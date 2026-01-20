@@ -631,7 +631,7 @@ public class Dungeon {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
 
-        if(level.FirstSave){
+        if(level.FirstSave){//mark
             level.FirstSave = false;
             FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId+10000),bundle);
         }

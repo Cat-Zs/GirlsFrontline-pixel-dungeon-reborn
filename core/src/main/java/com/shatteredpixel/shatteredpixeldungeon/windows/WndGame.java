@@ -107,7 +107,7 @@ public class WndGame extends Window {
 			// 重置楼层按钮
 			RedButton resetBtn = new RedButton( Messages.get(this, "kill") ) {
 				@Override
-				protected void onClick() {
+				protected void onClick() {//mark
 					Dungeon.hero.damage(9999999,Dungeon.hero);
 				}
 			};
