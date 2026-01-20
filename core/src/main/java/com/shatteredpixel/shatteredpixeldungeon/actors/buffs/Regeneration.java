@@ -61,6 +61,12 @@ public class Regeneration extends Buff {
 					delay /= RingOfEnergy.artifactChargeMultiplier(target);
 				}
 			}
+            if (Dungeon.hero.buff(ActHPtoGetFood.LockReg.class)!=null){
+                delay = REGENERATION_DELAY;
+                if (regenBuff != null && regenBuff.isCursed()) {
+                    delay *= 1.5f;
+                }
+            }
 			spend( delay );
 			
 		} else {
