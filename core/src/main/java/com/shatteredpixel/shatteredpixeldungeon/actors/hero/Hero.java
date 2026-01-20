@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ActHPtoGetFood;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AnkhInvulnerability;
@@ -51,10 +52,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Regeneration;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ShieldBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SiriusHeart;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SnipersMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.StarShield;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TalentGrass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TalentSecondSight;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vertigo;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.WellFed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
@@ -120,6 +124,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfLivingEarth;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.AK47;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ShootGun;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -346,8 +351,8 @@ public class Hero extends Char {
 		belongings.restoreFromBundle( bundle );
 		
 		// 如果是未来之星职业，自动添加天狼星心脏buff
-		if (subClass == HeroSubClass.FUTURE_STAR && buff(com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SiriusHeart.class) == null) {
-			Buff.affect(this, com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SiriusHeart.class);
+		if (subClass == HeroSubClass.FUTURE_STAR && buff(SiriusHeart.class) == null) {
+			Buff.affect(this, SiriusHeart.class);
 		}
 	}
 	
@@ -383,7 +388,25 @@ public class Hero extends Char {
     }
 
     public boolean hasTalentA( Talent talent ){
-        return pointsInTalentA(talent) >= 0;
+        int need;
+        switch (TierOfTalent.Tier(talent)){
+            case 1:
+                need = 1;
+                break;
+            case 2:
+                need = 6;
+                break;
+            case 3:
+                need = 12;
+                break;
+            case 4:
+                need = 20;
+                break;
+            case 0: default:
+                need = 0;
+                break;
+        }
+        return Dungeon.hero.lvl>=need &&pointsInTalentA(talent) >= 0;
     }
 
     public int pointsInTalentA( Talent talent ){
@@ -525,6 +548,14 @@ public class Hero extends Char {
             accuracy += 1000f;
 			accuracy *= 1000f;
 		}
+        // 56天赋：1-4
+        if (buff(Talent.Type56BookTracker.class) != null) {
+            accuracy *= 1.1F + 0.2F * pointsInTalent(Talent.Type56_14);
+        }
+        // 56天赋：1-4V2
+        if (buff(ShootGun.ShootTracker.class) != null) {
+            accuracy *= 1.1F + 0.2F * pointsInTalent(Talent.Type56_14V2);
+        }
 		
 		if (wep instanceof MissileWeapon){
 			if (Dungeon.level.adjacent( pos, target.pos )) {
@@ -633,11 +664,79 @@ public class Hero extends Char {
 		} else {
 			dmg = RingOfForce.damageRoll(this);
 		}
+        if (Dungeon.hero.hasTalent(Talent.Type56_21V3)){
+            Hunger hunger = buff(Hunger.class);
+            WellFed full = buff(WellFed.class);
+            int tier;
+            if (full!=null){
+                tier = 3;
+            }
+            else if (hunger!=null){
+                if (hunger.isStarving()){
+                    tier = 0;
+                }else if (hunger.isHungry()){
+                    tier = 1;
+                }else {
+                    tier = 2;
+                }
+            }
+            else {
+                tier = 0;
+            }
+            int baseRoll = 1+2*Dungeon.hero.pointsInTalent(Talent.Type56_21V3);
+            dmg += Random.Int(baseRoll*tier);
+        }
+        Hunger hunger = Dungeon.hero.buff(Hunger.class);
+        if (hunger!=null){
+            if (!hunger.isStarving()){
+                dmg= Math.round(dmg*dmgMul());
+            }
+        }
 		if (dmg < 0) dmg = 0;
 		
 		return dmg;
 	}
-	
+	private float dmgMul(){
+        float mul = 1 ;
+        Hunger hunger = Dungeon.hero.buff(Hunger.class);
+        if (hunger==null)
+            return 1;
+        if (ActHPtoGetFood.changeB==0){
+            if (hunger.fullA()>=400){
+                mul+=0.15f;
+            }else if (hunger.fullA()>=300){
+                mul+=0.12f;
+            }else if (hunger.fullA()>=200){
+                mul+=0.06f;
+            }
+        }
+        else if (ActHPtoGetFood.changeB==1){
+            if (hunger.fullA()>=500){
+                mul+=0.15f;
+            }else if (hunger.fullA()>=400){
+                mul+=0.12f;
+            }else if (hunger.fullA()>=300){
+                mul+=0.09f;
+            }else if (hunger.fullA()>=200){
+                mul+=0.06f;
+            }else if (hunger.fullA()>=100){
+                mul+=0.03f;
+            }
+        }
+        else if (ActHPtoGetFood.changeB==2){
+            mul+=0.00045F*hunger.fullA();
+        }
+        if (mul!=1){
+            if (Dungeon.hero.hasTalent(Talent.GUN_1V2)){
+                mul += 0.00015f * Dungeon.hero.pointsInTalent(Talent.GUN_1V2)*hunger.fullA();
+                mul = Math.min(1.35f,mul);
+            }
+            else if (Dungeon.hero.hasTalent(Talent.GUN_1)) {
+                mul += 0.02f * Dungeon.hero.pointsInTalent(Talent.GUN_1);
+            }
+        }
+        return mul;
+    }
 	@Override
 	public float speed() {
 
@@ -1304,6 +1403,12 @@ public class Hero extends Char {
 			if (sprite != null) {
 				sprite.showStatus(CharSprite.DEFAULT, Messages.get(this, "wait"));
 			}
+            if (hasTalent(Talent.Type56_23V3)){
+                if (Dungeon.hero.buff(TalentGrass.class)==null&&Dungeon.hero.buff(TalentGrass.GrassCD.class)==null
+                        &&Dungeon.hero.buff(TalentGrass.GrassWait.class)==null){
+                    Buff.affect(this, TalentGrass.GrassWait.class);
+                }
+            }
 		}
 		resting = fullRest;
 	}
@@ -2005,6 +2110,10 @@ public class Hero extends Char {
 		if (hit&&(buff(Talent.SiriushHeartTracker.class) != null)) {
 			com.shatteredpixel.shatteredpixeldungeon.actors.buffs.SiriusHeart.onAttack(this, enemy);
 		}
+        // 56天赋 - 攻击后移除buff
+        if (hit&&(buff(Talent.Type56BookTracker.class) != null)) {
+            buff(Talent.Type56BookTracker.class).detach();
+        }
 
 		curAction = null;
 

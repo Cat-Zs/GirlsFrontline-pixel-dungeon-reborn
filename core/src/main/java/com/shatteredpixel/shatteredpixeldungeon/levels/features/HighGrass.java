@@ -152,9 +152,9 @@ public class HighGrass {
                 }
 
                 int timeV2 = 0;
-                if (Dungeon.hero.hasTalent(Talent.Type56Two_Grass)){
-                    timeV2 += ExtraSTR*Dungeon.hero.pointsInTalent(Talent.Type56Two_GrassV2);
-                    timeV2 = Math.max(4+2*Dungeon.hero.pointsInTalent(Talent.Type56Two_GrassV2), timeV2);
+                if (Dungeon.hero.hasTalent(Talent.Type56_23V2)){
+                    timeV2 += ExtraSTR*Dungeon.hero.pointsInTalent(Talent.Type56_23V2);
+                    timeV2 = Math.max(4+2*Dungeon.hero.pointsInTalent(Talent.Type56_23V2), timeV2);
                 }
                 time = Math.max(timeV2, time);
                 if (time != 0) {

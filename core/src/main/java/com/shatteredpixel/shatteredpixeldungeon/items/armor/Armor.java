@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EquipLevelUp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Momentum;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TalentGrass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.type561.Type56FourTwo;
@@ -187,7 +188,7 @@ public class Armor extends EquipableItem {
 				degrade();
 			}
 			if (detaching.getGlyph() != null){
-				if (hero.lvl>=6&&hero.hasTalentA(Talent.RUNIC_TRANSFERENCE)
+				if (hero.hasTalentA(Talent.RUNIC_TRANSFERENCE)
 						&& (Arrays.asList(Glyph.common).contains(detaching.getGlyph().getClass())
 							|| Arrays.asList(Glyph.uncommon).contains(detaching.getGlyph().getClass()))){
                     //+0时检测天赋、携带的刻印稀有度
@@ -401,8 +402,15 @@ public class Armor extends EquipableItem {
                     lvl += 1 + hero.pointsInTalent(Talent.Type56FourTwoTwo);
                 }
                 Hunger hunger = hero.buff(Hunger.class);
-                if (hunger != null && hunger.isFull()) {
-                    lvl += hero.pointsInTalent(Talent.Type56Two_Armor);
+                if (hunger != null){
+                    if (hero.hasTalent(Talent.Type56Two_Armor)) {
+                        if (hunger.fullA() >= 500 - 100 * hero.pointsInTalent(Talent.Type56Two_Armor))
+                            lvl += 1;
+                    }
+                    if (hero.hasTalent(Talent.Type56_22V2)){
+                        if (hunger.isFull())
+                            lvl += hero.pointsInTalent(Talent.Type56_22V2);
+                    }
                 }
             }
 			return lvl;
@@ -614,8 +622,17 @@ public class Armor extends EquipableItem {
 		return inscribe( gl );
 	}
 
+    public static ArrayList<Class> shouldHas = new ArrayList<>();
 	public boolean hasGlyph(Class<?extends Glyph> type, Char owner) {
-		return glyph != null && glyph.getClass() == type && owner.buff(MagicImmune.class) == null;
+        if (owner== hero){
+            if (hero.buff(TalentGrass.class)!=null){
+                if (!shouldHas.contains(Camouflage.class))
+                    shouldHas.add(Camouflage.class);
+            }else {
+                shouldHas.remove(Camouflage.class);
+            }
+        }
+		return (shouldHas.contains(type)||glyph != null && glyph.getClass() == type)&& owner.buff(MagicImmune.class) == null;
 	}
 
 	//these are not used to process specific glyph effects, so magic immune doesn't affect them

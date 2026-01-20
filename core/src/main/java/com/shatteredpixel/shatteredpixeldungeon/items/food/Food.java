@@ -30,8 +30,10 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBookSpell.ExtraFood;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -82,7 +84,8 @@ public class Food extends Item {
 
 			satisfy(hero);
             EatText();
-			
+            TalentHeal();
+
 			hero.sprite.operate( hero.pos );
 			hero.busy();
 			SpellSprite.show( hero, SpellSprite.FOOD );
@@ -101,7 +104,15 @@ public class Food extends Item {
         GLog.i( Messages.get(this, "eat_msg") );
     }
 
-
+    private void TalentHeal(){
+        if (Dungeon.hero.hasTalent(Talent.Type56_21V2)){
+            if (Dungeon.hero.HP < Dungeon.hero.HT) {
+                int add = (int) (Dungeon.hero.HT*(0.02*Dungeon.hero.pointsInTalent(Talent.Type56_21V2)+0.01F));
+                Dungeon.hero.HP = Math.min( Dungeon.hero.HP + add, Dungeon.hero.HT );
+                Dungeon.hero.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
+            }
+        }
+    }
 	public static float eatingTimeStatic(){
 		if(Dungeon.hero.hasTalent(Talent.IRON_STOMACH)
 		|| Dungeon.hero.hasTalent(Talent.ENERGIZING_MEAL)
@@ -121,13 +132,17 @@ public class Food extends Item {
     public float energy(){
         float buffEnergy = energy;
         if(Dungeon.hero.hasTalent(Talent.Type56Two_FOOD))
-            buffEnergy+=10+20*Dungeon.hero.pointsInTalent(Talent.Type56Two_FOOD);
+            buffEnergy+=30*Dungeon.hero.pointsInTalent(Talent.Type56Two_FOOD);
         return buffEnergy;
     }
 	
 	protected void satisfy( Hero hero ){
 		float buffedEnergy=energy();
 
+        if (hero.buff(ExtraFood.FoodExtra.class) != null){
+            buffedEnergy*=1.3f;
+            hero.buff(ExtraFood.FoodExtra.class).detach();
+        }
 		if (Dungeon.isChallenged(Challenges.NO_FOOD)){
 			buffedEnergy/=3f;
 		}

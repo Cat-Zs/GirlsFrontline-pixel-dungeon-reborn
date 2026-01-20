@@ -62,6 +62,7 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMe
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestMissile;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestPotion;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.TestRing;
+import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.debug;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator.debugBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -317,6 +318,7 @@ public enum HeroClass {
         new ScrollOfTerror().identify().collect();
 		new SaltyZongzi().collect();
         new SugarZongzi().collect();
+        new debug().collect();
 	}
 	
 	private static void initGSH18( Hero hero ) {

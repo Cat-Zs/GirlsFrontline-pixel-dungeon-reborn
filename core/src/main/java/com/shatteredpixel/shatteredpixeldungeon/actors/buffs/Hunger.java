@@ -165,8 +165,11 @@ public class Hunger extends Buff implements Hero.Doom {
     }
     public boolean isFull(){ return level == 0; }
 
+    public float fullA(){
+        return STARVING-minlevel-level;
+    }
 	public float hunger() {
-		return level;
+		return level-minlevel;
 	}
 
 	@Override
