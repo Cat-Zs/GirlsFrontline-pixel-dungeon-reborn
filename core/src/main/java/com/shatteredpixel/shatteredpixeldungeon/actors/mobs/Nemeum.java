@@ -24,10 +24,12 @@ package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Grim;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Vampiric;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -132,7 +134,7 @@ public class Nemeum extends Mob {
             return super.doAttack(enemy);
         } else if (!beamCharged){
             ((NemeumSprite)sprite).charge( enemy.pos );
-            TNTFindHero();
+            TNTFindHero(enemy.pos);
             beamTime = attackDelay()*4f;
             spend( attackDelay() );
             beamCharged = true;
@@ -154,23 +156,59 @@ public class Nemeum extends Mob {
 
     }
     public void updateTNT(){
+        if (beamTarget==-1)
+            return;
         Ballistica b = new Ballistica(pos, Dungeon.hero.pos, Ballistica.STOP_SOLID);
         for (int p : b.path) {
             Char ch = Actor.findChar( p );
             if (ch == Dungeon.hero) {
-                TNTFindHero();
+                TNTFindHero( beamTarget );
+                //玩家在激光的可攻击范围内，显示瞄准弹道
             }
             if (p == b.collisionPos)
                 break;
         }
     }
-    public void TNTFindHero(){
-        Ballistica b = new Ballistica(pos, Dungeon.hero.pos, Ballistica.STOP_SOLID);
+    public void TNTFindHero( int targetPos ){
+        Ballistica b = new Ballistica(pos, targetPos, Ballistica.STOP_SOLID);
+        int color = 0xFFFF00;
+        boolean containHero = false;
+        //初始默认对玩家的瞄准弹道为黄色、对目标地点的弹道不包括玩家
         for (int p : b.path) {
-            sprite.parent.add(new TargetedCell(p, 0xFF0000));
+            if (p==Dungeon.hero.pos) {
+                color = 0xFF0000;
+                containHero = true;
+                //包括时对玩家的瞄准弹道变为红色
+            }
             if (p == b.collisionPos)
                 break;
         }
+        if (enemySeen&&enemy==Dungeon.hero){
+            color = 0xFF0000;
+            //目标是玩家时，也将对玩家的瞄准弹道变为红色
+        }
+        if (Dungeon.hero.buff(Invisibility.class)!=null
+                ||Dungeon.hero.buff(CloakOfShadows.cloakStealth.class)!=null)
+            color = 0xFFFF00;
+        if (containHero){
+            //对目标地点的弹道包括玩家时，直接显示对目标地点的弹道
+            for (int p : b.path) {
+                sprite.parent.add(new TargetedCell(p, color));
+                if (p == b.collisionPos)
+                    break;
+            }
+        }else {
+            //不包括时，显示目标地点，显示对玩家的瞄准弹道
+            Ballistica m = new Ballistica(pos, Dungeon.hero.pos, Ballistica.STOP_SOLID);
+            for (int p : m.path) {
+                sprite.parent.add(new TargetedCell(p, color));
+                if (p == m.collisionPos)
+                    break;
+            }
+            sprite.parent.add(new TargetedCell(targetPos, 0xFF0000));
+            //对目标点标红
+        }
+
     }
 
     // Reduce damage during charge. Nerf this 4 to 2.
