@@ -26,11 +26,6 @@ public class ExtraFood extends BookSpell{
         super.onCast(book, hero);
     }
 
-    public String desc() {
-        String desc = Messages.get(this, "desc");
-
-        return desc + "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
-    }
     public static class FoodExtra extends FlavourBuff {
         public FoodExtra() {
             this.type = buffType.POSITIVE;

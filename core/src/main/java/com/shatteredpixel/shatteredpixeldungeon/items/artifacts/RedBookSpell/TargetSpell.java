@@ -23,6 +23,8 @@ public class TargetSpell extends BookSpell {
     protected void onSelectB(Integer cell){}
     //B为补救措施
     protected boolean Stop = false;
+    //B为补救措施
+    protected boolean Sudden = false;
     protected CellSelector.Listener targeter = new CellSelector.Listener(){
         @Override
         public void onSelect(Integer cell) {
@@ -31,11 +33,10 @@ public class TargetSpell extends BookSpell {
             }
             onSelectA(cell);
             if (Stop){
-                return;
-            }else {
-                onSelectB(cell);
-            }
-            if (Stop){
+                if (Sudden) {
+                    //在onSelectA中，选中可选择格子的情况下仍进入了Stop，将会对是否处在突发环境进行幅值，如果确认处在突发环境将会执行应对措施onSelectB
+                    onSelectB(cell);
+                }
                 return;
             }
             TargetSpell.super.onCast(bookA, heroA);

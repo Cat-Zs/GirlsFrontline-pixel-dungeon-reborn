@@ -59,7 +59,7 @@ public class debugSelectCode extends Window {
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
 
-		RenderedTextBlock body = PixelScene.renderTextBlock( 6 );
+		RenderedTextBlock body = PixelScene.renderTextBlock( 7 );
         body.text(Messages.get(this, "message"), WIDTH);
 		body.setPos( titlebar.left(), titlebar.bottom() + GAP );
 		add( body );
@@ -67,7 +67,7 @@ public class debugSelectCode extends Window {
 		float pos = body.bottom() + 3*GAP;
         int i = 0;
 		for (ArrayList<Integer> listb :list) {
-			RedButton SelectTalent = new RedButton(debug.shortDesc(listb), 6){
+			RedButton SelectTalent = new RedButton(debug.shortDesc(listb), 7){
 				@Override
 				protected void onClick() {
                     GameScene.show(new debugSelectCodeB(debugA, listb));

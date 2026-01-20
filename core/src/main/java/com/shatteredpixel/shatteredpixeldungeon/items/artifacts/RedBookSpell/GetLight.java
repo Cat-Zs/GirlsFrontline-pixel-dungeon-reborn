@@ -42,7 +42,7 @@ public class GetLight extends BookSpell{
         }else {
             desc += Messages.get(this, "one");
         }
-        desc += "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
+        desc += "\n\n" + Messages.get(BookSpell.class, "charge_cost", this.chargeUse);
         return desc;
     }
 }

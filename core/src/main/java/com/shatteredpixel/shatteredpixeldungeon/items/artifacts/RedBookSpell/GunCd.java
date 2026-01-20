@@ -27,9 +27,4 @@ public class GunCd extends ItemSpell{
         ((ShootGun) item).cooldownLeft=Math.max(0, ((ShootGun) item).cooldownLeft-10);
     }
 
-    public String desc() {
-        String desc = Messages.get(this, "desc");
-        desc += "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
-        return desc;
-    }
 }

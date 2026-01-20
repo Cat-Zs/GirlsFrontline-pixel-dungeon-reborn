@@ -114,9 +114,4 @@ public class HPtoFood extends BookSpell{
         );
     }
 
-    public String desc() {
-        String desc = Messages.get(this, "desc");
-        desc += "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
-        return desc;
-    }
 }

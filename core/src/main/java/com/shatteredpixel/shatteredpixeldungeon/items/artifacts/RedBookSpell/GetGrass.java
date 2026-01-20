@@ -54,6 +54,7 @@ public class GetGrass extends TargetSpell{
         }else {
             GLog.n("收割失败");
             Stop=true;
+            Sudden = Dungeon.hero.buff(LockedFloor.class)!=null && Dungeon.level.map[cell]==Terrain.BARRICADE;
             return;
         }
         GameScene.updateMap(cell);
@@ -78,9 +79,4 @@ public class GetGrass extends TargetSpell{
         Dungeon.observe();
     }
 
-    public String desc() {
-        String desc = Messages.get(this, "desc");
-
-        return desc + "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
-    }
 }

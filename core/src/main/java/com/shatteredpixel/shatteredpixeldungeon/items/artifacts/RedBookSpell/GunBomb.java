@@ -29,11 +29,6 @@ public class GunBomb extends BookSpell{
         Buff.affect(Dungeon.hero,BombDamage.class, 2f);
     }
 
-    public String desc() {
-        String desc = Messages.get(this, "desc");
-        desc += "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
-        return desc;
-    }
     public static class BombDamage extends FlavourBuff {
         public BombDamage() {
             this.type = buffType.POSITIVE;

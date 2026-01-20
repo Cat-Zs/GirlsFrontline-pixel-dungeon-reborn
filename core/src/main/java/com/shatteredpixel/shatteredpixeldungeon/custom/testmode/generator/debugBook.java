@@ -384,7 +384,17 @@ public class debugBook extends TestItem {
                 if (item instanceof Artifact){
                     lvl = Math.min(lvl, ((Artifact) item).levelCap);
                 }
-                item.level(lvl);
+
+                if (item instanceof Artifact){
+                    int lvlB = lvl-item.level();
+                    if (lvlB>=0) {
+                        item.upgrade(lvlB);
+                    }else {
+                        item.degrade(-lvlB);
+                    }
+                }else {
+                    item.level(lvl);
+                }
                 Sample.INSTANCE.play( Assets.Sounds.READ );
             }
         }

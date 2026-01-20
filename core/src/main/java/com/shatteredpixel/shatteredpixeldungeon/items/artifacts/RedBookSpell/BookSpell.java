@@ -18,7 +18,6 @@ public class BookSpell {
         int lvl = book.level();
         if (tier == 1) {
             spells.add(GetLight.INSTANCE);
-            spells.add(HPtoFood.INSTANCE);
             if (lvl >= 1) {
                 spells.add(GunCd.INSTANCE);
             }
@@ -54,7 +53,7 @@ public class BookSpell {
 
     public String desc() {
         String desc = Messages.get(this, "desc");
-        desc += "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
+        desc += "\n\n" + Messages.get(BookSpell.class, "charge_cost", this.chargeUse);
         return desc;
     }
 
@@ -70,7 +69,7 @@ public class BookSpell {
 
     public String shortDesc() {
         String Desc = Messages.get(this, "short_desc");
-        Desc += " " + Messages.get(this, "charge_cost", this.chargeUse);
+        Desc += "\n" + Messages.get(BookSpell.class, "charge_cost", this.chargeUse);
         return Desc;
     }
 }

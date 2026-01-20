@@ -36,6 +36,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.watabou.utils.PathFinder;
 
 import java.util.ArrayList;
@@ -45,10 +46,12 @@ public class Grass extends Item {
 	{
 		image = ItemSpriteSheet.SEED_HOLDER;
 		stackable = true;
+        defaultAction =AC_CHOOSE;
 	}
 	private static final String ActA = "ACTA";
     private static final String ActB = "ACTB";
     private static final String ActC = "ACTC";
+    private static final String AC_CHOOSE  = "choose";
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
@@ -68,6 +71,9 @@ public class Grass extends Item {
 
 		super.execute( hero, action );
         switch (action) {
+            case AC_CHOOSE:
+                GameScene.show(new WndUseItem(null, this) );
+                break;
             case ActA:
                 GameScene.selectCell(ActAA);
                 break;
@@ -94,6 +100,7 @@ public class Grass extends Item {
     private static final String enemy = Messages.get(Grass.class, "enemy");
     private static final String cant_select = Messages.get(Grass.class,"cant_select");
     private static final String cant_build = Messages.get(Grass.class,"cant_build");
+    private static final String prompt = Messages.get(Grass.class, "prompt");
 
     public static CellSelector.Listener ActAA = new  CellSelector.Listener() {
         //格子选择监听器
@@ -137,7 +144,7 @@ public class Grass extends Item {
 
         @Override
         public String prompt() {
-            return Messages.get(this, "prompt");
+            return prompt;
         }
     };
     public static CellSelector.Listener ActBA = new  CellSelector.Listener() {
@@ -192,7 +199,7 @@ public class Grass extends Item {
 
         @Override
         public String prompt() {
-            return Messages.get(this, "prompt");
+            return prompt;
         }
     };
     public static CellSelector.Listener ActCA = new  CellSelector.Listener() {
@@ -219,7 +226,10 @@ public class Grass extends Item {
                     return;
                 }
                 if (enough(9)){
-                    if (Dungeon.level.passable[target] || Dungeon.level.map[target] == Terrain.TRAP || Dungeon.level.map[target] == Terrain.TRAP_GRASS) {
+                    if (Dungeon.level.passable[target]&&Dungeon.level.map[target] != Terrain.ENTRANCE
+                            &&Dungeon.level.map[target] != Terrain.UNLOCKED_EXIT&&Dungeon.level.map[target] != Terrain.EXIT
+                            //从passable中去除入口和出口
+                            || Dungeon.level.map[target] == Terrain.TRAP || Dungeon.level.map[target] == Terrain.TRAP_GRASS) {
                         set(target, Terrain.BARRICADE);
                         GameScene.updateMap(target);
                         Dungeon.observe();
@@ -237,7 +247,7 @@ public class Grass extends Item {
 
         @Override
         public String prompt() {
-            return Messages.get(this, "prompt");
+            return prompt;
         }
     };
 
@@ -249,7 +259,7 @@ public class Grass extends Item {
         if (grass.quantity>=2){
             info +="\n" + Messages.get(this,"ActBB");
         }
-        if (grass.quantity>=10){
+        if (grass.quantity>=9){
             info +="\n" + Messages.get(this,"ActCB");
         }
         return info;

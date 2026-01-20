@@ -25,9 +25,4 @@ public class GetShield extends BookSpell{
         super.onCast(book, hero);
     }
 
-    public String desc() {
-        String desc = Messages.get(this, "desc");
-        desc += "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
-        return desc;
-    }
 }

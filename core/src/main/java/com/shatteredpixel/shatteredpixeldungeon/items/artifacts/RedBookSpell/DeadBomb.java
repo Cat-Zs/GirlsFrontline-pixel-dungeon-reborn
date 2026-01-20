@@ -74,9 +74,4 @@ public class DeadBomb extends TargetSpell{
 
     }
 
-    public String desc() {
-        String desc = Messages.get(this, "desc");
-
-        return desc + "\n\n" + Messages.get(this, "charge_cost", this.chargeUse);
-    }
 }

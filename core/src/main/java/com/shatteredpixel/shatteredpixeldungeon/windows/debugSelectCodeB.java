@@ -59,14 +59,14 @@ public class debugSelectCodeB extends Window {
 		titlebar.setRect( 0, 0, WIDTH, 0 );
 		add( titlebar );
 
-		RenderedTextBlock body = PixelScene.renderTextBlock( 6 );
+		RenderedTextBlock body = PixelScene.renderTextBlock( 7 );
         body.text(debug.getInfo(list)+"\n\n"+Messages.get(this, "message"), WIDTH);
 		body.setPos( titlebar.left(), titlebar.bottom() + GAP );
 		add( body );
 
 		float pos = body.bottom() + 3*GAP;
 		for (int i :list) {
-			RedButton SelectTalent = new RedButton(debug.shortDesc(list, i), 6){
+			RedButton SelectTalent = new RedButton(debug.shortDesc(list, i), 7){
 				@Override
 				protected void onClick() {
                     Game.runOnRenderThread(new Callback() {

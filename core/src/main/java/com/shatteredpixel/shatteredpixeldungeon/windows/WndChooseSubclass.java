@@ -76,8 +76,8 @@ public class WndChooseSubclass extends Window {
 							if (index == 0 && WndChooseSubclass.this.parent != null){
 								WndChooseSubclass.this.hide();
 								tome.choose( subCls );
-                                if (hero.subClass== HeroSubClass.GUN_MASTER&&hero.buff(RedBook.BookRecharge.class)==null){
-                                    //如果转职是枪械但无法使用红书的时候，给予动作按钮
+                                if (subCls == HeroSubClass.GUN_MASTER){
+                                    //如果转职是枪械时，给予动作按钮
                                     Buff.count(hero, ActHPtoGetFood.class, 1).setChangeA(0);
                                 }
 							}
