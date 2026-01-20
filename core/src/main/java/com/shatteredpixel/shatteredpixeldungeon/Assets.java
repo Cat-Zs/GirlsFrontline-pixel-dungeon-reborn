@@ -84,6 +84,7 @@ public class Assets {
 		public static final String TILES_CITY      ="environment/tiles_city.png";
 		public static final String TILES_RECAVES   ="environment/tiles_recaves.png";
 		public static final String TILES_HALLS     ="environment/tiles_halls.png";
+        public static final String CHESS          ="environment/Chess.png";
 
 		public static final String WATER_SEWERS = "environment/water0.png";
 		public static final String WATER_PRISON = "environment/water1.png";
@@ -298,6 +299,7 @@ public class Assets {
 	public static class Sprites {
 		public static final String ITEMS        = "sprites/items-export.png";
 		public static final String ITEM_ICONS   = "sprites/item_icons.png";
+        // 使用environment目录中的Chess.png文件
 
 		public static final String WARRIOR  = "sprites/warrior.png";
 		public static final String MAGE     = "sprites/mage.png";

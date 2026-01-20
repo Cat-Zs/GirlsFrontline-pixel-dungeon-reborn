@@ -5,6 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.watabou.input.PointerEvent;
 import com.watabou.noosa.Camera;
@@ -44,6 +45,8 @@ public class MatchThreeScene extends PixelScene {
     // 游戏状态变量
     private int[][] gameBoard;
     private boolean gameRunning;
+    private int score; // 计分板变量
+    private RenderedTextBlock scoreText; // 分数显示组件
     
     // 选择状态
     private int selectedRow = -1;
@@ -72,6 +75,8 @@ public class MatchThreeScene extends PixelScene {
         createPlantButtons();
         // 添加选择指示器
         createSelectionIndicator();
+        // 添加分数显示
+        createScoreDisplay();
         // 添加控制按钮 - 确保最后添加，在最上层
         addControlButtons();
 
@@ -99,6 +104,10 @@ public class MatchThreeScene extends PixelScene {
     private void initGame() {
         // 创建游戏板
         gameBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
+        
+        // 初始化分数
+        score = 0;
+        updateScoreDisplay();
         
         // 填充游戏板
         for (int row = 0; row < BOARD_HEIGHT; row++) {
@@ -338,6 +347,10 @@ public class MatchThreeScene extends PixelScene {
     
     // 处理匹配
     private void processMatches(List<int[]> matches) {
+        // 为每个匹配的植物增加分数
+        score += matches.size() * 1;
+        updateScoreDisplay();
+        
         // 移除匹配的植物
         for (int[] match : matches) {
             gameBoard[match[0]][match[1]] = EMPTY;
@@ -385,6 +398,24 @@ public class MatchThreeScene extends PixelScene {
                     gameBoard[row][col] = getRandomPlant();
                 }
             }
+        }
+    }
+    
+    // 创建分数显示
+    private void createScoreDisplay() {
+        scoreText = PixelScene.renderTextBlock(9);
+        scoreText.text("分数: 0");
+        scoreText.setPos(PixelScene.align((uiCamera.width - scoreText.width()) / 2), 20);
+        scoreText.hardlight(0xFFFFFF);
+        scoreText.camera = uiCamera;
+        add(scoreText);
+    }
+    
+    // 更新分数显示
+    private void updateScoreDisplay() {
+        if (scoreText != null) {
+            scoreText.text("分数: " + score);
+            scoreText.setPos(PixelScene.align((uiCamera.width - scoreText.width()) / 2), 20);
         }
     }
     
