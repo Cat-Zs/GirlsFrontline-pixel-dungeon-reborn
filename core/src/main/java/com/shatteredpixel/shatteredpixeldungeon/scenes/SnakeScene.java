@@ -14,6 +14,7 @@ import com.watabou.input.GameAction;
 import com.watabou.input.KeyBindings;
 import com.watabou.input.KeyEvent;
 import com.watabou.utils.Signal;
+import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
@@ -45,6 +46,12 @@ public class SnakeScene extends PixelScene {
 
 	private boolean gameRunning = false;
 	private int snakeLength;
+	private int score; // 计分变量
+	private RenderedTextBlock scoreText; // 分数显示文本
+	private StyledButton restartButton; // 重新开始按钮
+	private StyledButton returnButton; // 返回按钮
+	private RenderedTextBlock gameOverText; // 游戏结束文本
+	private RenderedTextBlock finalScoreText; // 最终分数文本
 
 	//贪吃蛇初始化函数
 	private void gameInit(){
@@ -76,10 +83,15 @@ public class SnakeScene extends PixelScene {
 		while(map[_x=rand()%(HEIGHT-2)+1][_x2=rand()%(WIDTH-2)+1]!=EMPTY);
 		map[_x][_x2]=FRUIT;
 
-		renderInit();
-		inputInit();
+		// 初始化游戏状态
 		gameRunning = true;
 		snakeLength = 2;
+		score = 0; // 先初始化分数为0
+		timer = 1.0f; // 重置定时器，确保开局减速效果
+		
+		// 然后再渲染界面
+		renderInit();
+		inputInit();
 	}
 
 	//贪吃蛇(单次)运行
@@ -104,6 +116,8 @@ public class SnakeScene extends PixelScene {
 				map[_x][_x2]=FRUIT;
 
 				snakeLength+=1;
+				score += 10; // 吃到水果，分数加10
+				updateScoreDisplay(); // 更新分数显示
 				if(snakeLength>=HEIGHT*WIDTH-1){
 					return false;
 				}
@@ -246,6 +260,9 @@ public class SnakeScene extends PixelScene {
 		snakeTileMap.scale.x = scale;
 		snakeTileMap.scale.y = scale;
 		add(snakeTileMap);
+		
+		// 创建计分板
+		createScoreDisplay();
 	}
 	private void renderTick(){
 		for (int y=0; y<HEIGHT; y++) {
@@ -256,6 +273,10 @@ public class SnakeScene extends PixelScene {
 
 		snakeHead = hY*WIDTH+hX;
 		snakeTileMap.updateMap();
+	}
+
+	{
+		inGameScene = true;
 	}
 
 	@Override
@@ -286,6 +307,7 @@ public class SnakeScene extends PixelScene {
 				gameRunning = gameTick();
 				if(!gameRunning){//不要把这个挪到外面,因为暂时不确定create和update的执行顺序(懒得看代码了,不过按常理来讲应该是create一定比update早)
 					//游戏结束(可以根据长度(snakeLength)添加徽章之类的)
+					showGameOverScreen(); // 显示游戏结束界面
 				}
 			}
 		}
@@ -296,5 +318,113 @@ public class SnakeScene extends PixelScene {
 		KeyEvent.removeKeyListener(keyListener);
 
 		super.destroy();
+	}
+	
+	// 创建分数显示
+	private void createScoreDisplay() {
+		// 如果已经存在旧的计分板，先移除它
+		if (scoreText != null) {
+			scoreText.killAndErase();
+			scoreText = null;
+		}
+		
+		// 创建计分文本
+		scoreText = PixelScene.renderTextBlock("分数: " + score, 9);
+		scoreText.camera = uiCamera;
+		scoreText.hardlight(0xFFFFFF); // 白色文本
+		scoreText.setPos(
+			uiCamera.width - scoreText.width() - 10,
+			10
+		);
+		add(scoreText);
+	}
+	
+	// 更新分数显示
+	private void updateScoreDisplay() {
+		if (scoreText != null) {
+			scoreText.text("分数: " + score);
+			scoreText.setPos(
+				uiCamera.width - scoreText.width() - 10,
+				10
+			);
+		}
+	}
+	
+	// 显示游戏结束界面
+	private void showGameOverScreen() {
+		// 创建游戏结束文本
+		gameOverText = PixelScene.renderTextBlock("游戏结束!", 16);
+		gameOverText.camera = uiCamera;
+		gameOverText.hardlight(0xFFFFFF);
+		gameOverText.setPos(
+			(uiCamera.width - gameOverText.width()) / 2,
+			uiCamera.height / 2 - 60
+		);
+		add(gameOverText);
+		
+		// 创建最终分数文本
+		finalScoreText = PixelScene.renderTextBlock("最终分数: " + score, 12);
+		finalScoreText.camera = uiCamera;
+		finalScoreText.hardlight(0xFFFFFF);
+		finalScoreText.setPos(
+			(uiCamera.width - finalScoreText.width()) / 2,
+			uiCamera.height / 2 - 30
+		);
+		add(finalScoreText);
+		
+		// 创建重新开始按钮
+		restartButton = new StyledButton(Chrome.Type.TOAST_TR, "重新开始") {
+			@Override
+			protected void onClick() {
+				restartGame();
+			}
+		};
+		restartButton.camera = uiCamera;
+		restartButton.setSize(100, 30);
+		restartButton.setPos(
+			(uiCamera.width - restartButton.width()) / 2,
+			uiCamera.height / 2
+		);
+		add(restartButton);
+		
+		// 创建返回按钮
+		returnButton = new StyledButton(Chrome.Type.TOAST_TR, "返回") {
+			@Override
+			protected void onClick() {
+				onBackPressed();
+			}
+		};
+		returnButton.camera = uiCamera;
+		returnButton.setSize(100, 30);
+		returnButton.setPos(
+			(uiCamera.width - returnButton.width()) / 2,
+			uiCamera.height / 2 + 40
+		);
+		add(returnButton);
+	}
+	
+	// 重启游戏
+	private void restartGame() {
+		// 移除游戏结束界面的元素
+		if (gameOverText != null) {
+			gameOverText.killAndErase();
+			gameOverText = null;
+		}
+		if (finalScoreText != null) {
+			finalScoreText.killAndErase();
+			finalScoreText = null;
+		}
+		if (restartButton != null) {
+			restartButton.killAndErase();
+			restartButton = null;
+		}
+		if (returnButton != null) {
+			returnButton.killAndErase();
+			returnButton = null;
+		}
+		
+		// 重新初始化游戏
+		gameInit();
+		renderTick();
 	}
 }
