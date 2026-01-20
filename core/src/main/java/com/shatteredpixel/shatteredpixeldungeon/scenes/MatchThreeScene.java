@@ -139,18 +139,31 @@ public class MatchThreeScene extends PixelScene {
     
     // 创建游戏板视觉组件
     private void createBoardVisual() {
+        // 计算合适的单元格大小，使游戏板能够适应屏幕大小
+        float availableWidth = uiCamera.width * 0.9f; // 留出边距
+        float availableHeight = uiCamera.height * 0.9f; // 留出边距
+        
+        // 计算基于宽度和高度的最大单元格大小
+        float maxCellSizeWidth = availableWidth / BOARD_WIDTH;
+        float maxCellSizeHeight = availableHeight / BOARD_HEIGHT;
+        
+        // 选择较小的那个作为实际的单元格大小
+        float adjustedCellSize = Math.min(maxCellSizeWidth, maxCellSizeHeight);
+        
         // 创建游戏板容器
         boardContainer = new Component();
         boardContainer.camera = uiCamera;
         
-        // 设置游戏板大小（12*12）
-        float totalWidth = CELL_SIZE * BOARD_WIDTH;
-        float totalHeight = CELL_SIZE * BOARD_HEIGHT;
+        // 设置游戏板大小（基于调整后的单元格大小）
+        float totalWidth = adjustedCellSize * BOARD_WIDTH;
+        float totalHeight = adjustedCellSize * BOARD_HEIGHT;
         
         boardContainer.setSize(totalWidth, totalHeight);
+        
+        // 计算游戏板位置，确保居中
         boardContainer.setPos(
-            (uiCamera.width - boardContainer.width()) / 2,
-            (uiCamera.height - boardContainer.height()) / 2
+            PixelScene.align((uiCamera.width - totalWidth) / 2),
+            PixelScene.align((uiCamera.height - totalHeight) / 2)
         );
         
         add(boardContainer);
@@ -173,8 +186,8 @@ public class MatchThreeScene extends PixelScene {
                 };
                 
                 // 设置按钮大小和位置
-                plantButtons[row][col].setSize(CELL_SIZE, CELL_SIZE);
-                plantButtons[row][col].setPos(col * CELL_SIZE, row * CELL_SIZE);
+                plantButtons[row][col].setSize(adjustedCellSize, adjustedCellSize);
+                plantButtons[row][col].setPos(col * adjustedCellSize, row * adjustedCellSize);
                 plantButtons[row][col].camera = uiCamera;
                 
                 // 添加按钮到容器
@@ -184,6 +197,9 @@ public class MatchThreeScene extends PixelScene {
                 plantButtons[row][col].text("");
             }
         }
+        
+        // 更新选择指示器的大小，以适应新的单元格大小
+        updateSelectionIndicatorSize(adjustedCellSize);
         
         // 更新按钮状态
         updatePlantButtons();
@@ -447,11 +463,26 @@ public class MatchThreeScene extends PixelScene {
         selectionIndicator.visible = false;
         selectionIndicator.camera = uiCamera;
         
-        // 设置选择指示器的大小，使其适合24*24的单元格
-        float scale = CELL_SIZE / selectionIndicator.width();
+        // 确保选择指示器的原点是左上角
+        selectionIndicator.origin.set(0, 0);
+        
+        // 设置选择指示器的大小，使其完全覆盖24x24的单元格
+        // Icons.TARGET的实际尺寸是16x16，所以需要缩放1.5倍
+        float scale = CELL_SIZE / 16f; // 16是Icons.TARGET的实际宽度
         selectionIndicator.scale.set(scale);
         
         add(selectionIndicator);
+    }
+    
+    // 更新选择指示器大小
+    private void updateSelectionIndicatorSize(float cellSize) {
+        if (selectionIndicator == null) {
+            createSelectionIndicator();
+        }
+        
+        // 设置选择指示器的大小，使其完全覆盖单元格
+        float scale = cellSize / 16f; // 16是Icons.TARGET的实际宽度
+        selectionIndicator.scale.set(scale);
     }
     
     // 更新选择指示器位置
@@ -461,19 +492,23 @@ public class MatchThreeScene extends PixelScene {
             return;
         }
         
-        // 计算选择指示器的位置（基于按钮位置）
-        float cellX = boardContainer.x + selectedCol * CELL_SIZE;
-        float cellY = boardContainer.y + selectedRow * CELL_SIZE;
+        // 获取当前单元格大小
+        float cellSize = boardContainer.width() / BOARD_WIDTH;
         
-        // 计算缩放后的选择指示器尺寸
-        float scaledWidth = selectionIndicator.width() * selectionIndicator.scale.x;
-        float scaledHeight = selectionIndicator.height() * selectionIndicator.scale.y;
+        // 计算选中单元格的位置
+        float cellX = selectedCol * cellSize;
+        float cellY = selectedRow * cellSize;
         
-        // 设置选择指示器的位置，使其居中于选中的单元格
-        selectionIndicator.setPos(
-            cellX + (CELL_SIZE - scaledWidth) / 2,
-            cellY + (CELL_SIZE - scaledHeight) / 2
-        );
+        // 按照用户要求调整位置：向左偏移4个格子，向上偏移0.5个格子
+        cellX -= 4 * cellSize;
+        cellY -= 0.5 * cellSize;
+        
+        // 设置选择指示器的位置，使其与选中的单元格精确对齐
+        float x = boardContainer.x + cellX;
+        float y = boardContainer.y + cellY;
+        
+        // 使用PixelScene.align确保像素对齐
+        selectionIndicator.setPos(PixelScene.align(x), PixelScene.align(y));
         selectionIndicator.visible = true;
     }
     
