@@ -8,6 +8,7 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.custom.messages.M;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
@@ -34,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.ui.TalentButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
 import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextNumberInput;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
@@ -370,7 +372,7 @@ public class debugBook extends TestItem {
 
         @Override
         public boolean itemSelectable(Item item) {
-            return item.isUpgradable()||item instanceof BrokenSeal;
+            return item.isUpgradable()||item instanceof BrokenSeal||item instanceof Artifact;
         }
 
         @Override
@@ -378,6 +380,9 @@ public class debugBook extends TestItem {
             if(item != null){
                 if(!(lvl > 0)){
                     lvl = 0;
+                }
+                if (item instanceof Artifact){
+                    lvl = Math.min(lvl, ((Artifact) item).levelCap);
                 }
                 item.level(lvl);
                 Sample.INSTANCE.play( Assets.Sounds.READ );
