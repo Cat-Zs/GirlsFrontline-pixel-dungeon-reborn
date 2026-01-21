@@ -49,6 +49,9 @@ public class ChessScene extends PixelScene {
 	private int[][] gameBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
 	private boolean gameRunning;
 	private boolean whiteTurn;
+	private int playerKing;
+	private int aiKing;
+	private boolean aiEnabled = false;
 	// 选择状态
 	private int selectedRow = -1;
 	private int selectedCol = -1;
@@ -78,24 +81,17 @@ public class ChessScene extends PixelScene {
 	public void create() {
 		super.create();
 		
-		// 1. 设置背景
+		// 创建并设置背景
 		setupBackground();
-
-		// 2. 初始化游戏
-		initGame();
-		
-		// 3. 创建游戏板视觉组件并更新显示
+		// 创建游戏板视觉组件
 		createBoardVisual();
-		updateChessButtons();		
-		// 4. 添加控制按钮
+		// 创建并添加控制按钮
 		addControlButtons();
-		
-		// 5. 添加选择指示器
+		// 创建选择指示器
 		createSelectionIndicator();
 		
-		// 显示棋子选择窗口
-		gameRunning = false;
-		addToFront(new WndSideSelection());
+		// 启动游戏
+		restartGame();
 		
 		fadeIn();
 	}
@@ -200,23 +196,20 @@ public class ChessScene extends PixelScene {
 	
 	// 处理棋子按钮点击
 	private void handleChessPieceClick(int row, int col) {
-		if (!gameRunning) return;
+		if (!gameRunning || isAiTurn()) return;
 		
 		if (selectedRow == -1 && selectedCol == -1) {
 			// 第一次选择，检查是否选择了自己的棋子
-			if (isPlayerPiece(gameBoard[row][col])) {
+			if (belongsToCurrentSide(gameBoard[row][col])) {
 				selectedRow = row;
 				selectedCol = col;
 				updateSelectionIndicator();
 				showValidMoves(row, col);
 			}
 		} else {
-			// 第二次选择
-			if (row == selectedRow && col == selectedCol) {
-				// 取消选择
+			if (belongsToCurrentSide(gameBoard[row][col])) {
+				// 选择了自己的棋子
 				clearSelection();
-			} else if (isPlayerPiece(gameBoard[row][col])) {
-				// 选择了另一个自己的棋子
 				selectedRow = row;
 				selectedCol = col;
 				updateSelectionIndicator();
@@ -233,7 +226,7 @@ public class ChessScene extends PixelScene {
 	}
 	
 	// 检查是否是当前玩家的棋子
-	private boolean isPlayerPiece(int piece) {
+	private boolean belongsToCurrentSide(int piece) {
 		if (piece == EMPTY) return false;
 		
 		if (whiteTurn) {
@@ -467,6 +460,14 @@ public class ChessScene extends PixelScene {
 
 	// 普通移动和吃子
 	private void CommonMove(int fromRow, int fromCol, int toRow, int toCol){
+		// 特殊规则 将杀(游戏结束)
+		if (gameBoard[toRow][toCol] == (whiteTurn? BLACK_KING: WHITE_KING)){
+			// 暂停游戏并展示胜者
+			gameRunning = false;
+			addToFront(new WndWinner((whiteTurn? WHITE_KING: BLACK_KING)));
+			return;
+		}
+
 		gameBoard[toRow][toCol] = gameBoard[fromRow][fromCol];
 		gameBoard[fromRow][fromCol] = EMPTY;
 
@@ -497,6 +498,14 @@ public class ChessScene extends PixelScene {
 
 	// 兵普通移动和吃子
 	private void PawnMove(int fromRow, int fromCol, int toRow, int toCol){
+		// 特殊规则 将杀(游戏结束)
+		if (gameBoard[toRow][toCol] == (whiteTurn? BLACK_KING: WHITE_KING)){
+			// 暂停游戏并展示胜者
+			gameRunning = false;
+			addToFront(new WndWinner((whiteTurn? WHITE_KING: BLACK_KING)));
+			return;
+		}
+
 		gameBoard[toRow][toCol] = gameBoard[fromRow][fromCol];
 		gameBoard[fromRow][fromCol] = EMPTY;
 
@@ -525,11 +534,16 @@ public class ChessScene extends PixelScene {
 			passbyPawnRow = -1;
 		}
 
+		// 特殊规则 底线升变
 		if (toRow == 7 || toRow == 0){
-			// 特殊规则 底线升变
-			addToFront(new WndPromotion(toRow, toCol));
+			if (!isAiTurn()){
+				addToFront(new WndPromotion(toRow, toCol));
+			}else{
+				// 暂时先让AI只能升变成后 //mark
+				Promote(toRow, toCol, whiteTurn? WHITE_QUEEN: BLACK_QUEEN);
+			}
+		// 正常结束回合
 		}else{
-			// 正常结束回合
 			whiteTurn = !whiteTurn;
 		}
 
@@ -604,10 +618,7 @@ public class ChessScene extends PixelScene {
 				StyledButton btn = new StyledButton(Chrome.Type.TOAST_TR, pieceNames[i]) {
 					@Override
 					protected void onClick() {
-						// 执行升变
-						gameBoard[row][col] = finalPiece;
-						whiteTurn = !whiteTurn;
-						updateChessButtons();
+						Promote(row, col, finalPiece);
 						WndPromotion.this.hide();
 					}
 				};
@@ -618,14 +629,19 @@ public class ChessScene extends PixelScene {
 			}
 		}
 		
+		//默认升变成后
 		@Override
 		public void onBackPressed() {
-			// 执行升变
-			gameBoard[row][col] = whiteTurn ? WHITE_QUEEN : BLACK_QUEEN;
-			whiteTurn = !whiteTurn;
-			updateChessButtons();
+			Promote(row, col, whiteTurn? WHITE_QUEEN: BLACK_QUEEN);
 			hide();
 		}
+	}
+
+	// 执行升变
+	private void Promote(int row, int col, int piece){
+		gameBoard[row][col] = piece;
+		whiteTurn = !whiteTurn;
+		updateChessButtons();
 	}
 	
 	// 更新棋子按钮状态
@@ -721,22 +737,38 @@ public class ChessScene extends PixelScene {
 		};
 		restartButton.setSize(buttonWidth, buttonHeight);
 		restartButton.setPos(
-			(uiCamera.width - buttonWidth * 2 - margin) / 2,
+			(uiCamera.width - buttonWidth * 3 - margin * 2) / 2,
 			uiCamera.height - buttonHeight - margin
 		);
 		restartButton.camera = uiCamera;
 		add(restartButton);
 		
+		// AI按钮
+		aiButton = new StyledButton(Chrome.Type.TOAST_TR, aiEnabled? "AI已启动": "AI已关闭") {
+			@Override
+			protected void onClick() {
+				aiEnabled = !aiEnabled;
+				text(aiEnabled? "AI已启动": "AI已关闭");
+			}
+		};
+		aiButton.setSize(buttonWidth, buttonHeight);
+		aiButton.setPos(
+			restartButton.right() + margin,
+			uiCamera.height - buttonHeight - margin
+		);
+		aiButton.camera = uiCamera;
+		add(aiButton);
+		
 		// 退出按钮
 		exitButton = new StyledButton(Chrome.Type.TOAST_TR, "退出") {
 			@Override
 			protected void onClick() {
-				ChessScene.this.onBackPressed();
+				onBackPressed();
 			}
 		};
 		exitButton.setSize(buttonWidth, buttonHeight);
 		exitButton.setPos(
-			restartButton.right() + margin,
+			aiButton.right() + margin,
 			uiCamera.height - buttonHeight - margin
 		);
 		exitButton.camera = uiCamera;
@@ -787,11 +819,6 @@ public class ChessScene extends PixelScene {
 		// 遍历所有可能的目标位置
 		for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
 			for (int toCol = 0; toCol < BOARD_WIDTH; toCol++) {
-				// 跳过自己的位置
-				if (toRow == fromRow && toCol == fromCol) {
-					continue;
-				}
-				
 				// 检查是否是有效的移动
 				Runnable action = GetValidMove(fromRow, fromCol, toRow, toCol);
 				if (action != null) {
@@ -835,7 +862,10 @@ public class ChessScene extends PixelScene {
 	
 	// 重启游戏
 	private void restartGame() {
-		// 重置游戏状态
+		// 暂停游戏
+		gameRunning = false;
+
+		// 重置选择指示器
 		clearSelection();
 		
 		// 重新初始化游戏
@@ -844,20 +874,42 @@ public class ChessScene extends PixelScene {
 		// 更新游戏板显示
 		updateChessButtons();
 		
-		// 显示棋子选择窗口
-		gameRunning = false;
+		// 显示选边窗口
 		addToFront(new WndSideSelection());
 	}
-	
-	// 处理返回键
-	@Override
-	protected void onBackPressed() {
-		// 返回上一个场景
-		InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
-		Game.switchScene(InterlevelScene.class);
+
+	// 展示赢家窗口
+	private class WndWinner extends Window {
+		private static final int WIDTH = 150;
+		private static final int BTN_HEIGHT = 60;
+		private static final float GAP = 2;
+		
+		public WndWinner(int winner) {
+			super();
+			
+			// 设置窗口大小
+			resize(WIDTH, BTN_HEIGHT);
+			
+			// 白棋选择按钮
+			StyledButton whiteBtn = new StyledButton(Chrome.Type.TOAST_TR, winner==WHITE_KING? "白方胜利!": "黑方胜利!") {
+				@Override
+				protected void onClick() {
+					onBackPressed();
+				}
+			};
+			whiteBtn.setSize(WIDTH, BTN_HEIGHT);
+			whiteBtn.setPos(0, 0);
+			add(whiteBtn);
+		}
+
+		@Override
+		public void onBackPressed() {
+			restartGame();
+			hide();
+		}
 	}
 	
-	// 棋子选择窗口
+	// 选边窗口
 	private class WndSideSelection extends Window {
 		private static final int WIDTH = 150;
 		private static final int BTN_HEIGHT = 40;
@@ -870,13 +922,10 @@ public class ChessScene extends PixelScene {
 			resize(WIDTH, (int)(BTN_HEIGHT * 2 + GAP));
 			
 			// 白棋选择按钮
-			StyledButton whiteBtn = new StyledButton(Chrome.Type.TOAST_TR, "白棋先手") {
+			StyledButton whiteBtn = new StyledButton(Chrome.Type.TOAST_TR, "白棋(先手)") {
 				@Override
 				protected void onClick() {
-					// 选择白棋，开始游戏
-					whiteTurn = true;
-					gameRunning = true;
-					hide();
+					onBackPressed();
 				}
 			};
 			whiteBtn.setSize(WIDTH, BTN_HEIGHT);
@@ -884,11 +933,12 @@ public class ChessScene extends PixelScene {
 			add(whiteBtn);
 			
 			// 黑棋选择按钮
-			StyledButton blackBtn = new StyledButton(Chrome.Type.TOAST_TR, "黑棋先手") {
+			StyledButton blackBtn = new StyledButton(Chrome.Type.TOAST_TR, "黑棋(后手)") {
 				@Override
 				protected void onClick() {
-					// 选择黑棋，开始游戏
-					whiteTurn = false;
+					playerKing = BLACK_KING;
+					aiKing = WHITE_KING;
+					whiteTurn = true;
 					gameRunning = true;
 					hide();
 				}
@@ -898,12 +948,124 @@ public class ChessScene extends PixelScene {
 			add(blackBtn);
 		}
 
-		@Override
 		// 默认选择白棋
+		@Override
 		public void onBackPressed() {
+			playerKing = WHITE_KING;
+			aiKing = BLACK_KING;
 			whiteTurn = true;
 			gameRunning = true;
 			hide();
 		}
+	}
+
+	private boolean isAiTurn(){
+		return aiEnabled && ((whiteTurn && aiKing==WHITE_KING) || (!whiteTurn && aiKing==BLACK_KING));
+	}
+
+	@Override
+	public void update() {
+		super.update();
+		
+		// AI行动
+		if(gameRunning && isAiTurn()){
+			// 初始只有无效行动
+			Action action = new Action(-1, -1, -1, -1);
+
+			// 遍历所有移动 只留下"最好"的那一个
+			for (int fromRow = 0; fromRow < BOARD_HEIGHT; fromRow++) {
+			for (int fromCol = 0; fromCol < BOARD_WIDTH ; fromCol++) {
+				// 只考虑AI自己的棋子
+				if (belongsToCurrentSide(gameBoard[fromRow][fromCol])) {
+					for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
+					for (int toCol = 0; toCol < BOARD_WIDTH ; toCol++) {
+						action = action.selectIfBatter(new Action(fromRow, fromCol, toRow, toCol));
+					}
+					}
+				}
+			}
+			}
+			
+			// 尝试执行 若失败就暂停游戏
+			if (!action.tryUse()) {
+				gameRunning = false;
+			}
+		}
+	}
+
+	private class Action{
+		private static final float SCORE_NO_ACTION = -10000.0f;
+		private static final float SCORE_KILL_KING =  10000.0f;
+
+		private int fromRow;
+		private int fromCol;
+		private int toRow;
+		private int toCol;
+		private float score;
+		private Runnable action;
+
+		public Action(int fromRow, int fromCol, int toRow, int toCol){
+			this.fromRow = fromRow;
+			this.fromCol = fromCol;
+			this.toRow   = toRow;
+			this.toCol   = toCol;
+			
+			action = GetValidMove(fromRow, fromCol, toRow, toCol);
+
+			if (action == null){
+				score = SCORE_NO_ACTION;
+			}else{
+				score = getScore(fromRow, fromCol, toRow, toCol);
+			}
+		}
+
+		public Action selectIfBatter(Action other){
+			if (other.score > score){
+				return other;
+			}
+
+			return this;
+		}
+
+		public boolean tryUse(){
+			if (action != null) {
+				action.run();
+				return true;
+			}
+
+			return false;
+		}
+
+		private float getScore(int fromRow, int fromCol, int toRow, int toCol){
+			switch(gameBoard[toRow][toCol]){
+				case WHITE_KING:
+				case BLACK_KING:
+					return SCORE_KILL_KING;
+				case WHITE_QUEEN:
+				case BLACK_QUEEN:
+					return 100.0f;
+				case WHITE_ROOK:
+				case BLACK_ROOK:
+					return 50.0f;
+				case WHITE_BISHOP:
+				case BLACK_BISHOP:
+					return 25.0f;
+				case WHITE_KNIGHT:
+				case BLACK_KNIGHT:
+					return 15.0f;
+				case WHITE_PAWN:
+				case BLACK_PAWN:
+					return 10.0f;
+				default:
+					return 0.0f;
+			}
+		}
+	}
+
+	// 处理返回键
+	@Override
+	protected void onBackPressed() {
+		InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
+		Game.switchScene(InterlevelScene.class);
 	}
 }
