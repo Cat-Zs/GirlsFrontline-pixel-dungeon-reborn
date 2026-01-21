@@ -81,24 +81,22 @@ public class ChessScene extends PixelScene {
 		// 1. 设置背景
 		setupBackground();
 		
+		// 4. 添加控制按钮
+		addControlButtons();
+
 		// 2. 初始化游戏
 		initGame();
 		
-		// 3. 创建游戏板视觉组件
+		// 3. 创建游戏板视觉组件并更新显示
 		createBoardVisual();
-		
-		// 4. 添加控制按钮
-		addControlButtons();
+		updateChessButtons();
 		
 		// 5. 添加选择指示器
 		createSelectionIndicator();
 		
-		// 6. 初始化游戏状态
-		gameRunning = false;
-		whiteTurn = true;
-		
 		// 显示棋子选择窗口
-		showSideSelectionWindow();
+		gameRunning = false;
+		addToFront(new WndSideSelection());
 		
 		fadeIn();
 	}
@@ -199,9 +197,6 @@ public class ChessScene extends PixelScene {
 				add(chessButtons[row][col]);
 			}
 		}
-		
-		// 更新按钮状态
-		updateChessButtons();
 	}
 	
 	// 处理棋子按钮点击
@@ -233,7 +228,6 @@ public class ChessScene extends PixelScene {
 				if (action != null){
 					// 执行移动
 					action.run();
-					clearMoveIndicators();
 				}
 			}
 		}
@@ -540,8 +534,8 @@ public class ChessScene extends PixelScene {
 			whiteTurn = !whiteTurn;
 		}
 
-		updateChessButtons();
 		clearSelection();
+		updateChessButtons();
 	}
 
 	// 检查移动路径是否畅通
@@ -738,7 +732,7 @@ public class ChessScene extends PixelScene {
 		exitButton = new StyledButton(Chrome.Type.TOAST_TR, "退出") {
 			@Override
 			protected void onClick() {
-				onBackPressed();
+				ChessScene.this.onBackPressed();
 			}
 		};
 		exitButton.setSize(buttonWidth, buttonHeight);
@@ -791,9 +785,6 @@ public class ChessScene extends PixelScene {
 
 	// 显示可走路径标记
 	private void showValidMoves(int fromRow, int fromCol) {
-		// 先清除之前的标记
-		clearMoveIndicators();
-		
 		// 遍历所有可能的目标位置
 		for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
 			for (int toCol = 0; toCol < BOARD_WIDTH; toCol++) {
@@ -847,7 +838,6 @@ public class ChessScene extends PixelScene {
 	private void restartGame() {
 		// 重置游戏状态
 		clearSelection();
-		clearMoveIndicators();
 		
 		// 重新初始化游戏
 		initGame();
@@ -855,12 +845,9 @@ public class ChessScene extends PixelScene {
 		// 更新游戏板显示
 		updateChessButtons();
 		
-		// 重置游戏状态
-		gameRunning = false;
-		whiteTurn = true;
-		
 		// 显示棋子选择窗口
-		showSideSelectionWindow();
+		gameRunning = false;
+		addToFront(new WndSideSelection());
 	}
 	
 	// 处理返回键
@@ -869,11 +856,6 @@ public class ChessScene extends PixelScene {
 		// 返回上一个场景
 		InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
 		Game.switchScene(InterlevelScene.class);
-	}
-	
-	// 显示棋子选择窗口
-	private void showSideSelectionWindow() {
-		addToFront(new WndSideSelection());
 	}
 	
 	// 棋子选择窗口
@@ -893,7 +875,8 @@ public class ChessScene extends PixelScene {
 				@Override
 				protected void onClick() {
 					// 选择白棋，开始游戏
-					startGameAsWhite();
+					whiteTurn = true;
+					gameRunning = true;
 					hide();
 				}
 			};
@@ -906,7 +889,8 @@ public class ChessScene extends PixelScene {
 				@Override
 				protected void onClick() {
 					// 选择黑棋，开始游戏
-					startGameAsBlack();
+					whiteTurn = false;
+					gameRunning = true;
 					hide();
 				}
 			};
@@ -914,68 +898,13 @@ public class ChessScene extends PixelScene {
 			blackBtn.setPos(0, BTN_HEIGHT + GAP);
 			add(blackBtn);
 		}
-	}
-	
-	// 以白棋开始游戏
-	private void startGameAsWhite() {
-		// 重置游戏状态
-		initGame();
-		updateChessButtons();
-		gameRunning = true;
-		whiteTurn = true;
-	}
-	
-	// 以黑棋开始游戏
-	private void startGameAsBlack() {
-		// 重置游戏状态
-		initGame();
-		// 交换棋盘上的棋子
-		swapBoardSides();
-		updateChessButtons();
-		gameRunning = true;
-		whiteTurn = false;
-	}
-	
-	// 交换棋盘上的棋子
-	private void swapBoardSides() {
-		// 临时棋盘用于存储交换后的棋子
-		int[][] tempBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
-		
-		// 交换棋子
-		for (int row = 0; row < BOARD_HEIGHT; row++) {
-			for (int col = 0; col < BOARD_WIDTH; col++) {
-				int piece = gameBoard[row][col];
-				if (piece != EMPTY) {
-					// 计算交换后的位置
-					int newRow = BOARD_HEIGHT - 1 - row;
-					// 根据棋子类型转换为对方颜色
-					switch (piece) {
-						case WHITE_KING: tempBoard[newRow][col] = BLACK_KING; break;
-						case WHITE_QUEEN: tempBoard[newRow][col] = BLACK_QUEEN; break;
-						case WHITE_ROOK: tempBoard[newRow][col] = BLACK_ROOK; break;
-						case WHITE_BISHOP: tempBoard[newRow][col] = BLACK_BISHOP; break;
-						case WHITE_KNIGHT: tempBoard[newRow][col] = BLACK_KNIGHT; break;
-						case WHITE_PAWN: tempBoard[newRow][col] = BLACK_PAWN; break;
-						case BLACK_KING: tempBoard[newRow][col] = WHITE_KING; break;
-						case BLACK_QUEEN: tempBoard[newRow][col] = WHITE_QUEEN; break;
-						case BLACK_ROOK: tempBoard[newRow][col] = WHITE_ROOK; break;
-						case BLACK_BISHOP: tempBoard[newRow][col] = WHITE_BISHOP; break;
-						case BLACK_KNIGHT: tempBoard[newRow][col] = WHITE_KNIGHT; break;
-						case BLACK_PAWN: tempBoard[newRow][col] = WHITE_PAWN; break;
-					}
-				}
-			}
+
+		@Override
+		// 默认选择白棋
+		public void onBackPressed() {
+			whiteTurn = true;
+			gameRunning = true;
+			hide();
 		}
-		
-		// 复制临时棋盘到游戏棋盘
-		gameBoard = tempBoard;
-		
-		// 交换王车易位标记
-		boolean tempCanCastleRow0Col0 = canCastleRow0Col0;
-		boolean tempCanCastleRow0Col7 = canCastleRow0Col7;
-		canCastleRow0Col0 = canCastleRow7Col0;
-		canCastleRow0Col7 = canCastleRow7Col7;
-		canCastleRow7Col0 = tempCanCastleRow0Col0;
-		canCastleRow7Col7 = tempCanCastleRow0Col7;
 	}
 }
