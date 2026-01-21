@@ -775,7 +775,7 @@ public abstract class Mob extends Char {
 		}
 		
 		//ring of wealth logic
-		if (Ring.getBuffedBonus(Dungeon.hero, RingOfWealth.Wealth.class) > 0) {
+		if (Dungeon.hero.buff(RingOfWealth.Wealth.class)!=null) {
 			int rolls = 1;
 			if (properties.contains(Property.BOSS)) rolls = 15;
 			else if (properties.contains(Property.MINIBOSS)) rolls = 5;

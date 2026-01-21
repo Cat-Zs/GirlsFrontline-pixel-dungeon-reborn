@@ -61,7 +61,11 @@ public class RingOfWealth extends Ring {
 	
 	public String statsInfo() {
 		if (isIdentified()){
-			return Messages.get(this, "stats", new DecimalFormat("#.##").format(100f * (Math.pow(1.20f, soloBuffedBonus()) - 1f)));
+            String info = Messages.get(this, "stats", new DecimalFormat("#.##").format(100f * (Math.pow(1.20f, soloBuffedBonus()) - 1f)));
+            if (isEquipped(Dungeon.hero) && soloBuffedBonus() != combinedBuffedBonus(Dungeon.hero)) {
+                info = info + "\n\n" + Messages.get(this, "combined_stats", Messages.decimalFormat("#.##", 100.0F * (Math.pow(1.2F, combinedBuffedBonus(Dungeon.hero)) - 1.0F)));
+            }
+            return info;
 		} else {
 			return Messages.get(this, "typical_stats", new DecimalFormat("#.##").format(20f));
 		}
@@ -96,8 +100,6 @@ public class RingOfWealth extends Ring {
 	public static ArrayList<Item> tryForBonusDrop(Char target, int tries ){
 		int bonus = getBuffedBonus(target, Wealth.class);
 
-		if (bonus <= 0) return null;
-		
 		HashSet<Wealth> buffs = target.buffs(Wealth.class);
 		float triesToDrop = Float.MIN_VALUE;
 		int dropsToEquip = Integer.MIN_VALUE;
@@ -114,6 +116,8 @@ public class RingOfWealth extends Ring {
 		if (triesToDrop == Float.MIN_VALUE) {
 			triesToDrop = Random.NormalIntRange(0, 25);
 			dropsToEquip = Random.NormalIntRange(4, 8);
+            if (bonus<0)
+                triesToDrop+=bonus;
 		}
 
 		//now handle reward logic
@@ -122,9 +126,19 @@ public class RingOfWealth extends Ring {
 		triesToDrop -= tries;
 		while ( triesToDrop <= 0 ){
 			if (dropsToEquip <= 0){
-				Item i;
+                int equipBonus = 0;
+
+                for(Wealth w : target.buffs(Wealth.class)) {
+                    if (w.buffedLvl() > equipBonus) {
+                        equipBonus = w.buffedLvl() + Math.min(equipBonus, 2);
+                    } else {
+                        equipBonus += Math.min(w.buffedLvl(), 2);
+                    }
+                }
+
+                Item i;
 				do {
-					i = genEquipmentDrop(bonus - 1);
+					i = genEquipmentDrop(equipBonus - 1);
 				} while (Challenges.isItemBlocked(i));
 				drops.add(i);
 				dropsToEquip = Random.NormalIntRange(4, 8);
@@ -243,46 +257,71 @@ public class RingOfWealth extends Ring {
 		}
 	}
 
-	private static Item genEquipmentDrop( int level ){
-		Item result;
-		//each upgrade increases depth used for calculating drops by 1
-		int floorset = (Dungeon.curDepth() + level)/5;
-		switch (Random.Int(5)){
-			default: case 0: case 1:
-				Weapon w = Generator.randomWeapon(floorset);
-				if (!w.hasGoodEnchant() && Random.Int(10) < level)      w.enchant();
-				else if (w.hasCurseEnchant())                           w.enchant(null);
-				result = w;
-				break;
-			case 2:
-				Armor a = Generator.randomArmor(floorset);
-				if (!a.hasGoodGlyph() && Random.Int(10) < level)        a.inscribe();
-				else if (a.hasCurseGlyph())                             a.inscribe(null);
-				result = a;
-				break;
-			case 3:
-				result = Generator.random(Generator.Category.RING);
-				break;
-			case 4:
-				result = Generator.random(Generator.Category.ARTIFACT);
-				break;
-		}
-		//minimum level is 1/2/3/4/5/6 when ring level is 1/3/6/10/15/21
-		if (result.isUpgradable()){
-			int minLevel = (int)Math.floor((Math.sqrt(8*level + 1)-1)/2f);
-			if (result.level() < minLevel){
-				result.level(minLevel);
-			}
-		}
-		result.cursed = false;
-		result.cursedKnown = true;
-		if (result.level() >= 2) {
-			latestDropTier = 4;
-		} else {
-			latestDropTier = 3;
-		}
-		return result;
-	}
+    private static Item genEquipmentDrop(int level) {
+        int floorset = (Dungeon.depth + level) / 5;
+        Item result;
+        switch (Random.Int(5)) {
+            case 0:
+            case 1:
+            default:
+                Weapon w = Generator.randomWeapon(floorset);
+                if (level<0&&Random.Int(10) < -level){
+                    w.enchant(Weapon.Enchantment.randomCurse());
+                }
+                else if (!w.hasGoodEnchant() && Random.Int(10) < level) {
+                    w.enchant();
+                }
+                else if (w.hasCurseEnchant()) {
+                    w.enchant(null);
+                }
+
+                result = w;
+                break;
+            case 2:
+                Armor a = Generator.randomArmor(floorset);
+                if (level<0&&Random.Int(10) < -level){
+                    a.inscribe(Armor.Glyph.randomCurse());
+                }
+                else if (!a.hasGoodGlyph() && Random.Int(10) < level) {
+                    a.inscribe();
+                }
+                else if (a.hasCurseGlyph()) {
+                    a.inscribe(null);
+                }
+
+                result = a;
+                break;
+            case 3:
+                result = Generator.randomUsingDefaults(Generator.Category.RING);
+                break;
+            case 4:
+                result = Generator.random(Generator.Category.ARTIFACT);
+        }
+
+        if (result.isUpgradable()) {
+            int minLevel;
+            int lvl = result.level();
+            if (level>=0) {
+                minLevel = (level + 1) /2;
+                result.level(Math.max(minLevel, lvl));
+                //财富等级为正数时，取大者，财富等级作为保底
+            }else {
+                minLevel = (int) Math.floor((level - 1) *0.5f);
+                result.level(Math.min(minLevel, lvl));
+                //为负数时，取小者，从而实现负数等级的刷子
+            }
+        }
+
+        result.cursed = false;
+        result.cursedKnown = true;
+        if (result.level() >= 2) {
+            latestDropTier = 4;
+        } else {
+            latestDropTier = 3;
+        }
+
+        return result;
+    }
 
 	public class Wealth extends RingBuff {
 		
