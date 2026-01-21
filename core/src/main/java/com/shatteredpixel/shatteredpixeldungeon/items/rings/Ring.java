@@ -179,6 +179,30 @@ public class Ring extends KindofMisc {
 		
 		return desc;
 	}
+    public int combinedBonus(Hero hero) {
+        int bonus = 0;
+        if (hero.belongings.ring() != null && hero.belongings.ring().getClass() == this.getClass()) {
+            bonus += hero.belongings.ring().soloBonus();
+        }
+
+        if (hero.belongings.misc() != null && hero.belongings.misc().getClass() == this.getClass()) {
+            bonus += ((Ring)hero.belongings.misc()).soloBonus();
+        }
+
+        return bonus;
+    }
+    public int combinedBuffedBonus(Hero hero) {
+        int bonus = 0;
+        if (hero.belongings.ring() != null && hero.belongings.ring().getClass() == this.getClass()) {
+            bonus += hero.belongings.ring().soloBuffedBonus();
+        }
+
+        if (hero.belongings.misc() != null && hero.belongings.misc().getClass() == this.getClass()) {
+            bonus += ((Ring)hero.belongings.misc()).soloBuffedBonus();
+        }
+
+        return bonus;
+    }
 	
 	protected String statsInfo(){
 		return "";
@@ -319,7 +343,11 @@ public class Ring extends KindofMisc {
 		if (cursed){
 			return Math.min( 0, Ring.this.level()-2 );
 		} else {
-			return Ring.this.level()+1;
+			int lvl = Ring.this.level()+1;
+            if (Ring.this.level()<0) {
+                lvl = Ring.this.level()-1;
+            }
+            return lvl;
 		}
 	}
 
@@ -327,7 +355,12 @@ public class Ring extends KindofMisc {
 		if (cursed){
 			return Math.min( 0, Ring.this.buffedLvl()-2 );
 		} else {
-			return Ring.this.buffedLvl()+1;
+            int lvl =Ring.this.buffedLvl()+1;
+            if (Ring.this.buffedLvl()<0) {
+                lvl =Ring.this.buffedLvl()-1;
+            }
+            //-1、0的buff等级去除，以立刻获得对应收益
+			return lvl;
 		}
 	}
 

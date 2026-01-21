@@ -21,6 +21,7 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.rings;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
@@ -35,8 +36,12 @@ public class RingOfSharpshooting extends Ring {
 
 	public String statsInfo() {
 		if (isIdentified()){
-			return Messages.get(this, "stats", soloBuffedBonus(), new DecimalFormat("#.##").format(100f * (Math.pow(1.2, soloBonus()) - 1f)));
-		} else {
+			String info = Messages.get(this, "stats", soloBuffedBonus(), new DecimalFormat("#.##").format(100f * (Math.pow(1.2, soloBonus()) - 1f)));
+            if (isEquipped(Dungeon.hero) && soloBuffedBonus() != combinedBuffedBonus(Dungeon.hero)) {
+                info = info + "\n\n" + Messages.get(this, "combined_stats", combinedBuffedBonus(Dungeon.hero), Messages.decimalFormat("#.##", 100.0F * (Math.pow(1.2, combinedBonus(Dungeon.hero)) - 1.0F)));
+            }
+            return info;
+        } else {
 			return Messages.get(this, "typical_stats", 1, new DecimalFormat("#.##").format(20f));
 		}
 	}
