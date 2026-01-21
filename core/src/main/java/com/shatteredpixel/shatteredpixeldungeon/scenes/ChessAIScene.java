@@ -4,7 +4,6 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Chrome;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -19,7 +18,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChessScene extends PixelScene {
+public class ChessAIScene extends PixelScene {
 	{
 		inGameScene = true;
 	}
@@ -49,6 +48,8 @@ public class ChessScene extends PixelScene {
 	private int[][] gameBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
 	private boolean gameRunning;
 	private boolean whiteTurn;
+	private boolean aiEnabled;
+	private boolean playerIsWhite;
 	// 选择状态
 	private int selectedRow = -1;
 	private int selectedCol = -1;
@@ -80,22 +81,27 @@ public class ChessScene extends PixelScene {
 		
 		// 1. 设置背景
 		setupBackground();
-
+		
 		// 2. 初始化游戏
 		initGame();
 		
-		// 3. 创建游戏板视觉组件并更新显示
+		// 3. 创建游戏板视觉组件
 		createBoardVisual();
-		updateChessButtons();		
+		
 		// 4. 添加控制按钮
 		addControlButtons();
 		
 		// 5. 添加选择指示器
 		createSelectionIndicator();
 		
-		// 显示棋子选择窗口
+		// 6. 初始化游戏状态
 		gameRunning = false;
-		addToFront(new WndSideSelection());
+		whiteTurn = true;
+		aiEnabled = true;
+		playerIsWhite = true;
+		
+		// 7. 显示棋子选择窗口
+		showSideSelectionWindow();
 		
 		fadeIn();
 	}
@@ -196,11 +202,19 @@ public class ChessScene extends PixelScene {
 				add(chessButtons[row][col]);
 			}
 		}
+		
+		// 更新按钮状态
+		updateChessButtons();
 	}
 	
 	// 处理棋子按钮点击
 	private void handleChessPieceClick(int row, int col) {
 		if (!gameRunning) return;
+		
+		// 如果是AI回合，不处理点击
+		if ((whiteTurn && !playerIsWhite) || (!whiteTurn && playerIsWhite)) {
+			return;
+		}
 		
 		if (selectedRow == -1 && selectedCol == -1) {
 			// 第一次选择，检查是否选择了自己的棋子
@@ -227,6 +241,12 @@ public class ChessScene extends PixelScene {
 				if (action != null){
 					// 执行移动
 					action.run();
+					clearMoveIndicators();
+					
+					// 检查是否轮到AI移动
+					if (aiEnabled && ((whiteTurn && !playerIsWhite) || (!whiteTurn && playerIsWhite))) {
+						aiMove();
+					}
 				}
 			}
 		}
@@ -236,11 +256,11 @@ public class ChessScene extends PixelScene {
 	private boolean isPlayerPiece(int piece) {
 		if (piece == EMPTY) return false;
 		
-		if (whiteTurn) {
-			// 白方回合，检查是否是白方棋子
+		if (playerIsWhite) {
+			// 玩家是白方，检查是否是白方棋子
 			return piece >= WHITE_KING && piece <= WHITE_PAWN;
 		} else {
-			// 黑方回合，检查是否是黑方棋子
+			// 玩家是黑方，检查是否是黑方棋子
 			return piece >= BLACK_KING && piece <= BLACK_PAWN;
 		}
 	}
@@ -331,7 +351,7 @@ public class ChessScene extends PixelScene {
 				}
 
 				break;
-				
+			
 			case WHITE_ROOK:
 			case BLACK_ROOK:
 				// 车的移动规则：直线移动，不能有棋子阻挡
@@ -355,7 +375,7 @@ public class ChessScene extends PixelScene {
 					};
 				}
 				break;
-				
+			
 			case WHITE_BISHOP:
 			case BLACK_BISHOP:
 				// 象的移动规则：对角线移动，不能有棋子阻挡
@@ -363,7 +383,7 @@ public class ChessScene extends PixelScene {
 					return ()-> CommonMove(fromRow,fromCol,toRow,toCol);
 				}
 				break;
-				
+			
 			case WHITE_QUEEN:
 			case BLACK_QUEEN:
 				// 后的移动规则：直线或对角线移动，不能有棋子阻挡
@@ -371,7 +391,7 @@ public class ChessScene extends PixelScene {
 					return ()-> CommonMove(fromRow,fromCol,toRow,toCol);
 				}
 				break;
-				
+			
 			case WHITE_KNIGHT:
 			case BLACK_KNIGHT:
 				// 马的移动规则：日字形移动
@@ -379,7 +399,7 @@ public class ChessScene extends PixelScene {
 					return ()-> CommonMove(fromRow,fromCol,toRow,toCol);
 				}
 				break;
-				
+			
 			case WHITE_KING:
 			case BLACK_KING:
 				// 王的移动规则：一格范围内的任何方向 
@@ -533,8 +553,8 @@ public class ChessScene extends PixelScene {
 			whiteTurn = !whiteTurn;
 		}
 
-		clearSelection();
 		updateChessButtons();
+		clearSelection();
 	}
 
 	// 检查移动路径是否畅通
@@ -609,6 +629,11 @@ public class ChessScene extends PixelScene {
 						whiteTurn = !whiteTurn;
 						updateChessButtons();
 						WndPromotion.this.hide();
+						
+						// 检查是否轮到AI移动
+						if (aiEnabled && ((whiteTurn && !playerIsWhite) || (!whiteTurn && playerIsWhite))) {
+							aiMove();
+						}
 					}
 				};
 				
@@ -625,6 +650,11 @@ public class ChessScene extends PixelScene {
 			whiteTurn = !whiteTurn;
 			updateChessButtons();
 			hide();
+			
+			// 检查是否轮到AI移动
+			if (aiEnabled && ((whiteTurn && !playerIsWhite) || (!whiteTurn && playerIsWhite))) {
+				aiMove();
+			}
 		}
 	}
 	
@@ -721,22 +751,43 @@ public class ChessScene extends PixelScene {
 		};
 		restartButton.setSize(buttonWidth, buttonHeight);
 		restartButton.setPos(
-			(uiCamera.width - buttonWidth * 2 - margin) / 2,
+			(uiCamera.width - buttonWidth * 3 - margin * 2) / 2,
 			uiCamera.height - buttonHeight - margin
 		);
 		restartButton.camera = uiCamera;
 		add(restartButton);
 		
+		// AI按钮
+		aiButton = new StyledButton(Chrome.Type.TOAST_TR, aiEnabled ? "AI: 开" : "AI: 关") {
+			@Override
+			protected void onClick() {
+				aiEnabled = !aiEnabled;
+				text(aiEnabled ? "AI: 开" : "AI: 关");
+				
+				// 如果AI被启用且现在轮到AI移动，执行AI移动
+				if (aiEnabled && ((whiteTurn && !playerIsWhite) || (!whiteTurn && playerIsWhite))) {
+					aiMove();
+				}
+			}
+		};
+		aiButton.setSize(buttonWidth, buttonHeight);
+		aiButton.setPos(
+			restartButton.right() + margin,
+			uiCamera.height - buttonHeight - margin
+		);
+		aiButton.camera = uiCamera;
+		add(aiButton);
+		
 		// 退出按钮
 		exitButton = new StyledButton(Chrome.Type.TOAST_TR, "退出") {
 			@Override
 			protected void onClick() {
-				ChessScene.this.onBackPressed();
+				onBackPressed();
 			}
 		};
 		exitButton.setSize(buttonWidth, buttonHeight);
 		exitButton.setPos(
-			restartButton.right() + margin,
+			aiButton.right() + margin,
 			uiCamera.height - buttonHeight - margin
 		);
 		exitButton.camera = uiCamera;
@@ -784,6 +835,9 @@ public class ChessScene extends PixelScene {
 
 	// 显示可走路径标记
 	private void showValidMoves(int fromRow, int fromCol) {
+		// 先清除之前的标记
+		clearMoveIndicators();
+		
 		// 遍历所有可能的目标位置
 		for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
 			for (int toCol = 0; toCol < BOARD_WIDTH; toCol++) {
@@ -832,11 +886,12 @@ public class ChessScene extends PixelScene {
 		}
 		moveIndicators.clear();
 	}
-	
+
 	// 重启游戏
 	private void restartGame() {
 		// 重置游戏状态
 		clearSelection();
+		clearMoveIndicators();
 		
 		// 重新初始化游戏
 		initGame();
@@ -844,19 +899,20 @@ public class ChessScene extends PixelScene {
 		// 更新游戏板显示
 		updateChessButtons();
 		
-		// 显示棋子选择窗口
+		// 重置游戏状态
 		gameRunning = false;
+		whiteTurn = true;
+		aiEnabled = true;
+		
+		// 显示棋子选择窗口
+		showSideSelectionWindow();
+	}
+
+	// 显示棋子选择窗口
+	private void showSideSelectionWindow() {
 		addToFront(new WndSideSelection());
 	}
-	
-	// 处理返回键
-	@Override
-	protected void onBackPressed() {
-		// 返回上一个场景
-		InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
-		Game.switchScene(InterlevelScene.class);
-	}
-	
+
 	// 棋子选择窗口
 	private class WndSideSelection extends Window {
 		private static final int WIDTH = 150;
@@ -870,12 +926,11 @@ public class ChessScene extends PixelScene {
 			resize(WIDTH, (int)(BTN_HEIGHT * 2 + GAP));
 			
 			// 白棋选择按钮
-			StyledButton whiteBtn = new StyledButton(Chrome.Type.TOAST_TR, "白棋先手") {
+			StyledButton whiteBtn = new StyledButton(Chrome.Type.TOAST_TR, "白棋 (先手)") {
 				@Override
 				protected void onClick() {
 					// 选择白棋，开始游戏
-					whiteTurn = true;
-					gameRunning = true;
+					startGameAsWhite();
 					hide();
 				}
 			};
@@ -884,12 +939,11 @@ public class ChessScene extends PixelScene {
 			add(whiteBtn);
 			
 			// 黑棋选择按钮
-			StyledButton blackBtn = new StyledButton(Chrome.Type.TOAST_TR, "黑棋先手") {
+			StyledButton blackBtn = new StyledButton(Chrome.Type.TOAST_TR, "黑棋 (后手)") {
 				@Override
 				protected void onClick() {
 					// 选择黑棋，开始游戏
-					whiteTurn = false;
-					gameRunning = true;
+					startGameAsBlack();
 					hide();
 				}
 			};
@@ -897,13 +951,137 @@ public class ChessScene extends PixelScene {
 			blackBtn.setPos(0, BTN_HEIGHT + GAP);
 			add(blackBtn);
 		}
+	}
 
-		@Override
-		// 默认选择白棋
-		public void onBackPressed() {
-			whiteTurn = true;
-			gameRunning = true;
-			hide();
+	// 以白棋开始游戏
+	private void startGameAsWhite() {
+		// 重置游戏状态
+		initGame();
+		updateChessButtons();
+		gameRunning = true;
+		whiteTurn = true;
+		playerIsWhite = true;
+	}
+
+	// 以黑棋开始游戏
+	private void startGameAsBlack() {
+		// 重置游戏状态
+		initGame();
+		// 交换棋盘上的棋子
+		swapBoardSides();
+		updateChessButtons();
+		gameRunning = true;
+		whiteTurn = true;
+		playerIsWhite = false;
+		
+		// 如果AI启用，执行AI移动
+		if (aiEnabled) {
+			aiMove();
 		}
+	}
+
+	// 交换棋盘上的棋子
+	private void swapBoardSides() {
+		// 临时棋盘用于存储交换后的棋子
+		int[][] tempBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
+		
+		// 交换棋子
+		for (int row = 0; row < BOARD_HEIGHT; row++) {
+			for (int col = 0; col < BOARD_WIDTH; col++) {
+				int piece = gameBoard[row][col];
+				if (piece != EMPTY) {
+					// 计算交换后的位置
+					int newRow = BOARD_HEIGHT - 1 - row;
+					// 根据棋子类型转换为对方颜色
+					switch (piece) {
+						case WHITE_KING: tempBoard[newRow][col] = BLACK_KING; break;
+						case WHITE_QUEEN: tempBoard[newRow][col] = BLACK_QUEEN; break;
+						case WHITE_ROOK: tempBoard[newRow][col] = BLACK_ROOK; break;
+						case WHITE_BISHOP: tempBoard[newRow][col] = BLACK_BISHOP; break;
+						case WHITE_KNIGHT: tempBoard[newRow][col] = BLACK_KNIGHT; break;
+						case WHITE_PAWN: tempBoard[newRow][col] = BLACK_PAWN; break;
+						case BLACK_KING: tempBoard[newRow][col] = WHITE_KING; break;
+						case BLACK_QUEEN: tempBoard[newRow][col] = WHITE_QUEEN; break;
+						case BLACK_ROOK: tempBoard[newRow][col] = WHITE_ROOK; break;
+						case BLACK_BISHOP: tempBoard[newRow][col] = WHITE_BISHOP; break;
+						case BLACK_KNIGHT: tempBoard[newRow][col] = WHITE_KNIGHT; break;
+						case BLACK_PAWN: tempBoard[newRow][col] = WHITE_PAWN; break;
+					}
+				}
+			}
+		}
+		
+		// 复制临时棋盘到游戏棋盘
+		gameBoard = tempBoard;
+		
+		// 交换王车易位标记
+		boolean tempCanCastleRow0Col0 = canCastleRow0Col0;
+		boolean tempCanCastleRow0Col7 = canCastleRow0Col7;
+		canCastleRow0Col0 = canCastleRow7Col0;
+		canCastleRow0Col7 = canCastleRow7Col7;
+		canCastleRow7Col0 = tempCanCastleRow0Col0;
+		canCastleRow7Col7 = tempCanCastleRow0Col7;
+	}
+
+	// AI移动
+	private void aiMove() {
+		if (!gameRunning || !aiEnabled) return;
+		
+		// 收集所有有效的移动
+		List<Move> validMoves = new ArrayList<>();
+		
+		for (int fromRow = 0; fromRow < BOARD_HEIGHT; fromRow++) {
+			for (int fromCol = 0; fromCol < BOARD_WIDTH; fromCol++) {
+				int piece = gameBoard[fromRow][fromCol];
+				// 只考虑AI自己的棋子
+				if ((whiteTurn && piece >= WHITE_KING && piece <= WHITE_PAWN) || 
+				    (!whiteTurn && piece >= BLACK_KING && piece <= BLACK_PAWN)) {
+					for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
+						for (int toCol = 0; toCol < BOARD_WIDTH; toCol++) {
+							Runnable action = GetValidMove(fromRow, fromCol, toRow, toCol);
+							if (action != null) {
+								validMoves.add(new Move(fromRow, fromCol, toRow, toCol, action));
+							}
+						}
+					}
+				}
+			}
+		}
+		
+		// 如果有有效的移动，随机选择一个执行
+		if (!validMoves.isEmpty()) {
+			final Move selectedMove = validMoves.get(Random.Int(validMoves.size()));
+			selectedMove.action.run();
+			
+			// 检查是否轮到AI移动（例如，兵升变后）
+			if (aiEnabled && ((whiteTurn && !playerIsWhite) || (!whiteTurn && playerIsWhite))) {
+				aiMove();
+			}
+		}
+	}
+
+	// 移动类
+	private class Move {
+		int fromRow;
+		int fromCol;
+		int toRow;
+		int toCol;
+		Runnable action;
+		
+		Move(int fromRow, int fromCol, int toRow, int toCol, Runnable action) {
+			this.fromRow = fromRow;
+			this.fromCol = fromCol;
+			this.toRow = toRow;
+			this.toCol = toCol;
+			this.action = action;
+		}
+	}
+
+	// 处理返回键
+	@Override
+	protected void onBackPressed() {
+		// 返回上一个场景
+		InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
+		Game.switchScene(InterlevelScene.class);
 	}
 }
