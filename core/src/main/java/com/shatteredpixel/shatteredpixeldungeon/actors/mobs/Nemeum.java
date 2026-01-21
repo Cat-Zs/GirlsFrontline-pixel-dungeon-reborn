@@ -1,35 +1,12 @@
-/*
- * Pixel Dungeon
- * Copyright (C) 2012-2015 Oleg Dolya
- *
- * Shattered Pixel Dungeon
- * Copyright (C) 2014-2018 Evan Debenham
- *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU General Public License as published by
- * the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
- *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU General Public License for more details.
- *
- * You should have received a copy of the GNU General Public License
- * along with this program.  If not, see <http://www.gnu.org/licenses/>
- */
-
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Grim;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Vampiric;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
@@ -57,7 +34,7 @@ public class Nemeum extends Mob {
 
         properties.add(Property.ARMO);
     }
-// 사거리는 2칸으로 조정해주세요
+    // 사거리는 2칸으로 조정해주세요
     public int DamageReducer() { return 1; }
 
     @Override
@@ -84,12 +61,11 @@ public class Nemeum extends Mob {
     private int beamTarget = -1;
     private int beamCooldown;
     public boolean beamCharged;
-    private float beamTime;
 
     @Override
     protected boolean canAttack( Char enemy ) {
 
-        if (beamTime <= 0 && beamCooldown == 0) {
+        if (beamCooldown == 0) {
             Ballistica aim = new Ballistica(pos, enemy.pos, Ballistica.STOP_TARGET);
 
             if (enemy.invisible == 0 && !isCharmedBy(enemy) && fieldOfView[enemy.pos] && aim.subPath(1, aim.dist).contains(enemy.pos)){
@@ -105,7 +81,7 @@ public class Nemeum extends Mob {
 
     @Override
     protected boolean act() {
-        if (beamTime <= 0 && beamCharged && state != HUNTING){
+        if (beamCharged && state != HUNTING){
             beamCharged = false;
             sprite.idle();
         }
@@ -115,28 +91,23 @@ public class Nemeum extends Mob {
         }
         if (beamCooldown > 0)
             beamCooldown--;
-        if (beamCharged &&beamTime>0){
-            beamTime--;
-            spend(TICK);
-            updateTNT();
-            return true;
-        }
         return super.act();
     }
 
     @Override
     protected boolean doAttack( Char enemy ) {
 
-        if (beamTime>0){
-            spend(attackDelay());
-            return true;
-        }else if (beamCooldown > 1) {
+        if (beamCooldown > 1) {
             return super.doAttack(enemy);
         } else if (!beamCharged){
             ((NemeumSprite)sprite).charge( enemy.pos );
-            TNTFindHero(enemy.pos);
-            beamTime = attackDelay()*4f;
-            spend( attackDelay() );
+            Ballistica b = new Ballistica(pos, enemy.pos, Ballistica.STOP_SOLID);
+            for (int p : b.path) {
+                sprite.parent.add(new TargetedCell(p, 0xFF0000));
+                if (p == b.collisionPos)
+                    break;
+            }
+            spend( attackDelay()*4f );
             beamCharged = true;
             return true;
         } else {
@@ -152,61 +123,6 @@ public class Nemeum extends Mob {
                 deathGaze();
                 return true;
             }
-        }
-
-    }
-    public void updateTNT(){
-        if (beamTarget==-1)
-            return;
-        Ballistica b = new Ballistica(pos, Dungeon.hero.pos, Ballistica.STOP_SOLID);
-        for (int p : b.path) {
-            Char ch = Actor.findChar( p );
-            if (ch == Dungeon.hero) {
-                TNTFindHero( beamTarget );
-                //玩家在激光的可攻击范围内，显示瞄准弹道
-            }
-            if (p == b.collisionPos)
-                break;
-        }
-    }
-    public void TNTFindHero( int targetPos ){
-        Ballistica b = new Ballistica(pos, targetPos, Ballistica.STOP_SOLID);
-        int color = 0xFFFF00;
-        boolean containHero = false;
-        //初始默认对玩家的瞄准弹道为黄色、对目标地点的弹道不包括玩家
-        for (int p : b.path) {
-            if (p==Dungeon.hero.pos) {
-                color = 0xFF0000;
-                containHero = true;
-                //包括时对玩家的瞄准弹道变为红色
-            }
-            if (p == b.collisionPos)
-                break;
-        }
-        if (enemySeen&&enemy==Dungeon.hero){
-            color = 0xFF0000;
-            //目标是玩家时，也将对玩家的瞄准弹道变为红色
-        }
-        if (Dungeon.hero.buff(Invisibility.class)!=null
-                ||Dungeon.hero.buff(CloakOfShadows.cloakStealth.class)!=null)
-            color = 0xFFFF00;
-        if (containHero){
-            //对目标地点的弹道包括玩家时，直接显示对目标地点的弹道
-            for (int p : b.path) {
-                sprite.parent.add(new TargetedCell(p, color));
-                if (p == b.collisionPos)
-                    break;
-            }
-        }else {
-            //不包括时，显示目标地点，显示对玩家的瞄准弹道
-            Ballistica m = new Ballistica(pos, Dungeon.hero.pos, Ballistica.STOP_SOLID);
-            for (int p : m.path) {
-                sprite.parent.add(new TargetedCell(p, color));
-                if (p == m.collisionPos)
-                    break;
-            }
-            sprite.parent.add(new TargetedCell(targetPos, 0xFF0000));
-            //对目标点标红
         }
 
     }
@@ -271,13 +187,10 @@ public class Nemeum extends Mob {
     private static final String BEAM_COOLDOWN   = "beamCooldown";
     private static final String BEAM_CHARGED    = "beamCharged";
 
-    private static final String BEAM_TIME    = "beamTime";
-
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put( BEAM_TARGET, beamTarget);
-        bundle.put( BEAM_TIME, beamTime);
         bundle.put( BEAM_COOLDOWN, beamCooldown );
         bundle.put( BEAM_CHARGED, beamCharged );
     }
@@ -285,10 +198,8 @@ public class Nemeum extends Mob {
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
-        if (bundle.contains(BEAM_TARGET)) {
+        if (bundle.contains(BEAM_TARGET))
             beamTarget = bundle.getInt(BEAM_TARGET);
-            beamTime = bundle.getFloat(BEAM_TIME);
-        }
         beamCooldown = bundle.getInt(BEAM_COOLDOWN);
         beamCharged = bundle.getBoolean(BEAM_CHARGED);
     }

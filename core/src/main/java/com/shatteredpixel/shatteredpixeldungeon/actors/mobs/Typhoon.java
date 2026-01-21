@@ -148,6 +148,11 @@ public class Typhoon extends Hydra {
         }
     }
     public void TNTFindHero( int targetPos ){
+        if (enemy!=null&&enemy.buff(Invisibility.class)==null
+                &&enemy.buff(CloakOfShadows.cloakStealth.class)==null){
+            //有实体目标且没有隐身，则瞄准实体目标，否则瞄准预瞄点
+            targetPos = enemy.pos;
+        }
         Ballistica b = new Ballistica(pos, targetPos, Ballistica.STOP_SOLID);
         int color = 0xFFFF00;
         boolean containHero = false;
@@ -161,17 +166,23 @@ public class Typhoon extends Hydra {
             if (p == b.collisionPos)
                 break;
         }
-        if (enemySeen&&enemy==Dungeon.hero){
+        if (enemy==Dungeon.hero){
             color = 0xFF0000;
             //目标是玩家时，也将对玩家的瞄准弹道变为红色
+        }else if (enemy==null||!enemy.isAlive()){
+            //目标不是玩家，但目标死了
+            color = 0xFF0000;
         }
         if (Dungeon.hero.buff(Invisibility.class)!=null
-                ||Dungeon.hero.buff(CloakOfShadows.cloakStealth.class)!=null)
+                ||Dungeon.hero.buff(CloakOfShadows.cloakStealth.class)!=null) {
+            //玩家隐身，那么对玩家的弹道显示为黄色
             color = 0xFFFF00;
+        }
+
         if (containHero){
             //对目标地点的弹道包括玩家时，直接显示对目标地点的弹道
             for (int p : b.path) {
-                sprite.parent.add(new TargetedCell(p, color));
+                sprite.parent.add(new TargetedCell(p, 0xFF0000));
                 if (p == b.collisionPos)
                     break;
             }

@@ -51,6 +51,10 @@ public class Gun562Accessories extends Item{
 			}
 			gun562.activate(hero);
 			gun562.level(gun561.trueLevel());
+            gun562.curseInfusionBonus=gun561.curseInfusionBonus;
+            //保留诅咒棱晶状态
+            gun562.enchant(gun561.enchantment);
+            //保留附魔
 
 			hero.spendAndNext(3f);
 			detach(hero.belongings.backpack);

@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Terror;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
+import com.shatteredpixel.shatteredpixeldungeon.effects.TargetedCell;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Grim;
@@ -119,6 +120,12 @@ public class Jupiter extends Mob {
             return super.doAttack(enemy);
         } else if (!beamCharged){
             ((JupiterSprite)sprite).charge( enemy.pos );
+            Ballistica b = new Ballistica(pos, enemy.pos, Ballistica.STOP_SOLID);
+            for (int p : b.path) {
+                sprite.parent.add(new TargetedCell(p, 0xFF0000));
+                if (p == b.collisionPos)
+                    break;
+            }
             spend( attackDelay()*6f );
             beamCharged = true;
             return true;
