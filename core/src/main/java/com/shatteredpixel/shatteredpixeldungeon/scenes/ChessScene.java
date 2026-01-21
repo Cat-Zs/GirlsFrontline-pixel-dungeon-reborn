@@ -53,6 +53,8 @@ public class ChessScene extends PixelScene {
 	private int selectedRow = -1;
 	private int selectedCol = -1;
 	private Image selectionIndicator;
+	// 可走路径标记
+	private List<Image> moveIndicators = new ArrayList<>();
 	// 记录特殊规则
 	private int passbyPawnRow;
 	private int passbyPawnCol;
@@ -92,8 +94,11 @@ public class ChessScene extends PixelScene {
 		createSelectionIndicator();
 		
 		// 6. 初始化游戏状态
-		gameRunning = true;
+		gameRunning = false;
 		whiteTurn = true;
+		
+		// 显示棋子选择窗口
+		showSideSelectionWindow();
 		
 		fadeIn();
 	}
@@ -209,6 +214,7 @@ public class ChessScene extends PixelScene {
 				selectedRow = row;
 				selectedCol = col;
 				updateSelectionIndicator();
+				showValidMoves(row, col);
 			}
 		} else {
 			// 第二次选择
@@ -220,12 +226,14 @@ public class ChessScene extends PixelScene {
 				selectedRow = row;
 				selectedCol = col;
 				updateSelectionIndicator();
+				showValidMoves(row, col);
 			} else {
 				// 尝试移动棋子
 				Runnable action = GetValidMove(selectedRow, selectedCol, row, col);
 				if (action != null){
 					// 执行移动
 					action.run();
+					clearMoveIndicators();
 				}
 			}
 		}
@@ -778,12 +786,68 @@ public class ChessScene extends PixelScene {
 		selectedRow = -1;
 		selectedCol = -1;
 		selectionIndicator.visible = false;
+		clearMoveIndicators();
+	}
+
+	// 显示可走路径标记
+	private void showValidMoves(int fromRow, int fromCol) {
+		// 先清除之前的标记
+		clearMoveIndicators();
+		
+		// 遍历所有可能的目标位置
+		for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
+			for (int toCol = 0; toCol < BOARD_WIDTH; toCol++) {
+				// 跳过自己的位置
+				if (toRow == fromRow && toCol == fromCol) {
+					continue;
+				}
+				
+				// 检查是否是有效的移动
+				Runnable action = GetValidMove(fromRow, fromCol, toRow, toCol);
+				if (action != null) {
+					// 添加可走路径标记
+					addMoveIndicator(toRow, toCol);
+				}
+			}
+		}
+	}
+
+	// 添加可走路径标记
+	private void addMoveIndicator(int row, int col) {
+		// 创建标记图像
+		Image indicator = new Image(Icons.get(Icons.TARGET));
+		indicator.hardlight(0x00FF00); // 设置颜色为绿色
+		indicator.camera = uiCamera;
+		
+		// 设置标记大小
+		float scale = adjustedCellSize / indicator.width();
+		indicator.scale.set(scale);
+		
+		// 设置标记位置
+		float cellX = col * adjustedCellSize;
+		float cellY = row * adjustedCellSize;
+		indicator.setPos(cellX, cellY);
+		
+		// 添加标记到容器和列表
+		add(indicator);
+		moveIndicators.add(indicator);
+	}
+
+	// 清除可走路径标记
+	private void clearMoveIndicators() {
+		for (Image indicator : moveIndicators) {
+			if (indicator != null) {
+				indicator.killAndErase();
+			}
+		}
+		moveIndicators.clear();
 	}
 	
 	// 重启游戏
 	private void restartGame() {
 		// 重置游戏状态
 		clearSelection();
+		clearMoveIndicators();
 		
 		// 重新初始化游戏
 		initGame();
@@ -791,8 +855,12 @@ public class ChessScene extends PixelScene {
 		// 更新游戏板显示
 		updateChessButtons();
 		
-		gameRunning = true;
+		// 重置游戏状态
+		gameRunning = false;
 		whiteTurn = true;
+		
+		// 显示棋子选择窗口
+		showSideSelectionWindow();
 	}
 	
 	// 处理返回键
@@ -801,5 +869,113 @@ public class ChessScene extends PixelScene {
 		// 返回上一个场景
 		InterlevelScene.mode = InterlevelScene.Mode.CONTINUE;
 		Game.switchScene(InterlevelScene.class);
+	}
+	
+	// 显示棋子选择窗口
+	private void showSideSelectionWindow() {
+		addToFront(new WndSideSelection());
+	}
+	
+	// 棋子选择窗口
+	private class WndSideSelection extends Window {
+		private static final int WIDTH = 150;
+		private static final int BTN_HEIGHT = 40;
+		private static final float GAP = 2;
+		
+		public WndSideSelection() {
+			super();
+			
+			// 设置窗口大小
+			resize(WIDTH, (int)(BTN_HEIGHT * 2 + GAP));
+			
+			// 白棋选择按钮
+			StyledButton whiteBtn = new StyledButton(Chrome.Type.TOAST_TR, "白棋先手") {
+				@Override
+				protected void onClick() {
+					// 选择白棋，开始游戏
+					startGameAsWhite();
+					hide();
+				}
+			};
+			whiteBtn.setSize(WIDTH, BTN_HEIGHT);
+			whiteBtn.setPos(0, 0);
+			add(whiteBtn);
+			
+			// 黑棋选择按钮
+			StyledButton blackBtn = new StyledButton(Chrome.Type.TOAST_TR, "黑棋先手") {
+				@Override
+				protected void onClick() {
+					// 选择黑棋，开始游戏
+					startGameAsBlack();
+					hide();
+				}
+			};
+			blackBtn.setSize(WIDTH, BTN_HEIGHT);
+			blackBtn.setPos(0, BTN_HEIGHT + GAP);
+			add(blackBtn);
+		}
+	}
+	
+	// 以白棋开始游戏
+	private void startGameAsWhite() {
+		// 重置游戏状态
+		initGame();
+		updateChessButtons();
+		gameRunning = true;
+		whiteTurn = true;
+	}
+	
+	// 以黑棋开始游戏
+	private void startGameAsBlack() {
+		// 重置游戏状态
+		initGame();
+		// 交换棋盘上的棋子
+		swapBoardSides();
+		updateChessButtons();
+		gameRunning = true;
+		whiteTurn = false;
+	}
+	
+	// 交换棋盘上的棋子
+	private void swapBoardSides() {
+		// 临时棋盘用于存储交换后的棋子
+		int[][] tempBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
+		
+		// 交换棋子
+		for (int row = 0; row < BOARD_HEIGHT; row++) {
+			for (int col = 0; col < BOARD_WIDTH; col++) {
+				int piece = gameBoard[row][col];
+				if (piece != EMPTY) {
+					// 计算交换后的位置
+					int newRow = BOARD_HEIGHT - 1 - row;
+					// 根据棋子类型转换为对方颜色
+					switch (piece) {
+						case WHITE_KING: tempBoard[newRow][col] = BLACK_KING; break;
+						case WHITE_QUEEN: tempBoard[newRow][col] = BLACK_QUEEN; break;
+						case WHITE_ROOK: tempBoard[newRow][col] = BLACK_ROOK; break;
+						case WHITE_BISHOP: tempBoard[newRow][col] = BLACK_BISHOP; break;
+						case WHITE_KNIGHT: tempBoard[newRow][col] = BLACK_KNIGHT; break;
+						case WHITE_PAWN: tempBoard[newRow][col] = BLACK_PAWN; break;
+						case BLACK_KING: tempBoard[newRow][col] = WHITE_KING; break;
+						case BLACK_QUEEN: tempBoard[newRow][col] = WHITE_QUEEN; break;
+						case BLACK_ROOK: tempBoard[newRow][col] = WHITE_ROOK; break;
+						case BLACK_BISHOP: tempBoard[newRow][col] = WHITE_BISHOP; break;
+						case BLACK_KNIGHT: tempBoard[newRow][col] = WHITE_KNIGHT; break;
+						case BLACK_PAWN: tempBoard[newRow][col] = WHITE_PAWN; break;
+					}
+				}
+			}
+		}
+		
+		// 复制临时棋盘到游戏棋盘
+		gameBoard = tempBoard;
+		
+		// 交换王车易位标记
+		boolean tempCanCastleRow0Col0 = canCastleRow0Col0;
+		boolean tempCanCastleRow0Col7 = canCastleRow0Col7;
+		canCastleRow0Col0 = canCastleRow7Col0;
+		canCastleRow0Col7 = canCastleRow7Col7;
+		canCastleRow7Col0 = tempCanCastleRow0Col0;
+		canCastleRow7Col7 = tempCanCastleRow0Col7;
 	}
 }
