@@ -43,9 +43,17 @@ public class StyledButton extends Button {
 	}
 	
 	public StyledButton(Chrome.Type type, String label, int size ){
+		this(Chrome.get(type), label, 9);
+	}
+
+	public StyledButton(NinePatch background, String label ) {
+		this(background, label, 9);
+	}
+
+	public StyledButton(NinePatch background, String label, int size ){
 		super();
 		
-		bg = Chrome.get( type );
+		bg = background;
 		addToBack( bg );
 		
 		text = PixelScene.renderTextBlock( size );

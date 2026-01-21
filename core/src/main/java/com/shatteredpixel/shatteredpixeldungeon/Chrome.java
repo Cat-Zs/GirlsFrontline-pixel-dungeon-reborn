@@ -40,7 +40,7 @@ public class Chrome {
 		TAB_SET,
 		TAB_SELECTED,
 		TAB_UNSELECTED,
-		BLANK,
+		BLANK,//纯透明
 		DIALOG
 	}
 
