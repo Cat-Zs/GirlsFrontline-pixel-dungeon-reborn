@@ -219,7 +219,10 @@ public class RatKing extends NPC {
             //重置点击次数以获取特色文案
         }
         else if (hintCount < 3) {
-            if(hasGivenSugar){
+            if (Dungeon.depth==0){
+                yell(Messages.get(this,"zero_"+hintCount));
+            }
+            else if(hasGivenSugar){
                 // FNC获得礼物后的诚挚祝福
                 yellgood(Messages.get(this,"wish_"+hintCount));
 //                if (hintCount == 0) {
@@ -231,14 +234,14 @@ public class RatKing extends NPC {
 //                }
             }else {
                 // FNC护食哈气了
-                yell(Messages.get(this,"argue_"+hintCount));
-//                if (hintCount == 0) {
-//                    yell(Messages.get(this, "no_more"));
-//                } else if (hintCount == 1) {
-//                    yell(Messages.get(this, "no_more_2"));
-//                } else {
-//                    yell(Messages.get(this, "no_more_3"));
-//                }
+                String argue = Messages.get(this,"argue_"+hintCount);
+                if (hintCount == 0) {
+                    yellgood(argue);
+                } else if (hintCount == 1) {
+                    yellnormal(argue);
+                } else {
+                    yell(argue);
+                }
             }
                 // 增加提示计数器
                 Buff.count(hero, HintTracker.class, 1);

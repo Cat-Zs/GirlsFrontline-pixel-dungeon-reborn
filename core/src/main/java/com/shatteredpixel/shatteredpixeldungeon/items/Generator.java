@@ -482,7 +482,8 @@ public class Generator {
                     XMasSugar.class,
                     SaltyZongzi.class
             };
-			FOOD.probs = new float[]{ 4, 0, HolidayDiff(Pasty.class), 0, 0, HolidayDiff(XMasSugar.class) ,0};
+            FOOD.defaultProbs = new float[]{ 4, 0, 1, 0, 0, HolidayDiff(XMasSugar.class) ,0};
+			FOOD.probs = FOOD.defaultProbs.clone();
 			
 			RING.classes = new Class<?>[]{
 					RingOfAccuracy.class,
@@ -517,7 +518,7 @@ public class Generator {
 			ARTIFACT.probs = ARTIFACT.defaultProbs.clone();
 		}
 	}
-    private static int HolidayDiff(Class food){
+    public static int HolidayDiff(Class food){
         if(food == Food.SummonPasty().getClass())
             return 1;
         else return 0;
