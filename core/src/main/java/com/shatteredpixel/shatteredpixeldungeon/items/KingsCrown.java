@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Education;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Ratmogrify;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
@@ -98,11 +99,18 @@ public class KingsCrown extends Item {
 
 			if (ability instanceof Ratmogrify){
 				GLog.p(Messages.get(this, "ratgraded"));
-			} else {
+			} else if (ability instanceof Education){
+                GLog.p(Messages.get(this, "finish_education"));
+            } else {
 				GLog.p(Messages.get(this, "upgraded"));
 			}
 
-			ClassArmor classArmor = ClassArmor.upgrade(hero, armor);
+			Armor classArmor ;
+            if (ability instanceof Education){
+                classArmor = armor;
+            }else {
+                classArmor = ClassArmor.upgrade(hero, armor);
+            }
 			if (hero.belongings.armor == armor) {
 
 				hero.belongings.armor = classArmor;

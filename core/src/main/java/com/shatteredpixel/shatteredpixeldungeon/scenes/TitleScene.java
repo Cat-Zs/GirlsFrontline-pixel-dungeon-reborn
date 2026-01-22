@@ -104,7 +104,6 @@ public class TitleScene extends PixelScene {
 		StyledButton btnPlay = new StyledButton(GREY_BUTTON,"进入游戏"){
 			@Override
 			protected void onClick() {
-                TierOfTalent.ResetAllTalentList();
 				if (GamesInProgress.checkAll().isEmpty()){
 					TitleScene.this.add( new WndStartGame(1) );
 				} else {
