@@ -147,8 +147,15 @@ public class Hunger extends Buff implements Hero.Doom {
 
 		level -= energy;
 		if (level < minlevel && !overrideLimits) {
+            float over = minlevel-level;
 			level = minlevel;
-		} else if (level > STARVING) {
+            if (Dungeon.hero.buff(ActHPtoGetFood.LockReg.class)!=null){
+                ActHPtoGetFood.LockReg.lost += over;
+                if (ActHPtoGetFood.LockReg.lost >=Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).cooldown()){
+                    Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).detach();
+                }
+            }
+        } else if (level > STARVING) {
 			float excess = level - STARVING;
 			level = STARVING;
 			partialDamage += excess * (target.HT/1000f);
