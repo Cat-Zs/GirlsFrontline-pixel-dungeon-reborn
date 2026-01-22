@@ -8,6 +8,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.CustomTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.effects.particles.FlameParticle;
+import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.watabou.noosa.Group;
+import com.watabou.noosa.Halo;
+import com.watabou.noosa.particles.Emitter;
+import com.watabou.utils.PointF;
 
 public class CoffeeRoom extends Level {
     private static final int WIDTH = 24;   // 房间的宽度（24个瓦片）
@@ -28,20 +35,20 @@ public class CoffeeRoom extends Level {
     // 硬编码的地图数组（24x24）我去大地图也太难写了
     private static final int[] MAP = {
         W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
-        W, W, Z, Z, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, D, W, W,
-        W, W, D, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
-        W, W, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
-        W, W, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
-        W, W, e, W, e, e, Z, e, e, e, Z, Z, Z, Z, e, Z, Z, e, Z, e, Z, e, W, W,
-        W, W, e, Z, e, e, e, e, e, e, e, Z, Z, Z, e, e, e, e, e, e, Z, e, W, W,
-        W, W, e, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, e, e, e, e, e, Z, e, Z, e, W, W,
-        W, W, e, Z, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, Z, e, W, W,
-        W, W, e, Z, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, Z, e, W, W,
-        W, W, e, Z, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, Z, e, W, W,
-        W, W, e, Z, e, e, e, e, e, e, e, Z, e, e, e, e, Z, e, e, e, Z, e, W, W,
-        W, W, e, Z, Z, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
-        W, W, e, Z, Z, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
-        W, W, e, Z, Z, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
+        W, W, Z, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, D, W, W,
+        W, W, D, W, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, W, e, W, W,
+        W, W, e, W, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, W, e, W, W,
+        W, W, e, W, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, W, e, W, W,
+        W, W, e, W, e, e, Z, e, e, e, Z, Z, Z, Z, e, Z, Z, e, Z, e, W, e, W, W,
+        W, W, e, W, e, e, e, e, e, e, e, Z, Z, Z, e, e, e, e, e, e, W, e, W, W,
+        W, W, e, W, e, Z, Z, Z, Z, Z, Z, Z, Z, e, e, e, e, e, Z, e, W, e, W, W,
+        W, W, e, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, e, W, W,
+        W, W, e, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, e, W, W,
+        W, W, e, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, e, W, W,
+        W, W, e, W, e, e, e, e, e, e, e, Z, e, e, e, e, Z, e, e, e, W, e, W, W,
+        W, W, e, W, Z, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, W, e, W, W,
+        W, W, e, W, W, W, D, W, W, W, W, W, W, W, W, W, W, W, W, W, W, e, W, W,
+        W, W, e, W, Z, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, W, e, W, W,
         W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
         W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
         W, W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W, W,
@@ -159,8 +166,61 @@ public class CoffeeRoom extends Level {
     protected void createItems() {
     }
 
+    @Override
+    public Group addVisuals() {
+        super.addVisuals();
+        addCoffeeRoomVisuals(this, visuals);
+        return visuals;
+    }
+
     // 初始化locked变量为true以禁用饥饿值增加
     {
         locked = true;
+    }
+
+    public static void addCoffeeRoomVisuals(Level level, Group group) {
+        // 在咖啡室的特定位置添加固定光源
+        // 可以根据需要调整这些位置
+        int[] lightPositions = {
+            // 左上角光源
+            3 * WIDTH + 4,
+            // 右上角光源
+            3 * WIDTH + 19,
+            // 中间光源
+            17 * WIDTH + 10,
+            // 左下角光源
+            11 * WIDTH + 4,
+            // 右下角光源
+            11 * WIDTH + 19
+        };
+
+        for (int pos : lightPositions) {
+            group.add(new LightSource(pos));
+        }
+    }
+
+    public static class LightSource extends Emitter {
+
+        private int pos;
+
+        public LightSource(int pos) {
+            super();
+
+            this.pos = pos;
+
+            PointF p = DungeonTilemap.tileCenterToWorld(pos);
+            pos(p.x - 1, p.y + 2, 2, 0);
+
+            pour(FlameParticle.FACTORY, 0.15f);
+
+            add(new Halo(12, 0xFFFFCC, 0.4f).point(p.x, p.y + 1));
+        }
+
+        @Override
+        public void update() {
+            if (visible = (pos < Dungeon.level.heroFOV.length && Dungeon.level.heroFOV[pos])) {
+                super.update();
+            }
+        }
     }
 }
