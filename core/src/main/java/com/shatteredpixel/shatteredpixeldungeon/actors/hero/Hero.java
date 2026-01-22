@@ -388,24 +388,7 @@ public class Hero extends Char {
     }
 
     public boolean hasTalentA( Talent talent ){
-        int need;
-        switch (TierOfTalent.Tier(talent)){
-            case 1:
-                need = 1;
-                break;
-            case 2:
-                need = 6;
-                break;
-            case 3:
-                need = 12;
-                break;
-            case 4:
-                need = 20;
-                break;
-            case 0: default:
-                need = 0;
-                break;
-        }
+        int need= Talent.tierLevelThresholds[TierOfTalent.Tier(talent)]-1;
         return Dungeon.hero.lvl>=need &&pointsInTalentA(talent) >= 0;
     }
 
@@ -447,16 +430,23 @@ public class Hero extends Char {
 	}
 
 	public int bonusTalentPoints(int tier){
+        int point;
 		if (lvl < (Talent.tierLevelThresholds[tier]-1)
 				|| (tier == 3 && subClass == HeroSubClass.NONE)
 				|| (tier == 4 && armorAbility == null)) {
-			return 0;
+			point = 0;
 		} else if (buff(PotionOfDivineInspiration.DivineInspirationTracker.class) != null
 					&& buff(PotionOfDivineInspiration.DivineInspirationTracker.class).isBoosted(tier)) {
-			return 2;
+            point = 2;
 		} else {
-			return 0;
+            point = 0;
 		}
+        int lvl = Dungeon.hero.pointsInTalent(Talent.HIGH_EDUCATION);
+        while (lvl>=tier&&tier!=4){
+            point += 1;
+            lvl-=3;
+        }
+        return point;
 	}
 	
 	public String className() {
@@ -850,7 +840,11 @@ public class Hero extends Char {
 	@Override
 	public boolean act() {
         Dungeon.GetSight();
-		
+        if (Dungeon.hero.buff(ActHPtoGetFood.LockReg.class)!=null){
+            if (ActHPtoGetFood.LockReg.lost >=Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).cooldown()){
+                Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).detach();
+            }
+        }
 		//calls to dungeon.observe will also update hero's local FOV.
 		fieldOfView = Dungeon.level.heroFOV;
 

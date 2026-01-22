@@ -881,6 +881,10 @@ public abstract class Mob extends Char {
         GLog.newLine();
         GLog.p( "%s: \"%s\" ", Messages.titleCase(name()), str );
     }
+    public void yellnormal( String str ) {
+        GLog.newLine();
+        GLog.w( "%s: \"%s\" ", Messages.titleCase(name()), str );
+    }
 
 	//returns true when a mob sees the hero, and is currently targeting them.
 	public boolean focusingHero() {

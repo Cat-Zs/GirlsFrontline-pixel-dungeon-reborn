@@ -154,6 +154,8 @@ public enum Talent {
 
 	//universal T4
 	HEROIC_ENERGY(26, 4), //See icon() and title() for special logic for this one
+    //Normal
+    HIGH_EDUCATION(26, 12),
 	//Ratmogrify T4
 	RATSISTANCE(124, 4), RATLOMACY(125, 4), RATFORCEMENTS(126, 4),
     //type561 T1

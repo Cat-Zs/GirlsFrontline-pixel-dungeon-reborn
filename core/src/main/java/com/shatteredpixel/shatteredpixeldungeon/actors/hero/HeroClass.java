@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Education;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpectralBlades;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.SpiritHawk;
@@ -104,6 +105,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKn
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.watabou.utils.DeviceCompat;
+
+import java.util.Arrays;
 
 public enum HeroClass {
 
@@ -344,21 +347,35 @@ public enum HeroClass {
 	}
 
 	public ArmorAbility[] armorAbilities(){
+        ArmorAbility[] person;
 		switch (this) {
-			case WARRIOR: default:
-				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
 			case MAGE:
-				return new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
+                person= new ArmorAbility[]{new ElementalBlast(), new WildMagic(), new WarpBeacon()};
+                break;
 			case ROGUE:
-				return new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
+                person= new ArmorAbility[]{new SmokeBomb(), new DeathMark(), new ShadowClone()};
+                break;
 			case HUNTRESS:
-				return new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
+                person= new ArmorAbility[]{new SpectralBlades(), new NaturesPower(), new SpiritHawk()};
+                break;
 			case TYPE561:
-				return new ArmorAbility[]{new Type56FourOne(), new Type56FourTwo()};
+                person= new ArmorAbility[]{new Type56FourOne(), new Type56FourTwo()};
+                break;
 			case GSH18:
-				return new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()}; // 使用战士的技能
+				person= new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()}; // 使用战士的技能
+                break;
+            case WARRIOR: default:
+                person= new ArmorAbility[]{new HeroicLeap(), new Shockwave(), new Endure()};
+                break;
+        }
+        person=add(person,new Education());
+        return person;
 	}
-	}
+    private ArmorAbility[] add(ArmorAbility[] list,ArmorAbility ability){
+        list = Arrays.copyOf(list,list.length+1);
+        list[list.length-1]=ability;
+        return list;
+    }
 
 	public String spritesheet() {
 		switch (this) {

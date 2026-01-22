@@ -170,6 +170,7 @@ public class Assets {
 		public static final String SCENES   = "messages/scenes/scenes";
 		public static final String UI       = "messages/ui/ui";
 		public static final String WINDOWS  = "messages/windows/windows";
+        public static final String MINIGAMES  = "messages/minigames/minigames";
 	}
 
 	public static class Music {

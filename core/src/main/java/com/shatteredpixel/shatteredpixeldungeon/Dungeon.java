@@ -46,7 +46,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Pasty;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.XMasSugar;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.Potion;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.Ring;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
@@ -93,6 +95,7 @@ import com.watabou.utils.SparseArray;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
 import java.util.HashSet;
 
@@ -186,12 +189,24 @@ public class Dungeon {
         WandLock = false;
         Hunger.minlevel = 0;
     }
+
+    public static ArrayList<Class> HolidayFood = new ArrayList<>(Arrays.asList(Pasty.class, XMasSugar.class)) ;
     public static void resetGenerator(){
         for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
             if (Generator.Category.FOOD.classes[j] == Food.class ) {
-                Generator.Category.FOOD.probs[j] = 4;
+                if (Dungeon.hero.heroClass==HeroClass.TYPE561) {
+                    Generator.Category.FOOD.probs[j] = 2;
+                }else {
+                    Generator.Category.FOOD.probs[j] = 4;
+                }
             }else if( Generator.Category.FOOD.classes[j] == SaltyZongzi.class){
-                Generator.Category.FOOD.probs[j] = 0;
+                if (Dungeon.hero.heroClass==HeroClass.TYPE561) {
+                    Generator.Category.FOOD.probs[j] = 2;
+                }else {
+                    Generator.Category.FOOD.probs[j] = 0;
+                }
+            }else if (HolidayFood.contains(Generator.Category.FOOD.classes[j])){
+                Generator.Category.FOOD.probs[j] =Generator.HolidayDiff(Generator.Category.FOOD.classes[j]);
             }
         }
     }
@@ -252,10 +267,6 @@ public class Dungeon {
 		Actor.clear();
 		Actor.resetNextID();
 
-        resetGenerator();
-        //按理说这种权重会变动的生成表，理应在生成器中设置成标准表，然后再进行复制的，
-        //但考虑到节日食物的生成权重会跟随日期动态变化，终归还是要有一个来到这里在创建/读取存档的时机重置
-        //重置节日食物要在创建、读取的时候修改，而重置受影响食物只需要在创建处修改，所以选择重置受影响食物
 		Random.pushGenerator( seed );
 	
 			Scroll.initLabels();
@@ -302,11 +313,6 @@ public class Dungeon {
 		GamesInProgress.selectedClass.initHero( hero );
         if(hero.heroClass==HeroClass.TYPE561) {
             Hunger.minlevel = -100;
-            for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
-                if (Generator.Category.FOOD.classes[j] == Food.class || Generator.Category.FOOD.classes[j] == SaltyZongzi.class) {
-                    Generator.Category.FOOD.probs[j] = 2;
-                }
-            }
             Buff.affect(hero, Hunger.class).satisfy(100);
         }
 	}
@@ -336,6 +342,7 @@ public class Dungeon {
 	}
 
 	public static Level newLevel(int id){
+        resetGenerator();
 		Level level;
 		switch(id){
 		case 0:
@@ -762,11 +769,6 @@ public class Dungeon {
 		hero = (Hero)bundle.get( HERO );
         if(hero.heroClass== HeroClass.TYPE561){
             Hunger.minlevel = -100;
-            for (int j = 0; j < Generator.Category.FOOD.classes.length; j++) {
-                if (Generator.Category.FOOD.classes[j] == Food.class || Generator.Category.FOOD.classes[j] == SaltyZongzi.class) {
-                    Generator.Category.FOOD.probs[j] = 2;
-                }
-            }
         }
 		depth = bundle.getInt( DEPTH );
 

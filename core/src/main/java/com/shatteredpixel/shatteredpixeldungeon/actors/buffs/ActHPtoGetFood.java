@@ -162,5 +162,24 @@ public class ActHPtoGetFood extends CounterBuff implements ActionIndicator.Actio
         {
             type = buffType.POSITIVE;
         }
+        public static float lost = 0;
+        private static final String LOST = "LOST";
+
+        @Override
+        public void detach(){
+            lost = 0;
+            super.detach();
+        }
+        @Override
+        public void restoreFromBundle(Bundle bundle) {
+            super.restoreFromBundle(bundle);
+            lost = bundle.getFloat(LOST);
+        }
+
+        @Override
+        public void storeInBundle(Bundle bundle) {
+            super.storeInBundle(bundle);
+            bundle.put(LOST, lost);
+        }
     }
 }
