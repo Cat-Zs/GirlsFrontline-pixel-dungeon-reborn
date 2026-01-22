@@ -300,7 +300,7 @@ public class WndSettings extends WndTabbed {
 			add(optBrightness);
 
 			optVisGrid = new OptionSlider(Messages.get(this, "visual_grid"),
-					Messages.get(this, "off"), Messages.get(this, "high"), -1, 2) {
+					Messages.get(this, "off"), Messages.get(this, "high"), -1, 5) {
 				@Override
 				protected void onChange() {
 					SPDSettings.visualGrid(getSelectedValue());

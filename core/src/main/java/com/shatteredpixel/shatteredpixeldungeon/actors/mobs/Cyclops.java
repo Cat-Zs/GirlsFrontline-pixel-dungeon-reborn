@@ -38,7 +38,7 @@ public class Cyclops extends Mob {
 
         HP = HT = 120;
         EXP = 17;
-        defenseSkill = 60;
+        defenseSkill = 45;
         baseSpeed = 1f;
         maxLvl = 36;
 
@@ -59,7 +59,7 @@ public class Cyclops extends Mob {
 
     @Override
     public int attackSkill( Char target ) {
-        return 60;
+        return 45;
     }
 
     @Override

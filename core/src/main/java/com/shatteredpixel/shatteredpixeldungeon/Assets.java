@@ -287,29 +287,21 @@ public class Assets {
 		};
 	}
 
-	public static class Splashes {
-		public static final String WARRIOR  = "splashes/warrior.jpg";
-		public static final String MAGE     = "splashes/mage.jpg";
-		public static final String ROGUE    = "splashes/rogue.jpg";
-		public static final String HUNTRESS = "splashes/huntress.jpg";
-		public static final String TYPE561  = "splashes/type56.jpg";
-		public static final String GSH18    = "splashes/gsh18.jpg";
-		public static final String HK416    = "splashes/hk416.jpg";
-	}
+
 
 	public static class Sprites {
 		public static final String ITEMS        = "sprites/items-export.png";
 		public static final String ITEM_ICONS   = "sprites/item_icons.png";
         // 使用environment目录中的Chess.png文件
 
-		public static final String WARRIOR  = "sprites/warrior.png";
-		public static final String MAGE     = "sprites/mage.png";
-		public static final String ROGUE    = "sprites/rogue.png";
-		public static final String HUNTRESS = "sprites/sun.png";
-		public static final String TYPE561  = "sprites/type56.png";
-		public static final String GSH18    = "sprites/gsh18.png";
-		public static final String HK416    = "sprites/hk416.png";
-		public static final String AVATARS  = "sprites/avatars.png";
+		public static final String WARRIOR  = "sprites/char/warrior.png";
+		public static final String MAGE     = "sprites/char/mage.png";
+		public static final String ROGUE    = "sprites/char/rogue.png";
+		public static final String HUNTRESS = "sprites/char/sun.png";
+		public static final String TYPE561  = "sprites/char/type56.png";
+		public static final String GSH18    = "sprites/char/gsh18.png";
+		public static final String HK416    = "sprites/char/hk416.png";
+		public static final String AVATARS  = "sprites/char/avatars.png";
 		public static final String PET      = "sprites/pet.png";
 		public static final String AMULET   = "sprites/amulet.png";
 

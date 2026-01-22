@@ -123,7 +123,7 @@ public class SPDSettings extends GameSettings {
 	}
 	
 	public static int visualGrid() {
-		return getInt( KEY_GRID, 0, -1, 2 );
+		return getInt( KEY_GRID, 0, -1, 4 );
 	}
 	
 	//Interface

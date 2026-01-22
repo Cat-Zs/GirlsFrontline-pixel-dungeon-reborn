@@ -391,26 +391,10 @@ public enum HeroClass {
 			case TYPE561:
 				return Assets.Sprites.TYPE561;
 			case GSH18:
-				return Assets.Sprites.GSH18; // 使用正确的GSH18精灵
+				return Assets.Sprites.GSH18; 
 		}
 	}
 
-	public String splashArt(){
-		switch (this) {
-			case WARRIOR: default:
-				return Assets.Splashes.WARRIOR;
-			case MAGE:
-				return Assets.Splashes.MAGE;
-			case ROGUE:
-				return Assets.Splashes.ROGUE;
-			case HUNTRESS:
-				return Assets.Splashes.HUNTRESS;
-			case TYPE561:
-				return Assets.Splashes.HUNTRESS; // 暂时使用HUNTRESS的溅落效果
-			case GSH18:
-				return Assets.Splashes.HUNTRESS; // 暂时使用HUNTRESS的溅落效果
-		}
-	}
 	
 	public String[] perks() {
 		switch (this) {
