@@ -7,6 +7,8 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.WindowTrigger;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Trigger;
+import com.shatteredpixel.shatteredpixeldungeon.minigames.BlackJack;
+import com.shatteredpixel.shatteredpixeldungeon.minigames.WndBlackJack;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -166,7 +168,17 @@ private static final int achievementButtonPos = 2*WIDTH+11;
 				});
 				curBtn.icon(Icons.get(Icons.DISPLAY));
 
-				addButton(curBtn = new RedButton("主菜单"){//mark
+                addButton(curBtn = new RedButton("21点"){
+                    @Override
+                    protected void onClick() {
+                        BlackJack.gameStart();
+                        GameScene.show(new WndBlackJack(false));
+                    }
+                });
+                curBtn.icon(Icons.get(Icons.DISPLAY));
+
+
+                addButton(curBtn = new RedButton("主菜单"){
 					@Override
 					protected void onClick() {
 						try{Dungeon.saveAll();
