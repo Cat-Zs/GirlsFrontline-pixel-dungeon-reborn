@@ -28,8 +28,10 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTitledMessage;
+import com.watabou.input.PointerEvent;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.PointerArea;
 
 import java.util.ArrayList;
 
@@ -49,7 +51,7 @@ public class ChangesWindowWithPages extends ChangesWindow {
         );
         add(pageNumberText);
 
-        // 创建翻页按钮（缩小尺寸）
+        // 创建翻页按钮（保持视觉大小不变）
         RedButton btnPrev = new RedButton("<") {
             @Override
             protected void onClick() {
@@ -59,11 +61,13 @@ public class ChangesWindowWithPages extends ChangesWindow {
                 }
             }
         };
-        btnPrev.setSize(10, 10); // 调整界面尺寸的位置
-        // 设置翻页按钮和页码文本位置（居中显示）
+        // 设置按钮视觉大小
+        btnPrev.setSize(10, 10);
+        // 设置按钮位置
         btnPrev.setPos(0, height - 10);
         add(btnPrev);
 
+        // 创建翻页按钮（保持视觉大小不变）
         RedButton btnNext = new RedButton(">") {
             @Override
             protected void onClick() {
@@ -73,10 +77,37 @@ public class ChangesWindowWithPages extends ChangesWindow {
                 }
             }
         };
-        btnNext.setSize(10, 10); // 缩小按钮尺寸
-        btnNext.setPos(width - 10, // 下一页按钮在页码右侧
-                height - 10);
+        // 设置按钮视觉大小
+        btnNext.setSize(10, 10);
+        // 设置按钮位置
+        btnNext.setPos(width - 10, height - 10);
         add(btnNext);
+
+        // 为翻页按钮创建更大的点击区域（3倍大小）
+        
+        // 为上一页按钮创建更大的点击区域（再扩大2倍）
+        PointerArea prevHotArea = new PointerArea(-55, height - 65, 120, 120) {
+            @Override
+            protected void onClick(PointerEvent event) {
+                if (page > 0) {
+                    onBackPressed();
+                    GirlsFrontlinePixelDungeon.scene().add(new ChangesWindowWithPages(new Image(iconA), title, pageContents, page - 1));
+                }
+            }
+        };
+        add(prevHotArea);
+
+        // 为下一页按钮创建更大的点击区域
+        PointerArea nextHotArea = new PointerArea(width - 65, height - 65, 120, 120) {
+            @Override
+            protected void onClick(PointerEvent event) {
+                if (page < pageContents.size() - 1) {
+                    onBackPressed();
+                    GirlsFrontlinePixelDungeon.scene().add(new ChangesWindowWithPages(new Image(iconA), title, pageContents, page + 1));
+                }
+            }
+        };
+        add(nextHotArea);
     }
 
 }

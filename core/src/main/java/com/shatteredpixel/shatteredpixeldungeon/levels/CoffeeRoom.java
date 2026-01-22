@@ -2,6 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.levels.ZeroLevelSub;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Workshop;
 import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -15,6 +16,9 @@ public class CoffeeRoom extends Level {
 
     // 定义了传送触发器的位置（左上角）
     public static final int toZeroLevelSub = TEMP_MIN * WIDTH + TEMP_MIN;
+    
+    // 定义了到Workshop的传送触发器位置（向右19格，向上1格）
+    public static final int toWorkshop = (TEMP_MIN - 1) * WIDTH + (TEMP_MIN + 19);
 
     // 地形类型常量
     private static final int W = Terrain.WALL;
@@ -25,10 +29,10 @@ public class CoffeeRoom extends Level {
     private static final int[] MAP = {
         W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W,
         W, W, Z, Z, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, W, D, W, W,
-        Z, Z, D, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
+        W, W, D, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
         W, W, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
         W, W, e, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, Z, e, W, W,
-        W, W, e, e, e, e, Z, e, e, e, Z, Z, Z, Z, e, Z, Z, e, Z, e, Z, e, W, W,
+        W, W, e, W, e, e, Z, e, e, e, Z, Z, Z, Z, e, Z, Z, e, Z, e, Z, e, W, W,
         W, W, e, Z, e, e, e, e, e, e, e, Z, Z, Z, e, e, e, e, e, e, Z, e, W, W,
         W, W, e, Z, e, Z, Z, Z, Z, Z, Z, Z, Z, e, e, e, e, e, Z, e, Z, e, W, W,
         W, W, e, Z, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, e, Z, e, W, W,
@@ -71,6 +75,9 @@ public class CoffeeRoom extends Level {
 
         // 添加向上的楼梯(连接回ZeroLevelSub)
         placeTrigger(new Teleporter().create(toZeroLevelSub, ZeroLevelSub.toCoffeeRoom, 1000));
+        
+        // 添加到Workshop的传送触发器
+        placeTrigger(new Teleporter().create(toWorkshop, Workshop.toCoffeeRoom, 4000));
 
         // 添加底部覆盖贴图
         CustomTilemap customBottomTile = new CustomBottomTile();
@@ -155,26 +162,5 @@ public class CoffeeRoom extends Level {
     // 初始化locked变量为true以禁用饥饿值增加
     {
         locked = true;
-    }
-
-    // 重写updateFieldOfView方法，实现永久视野
-    @Override
-    public void updateFieldOfView(Char c, boolean[] fieldOfView) {
-        // 对于CoffeeRoom，设置所有单元格为可见
-        for (int i = 0; i < fieldOfView.length; i++) {
-            fieldOfView[i] = true;
-        }
-
-        // 同时将所有单元格标记为已映射和已访问，确保完全可见
-        if (mapped != null) {
-            for (int i = 0; i < mapped.length; i++) {
-                mapped[i] = true;
-            }
-        }
-        if (visited != null) {
-            for (int i = 0; i < visited.length; i++) {
-                visited[i] = true;
-            }
-        }
     }
 }

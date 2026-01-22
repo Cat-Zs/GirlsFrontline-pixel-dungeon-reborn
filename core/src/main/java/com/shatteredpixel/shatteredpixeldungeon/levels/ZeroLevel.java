@@ -40,23 +40,23 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 
 // 零层(ZeroLevel) - 游戏的起始房间或特殊房间
 public class ZeroLevel extends Level {
-	// 房间尺寸常量，宽16格，高10格
+	// 房间尺寸常量，宽16格，高12格
 	private static final int WIDTH  = 16;
-	private static final int HEIGHT = 11;
+	private static final int HEIGHT = 12;
 	// 临时最小和最大位置常量，用于定位房间内的元素
 	private static final int TEMP_MIN = 2;
 	private static final int TEMP_MAX = 9;
 
 	// 定义了传送触发器的位置
-	public static final int toZeroLevelSub = 9*WIDTH+13;
+	public static final int toZeroLevelSub = 10*WIDTH+13;
 
 	// 定义了六个电脑地块的位置
-	private static final int computerPos0 = 6*WIDTH+6;
-	private static final int computerPos1 = 6*WIDTH+7;
-	private static final int computerPos2 = 6*WIDTH+8;
-	private static final int computerPos3 = 7*WIDTH+6;
-	private static final int computerPos4 = 7*WIDTH+7;
-	private static final int computerPos5 = 7*WIDTH+8;
+	private static final int computerPos0 = 7*WIDTH+6;
+	private static final int computerPos1 = 7*WIDTH+7;
+	private static final int computerPos2 = 7*WIDTH+8;
+	private static final int computerPos3 = 8*WIDTH+6;
+	private static final int computerPos4 = 8*WIDTH+7;
+	private static final int computerPos5 = 8*WIDTH+8;
 	// 定义了消毒通道的位置
 	private static final int decontaminationCorridorPos = 5*WIDTH+13;
 	// 定义了成就按钮的位置（消毒通道上方一格向左移动两格，再向上移动两格）
@@ -78,6 +78,7 @@ private static final int achievementButtonPos = 2*WIDTH+11;
 		W, e, e, Z, Z, Z, Z, Z, e, e, e, e, Z, Z, Z, W,
 		W, e, e, e, e, e, e, e, e, e, e, e, e, Z, Z, W,
 		W, e, e, e, e, e, e, e, e, e, e, e, e, Z, Z, W,
+		W, e, e, e, e, e, e, e, e, e, e, e, e, e, e, W,
 		W, e, e, e, Z, Z, C, C, C, Z, Z, e, e, e, e, W,
 		W, e, e, e, e, e, C, C, C, e, e, e, e, e, e, W,
 		W, Z, Z, e, e, e, e, e, e, e, e, e, e, e, Z, W,
