@@ -51,6 +51,7 @@ public class ChessScene extends PixelScene {
 	private boolean whiteTurn;
 	private int playerKing;
 	private int aiKing;
+	private boolean virtualMove = false;
 	private boolean aiEnabled = false;
 	// 选择状态
 	private int selectedRow = -1;
@@ -462,6 +463,8 @@ public class ChessScene extends PixelScene {
 	private void CommonMove(int fromRow, int fromCol, int toRow, int toCol){
 		// 特殊规则 将杀(游戏结束)
 		if (gameBoard[toRow][toCol] == (whiteTurn? BLACK_KING: WHITE_KING)){
+			// 这个不应被执行
+			if (virtualMove){throw new RuntimeException("Error when virtualMove kill king");}
 			// 暂停游戏并展示胜者
 			gameRunning = false;
 			addToFront(new WndWinner((whiteTurn? WHITE_KING: BLACK_KING)));
@@ -492,14 +495,18 @@ public class ChessScene extends PixelScene {
 
 		// 结束回合
 		whiteTurn = !whiteTurn;
-		clearSelection();
-		updateChessButtons();
+		if (!virtualMove){
+			clearSelection();
+			updateChessButtons();
+		}
 	}
 
 	// 兵普通移动和吃子
 	private void PawnMove(int fromRow, int fromCol, int toRow, int toCol){
 		// 特殊规则 将杀(游戏结束)
 		if (gameBoard[toRow][toCol] == (whiteTurn? BLACK_KING: WHITE_KING)){
+			// 这个不应被执行
+			if (virtualMove){throw new RuntimeException("Error when virtualMove kill king");}
 			// 暂停游戏并展示胜者
 			gameRunning = false;
 			addToFront(new WndWinner((whiteTurn? WHITE_KING: BLACK_KING)));
@@ -547,8 +554,10 @@ public class ChessScene extends PixelScene {
 			whiteTurn = !whiteTurn;
 		}
 
-		clearSelection();
-		updateChessButtons();
+		if (!virtualMove){
+			clearSelection();
+			updateChessButtons();
+		}
 	}
 
 	// 检查移动路径是否畅通
@@ -960,7 +969,7 @@ public class ChessScene extends PixelScene {
 	}
 
 	private boolean isAiTurn(){
-		return aiEnabled && ((whiteTurn && aiKing==WHITE_KING) || (!whiteTurn && aiKing==BLACK_KING));
+		return aiEnabled && (virtualMove || (whiteTurn && aiKing==WHITE_KING) || (!whiteTurn && aiKing==BLACK_KING));
 	}
 
 	@Override
@@ -969,21 +978,13 @@ public class ChessScene extends PixelScene {
 		
 		// AI行动
 		if(gameRunning && isAiTurn()){
-			// 初始只有无效行动
-			Action action = new Action(-1, -1, -1, -1);
+			// 寻找最优行动 思考深度为4 //mark
+			virtualMove = true;
+			Action action = findBestAction(4);
+			virtualMove = false;
 
-			// 遍历所有移动 只留下"最好"的那一个
-			for (int fromRow = 0; fromRow < BOARD_HEIGHT; fromRow++) {
-			for (int fromCol = 0; fromCol < BOARD_WIDTH ; fromCol++) {
-				// 只考虑AI自己的棋子
-				if (belongsToCurrentSide(gameBoard[fromRow][fromCol])) {
-					for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
-					for (int toCol = 0; toCol < BOARD_WIDTH ; toCol++) {
-						action = action.selectIfBatter(new Action(fromRow, fromCol, toRow, toCol));
-					}
-					}
-				}
-			}
+			if (action.score == 0.0f){
+				action = getRandomAction();
 			}
 			
 			// 尝试执行 若失败就暂停游戏
@@ -991,6 +992,56 @@ public class ChessScene extends PixelScene {
 				gameRunning = false;
 			}
 		}
+	}
+
+	private Action getRandomAction(){
+		List<Action> actions = new ArrayList();
+
+		for (int fromRow = 0; fromRow < BOARD_HEIGHT; fromRow++) {
+		for (int fromCol = 0; fromCol < BOARD_WIDTH ; fromCol++) {
+			if (belongsToCurrentSide(gameBoard[fromRow][fromCol])) {
+				for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
+				for (int toCol = 0; toCol < BOARD_WIDTH ; toCol++) {
+					Action newAction = new Action(fromRow, fromCol, toRow, toCol, -1);
+					if (newAction.act != null){actions.add(newAction);}
+				}
+				}
+			}
+		}
+		}
+		
+		// 如果有有效的行动，随机选择一个
+		if (!actions.isEmpty()) {
+			return Random.element(actions);
+		}
+
+		return new Action(-1, -1, -1, -1, -1);
+	}
+
+	private Action findBestAction(int deepth){
+		// 这个分支理应不被执行
+		if (deepth <= 0 || !gameRunning){
+			throw new RuntimeException("Error when chess ai deepThinking");
+		}
+
+		// 初始只有无效行动
+		Action action = new Action(-1, -1, -1, -1, deepth);
+
+		// 遍历所有移动 只留下"最好"的那一个
+		for (int fromRow = 0; fromRow < BOARD_HEIGHT; fromRow++) {
+		for (int fromCol = 0; fromCol < BOARD_WIDTH ; fromCol++) {
+			// 只考虑AI自己的棋子
+			if (belongsToCurrentSide(gameBoard[fromRow][fromCol])) {
+				for (int toRow = 0; toRow < BOARD_HEIGHT; toRow++) {
+				for (int toCol = 0; toCol < BOARD_WIDTH ; toCol++) {
+					action = action.selectIfBatter(new Action(fromRow, fromCol, toRow, toCol, deepth));
+				}
+				}
+			}
+		}
+		}
+		
+		return action;
 	}
 
 	private class Action{
@@ -1002,25 +1053,43 @@ public class ChessScene extends PixelScene {
 		private int toRow;
 		private int toCol;
 		private float score;
-		private Runnable action;
+		private Runnable act;
 
-		public Action(int fromRow, int fromCol, int toRow, int toCol){
+		public Action(int fromRow, int fromCol, int toRow, int toCol, int deepth){
 			this.fromRow = fromRow;
 			this.fromCol = fromCol;
 			this.toRow   = toRow;
 			this.toCol   = toCol;
-			
-			action = GetValidMove(fromRow, fromCol, toRow, toCol);
 
-			if (action == null){
+			act = GetValidMove(fromRow, fromCol, toRow, toCol);
+
+			if (act == null){
 				score = SCORE_NO_ACTION;
-			}else{
-				score = getScore(fromRow, fromCol, toRow, toCol);
+				return;
 			}
+
+			score = getScore(fromRow, fromCol, toRow, toCol);//mark
+			if (score == SCORE_KILL_KING || deepth <= 1){
+				return;
+			}
+
+			BoardRecord boardRecord = new BoardRecord(ChessScene.this);
+			act.run();
+			
+			Action action = findBestAction(deepth-1);//mark
+			if (action.score >= SCORE_KILL_KING){
+				score = SCORE_NO_ACTION;
+			}else if (action.score <= SCORE_NO_ACTION){
+				score = SCORE_KILL_KING;
+			}else{
+				score = score - action.score;
+			}
+			
+			boardRecord.pushTo(ChessScene.this);
 		}
 
 		public Action selectIfBatter(Action other){
-			if (other.score > score){
+			if (act == null || other.score > score){
 				return other;
 			}
 
@@ -1028,8 +1097,8 @@ public class ChessScene extends PixelScene {
 		}
 
 		public boolean tryUse(){
-			if (action != null) {
-				action.run();
+			if (act != null) {
+				act.run();
 				return true;
 			}
 
@@ -1059,6 +1128,51 @@ public class ChessScene extends PixelScene {
 				default:
 					return 0.0f;
 			}
+		}
+	}
+
+	// 记录局面
+	private static class BoardRecord{
+		private int[][] gameBoard = new int[BOARD_HEIGHT][BOARD_WIDTH];
+		private boolean gameRunning;
+		private boolean whiteTurn;
+		private int     passbyPawnRow;
+		private int     passbyPawnCol;
+		private boolean canCastleRow0Col0;
+		private boolean canCastleRow0Col7;
+		private boolean canCastleRow7Col0;
+		private boolean canCastleRow7Col7;
+
+		public BoardRecord(ChessScene scene){
+			for (int row = 0; row < BOARD_HEIGHT; row++) {
+				System.arraycopy(scene.gameBoard[row],0, gameBoard[row],0, BOARD_WIDTH);
+			}
+
+			gameRunning = scene.gameRunning;
+			whiteTurn   = scene.whiteTurn  ;
+
+			passbyPawnRow     = scene.passbyPawnRow    ;
+			passbyPawnCol     = scene.passbyPawnCol    ;
+			canCastleRow0Col0 = scene.canCastleRow0Col0;
+			canCastleRow0Col7 = scene.canCastleRow0Col7;
+			canCastleRow7Col0 = scene.canCastleRow7Col0;
+			canCastleRow7Col7 = scene.canCastleRow7Col7;
+		}
+
+		public void pushTo(ChessScene scene){
+			for (int row = 0; row < BOARD_HEIGHT; row++) {
+				System.arraycopy(gameBoard[row],0, scene.gameBoard[row],0, BOARD_WIDTH);
+			}
+
+			scene.gameRunning = gameRunning;
+			scene.whiteTurn   = whiteTurn  ;
+
+			scene.passbyPawnRow     = passbyPawnRow    ;
+			scene.passbyPawnCol     = passbyPawnCol    ;
+			scene.canCastleRow0Col0 = canCastleRow0Col0;
+			scene.canCastleRow0Col7 = canCastleRow0Col7;
+			scene.canCastleRow7Col0 = canCastleRow7Col0;
+			scene.canCastleRow7Col7 = canCastleRow7Col7;
 		}
 	}
 
