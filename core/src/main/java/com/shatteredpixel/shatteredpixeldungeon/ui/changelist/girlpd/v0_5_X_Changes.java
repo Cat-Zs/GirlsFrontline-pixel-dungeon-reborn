@@ -53,53 +53,150 @@ public class v0_5_X_Changes {
         changes.hardlight( CharSprite.POSITIVE );
         changeInfos.add(changes);
 
-        changes.addButton( new ChangeButton(Icons.SETTINGS.get(), "增强-优化体验",
-        "_-_ 提高了排行榜可被显示的最大记录为_30_\n（原最大记录为11），增加了排行榜的翻页功能。\n\n" +
-        "_-_ 交换了主界面中_进入游戏_和_进入零层_的交互按钮位置。\n\n"+
-        "_-_ 启用_种子系统_后，将会在排行榜标注显示出来。\n\n" +
-        "_-_ 创建存档的角色选择界面单页上限调整为_4个_，添加了_翻页功能_，并优化了交互按钮的显示。\n\n"+
-        "_-_ 修复了角色死亡后，_战役失败_不被显示的bug。\n\n"+
-        "_-_ 修复了pc端_角色点击交换按钮_时，角色_异常移动_的bug。\n\n"+
-        "_-_ 修复了地图编辑器中_图块过大_的问题。\n\n"+
-		"_-_ 地图编辑器现在总是更新视野，而非一团黑色。\n\n"+
-        "_-_ 更改了部分文本错误或优化了不合理的内容。\n"));
+        Image gun561 = new Image(HeroSprite.avatar(HeroClass.TYPE561, 5));
+		gun561.scale.set(0.75f);
+		changes.addButton( new ChangeButton(gun561, "56-1式",
+        "_-_ 在本次更新中56-1式角色获得了_专属的护甲技能_\n" +
+        "_-_ 56-1式角色将不再必须回到5层从FNC处获取护甲技能了！\n" +
+        "_-_ 专属护甲技能详情请前往游戏内阅读。"
+         ));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.RING_DIAMOND, null), "战术瞄准镜",
+        "_-_ 增强了_战术瞄准镜_对攻击_速度极慢_的武器的增幅效果。\n" +
+        "_-_ 这意味着，那些需要极长回合才能攻击一次的_狙击枪类武器_会从中获取更高的_攻击速度_收益。"
+        ));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+		changes.hardlight( CharSprite.WARNING );
+		changeInfos.add(changes);
+
+        ArrayList<String> pageContents1 = new ArrayList<>();
+        /*请帮忙将以下的更新公告贴图改为波波沙的贴图
+        Image(Assets.Sprites.TROLL, 0 ,0 ,12 ,21);
+        imageTemp.scale.x=0.8f;
+        imageTemp.scale.y=0.8f;
+        谢谢你*/
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.IRON_KEY, null), "游戏优化", pageContents1));
+        pageContents1.add(
+            "_-_ 优化了更新公告的呈现方式，以后冗杂的_小项优化内容_将以此_页面形式_呈现\n" +
+            "_-_ _节日彩蛋敌人_加入了_敌人生成器_，目前尚未进行专类分页\n"+
+            "_-_ 修复了_感知符石_不能猜两次的BUG\n"+
+            "_-_ 修复了未鉴定的需要选择目标的磁盘在首次使用时会产生_额外消耗_的BUG\n"+ 
+            "_-_ 为所有_提供护甲的武器_加入了实时_属性显示_文本"
+        );
+        pageContents1.add(
+            "_-_ _测试模式_的道具_测试书_内容得到了丰富，玩家可以_更加自由_的在测试模式下调节一些不易调节的属性数值。\n" +
+            "_-_ 在_手机版_加入独立_退出游戏按钮_，玩家可以不必使用手机的_返回按钮_来非正式的退出游戏了。(此举为避免一些极端情况下游戏没能正常保存而产生问题）\n" +
+            "_-_ 优化了_角色选择界面_，可以使用翻页按钮切换角色栏目，避免界面拥挤。\n"+
+            "_-_ 修复了作为_主脑护卫_的铁血BOSS_攻击特效_错误的BUG\n"+
+            "_-_ 修复了_空降妖精_击败BOSS无法获得升级的BUG"
+        );
+        pageContents1.add(
+            "_-_ 挑战_精英强敌_不再会令_切割者_初始处于敌对状态。\n" +
+            "_-_ _二选一水晶补给箱_逻辑优化，在获取了所有的遗物后，补给箱将不会_同时刷新_两个瞄准镜宝箱。\n" +
+            "_-_ 修复了_空降妖精_在不该出现的地方被刷新出的BUG。\n"+
+            "_-_ 改动了UMP45的_受击音效_（鼻梁骨警告）。\n"+
+            "_-_ 修复了出售给商人的物品与_商人重叠_而无法购回的BUG。"
+        );
+        pageContents1.add(
+            "_-_ 修复了部分情况下商店有空地格但_出售失败_的问题。\n" +
+            "_-_ 修复了因为消耗物品时机改动而导致的，_嬗变磁盘_可以_嬗变自身_的BUG。\n" +
+            "_-_ 修复了UMP45的2层天赋_+2 刻印转移_总保留护甲刻印而无法_自选刻印_的BUG。\n"+
+            "_-_ 优化了测试模式的_地形编辑器_，现在会自动更新改动_地格的视野_。\n"+
+            "_-_ 修复了玩家死亡导致游戏结束后，_不显示GAME OVER标志_的BUG"
+        );
+        pageContents1.add(
+            "_-_ 修复了部分极端情况下，特效_大量堆叠_造成崩溃的BUG。\n" +
+            "_-_ 修复了PC版_移动按键_在部分情况下实际功能错乱的BUG。\n" +
+            "_-_ 在_设置界面_加入了_切换UI风格_的按钮。\n"+
+            "_-_ _启用种子_进行的游戏将在_排行榜_有标记以_区分_。\n"+
+            "_-_ 在角色属性界面增加了_复制按钮_，以便捷的_复制种子_。"
+        );
+        pageContents1.add(
+            "_-_ 新增了装备同类瞄准镜，将显示_连携升级_提供的属性。\n" +
+            "_-_ 扩充了_排行榜_可显示查看的游戏记录上限，为30条，可翻页进行查阅。\n" +
+            "_-_ _诅咒的财富瞄准镜_也会掉落额外物品，但概率更低，甚至会掉落负等级的物品。" 
+        );
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY,null), "水晶房间",
+        "_-_ 对需要三把钥匙才能完全开启的_水晶房间_的六选三变体进行了优化。\n"+
+        "_-_ 只有玩家在_鉴定了_经验或嬗变时，对应的最后一个房间才必然刷新其，否则将为随机刷新。"
+        ));
+
+        Image as = new Image(Assets.ACYCLOPS, 0 ,0 ,16 ,19);
+        changes.addButton(new ChangeButton(as,"第六作战区域怪组",
+            "_-_ 调整了_26-29层_部分敌人不合理的掉落物获取限制规则。\n"+
+            "_-_ _达克堤利_掉落等级上限提高，击败可掉落_随机磁盘_。\n"+
+            "_-_ _九头蛇_可获取经验上限提高。\n"+
+            "_-_ _独眼巨人A_掉落等级上限提高，击败可掉落_随机药水_（不包括治疗）。\n"+
+            "_-_ 想要快速达到_40级_，玩家依然需要依靠_击杀提丰_获取高额经验。"
+        ));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
         changes.hardlight( Window.TITLE_COLOR );
         changeInfos.add(changes);
 
-        Image gun561 = new Image(HeroSprite.avatar(HeroClass.TYPE561, 5));
-		gun561.scale.set(0.75f);
-		changes.addButton( new ChangeButton(gun561, "角色重置：56-1式",
-        "_-_ 重置561角色，并且初步完善护甲技能。\n" +
-        "_-_ 重置type 56-1武器的榴弹伤害计算，现在榴弹伤害与等级相关。\n" +
-        "_-_ 重置袖珍本的功能。\n"+
-        "_-_ _描述不够详细，内容还需补充_\n" ));
+        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON), "0层：格里芬基地",
+			"_-_ 修缮了0层的_格里芬基地_现在成为了拥有实际功能的区域了。\n" +
+			"_-_ _前进营地_区域可以直接进入游戏，也可查看成就与排行榜。\n" +
+			"_-_ _404安全屋_暂无实际功能，现阶段仅为实装前代作者未实装的区域。\n"+
+			"_-_ _咖啡厅_暂无实际功能，未来将加入可互动的NPC。\n\n"+
+			"_-_ 不要让RFB知道前进营地的_阀门控制台_可以用来_打电动_！"
+		));
 
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_BEACON, null), "完善0层",
-        "_-_ 完善前进营地，绘制了贴图，并且将主界面的部分功能复现至前进营地中。\n" +
-        "_-_ 在前进营地中，加入了简单小游戏。\n\n" +
-        "_-_ 在0层中优化了交互按钮、可以直接重置0层存档以防止未经测试的功能导致其卡死。\n" +
-        "_-_ 完善圣诞节彩蛋开启条件。\n\n" +
-        "_-_ 增加了串联层格里芬走廊,但暂时没有绘制贴图。\n" +
-        "_-_ 加入了原049南希的404小屋。\n" +
-        "_-_ 加入了咖啡厅，但功能尚未完善。\n"));
+        ArrayList<String> pageContents = new ArrayList<>();
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.IRON_KEY, null), "0层基地指南", pageContents));
+        pageContents.add(
+            "_-_ 点击主页面_返回地表_将进入0层基地，返回地表将在第一次带_获救的M4A1_从1层上楼解锁\n"+
+            "_-_ 若遇见0层基地_背景未刷新_的问题（通常出现在旧版本创建的0层存档被带到了新版本），需点击右上角菜单_重置楼层_，而后重新进入\n"+ 
+            "_-_ _重置楼层_按钮同样可以用于应对在0层基地中因任何未知原因卡死但未崩溃的情况"
+        );
+        pageContents.add(
+            "_-_ 通过点击_实时转播终端_可以查看_排行榜_与_成就_。\n" +
+            "_-_ 通过点击_消毒通道_可以_进入游戏存档_。\n" +
+            "_-_ 通过点击_先进阀门控制台_可以_返回主页面_。"
+        );
+        pageContents.add(
+            "_-_ 0层基地开放了多个房间已供探索，但大多数暂无实际功能。\n" +
+            "_-_ 通过点击FNC可以选择开启节日彩蛋模式，未来将加入更多节日彩蛋。\n" +
+            "_-_ _先进阀门控制台_的电脑看起来很适合_打电动_……\n"
+        );
+
+        Image gm = new Image(Assets.Sprites.GOLYATFACTORY, 0 ,0 ,31 ,31);
+        gm.scale.x=0.6f;
+        gm.scale.y=0.6f;
+        changes.addButton(new ChangeButton(gm, "歌利亚工厂", 
+        "_-_ 加入了新敌人_歌利亚工厂_，将在_8-9层_随机刷新，击败后掉落随机药水（概率为治疗）。\n" +
+        "_-_ 歌利亚工厂没有主动攻击手段，但在遇敌后将持续_制造歌利亚_。\n"+
+        "_-_ 歌利亚工厂被击败后，所有由其制造的歌利亚将_同步死亡_。\n\n"+
+        "_-_ 放轻松，歌利亚工厂制造的歌利亚_大小不一_是正常情况。"
+        ));
+
         AgentSprite.AgentSpriteRe agent = new AgentSprite.AgentSpriteRe();
         agent.scale.set(PixelScene.align(0.6f));
-        changes.addButton(new ChangeButton(agent, "贴图改动",
-        "_-_ 加入代理人贴图（原贴图为破碎暗影之拳）。\n"+
-        "_-_ 将_歌莉娅工厂_生产的歌莉娅大小改为_随机_但数值不会改变。\n"+
-        "_-_ 优化了pc端光标贴图使其更加少前化。\n"+
-        "_-_ 绘制了新的UI界面，现在可以自由切换UI风格。\n"));
+        changes.addButton(new ChangeButton(agent, "代理人",
+        "_-_ 加入了敌人_代理人_作为主脑可呼叫护卫的其中之一。\n"+
+        "_-_ 代理人替换了_黑暗之拳_，但在未来将获得全新的战斗方式和能力\n\n"+
+        "_-_ 她刚刚是不是_眨眼了_？"
+        ));
 
-		changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
+        Image tp = new Image(new TyphoonSprite.TyphoonSpriteRe());
+        tp.scale.set(PixelScene.align(0.30f));
+        changes.addButton( new ChangeButton(tp, "弹道测算",
+            "_-_ 为人形安装了弹道测算装置，当你被高能武器瞄准时会_提示其弹道_。\n"+
+            "_-_ 这意味着，玩家将更不易被_提丰_类敌人在_视野外斩杀_。\n\n"+
+            "_-_ 若未来加入了更多此类敌人，此能力将同步更新。"
+        ));
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
 		changes.hardlight( CharSprite.NEGATIVE );
 		changeInfos.add(changes);
 
-		changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "削弱-平衡性调整",
-        "_-_ 削弱了_水晶房间_的奖励：如经验药水和嬗变磁盘已被鉴定；则不会同时出现在渐进水晶房内。\n\n" +
-        "_-_ 将空降妖精的_自然生成_权重改为0，仅能通过_嬗变和击败行裁者概率获得_。\n\n" +
-        "_-_ _提丰_瞄准时，会加入瞄准路径的标记，以防止玩家在黑暗挑战中被莫名其妙秒杀。\n\n"));
+        Image ac = new Image(Assets.Sprites.BRUTE, 0 ,0 ,15 ,18);
+        changes.addButton(new ChangeButton(ac,"烈焰精英",
+            "_-_ 削弱了_烈焰精英_类敌人的点燃能力，烈焰精英将不能点燃站在水面上的单位。\n"+
+            "_-_ 同时，当_烈焰精英_在_水面上_被击败时，其不再会_点燃周围_。"
+        ));
     }
 
 	public static void add_0_5_6_Changes( ArrayList<ChangeInfo> changeInfos ){
@@ -147,7 +244,7 @@ public class v0_5_X_Changes {
         Image gm = new Image(Assets.Sprites.MANTI, 0 ,0 ,48 ,40);
         gm.scale.x=0.5f;
         gm.scale.y=0.5f;
-        changes.addButton(new ChangeButton(gm, "蝎甲兽加强", 
+        changes.addButton(new ChangeButton(gm, "蝎甲兽", 
         "_-_ 敌人_蝎甲兽_的生命值上限提高，且对单次高额伤害获得伤害阈值。\n" +
 		"_-_ 这意味着蝎甲兽将强制性需要多次攻击才能击败。"
 		));
@@ -196,6 +293,7 @@ public class v0_5_X_Changes {
 		changes = new ChangeInfo("0.5.6-A", false, null);
         changes.hardlight( CharSprite.WARNING );
         changeInfos.add(changes);
+
         ArrayList<String> pageContents = new ArrayList<>();
         pageContents.add(
             "_-_ 优化小版本的版本号在更新界面的显示。\n" +
@@ -398,6 +496,7 @@ public class v0_5_X_Changes {
         	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，索敌精英将不能越过单位直接攻击玩家。\n"+
         	"_-_ 这意味着现在不会在被围困时被_索敌精英_类敌人从远处直接攻击到了。"
         ));
+
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MACCOL,null), "大麦味可乐",
         "_-_ _大麦味可乐_重新回到了游戏！\n"+
         "_-_ 现在商店中的_压缩饼干_将有概率变为_大麦味可乐_！"
