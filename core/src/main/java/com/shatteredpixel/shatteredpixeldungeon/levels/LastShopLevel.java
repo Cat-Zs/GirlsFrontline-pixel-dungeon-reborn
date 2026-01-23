@@ -1,6 +1,8 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -35,12 +37,16 @@ public class LastShopLevel extends Level {
 
     @Override
     public String tilesTex() {
-        return Assets.Environment.TILES_HALLS;
+        return Dungeon.isChallenged(Challenges.STRONGER_BOSSES)?
+                Assets.Environment.TILES_HALLS:
+                Assets.Environment.TILES_CITY;
     }
 
     @Override
     public String waterTex() {
-        return Assets.Environment.WATER_HALLS;
+        return Dungeon.isChallenged(Challenges.STRONGER_BOSSES)?
+                Assets.Environment.WATER_HALLS:
+                Assets.Environment.WATER_CITY;
     }
 
     @Override
