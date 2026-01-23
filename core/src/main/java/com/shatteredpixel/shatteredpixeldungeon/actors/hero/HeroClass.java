@@ -76,6 +76,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.bags.MagicalHolster;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.PotionBandolier;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.ScrollHolder;
 import com.shatteredpixel.shatteredpixeldungeon.items.bags.VelvetPouch;
+import com.shatteredpixel.shatteredpixeldungeon.items.bombs.TestBomb;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
@@ -150,7 +151,7 @@ public enum HeroClass {
 			CustomWeapon customWeapon = new CustomWeapon();
 			customWeapon.adjustStatus();
 			customWeapon.identify().collect();
-			
+			new TestBomb().quantity(100).collect();
 			new TestBag().collect();
             new debugBook().collect();
             

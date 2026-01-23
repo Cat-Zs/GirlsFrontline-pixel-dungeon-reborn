@@ -63,9 +63,11 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbili
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Ghoul;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Monk;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.ImmortalShieldAffecter;
 import com.shatteredpixel.shatteredpixeldungeon.custom.utils.Constants;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
@@ -125,6 +127,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.SpiritBow;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.DMR.AK47;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ShootGun;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
@@ -678,10 +681,12 @@ public class Hero extends Char {
             int baseRoll = 1+2*Dungeon.hero.pointsInTalent(Talent.Type56_21V3);
             dmg += Random.Int(baseRoll*tier);
         }
-        Hunger hunger = Dungeon.hero.buff(Hunger.class);
-        if (hunger!=null){
-            if (!hunger.isStarving()){
-                dmg= Math.round(dmg*dmgMul());
+        if (Dungeon.hero.subClass==HeroSubClass.GUN_MASTER) {
+            Hunger hunger = Dungeon.hero.buff(Hunger.class);
+            if (hunger != null) {
+                if (!hunger.isStarving()) {
+                    dmg = Math.round(dmg * dmgMul());
+                }
             }
         }
 		if (dmg < 0) dmg = 0;
@@ -1312,7 +1317,7 @@ public class Hero extends Char {
                     public void call() {
                         GameScene.show(
                                 new WndOptions(new ElpheltSprite(),
-                                        Messages.titleCase(Messages.get(Elphelt.class, "name", new Object[0])),
+                                        Messages.titleCase(Messages.get(Elphelt.class, "name")),
                                         Messages.get(Elphelt.class, "pick_warn"),
                                         Messages.get(Elphelt.class, "yes"),
                                         Messages.get(Elphelt.class, "no")) {
