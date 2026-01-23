@@ -232,7 +232,8 @@ public class Dungeon {
 	public static int gold;
 	public static int energy;
     //public static boolean ExtractSummoned;提取升级是否生成的计数
-	
+
+    public static int RollTimes      = 0;
 	public static HashSet<Integer> chapters;
 
 	public static SparseArray<ArrayList<Item>> droppedItems;
@@ -593,7 +594,7 @@ public class Dungeon {
     private static final String NOTESAVEA       = "NOTESAVEA";
     private static final String NOTESAVEB       = "NOTESAVEB";
     private static final String LOCKXMAS       = "LOCKXMAS";
-	
+    private static final String ROLLTIMES       = "ROLLTIMES";
 	public static void saveGame( int save ) {
 		try {
 			Bundle bundle = new Bundle();
@@ -607,7 +608,7 @@ public class Dungeon {
 			bundle.put( MOBS_TO_CHAMPION, mobsToChampion );
 			bundle.put( HERO, hero );
 			bundle.put( DEPTH, depth );
-
+            bundle.put( ROLLTIMES, RollTimes);
             int countA = 0;
             Class ItemToSave[]= new Class[itemAOfSave.size()];
             for(Class i :itemAOfSave){
@@ -728,7 +729,7 @@ public class Dungeon {
 		SummonId = bundle.getInt( SUMMON_ID );
         SUBId   = bundle.getInt( SUB_ID );
 		version = bundle.getInt( VERSION );
-
+        RollTimes = bundle.getInt( ROLLTIMES );
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
 
         itemAOfSave = new ArrayList<>();

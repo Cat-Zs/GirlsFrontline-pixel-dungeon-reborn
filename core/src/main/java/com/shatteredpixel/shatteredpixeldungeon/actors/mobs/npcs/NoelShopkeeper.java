@@ -46,25 +46,7 @@ public class NoelShopkeeper extends ImpShopkeeper {
         turnsSinceHarmed = -1;
         properties.add(Property.IMMOVABLE);
 	}
-	
-	private boolean seenBefore       = false;
-	public static final int RollNeed = 1200;
-    public static int RollTimes      = 0;
-    public static final int PlayNeed = 600;
 
-	@Override
-	protected boolean act() {
-		if (!seenBefore && Dungeon.level.heroFOV[pos]) {
-			yellgood( Messages.get(this, "greetings", Dungeon.hero.name() ) );
-			seenBefore = true;
-		}
-		
-		return super.act();
-	}
-
-    public String WndInfo(){
-        return Messages.get(this, "wndinfo");
-    }
     @Override
     public boolean interact(Char c) {
         if (c != Dungeon.hero) {
@@ -75,10 +57,9 @@ public class NoelShopkeeper extends ImpShopkeeper {
             public void call() {
                 NoelShopkeeper noelShopkeeper = new NoelShopkeeper();
                 String[] options = new String[3];
-                int maxLen = PixelScene.landscape() ? 30 : 25;
                 int i = 0;
                 options[i++] = Messages.get(noelShopkeeper, "sell");
-                options[i++] = Messages.get(noelShopkeeper, "roll", NoelShopkeeper.RollNeed *(NoelShopkeeper.RollTimes +1));
+                options[i++] = Messages.get(noelShopkeeper, "roll", NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1));
                 options[i++] = Messages.get(noelShopkeeper, "play");
 
                 GameScene.show(new WndOptions(noelShopkeeper.sprite(), Messages.titleCase(noelShopkeeper.name()), noelShopkeeper.WndInfo(), options) {
@@ -87,8 +68,8 @@ public class NoelShopkeeper extends ImpShopkeeper {
                         if (index == 0) {
                             Shopkeeper.sell();
                         } else if (index == 1) {
-                            Dungeon.gold-=NoelShopkeeper.RollNeed *(NoelShopkeeper.RollTimes +1);
-                            NoelShopkeeper.RollTimes++;
+                            Dungeon.gold-=NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1);
+                            Dungeon.RollTimes++;
                             Item item = Generator.randomUsingDefaults();
                             int place;
                             Char target;
@@ -110,7 +91,7 @@ public class NoelShopkeeper extends ImpShopkeeper {
                         if (index == 0) {
                             return true;
                         } else if (index == 1){
-                            return Dungeon.gold>=NoelShopkeeper.RollNeed *(NoelShopkeeper.RollTimes +1);
+                            return Dungeon.gold>=NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1);
                         } else if (index == 2){
                             return Dungeon.gold>=NoelShopkeeper.PlayNeed;
                         }else
@@ -121,16 +102,5 @@ public class NoelShopkeeper extends ImpShopkeeper {
             }
         });
         return true;
-    }
-    private final String ROLLTIME = "ROLLTIME";
-
-    public void storeInBundle( Bundle bundle ) {
-        super.storeInBundle(bundle);
-        bundle.put(ROLLTIME, RollTimes);
-    }
-
-    public void restoreFromBundle( Bundle bundle ) {
-        super.restoreFromBundle(bundle);
-        RollTimes = bundle.getInt(ROLLTIME);
     }
 }

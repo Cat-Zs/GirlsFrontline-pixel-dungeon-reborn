@@ -73,6 +73,9 @@ public class Shopkeeper extends NPC {
             super.add(buff);
         }
     }
+    public String WndInfo(){
+        return Messages.get(this, "wndinfo");
+    }
     public void processHarm() {
             if (this.turnsSinceHarmed < 1) {
                 this.turnsSinceHarmed = 0;
