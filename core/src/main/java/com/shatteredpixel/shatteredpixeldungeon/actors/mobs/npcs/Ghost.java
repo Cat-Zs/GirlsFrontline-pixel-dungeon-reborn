@@ -218,12 +218,12 @@ public class Ghost extends NPC {
 		public static boolean active(){
 			return spawned && given && !processed && depth == Dungeon.depth;
 		}
-		private static boolean spawned;
+		public static boolean spawned;
 
 		private static int type;
 
 		private static boolean given;
-		private static boolean processed;
+		public static boolean processed;
 		
 		private static int depth;
 		

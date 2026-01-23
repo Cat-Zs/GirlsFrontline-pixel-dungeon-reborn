@@ -6,9 +6,15 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.shatteredpixel.shatteredpixeldungeon.custom.messages.M;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestItem;
 import com.shatteredpixel.shatteredpixeldungeon.items.BrokenSeal;
@@ -80,6 +86,8 @@ public class debugBook extends TestItem {
                 return "-"+Messages.get(this, "ac_cha");
             case 7:
                 return "-"+Messages.get(this, "ac_reset");
+            case 8:
+                return "-"+Messages.get(this, "ac_complete");
             default:
                 return "";
         }
@@ -101,6 +109,8 @@ public class debugBook extends TestItem {
                 return Messages.get(this, "cha",chadesc());
             case 7:
                 return Messages.get(this, "reset");
+            case 8:
+                return Messages.get(this, "complete");
             default:
                 return "";
         }
@@ -156,6 +166,9 @@ public class debugBook extends TestItem {
             case 7:
                 defaultAction=AC_APPLY;
                 break;
+            case 8:
+                defaultAction=AC_APPLY;
+                break;
 
         }
         return actions;
@@ -199,6 +212,9 @@ public class debugBook extends TestItem {
                 case 7:
                     resetLevel();
                     break;
+                case 8:
+                    complete();
+                    break;
                 case 0: default:
                     break;
             }
@@ -210,7 +226,7 @@ public class debugBook extends TestItem {
                 new WndTextNumberInput(
                         Messages.get(this, "mode_title"),
                         Messages.get(this, "mode_body"),
-                        Integer.toString(modeA),
+                        "",
                         20,
                         false,
                         Messages.get(this, "yes"),
@@ -269,6 +285,12 @@ public class debugBook extends TestItem {
             GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_reset")));
             updateQuickslot();
         }
+        else if(mode == 8){
+            modeA = 8;
+            defaultAction = AC_APPLY;
+            GLog.p(Messages.get(this,"modetext",Messages.get(this,"ac_complete")));
+            updateQuickslot();
+        }
         else {
             modeA = 0;
             defaultAction = AC_SETMODE;
@@ -283,7 +305,7 @@ public class debugBook extends TestItem {
                 new WndTextNumberInput(
                         Messages.get(this, "exp_title"),
                         Messages.get(this, "exp_body"),
-                        Integer.toString(exp),
+                        "",
                         4,
                         false,
                         Messages.get(this, "yes"),
@@ -317,7 +339,7 @@ public class debugBook extends TestItem {
                 new WndTextNumberInput(
                         Messages.get(this, "str_title"),
                         Messages.get(this, "str_body"),
-                        Integer.toString(str),
+                        "",
                         4,
                         false,
                         Messages.get(this, "yes"),
@@ -343,7 +365,7 @@ public class debugBook extends TestItem {
                 new WndTextNumberInput(
                         Messages.get(this, "lvl_title"),
                         Messages.get(this, "lvl_body"),
-                        Integer.toString(lvl),
+                        "",
                         4,
                         false,
                         Messages.get(this, "yes"),
@@ -465,7 +487,7 @@ public class debugBook extends TestItem {
                 new WndTextNumberInput(
                         Messages.get(this, "cha_title"),
                         Messages.get(this, "cha_body"),
-                        Integer.toString(0),
+                        "",
                         4,
                         false,
                         Messages.get(this, "yes"),
@@ -636,5 +658,18 @@ public class debugBook extends TestItem {
         InterlevelScene.returnDepth = Dungeon.depth;
         InterlevelScene.mode = InterlevelScene.Mode.RESET;
         Game.switchScene( InterlevelScene.class );
+    }
+    private void complete(){
+        Ghost.Quest.complete();
+        Ghost.Quest.spawned = true;
+        Ghost.Quest.processed = true;
+        Wandmaker.Quest.complete();
+        Wandmaker.Quest.spawned = true;
+        Buff.count(hero, Elphelt.Finish.class,1);
+        Blacksmith.Quest.completed = true;
+        Blacksmith.Quest.spawned = true;
+        Imp.Quest.complete();
+        Imp.Quest.spawned = true;
+        GLog.p("NPC任务已全部完成。");
     }
 }

@@ -177,7 +177,7 @@ public class Wandmaker extends NPC {
 		// 2 = elemental embers quest
 		// 3 = rotberry quest
 		
-		private static boolean spawned;
+		public static boolean spawned;
 		
 		private static boolean given;
 		
