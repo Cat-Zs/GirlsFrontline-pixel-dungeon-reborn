@@ -11,6 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.GooWarn;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Charm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
@@ -376,7 +377,7 @@ public class Elphelt extends Mob {
 		Badges.validateElpheltKilled();
 		GameScene.bossSlain();
 		super.die( cause );
-
+        Buff.count(Dungeon.hero, Finish.class, 1);
 		Game.runOnRenderThread(()->GameScene.show(new WndDialog(new Elphelt_Plot.End())));
 
 		yell( Messages.get(this, "defeated") );
@@ -926,4 +927,10 @@ public class Elphelt extends Mob {
 			return true;
 		}
 	}
+    public static class Finish extends CounterBuff {
+        {
+            revivePersists = true;
+            type = buffType.POSITIVE;
+        }
+    }
 }

@@ -75,15 +75,15 @@ public class ZeroLevelSub extends Level {
 
         // 添加向上的楼梯
         map[toForwardCamp] = Terrain.DOOR;
-        placeTrigger(new Teleporter().create(toForwardCamp,ZeroLevel.toZeroLevelSub,0));
+        placeTrigger(new Teleporter().create(toForwardCamp,ZeroLevel.toZeroLevelSub,0,0));
 
         // 添加向下的楼梯到404房间(右上角位置)
         map[toRoom404] = Terrain.DOOR;
-        placeTrigger(new Teleporter().create(toRoom404,Room404.toZeroLevelSub,2000));
+        placeTrigger(new Teleporter().create(toRoom404,Room404.toZeroLevelSub,0,2));
 
         // 添加向下的楼梯到CoffeeRoom(在404传送器上方)
         map[toCoffeeRoom] = Terrain.DOOR;
-        placeTrigger(new Teleporter().create(toCoffeeRoom,CoffeeRoom.toZeroLevelSub,3000));
+        placeTrigger(new Teleporter().create(toCoffeeRoom,CoffeeRoom.toZeroLevelSub,0,3));
 
         CustomTilemap customBottomTile = new CustomBottomTile();
         customBottomTile.setRect(0, 0, width(), height());

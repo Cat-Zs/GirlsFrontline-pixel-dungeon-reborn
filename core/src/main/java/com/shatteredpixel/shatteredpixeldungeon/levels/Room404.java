@@ -67,7 +67,7 @@ public class Room404 extends Level {
         //进入404小屋时的位置设置到上楼楼梯处
 
         // 添加向上的楼梯(连接回ZeroLevelSub)
-        placeTrigger(new Teleporter().create(toZeroLevelSub,ZeroLevelSub.toRoom404,1000));
+        placeTrigger(new Teleporter().create(toZeroLevelSub,ZeroLevelSub.toRoom404,0,1));
 
         // 添加底部覆盖贴图
         CustomTilemap customBottomTile = new CustomBottomTile();

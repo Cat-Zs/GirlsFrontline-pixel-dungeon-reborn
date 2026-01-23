@@ -51,6 +51,7 @@ public class BeaconOfReturning extends Spell {
 	
 	public int returnDepth	= -1;
 	public int returnPos;
+    public int sonId = 0;
 	
 	@Override
 	protected void onCast(final Hero hero) {
@@ -93,7 +94,8 @@ public class BeaconOfReturning extends Spell {
 	
 	private void setBeacon(Hero hero ){
 		returnDepth = Dungeon.depth;
-		returnPos = hero.pos;
+        sonId       = Dungeon.sonId;
+		returnPos   = hero.pos;
 		
 		hero.spend( 1f );
 		hero.busy();
@@ -160,6 +162,7 @@ public class BeaconOfReturning extends Spell {
 			InterlevelScene.mode = InterlevelScene.Mode.RETURN;
 			InterlevelScene.returnDepth = returnDepth;
 			InterlevelScene.returnPos = returnPos;
+            InterlevelScene.sonId = sonId;
 			Game.switchScene( InterlevelScene.class );
 		}
 		detach(hero.belongings.backpack);
@@ -183,11 +186,13 @@ public class BeaconOfReturning extends Spell {
 	
 	private static final String DEPTH	= "depth";
 	private static final String POS		= "pos";
+    private static final String SONID		= "sonid";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
 		bundle.put( DEPTH, returnDepth );
+        bundle.put( SONID, sonId );
 		if (returnDepth != -1) {
 			bundle.put( POS, returnPos );
 		}
@@ -198,6 +203,7 @@ public class BeaconOfReturning extends Spell {
 		super.restoreFromBundle(bundle);
 		returnDepth	= bundle.getInt( DEPTH );
 		returnPos	= bundle.getInt( POS );
+        sonId       = bundle.getInt(SONID);
 	}
 	
 	@Override

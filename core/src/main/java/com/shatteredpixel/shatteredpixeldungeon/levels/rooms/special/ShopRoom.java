@@ -34,6 +34,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Stylus;
 import com.shatteredpixel.shatteredpixeldungeon.items.Torch;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.LeatherArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.MailArmor;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.PlateArmor;
@@ -49,13 +50,16 @@ import com.shatteredpixel.shatteredpixeldungeon.items.food.SmallRation;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SugarZongzi;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.Maccol;
 import com.shatteredpixel.shatteredpixeldungeon.items.food.SaltyZongzi;
+import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfExperience;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfHealing;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfIdentify;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfRemoveCurse;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Alchemize;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAugmentation;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.TippedDart;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -110,6 +114,12 @@ public class ShopRoom extends SpecialRoom {
 
 	}
 
+    protected void placeShopkeeper(Level level, int pos ) {
+        Mob shopkeeper = new Shopkeeper();
+        shopkeeper.pos = pos;
+        level.mobs.add( shopkeeper );
+    }
+
 	protected void placeItems( Level level ){
 
 		if (itemsToSpawn == null){
@@ -151,47 +161,116 @@ public class ShopRoom extends SpecialRoom {
 		}
 
 	}
+    public void placeItems( Level level, int center, ArrayList<Integer> list ){
+
+        if (itemsToSpawn == null){
+            itemsToSpawn = generateItems();
+        }
+        for (Item i:itemsToSpawn){
+            for (int j :list){
+                if (level.heaps.get( j ) != null || level.findMob( j ) != null){
+                    continue;
+                }
+                level.drop(i,j).type = Heap.Type.FOR_SALE;
+                break;
+            }
+        }
+
+    }
 	
 	protected static ArrayList<Item> generateItems() {
 
 		ArrayList<Item> itemsToSpawn = new ArrayList<>();
 
 		MeleeWeapon w;
+        Armor a;
+        MissileWeapon m;
 		switch (Dungeon.depth) {
 		case 6: default:
 			w = (MeleeWeapon) Generator.random(Generator.wepTiers[1]);
-			itemsToSpawn.add( Generator.random(Generator.misTiers[1]).quantity(2).identify(false) );
-			itemsToSpawn.add( new LeatherArmor().identify(false) );
+			m = (MissileWeapon) Generator.random(Generator.misTiers[1]).quantity(2);
+            a = (Armor) new LeatherArmor().identify(false);
 			break;
 			
 		case 11:
 			w = (MeleeWeapon) Generator.random(Generator.wepTiers[2]);
-			itemsToSpawn.add( Generator.random(Generator.misTiers[2]).quantity(2).identify(false) );
-			itemsToSpawn.add( new MailArmor().identify(false) );
+            m = (MissileWeapon) Generator.random(Generator.misTiers[2]).quantity(2);
+            a = (Armor) new MailArmor().identify(false);
 			break;
 			
 		case 16:
 			w = (MeleeWeapon) Generator.random(Generator.wepTiers[3]);
-			itemsToSpawn.add( Generator.random(Generator.misTiers[3]).quantity(2).identify(false) );
-			itemsToSpawn.add( new ScaleArmor().identify(false) );
+            m = (MissileWeapon) Generator.random(Generator.misTiers[3]).quantity(2);
+            a = (Armor) new ScaleArmor().identify(false);
 			break;
 
 		case 20: case 21:
 			w = (MeleeWeapon) Generator.random(Generator.wepTiers[4]);
-			itemsToSpawn.add( Generator.random(Generator.misTiers[4]).quantity(2).identify(false) );
-			itemsToSpawn.add( new PlateArmor().identify(false) );
+            m = (MissileWeapon) Generator.random(Generator.misTiers[4]).quantity(2);
+            a = (Armor) new PlateArmor().identify(false);
 			itemsToSpawn.add( new Torch() );
 			itemsToSpawn.add( new Torch() );
 			itemsToSpawn.add( new Torch() );
 			break;
+        case 25:
+            w = (MeleeWeapon) Generator.random(Generator.wepTiers[5]);
+            m = (MissileWeapon) Generator.random(Generator.misTiers[4]).quantity(2);
+            a = (Armor) new PlateArmor().identify(false);
+            itemsToSpawn.add(new Torch());
+            itemsToSpawn.add(new Torch());
+            itemsToSpawn.add(new Torch());
+            break;
 		}
 		w.enchant(null);
 		w.cursed = false;
 		w.level(0);
+        if (Dungeon.depth == 25) {
+            int A = Random.Int(100);
+            if (A < 5) {
+                w.upgrade(2);
+            } else if (A < 25) {
+                w.upgrade();
+            }
+            if (Random.Int(10) < 7)
+                w.upgrade();
+        }
 		w.identify(false);
 		itemsToSpawn.add(w);
-		
-		itemsToSpawn.add( TippedDart.randomTipped(2) );
+
+        a.inscribe(null);
+        a.cursed = false;
+        a.level(0);
+        if (Dungeon.depth == 25) {
+            int B = Random.Int(100);
+            if (B < 5) {
+                a.upgrade(2);
+            } else if (B < 25) {
+                a.upgrade();
+            }
+            if (Random.Int(10) < 7)
+                a.upgrade();
+        }
+        a.identify(false);
+        itemsToSpawn.add(a);
+
+        m.level(0);
+        if (Dungeon.depth==25){
+            int C = Random.Int(100);
+            int lvl = 0;
+            if (C < 5) {
+                lvl = 2;
+            } else if (C < 25) {
+                lvl = 1;
+            }
+            if (Random.Int(10) < 7) {
+                lvl += 1;
+            }
+            m.level(lvl);
+        }
+        m.identify(false);
+        itemsToSpawn.add(m);
+
+        itemsToSpawn.add( TippedDart.randomTipped(2) );
 
 		itemsToSpawn.add( new Alchemize().quantity(Random.IntRange(2, 3)));
 
@@ -201,7 +280,15 @@ public class ShopRoom extends SpecialRoom {
 		itemsToSpawn.add( new PotionOfHealing() );
 		itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
 		itemsToSpawn.add( Generator.randomUsingDefaults( Generator.Category.POTION ) );
-
+        if (Dungeon.depth == 25) {
+            if (Random.Int(2) == 0) {
+                if (Random.Int(2) == 0) {
+                    itemsToSpawn.add(new PotionOfExperience());
+                } else {
+                    itemsToSpawn.add(new ScrollOfTransmutation());
+                }
+            }
+        }
 		itemsToSpawn.add( new ScrollOfIdentify() );
 		itemsToSpawn.add( new ScrollOfRemoveCurse() );
 		itemsToSpawn.add( new ScrollOfMagicMapping() );
