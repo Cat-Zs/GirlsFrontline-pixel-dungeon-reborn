@@ -551,12 +551,14 @@ public class InterlevelScene extends PixelScene {
 
 		GameLog.wipe();
 
-		Dungeon.loadGame( GamesInProgress.curSlot );
 		Level level;
+        Dungeon.loadGame( GamesInProgress.curSlot );
         int son = 0;
         GamesInProgress.Info gameInfo = GamesInProgress.check(GamesInProgress.curSlot);
-        if (gameInfo!=null)
+        if (gameInfo!=null) {
             son = gameInfo.sonId;
+        }
+        Dungeon.sonId=son;
         try{
             level = Dungeon.loadLevel(GamesInProgress.curSlot, Dungeon.depth, son, 0);
             //尝试新子层

@@ -235,7 +235,7 @@ public class WndSelectGameInProgress extends Window {
 			level.setPos(x + 16f * SCALE - level.width() / 4f, y + 29f * SCALE - level.height() / 8f);
 
 			add(score);
-			score.text(String.valueOf(Info.depth));
+			score.text(Info.depth +"/"+Info.sonId);
 
 			score.setPos(x + 10.5f * SCALE - score.width() / 2f, y + 47f * SCALE);
 
