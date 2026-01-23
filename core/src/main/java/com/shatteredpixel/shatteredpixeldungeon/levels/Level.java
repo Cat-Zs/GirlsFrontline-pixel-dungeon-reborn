@@ -124,7 +124,8 @@ public abstract class Level implements Bundlable {
     public boolean FirstSight = true;
     public boolean SecondSight = true;
 
-	public int levelId;
+	public int SummonId;
+    public int sonId;
 	public int version;
 	
 	public int[] map;
@@ -175,7 +176,7 @@ public abstract class Level implements Bundlable {
 	public int color2 = 0x88CC44;
 
 	private static final String LEVEL_DEPTH = "levelDepth";
-	private static final String LEVEL_ID    = "levelId";
+	private static final String SUMMON_ID    = "SummonId";
 	private static final String VERSION     = "version";
 	private static final String WIDTH       = "width";
 	private static final String HEIGHT      = "height";
@@ -198,9 +199,10 @@ public abstract class Level implements Bundlable {
     private static final String FIRSTSIGHT   = "FIRSTSIGHT";
     private static final String SECONDSIGHT   = "SECONDSIGHT";
 
-	public void create(int levelDepth,int levelId){
+	public void create(int levelDepth,int id, int sonId){
 		this.levelDepth=levelDepth;
-		this.levelId   =levelId;
+		SummonId   = id;
+        this.sonId   =sonId;
 		Random.pushGenerator( Dungeon.seedCurDepth() );
 		
 		if (!(Dungeon.bossLevel())) {
@@ -347,7 +349,7 @@ public abstract class Level implements Bundlable {
         FirstSight=bundle.getBoolean(FIRSTSAVE);
         SecondSight=bundle.getBoolean(SECONDSIGHT);
 		levelDepth=bundle.getInt(LEVEL_DEPTH);
-		levelId   =bundle.getInt(LEVEL_ID   );
+		SummonId   =bundle.getInt(SUMMON_ID   );
 		version   =bundle.getInt(VERSION    );
 		
 		//saves from before v0.9.2b are not supported
@@ -449,7 +451,7 @@ public abstract class Level implements Bundlable {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put(LEVEL_DEPTH,levelDepth);
-		bundle.put(LEVEL_ID,levelId);
+		bundle.put(SUMMON_ID,SummonId);
 		bundle.put(VERSION, Game.versionCode );
 		bundle.put(WIDTH, width );
 		bundle.put(HEIGHT, height );

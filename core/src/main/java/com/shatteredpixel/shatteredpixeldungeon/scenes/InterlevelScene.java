@@ -30,9 +30,6 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MindVision;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.TalentSecondSight;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
@@ -72,7 +69,7 @@ public class InterlevelScene extends PixelScene {
 	//fast fade when ascending, or descending to a floor you've been on
 	private static final float FAST_FADE = 0.50f; //.33 in, .33 steady, .33 out, 1 second total
 	
-	private static float fadeTime;
+	public static float fadeTime;
 	
 	public enum Mode {
 		ACCESS,DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, NONE, RESET
@@ -85,7 +82,8 @@ public class InterlevelScene extends PixelScene {
 	public static int returnPos;
 
 	public static int accessPos;
-	public static int accessLevelId;
+	public static int accessLevelDepth;
+    public static int sonId = 0;
 
 	public static boolean fallIntoPit;
 
@@ -107,7 +105,8 @@ public class InterlevelScene extends PixelScene {
 		inGameScene = true;
 	}
 
-	@Override
+	@SuppressWarnings("SuspiciousIndentation")
+    @Override
 	public void create() {
 		super.create();
 
@@ -167,47 +166,7 @@ public class InterlevelScene extends PixelScene {
 		else if (lastRegion == 4)    loadingAsset = Assets.Interfaces.LOADING_CITY;
 		else if (lastRegion == 5)    loadingAsset = Assets.Interfaces.LOADING_HALLS;
 		else                         loadingAsset = Assets.Interfaces.SHADOW;
-
-        //slow down transition when displaying an install prompt
-        if (Updates.isInstallable()){
-            fadeTime += 0.5f; //adds 1 second total
-            //speed up transition when debugging
-        }else if (DeviceCompat.isDebug()|| Dungeon.isChallenged(Challenges.TEST_MODE)){
-			fadeTime = 0f;
-            //debug版本或者测试模式将楼层切换的时间fadeTime设置为0
-		}
-        if(!DeviceCompat.isDebug()&& !Dungeon.isChallenged(Challenges.TEST_MODE)){
-            //非debug版本进入过测试模式后进入普通对局时，重新对fadeTime赋值
-            fadeTime = NORM_FADE;
-            switch (mode){
-                case DESCEND:
-                    if (Dungeon.hero == null){
-                        fadeTime = SLOW_FADE;
-                    } else {
-                        loadingDepth = Dungeon.depth+1;
-                        if (!(Statistics.deepestFloor < loadingDepth)) {
-                            fadeTime = FAST_FADE;
-                        } else if (loadingDepth == 6 || loadingDepth == 11
-                                || loadingDepth == 16 || loadingDepth == 21) {
-                            fadeTime = SLOW_FADE;
-                        }
-                    }
-                    break;
-                case ASCEND:
-                    fadeTime = FAST_FADE;
-                    break;
-                case RETURN:
-                case FALL:
-                case CONTINUE:
-                default:
-                    break;
-            }
-            if (Updates.isInstallable()){
-                fadeTime += 0.5f; //adds 1 second total
-                //speed up transition when debugging
-            }
-        }
-
+        resetFadeTime(DeviceCompat.isDebug()|| Dungeon.isChallenged(Challenges.TEST_MODE), loadingDepth);
 
 		SkinnedBlock bg = new SkinnedBlock(Camera.main.width, Camera.main.height, loadingAsset ){
 			@Override
@@ -340,6 +299,47 @@ public class InterlevelScene extends PixelScene {
 		waitingTime = 0f;
 	}
 
+    public static void resetFadeTime(boolean ignore, int loadingDepth){
+        //slow down transition when displaying an install prompt
+        if (Updates.isInstallable()){
+            fadeTime += 0.5f; //adds 1 second total
+            //speed up transition when debugging
+        }else if (ignore){
+            fadeTime = 0f;
+            //debug版本或者测试模式将楼层切换的时间fadeTime设置为0
+        }
+        if(!ignore&&!DeviceCompat.isDebug()&& !Dungeon.isChallenged(Challenges.TEST_MODE)){
+            //非debug版本进入过测试模式后进入普通对局时，重新对fadeTime赋值
+            fadeTime = NORM_FADE;
+            switch (mode){
+                case DESCEND:
+                    if (Dungeon.hero == null){
+                        fadeTime = SLOW_FADE;
+                    } else {
+                        loadingDepth = Dungeon.depth+1;
+                        if (!(Statistics.deepestFloor < loadingDepth)) {
+                            fadeTime = FAST_FADE;
+                        } else if (loadingDepth == 6 || loadingDepth == 11
+                                || loadingDepth == 16 || loadingDepth == 21) {
+                            fadeTime = SLOW_FADE;
+                        }
+                    }
+                    break;
+                case ASCEND:
+                    fadeTime = FAST_FADE;
+                    break;
+                case RETURN:
+                case FALL:
+                case CONTINUE:
+                default:
+                    break;
+            }
+            if (Updates.isInstallable()){
+                fadeTime += 0.5f; //adds 1 second total
+                //speed up transition when debugging
+            }
+        }
+    }
 	@Override
 	public void update() {
 		super.update();
@@ -413,7 +413,7 @@ public class InterlevelScene extends PixelScene {
 		Dungeon.init("ANEWWORLD",0);
 		GameLog.wipe();
 		Dungeon.depth=Statistics.deepestFloor=-1;
-		Level level = Dungeon.newLevel(0);
+		Level level = Dungeon.newLevel(0,0);
 		Dungeon.switchLevel(level,level.entrance);
 	}
 
@@ -422,12 +422,29 @@ public class InterlevelScene extends PixelScene {
 		try{Dungeon.saveAll();}
 		catch(IOException e){Game.reportException(e);}
 
-		Level level=Dungeon.tryLoadLevel(accessLevelId,0);
-		if(null==level){
-			level=Dungeon.newLevel(accessLevelId);
-		}
+		Level level;
+        if (sonId!=0) {
+            //先尝试新子层
+            level = Dungeon.tryLoadLevel(accessLevelDepth, sonId, 0);
+            if (null == level) {
+                level = Dungeon.tryLoadLevel(accessLevelDepth + 1000 * sonId, 0, 0);
+                //没有新子层尝试旧子层
+            }
+            if (null == level) {
+                //没有旧子层则新建
+                level = Dungeon.newLevel(accessLevelDepth, sonId);
+            }
+        }else {
+            level = Dungeon.tryLoadLevel(accessLevelDepth, 0, 0);
+            if (null == level) {
+                level = Dungeon.newLevel(accessLevelDepth, 0);
+            }
+        }
 
 		Dungeon.depth=level.levelDepth;
+        Dungeon.sonId=level.sonId;
+        sonId = 0;
+        //特殊前进时使用子层标签读取或生成，结束后清零
 		Dungeon.switchLevel(level,accessPos);
 	}
 
@@ -442,11 +459,20 @@ public class InterlevelScene extends PixelScene {
 		}
 
 		Level level;
+        int depth = Dungeon.depth;
+        int son = Dungeon.sonId;
+        if (depth==25&&son==0){
+            son++;
+        }else {
+            depth++;
+            son = 0;
+            //下楼默认主层，在产生子层的楼层特殊处理
+        }
 		if (Dungeon.depth >= Statistics.deepestFloor) {
-			level = Dungeon.newLevel(Dungeon.depth+1);
+			level = Dungeon.newLevel(depth, son);
 		} else {
-			Dungeon.depth++;
-			level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
+			Dungeon.depth = depth;
+			level = Dungeon.loadLevel(GamesInProgress.curSlot,depth,son,0);
 		}
 		Dungeon.switchLevel( level, level.entrance );
 	}
@@ -460,16 +486,18 @@ public class InterlevelScene extends PixelScene {
 
 		Level level;
 		if (Dungeon.depth >= Statistics.deepestFloor) {
-			level = Dungeon.newLevel(Dungeon.depth+1);
+			level = Dungeon.newLevel(Dungeon.depth+1, 0);
 		} else {
 			Dungeon.depth++;
-			level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
+			level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0,0);
+            //坠落回主层
 		}
 		Dungeon.switchLevel( level, level.fallCell( fallIntoPit ));
 	}
     private void reset() throws IOException {
         Actor.fixTime();
-        Level copyLevel = Dungeon.tryLoadLevel(Dungeon.depth,1);
+        Level copyLevel = Dungeon.tryLoadLevel(Dungeon.depth,Dungeon.sonId,1);
+        //重置楼层，所以以当前楼层子标签读取
         if (copyLevel == null) {
             GLog.n("未读取到复制存档，即将重新保存");
             Dungeon.level.FirstSave = true;
@@ -483,8 +511,20 @@ public class InterlevelScene extends PixelScene {
 		Mob.holdAllies( Dungeon.level );
 
 		Dungeon.saveAll();
-		Dungeon.depth--;
-		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
+        int depth = Dungeon.depth;
+        int son = Dungeon.sonId;
+        if (son==1){
+            son = 0;
+        }else {
+            depth--;
+            if (depth == 25)
+                son = 1;
+            else
+                son = 0;
+            //上楼默认主层，在产生子层的楼层特殊处理
+        }
+		Dungeon.depth=depth;
+		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,depth,son,0);
 		Dungeon.switchLevel( level, level.exit );
 	}
 	
@@ -494,7 +534,15 @@ public class InterlevelScene extends PixelScene {
 
 		Dungeon.saveAll();
 		Dungeon.depth = returnDepth;
-		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
+		Level level;
+        try{
+            level = Dungeon.loadLevel(GamesInProgress.curSlot, Dungeon.depth, sonId, 0);
+        } catch (IOException e) {
+            level = Dungeon.loadLevel(GamesInProgress.curSlot, Dungeon.depth+1000*sonId, 0, 0);
+            //对旧版本子层兼容
+        }
+        sonId = 0;
+        //大传、大传送的用处，先赋予子层标签再进入此处，返回之后子层临时参数清零
 		Dungeon.switchLevel( level, returnPos );
 	}
 	
@@ -504,7 +552,19 @@ public class InterlevelScene extends PixelScene {
 		GameLog.wipe();
 
 		Dungeon.loadGame( GamesInProgress.curSlot );
-		Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.levelId,0);
+		Level level;
+        int son = 0;
+        GamesInProgress.Info gameInfo = GamesInProgress.check(GamesInProgress.curSlot);
+        if (gameInfo!=null)
+            son = gameInfo.sonId;
+        try{
+            level = Dungeon.loadLevel(GamesInProgress.curSlot, Dungeon.depth, son, 0);
+            //尝试新子层
+        } catch (IOException e) {
+            level = Dungeon.loadLevel(GamesInProgress.curSlot, Dungeon.depth + 1000*son, 0, 0);
+            //未建立则尝试旧子层
+        }
+        //读档
 		Dungeon.switchLevel(level,Dungeon.hero.pos);
 	}
 	
@@ -517,7 +577,7 @@ public class InterlevelScene extends PixelScene {
 			ArrayList<Item> preservedItems = Dungeon.level.getItemsToPreserveFromSealedResurrect();
 
 			Dungeon.hero.resurrect();
-			level = Dungeon.newLevel(Dungeon.levelId);
+			level = Dungeon.newLevel(Dungeon.depth, sonId);
 			Dungeon.hero.pos = level.randomRespawnCell(Dungeon.hero);
 
 			for (Item i : preservedItems){

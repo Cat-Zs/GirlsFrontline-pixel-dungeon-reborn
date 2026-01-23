@@ -67,6 +67,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.DeepCaveLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.HallsBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.HallsLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.LastLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.LastShopLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.PrisonLevel;
@@ -238,7 +239,8 @@ public class Dungeon {
 	public static SparseArray<ArrayList<Item>> portedItems;
 
 	public static int version;
-	public static int levelId;
+	public static int SummonId;
+    public static int sonId;
 
 	public static long seed;
 
@@ -322,7 +324,7 @@ public class Dungeon {
 		return (challenges & mask) != 0;
 	}
 	
-	public static Level newLevel(Level level,int levelDepth,int id){
+	public static Level newLevel(Level level,int levelDepth, int sonId){
 		Dungeon.level = null;
 		Actor.clear();
 
@@ -337,62 +339,101 @@ public class Dungeon {
 			}
 		}
 
-		level.create(depth,id);
+		level.create(depth,levelDepth+1000*sonId,sonId);
 		Statistics.qualifiedForNoKilling = !bossLevel();
 		return level;
 	}
+    private static Level normalLevel(int id){
+        Level level;
+        switch(id){
+            case 1: case 2:case 3:case 4:
+                level = new SewerLevel();break;
+            case 5:
+                level = new SewerBossLevel();break;
+            case 6:case 7:case 8:case 9:
+                level = new PrisonLevel();break;
+            case 10:
+                level = new PrisonBossLevel();break;
+            case 11:case 12:case 13:case 14:
+                level = new CavesLevel();break;
+            case 15:
+                level = new CavesBossLevel();break;
+            case 16:case 17:case 18:case 19:
+                level = new CityLevel();break;
+            case 20:
+                level = new CityBossLevel();break;
+            case 21:case 22:case 23:case 24:
+                level = new DeepCaveLevel();break;
+            case 25:
+                level = new DeepCaveBossLevel();break;
+            case 26: case 27:case 28: case 29:
+                level = new HallsLevel();break;
+            case 30:
+                level = new HallsBossLevel();break;
+            case 31:
+                level = new LastLevel();break;
+            default:
+                level = new DeadEndLevel();
+        }
+        return level;
+    }
+    private static Level ZeroLevel(int son){
+        Level level;
+        switch (son){
+            case 0:
+                level = new ZeroLevel();
+                break;
+            case 1:
+                level = new ZeroLevelSub();
+                break;
+            case 2:
+                level = new Room404();
+                break;
+            case 3:
+                level = new CoffeeRoom();
+                break;
+            case 4:
+                level = new Workshop();
+                break;
+            default:
+                level = new DeadEndLevel();
+                break;
+        }
+        return level;
+    }
 
-	public static Level newLevel(int id){
+    private static Level newSonLevel(int id,int sonId){
+        Level level;
+        switch (id){
+            case 10:
+                if (sonId==1) {
+                    level = new RabbitBossLevel();
+                    break;
+                }
+            case 25:
+                if (sonId==1) {
+                    level = new LastShopLevel();
+                    break;
+                }
+            default:
+                level = new DeadEndLevel();
+                break;
+        }
+        return level;
+    }
+	public static Level newLevel(int depth,int sonId){
         resetGenerator();
 		Level level;
-		switch(id){
-		case 0:
-			level = new ZeroLevel();break;
-		case 1:case 2:case 3:case 4:
-			level = new SewerLevel();break;
-		case 5:
-			level = new SewerBossLevel();break;
-		case 6:case 7:case 8:case 9:
-			level = new PrisonLevel();break;
-		case 10:
-			level = new PrisonBossLevel();break;
-		case 1010:
-			level = new RabbitBossLevel();break;
-		case 11:case 12:case 13:case 14:
-			level = new CavesLevel();break;
-		case 15:
-			level = new CavesBossLevel();break;
-		case 16:case 17:case 18:case 19:
-			level = new CityLevel();break;
-		case 20:
-			level = new CityBossLevel();break;
-		case 21:case 22:case 23:case 24:
-			level = new DeepCaveLevel();break;
-		case 25:
-			level = new DeepCaveBossLevel();break;
-		case 26:case 27:case 28:case 29:
-			level = new HallsLevel();break;
-		case 30:
-			level = new HallsBossLevel();break;
-		case 31:
-			level = new LastLevel();break;
-		case 1000:
-			level = new ZeroLevelSub();
-			break;
-		case 2000:
-			level = new Room404();
-			break;
-		case 3000:
-			level = new CoffeeRoom();
-			break;
-		case 4000:
-			level = new Workshop();
-			break;
-		default:
-			level = new DeadEndLevel();
-		}
-		
-		return newLevel(level,id%1000,id);
+        if (depth==0){
+            level = ZeroLevel(sonId);
+        }else {
+            if (sonId == 0) {
+                level = normalLevel(depth);
+            } else {
+                level = newSonLevel(depth, sonId);
+            }
+        }
+		return newLevel(level,depth,sonId);
 	}
 	
 	public static void resetLevel() {
@@ -445,7 +486,8 @@ public class Dungeon {
 		
 		PathFinder.setMapSize(level.width(), level.height());
 		
-		levelId=level.levelId;
+		SummonId=level.SummonId;
+        sonId  =level.sonId;
 		Dungeon.level = level;
 		Mob.restoreAllies( level, pos );
 		Actor.init();
@@ -530,7 +572,8 @@ public class Dungeon {
 		return Random.Int(5 - floorThisSet) < asLeftThisSet;
 	}
 	
-	private static final String LEVEL_ID        = "level_id";
+	private static final String SUMMON_ID        = "summonid";
+    private static final String SON_ID          = "son_id";
 	private static final String VERSION		    = "version";
 	private static final String SEED		    = "seed";
 	private static final String CHALLENGES	    = "challenges";
@@ -555,7 +598,8 @@ public class Dungeon {
 		try {
 			Bundle bundle = new Bundle();
 
-			bundle.put( LEVEL_ID,levelId);
+			bundle.put( SUMMON_ID,SummonId);
+            bundle.put( SON_ID,sonId);
 			version = Game.versionCode;
 			bundle.put( VERSION, version );
 			bundle.put( SEED, seed );
@@ -641,13 +685,25 @@ public class Dungeon {
 	public static void saveLevel( int save ) throws IOException {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
-
+        int depth=level.levelDepth;
+        int son=level.sonId;
         if(level.FirstSave){//mark
             level.FirstSave = false;
-            FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId, 1),bundle);
+            FileUtils.bundleToFile(GamesInProgress.depthFile(save,depth, son,1),bundle);
         }
-        FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId, 0),bundle);
+        FileUtils.bundleToFile(GamesInProgress.depthFile(save,depth, son,0),bundle);
 	}
+    public static void saveLevel( Level level ) throws IOException {
+        Bundle bundle = new Bundle();
+        bundle.put( LEVEL, level );
+        int depth=level.levelDepth;
+        int son=level.sonId;
+        if(level.FirstSave){//mark
+            level.FirstSave = false;
+            FileUtils.bundleToFile(GamesInProgress.depthFile(GamesInProgress.curSlot,depth, son,1),bundle);
+        }
+        FileUtils.bundleToFile(GamesInProgress.depthFile(GamesInProgress.curSlot,depth, son,0),bundle);
+    }
 	
 	public static void saveAll() throws IOException {
 		if (hero != null && (hero.isAlive() || WndResurrect.instance != null)) {
@@ -669,7 +725,8 @@ public class Dungeon {
         resetTest();
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.gameFile( save ) );
 
-		levelId = bundle.getInt( LEVEL_ID );
+		SummonId = bundle.getInt( SUMMON_ID );
+        sonId   = bundle.getInt( SON_ID );
 		version = bundle.getInt( VERSION );
 
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
@@ -824,12 +881,12 @@ public class Dungeon {
                     //首次进入获得三回合灵视
 
                     if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2) {
-                        Sec.Set(Dungeon.levelId, 25);
+                        Sec.Set(Dungeon.depth, 25);
                         //天赋2级时才会计时25回合
                     }
                 }
 
-                if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2 && Sec.EndCD(Dungeon.levelId)&&Dungeon.level.SecondSight) {
+                if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2 && Sec.EndCD(Dungeon.depth)&&Dungeon.level.SecondSight) {
                     Dungeon.level.SecondSight = false;
                     Buff.affect(Dungeon.hero, MindVision.class, 3);
                 }//计时结束后进入该楼层
@@ -837,14 +894,14 @@ public class Dungeon {
         }
     }
 
-	public static Level tryLoadLevel(int levelId, int copy){//mark
+	public static Level tryLoadLevel(int depth,int sonId, int copy){//mark
 		final int save=GamesInProgress.curSlot;
-		final String fileName=GamesInProgress.depthFile(save,levelId,copy);
+		final String fileName=GamesInProgress.depthFile(save,depth,sonId,copy);
 		if(FileUtils.fileExists(fileName)){
 			//file may be deleted between fileExists and loadLevel,who knows.
 			try{
                 GetSight();
-				return loadLevel(save,levelId,copy);
+				return loadLevel(save,depth,sonId,copy);
 			}catch(IOException e){
 				Game.reportException(e);
 			}
@@ -853,11 +910,11 @@ public class Dungeon {
 		return null;
 	}
 	
-	public static Level loadLevel(int save,int levelId, int copy) throws IOException {
+	public static Level loadLevel(int save,int levelId,int sonId, int copy) throws IOException {
 		Dungeon.level = null;
 		Actor.clear();
 		
-		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId, copy));
+		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId,sonId,copy));
 		
 		Level level = (Level)bundle.get( LEVEL );
 		
@@ -886,6 +943,7 @@ public class Dungeon {
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
 		info.depth = bundle.getInt( DEPTH );
+        info.sonId = bundle.getInt( SON_ID );
 		info.version = bundle.getInt( VERSION );
 		info.challenges = bundle.getInt( CHALLENGES );
 		Hero.preview( info, bundle.getBundle( HERO ) );

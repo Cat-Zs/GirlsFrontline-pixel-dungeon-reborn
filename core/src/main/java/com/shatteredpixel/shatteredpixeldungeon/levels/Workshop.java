@@ -68,7 +68,7 @@ public class Workshop extends Level {
         exit = entrance;
 
         // 添加向上的楼梯(连接回CoffeeRoom)
-        placeTrigger(new Teleporter().create(toCoffeeRoom, CoffeeRoom.toWorkshop, 3000));
+        placeTrigger(new Teleporter().create(toCoffeeRoom, CoffeeRoom.toWorkshop, 0, 3));
 
         return true;
     }
