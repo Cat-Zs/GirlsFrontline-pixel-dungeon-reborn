@@ -163,6 +163,11 @@ public class Ghoul extends Mob {
 		super.die(cause);
 	}
 
+    public void dieA(boolean die,Object cause){
+        if (die) {
+            super.die(cause);
+        }
+    }
 	@Override
 	protected synchronized void onRemove() {
 		if (beingLifeLinked) {

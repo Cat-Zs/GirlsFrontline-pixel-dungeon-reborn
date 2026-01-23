@@ -244,6 +244,11 @@ public class Heap implements Bundlable {
             type = Type.HEAP;
             sprite.link();
             sprite.drop();
+        }else
+        if (type == Type.CHEST || type == Type.SKELETON || type == Type.TOMB || type == Type.REMAINS) {
+            type = Type.HEAP;
+            sprite.link();
+            sprite.drop();
         }
     }
 
