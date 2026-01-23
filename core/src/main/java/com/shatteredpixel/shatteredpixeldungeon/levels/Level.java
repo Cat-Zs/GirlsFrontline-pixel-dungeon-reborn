@@ -125,7 +125,7 @@ public abstract class Level implements Bundlable {
     public boolean SecondSight = true;
 
 	public int SummonId;
-    public int sonId;
+    public int SUBId;
 	public int version;
 	
 	public int[] map;
@@ -177,7 +177,7 @@ public abstract class Level implements Bundlable {
 
 	private static final String LEVEL_DEPTH = "levelDepth";
 	private static final String SUMMON_ID    = "SummonId";
-    private static final String SON_ID    = "SONId";
+    private static final String SUB_ID    = "SUBId";
 	private static final String VERSION     = "version";
 	private static final String WIDTH       = "width";
 	private static final String HEIGHT      = "height";
@@ -200,10 +200,10 @@ public abstract class Level implements Bundlable {
     private static final String FIRSTSIGHT   = "FIRSTSIGHT";
     private static final String SECONDSIGHT   = "SECONDSIGHT";
 
-	public void create(int levelDepth,int id, int sonId){
+	public void create(int levelDepth,int id, int SUBId){
 		this.levelDepth=levelDepth;
 		SummonId   = id;
-        this.sonId   =sonId;
+        this.SUBId   =SUBId;
 		Random.pushGenerator( Dungeon.seedCurDepth() );
 		
 		if (!(Dungeon.bossLevel())) {
@@ -351,7 +351,7 @@ public abstract class Level implements Bundlable {
         SecondSight=bundle.getBoolean(SECONDSIGHT);
 		levelDepth=bundle.getInt(LEVEL_DEPTH);
 		SummonId   =bundle.getInt(SUMMON_ID   );
-        sonId   =bundle.getInt(SON_ID   );
+        SUBId   =bundle.getInt(SUB_ID   );
 		version   =bundle.getInt(VERSION    );
 		
 		//saves from before v0.9.2b are not supported
@@ -454,7 +454,7 @@ public abstract class Level implements Bundlable {
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put(LEVEL_DEPTH,levelDepth);
 		bundle.put(SUMMON_ID,SummonId);
-        bundle.put(SON_ID,sonId);
+        bundle.put(SUB_ID,SUBId);
 		bundle.put(VERSION, Game.versionCode );
 		bundle.put(WIDTH, width );
 		bundle.put(HEIGHT, height );

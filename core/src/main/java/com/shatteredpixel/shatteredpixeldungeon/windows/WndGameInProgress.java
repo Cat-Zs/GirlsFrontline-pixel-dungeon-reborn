@@ -28,23 +28,17 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
-import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Game;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.DeviceCompat;
-import com.watabou.utils.FileUtils;
 
-import java.io.IOException;
 import java.util.Locale;
 
 public class WndGameInProgress extends Window {
@@ -114,7 +108,12 @@ public class WndGameInProgress extends Window {
 			@Override
 			protected void onClick() {
 				super.onClick();
-                InterlevelScene.resetFadeTime(DeviceCompat.isDebug()|| Dungeon.isChallenged(Challenges.TEST_MODE), 1);
+                boolean isTest = false;
+                GamesInProgress.Info gameInfo = GamesInProgress.check(GamesInProgress.curSlot);
+                if (gameInfo!=null) {
+                    isTest = GamesInProgress.isChallenged(gameInfo.challenges,Challenges.TEST_MODE);
+                }
+                InterlevelScene.resetFadeTime(DeviceCompat.isDebug()|| isTest);
 				Dungeon.hero = null;
 				ActionIndicator.action = null;
 				GamesInProgress.curSlot = slot;

@@ -529,7 +529,7 @@ public class GameScene extends PixelScene {
 			} else {
 				// 根据当前levelId显示不同的进入消息
 				if (InterlevelScene.mode == InterlevelScene.Mode.ACCESS) {
-					switch (Dungeon.level.sonId) {
+					switch (Dungeon.level.SUBId) {
 						case 0: // ZeroLevel
 							GLog.h(Messages.get(InterlevelScene.class, "access_zero_level"));
 							break;

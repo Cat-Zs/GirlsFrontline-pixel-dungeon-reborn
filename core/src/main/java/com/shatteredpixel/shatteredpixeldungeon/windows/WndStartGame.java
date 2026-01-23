@@ -30,7 +30,6 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
-import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.IntroScene;
@@ -46,7 +45,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
 import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
-import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextNumberInput;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
 import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
@@ -54,8 +52,6 @@ import com.watabou.noosa.Image;
 import com.watabou.noosa.RenderedText;
 import com.watabou.noosa.ui.Component;
 import com.watabou.utils.DeviceCompat;
-
-import java.io.IOException;
 
 import java.util.ArrayList;
 
@@ -161,7 +157,7 @@ public class WndStartGame extends Window {
 				GamesInProgress.curSlot = slot;
 				InterlevelScene.seedCode=SPDSettings.seedCode();
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
-                InterlevelScene.resetFadeTime(DeviceCompat.isDebug()|| Dungeon.isChallenged(Challenges.TEST_MODE), 1);
+                InterlevelScene.resetFadeTime(DeviceCompat.isDebug()|| SPDSettings.isChallenged(Challenges.TEST_MODE));
 				if (SPDSettings.intro()) {
 					SPDSettings.intro( false );
 					Game.switchScene( IntroScene.class );

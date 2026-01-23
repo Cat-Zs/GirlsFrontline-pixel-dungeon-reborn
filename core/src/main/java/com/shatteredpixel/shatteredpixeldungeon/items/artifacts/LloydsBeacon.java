@@ -60,6 +60,7 @@ public class LloydsBeacon extends Artifact {
 	
 	public int returnDepth	= -1;
 	public int returnPos;
+    public int SUBId;
 	
 	{
 		image = ItemSpriteSheet.ARTIFACT_BEACON;
@@ -75,6 +76,7 @@ public class LloydsBeacon extends Artifact {
 	
 	private static final String DEPTH	= "depth";
 	private static final String POS		= "pos";
+    private static final String SUBID		= "SUBID";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -82,6 +84,7 @@ public class LloydsBeacon extends Artifact {
 		bundle.put( DEPTH, returnDepth );
 		if (returnDepth != -1) {
 			bundle.put( POS, returnPos );
+            bundle.put( SUBID, SUBId );
 		}
 	}
 	
@@ -90,6 +93,7 @@ public class LloydsBeacon extends Artifact {
 		super.restoreFromBundle(bundle);
 		returnDepth	= bundle.getInt( DEPTH );
 		returnPos	= bundle.getInt( POS );
+        SUBId       = bundle.getInt( SUBID );
 	}
 	
 	@Override
@@ -145,8 +149,8 @@ public class LloydsBeacon extends Artifact {
 		} else if (action == AC_SET) {
 			
 			returnDepth = Dungeon.depth;
-			returnPos = hero.pos;
-			
+			returnPos   = hero.pos;
+			SUBId       = Dungeon.SUBId;
 			hero.spend( LloydsBeacon.TIME_TO_USE );
 			hero.busy();
 			
@@ -157,7 +161,7 @@ public class LloydsBeacon extends Artifact {
 			
 		} else if (action == AC_RETURN) {
 			
-			if (returnDepth == Dungeon.depth) {
+			if (returnDepth == Dungeon.depth&&SUBId==Dungeon.SUBId) {
 				ScrollOfTeleportation.appear( hero, returnPos );
 				for(Mob m : Dungeon.level.mobs){
 					if (m.pos == hero.pos){
@@ -184,6 +188,7 @@ public class LloydsBeacon extends Artifact {
 				InterlevelScene.mode = InterlevelScene.Mode.RETURN;
 				InterlevelScene.returnDepth = returnDepth;
 				InterlevelScene.returnPos = returnPos;
+                InterlevelScene.SUBId = SUBId;
 				Game.switchScene( InterlevelScene.class );
 			}
 			

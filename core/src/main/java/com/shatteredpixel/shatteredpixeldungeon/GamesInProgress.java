@@ -50,7 +50,7 @@ public class GamesInProgress {
 	private static final String GAME_FOLDER = "game%d";
 	private static final String GAME_FILE	= "game.dat";
 	private static final String DEPTH_FILE	= "depth%d";
-    private static final String SON_FILE	= "_son%d";
+    private static final String SUB_FILE	= "_sub%d";
     private static final String COPY_FILE	= "_id%d";
     private static final String END         = ".dat";
 	
@@ -67,10 +67,10 @@ public class GamesInProgress {
 		return gameFolder(slot) + "/" + GAME_FILE;
 	}
 	
-	public static String depthFile( int slot, int levelId,int sonId, int copy) {
+	public static String depthFile( int slot, int levelId,int SUBId, int copy) {
         String File = gameFolder(slot) + "/"+ Messages.format(DEPTH_FILE,levelId);
-        if (sonId!=0)
-            File += Messages.format(SON_FILE,sonId);
+        if (SUBId!=0)
+            File += Messages.format(SUB_FILE,SUBId);
         if (copy!=0)
             File += Messages.format(COPY_FILE,copy);
         File += END;
@@ -132,6 +132,9 @@ public class GamesInProgress {
 			
 		}
 	}
+    public static boolean isChallenged( int challenges, int mask ) {
+        return (challenges & mask) != 0;
+    }
 
 	public static void set(int slot, int depth, int challenges,
 	                       Hero hero) {
@@ -139,7 +142,7 @@ public class GamesInProgress {
 		info.slot = slot;
 		
 		info.depth = depth;
-        info.sonId = Dungeon.sonId;
+        info.SUBId = Dungeon.SUBId;
 		info.challenges = challenges;
 		info.version = Dungeon.version;
 		info.level = hero.lvl;
@@ -172,7 +175,7 @@ public class GamesInProgress {
 		public int slot;
 		
 		public int depth;
-        public int sonId;
+        public int SUBId;
 		public int version;
 		public int challenges;
 

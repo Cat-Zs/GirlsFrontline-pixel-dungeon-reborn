@@ -240,7 +240,7 @@ public class Dungeon {
 
 	public static int version;
 	public static int SummonId;
-    public static int sonId;
+    public static int SUBId;
 
 	public static long seed;
 
@@ -324,7 +324,7 @@ public class Dungeon {
 		return (challenges & mask) != 0;
 	}
 	
-	public static Level newLevel(Level level,int levelDepth, int sonId){
+	public static Level newLevel(Level level,int levelDepth, int SUBId){
 		Dungeon.level = null;
 		Actor.clear();
 
@@ -339,7 +339,7 @@ public class Dungeon {
 			}
 		}
 
-		level.create(depth,levelDepth+1000*sonId,sonId);
+		level.create(depth,levelDepth+1000*SUBId,SUBId);
 		Statistics.qualifiedForNoKilling = !bossLevel();
 		return level;
 	}
@@ -377,9 +377,9 @@ public class Dungeon {
         }
         return level;
     }
-    private static Level ZeroLevel(int son){
+    private static Level ZeroLevel(int SUB){
         Level level;
-        switch (son){
+        switch (SUB){
             case 0:
                 level = new ZeroLevel();
                 break;
@@ -402,16 +402,16 @@ public class Dungeon {
         return level;
     }
 
-    private static Level newSonLevel(int id,int sonId){
+    private static Level newSUBLevel(int id,int SUBId){
         Level level;
         switch (id){
             case 10:
-                if (sonId==1) {
+                if (SUBId==1) {
                     level = new RabbitBossLevel();
                     break;
                 }
             case 25:
-                if (sonId==1) {
+                if (SUBId==1) {
                     level = new LastShopLevel();
                     break;
                 }
@@ -421,19 +421,19 @@ public class Dungeon {
         }
         return level;
     }
-	public static Level newLevel(int depth,int sonId){
+	public static Level newLevel(int depth,int SUBId){
         resetGenerator();
 		Level level;
         if (depth==0){
-            level = ZeroLevel(sonId);
+            level = ZeroLevel(SUBId);
         }else {
-            if (sonId == 0) {
+            if (SUBId == 0) {
                 level = normalLevel(depth);
             } else {
-                level = newSonLevel(depth, sonId);
+                level = newSUBLevel(depth, SUBId);
             }
         }
-		return newLevel(level,depth,sonId);
+		return newLevel(level,depth,SUBId);
 	}
 	
 	public static void resetLevel() {
@@ -487,7 +487,7 @@ public class Dungeon {
 		PathFinder.setMapSize(level.width(), level.height());
 		
 		SummonId=level.SummonId;
-        sonId  =level.sonId;
+        SUBId  =level.SUBId;
 		Dungeon.level = level;
 		Mob.restoreAllies( level, pos );
 		Actor.init();
@@ -573,7 +573,7 @@ public class Dungeon {
 	}
 	
 	private static final String SUMMON_ID        = "summonid";
-    private static final String SON_ID          = "son_id";
+    private static final String SUB_ID          = "SUB_id";
 	private static final String VERSION		    = "version";
 	private static final String SEED		    = "seed";
 	private static final String CHALLENGES	    = "challenges";
@@ -599,7 +599,7 @@ public class Dungeon {
 			Bundle bundle = new Bundle();
 
 			bundle.put( SUMMON_ID,SummonId);
-            bundle.put( SON_ID,sonId);
+            bundle.put( SUB_ID,SUBId);
 			version = Game.versionCode;
 			bundle.put( VERSION, version );
 			bundle.put( SEED, seed );
@@ -686,23 +686,23 @@ public class Dungeon {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
         int depth=level.levelDepth;
-        int son=level.sonId;
+        int SUB=level.SUBId;
         if(level.FirstSave){//mark
             level.FirstSave = false;
-            FileUtils.bundleToFile(GamesInProgress.depthFile(save,depth, son,1),bundle);
+            FileUtils.bundleToFile(GamesInProgress.depthFile(save,depth, SUB,1),bundle);
         }
-        FileUtils.bundleToFile(GamesInProgress.depthFile(save,depth, son,0),bundle);
+        FileUtils.bundleToFile(GamesInProgress.depthFile(save,depth, SUB,0),bundle);
 	}
     public static void saveLevel( Level level ) throws IOException {
         Bundle bundle = new Bundle();
         bundle.put( LEVEL, level );
         int depth=level.levelDepth;
-        int son=level.sonId;
+        int SUB=level.SUBId;
         if(level.FirstSave){//mark
             level.FirstSave = false;
-            FileUtils.bundleToFile(GamesInProgress.depthFile(GamesInProgress.curSlot,depth, son,1),bundle);
+            FileUtils.bundleToFile(GamesInProgress.depthFile(GamesInProgress.curSlot,depth, SUB,1),bundle);
         }
-        FileUtils.bundleToFile(GamesInProgress.depthFile(GamesInProgress.curSlot,depth, son,0),bundle);
+        FileUtils.bundleToFile(GamesInProgress.depthFile(GamesInProgress.curSlot,depth, SUB,0),bundle);
     }
 	
 	public static void saveAll() throws IOException {
@@ -726,7 +726,7 @@ public class Dungeon {
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.gameFile( save ) );
 
 		SummonId = bundle.getInt( SUMMON_ID );
-        sonId   = bundle.getInt( SON_ID );
+        SUBId   = bundle.getInt( SUB_ID );
 		version = bundle.getInt( VERSION );
 
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
@@ -894,14 +894,14 @@ public class Dungeon {
         }
     }
 
-	public static Level tryLoadLevel(int depth,int sonId, int copy){//mark
+	public static Level tryLoadLevel(int depth,int SUBId, int copy){//mark
 		final int save=GamesInProgress.curSlot;
-		final String fileName=GamesInProgress.depthFile(save,depth,sonId,copy);
+		final String fileName=GamesInProgress.depthFile(save,depth,SUBId,copy);
 		if(FileUtils.fileExists(fileName)){
 			//file may be deleted between fileExists and loadLevel,who knows.
 			try{
                 GetSight();
-				return loadLevel(save,depth,sonId,copy);
+				return loadLevel(save,depth,SUBId,copy);
 			}catch(IOException e){
 				Game.reportException(e);
 			}
@@ -910,11 +910,11 @@ public class Dungeon {
 		return null;
 	}
 	
-	public static Level loadLevel(int save,int levelId,int sonId, int copy) throws IOException {
+	public static Level loadLevel(int save,int levelId,int SUBId, int copy) throws IOException {
 		Dungeon.level = null;
 		Actor.clear();
 		
-		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId,sonId,copy));
+		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId,SUBId,copy));
 		
 		Level level = (Level)bundle.get( LEVEL );
 		
@@ -943,7 +943,7 @@ public class Dungeon {
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
 		info.depth = bundle.getInt( DEPTH );
-        info.sonId = bundle.getInt( SON_ID );
+        info.SUBId = bundle.getInt( SUB_ID );
 		info.version = bundle.getInt( VERSION );
 		info.challenges = bundle.getInt( CHALLENGES );
 		Hero.preview( info, bundle.getBundle( HERO ) );

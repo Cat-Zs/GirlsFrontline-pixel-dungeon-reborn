@@ -9,18 +9,18 @@ import com.watabou.noosa.Game;
 public class Teleporter extends Trigger{
 	public int targetPos;
 	public int targetLevelDepth;
-    public int sonId;
+    public int SUBId;
 
 	private static final String TARGET_POS     ="target_pos";
 	private static final String TARGET_LEVEL_DEPTH ="target_level_depth";
-    private static final String SON_ID="son_id";
+    private static final String SUB_ID="SUB_id";
 
 	@Override
 	public void storeInBundle(Bundle bundle){
 		super.storeInBundle(bundle);
 		bundle.put(TARGET_POS     ,targetPos    );
 		bundle.put(TARGET_LEVEL_DEPTH, targetLevelDepth);
-        bundle.put(SON_ID,sonId);
+        bundle.put(SUB_ID,SUBId);
 	}
 	
 	@Override
@@ -28,14 +28,14 @@ public class Teleporter extends Trigger{
 		super.restoreFromBundle(bundle);
 		targetPos    =bundle.getInt(TARGET_POS     );
 		targetLevelDepth =bundle.getInt(TARGET_LEVEL_DEPTH);
-        sonId=bundle.getInt(SON_ID);
+        SUBId=bundle.getInt(SUB_ID);
 	}
 
-	public Teleporter create(int pos,int targetPos,int targetLevelDepth, int sonId){
+	public Teleporter create(int pos,int targetPos,int targetLevelDepth, int SUBId){
 		this.pos=pos;
 		this.targetPos=targetPos;
 		this.targetLevelDepth =targetLevelDepth;
-        this.sonId=sonId;
+        this.SUBId=SUBId;
 		return this;
 	}
 	
@@ -44,7 +44,7 @@ public class Teleporter extends Trigger{
 		if(Dungeon.hero==ch){
 			InterlevelScene.accessPos=targetPos;
 			InterlevelScene.accessLevelDepth = targetLevelDepth;
-            InterlevelScene.sonId=sonId;
+            InterlevelScene.SUBId=SUBId;
 			InterlevelScene.mode=InterlevelScene.Mode.ACCESS;
 			Game.switchScene(InterlevelScene.class);
 		}
