@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
@@ -29,11 +30,14 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ImpSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.P7Sprite;
+import com.watabou.noosa.Game;
+import com.watabou.utils.Callback;
 
 public class ImpShopkeeper extends Shopkeeper {
 
 	{
 		spriteClass = P7Sprite.class;
+        turnsSinceHarmed = -1;
 	}
 	
 	private boolean seenBefore = false;
@@ -41,10 +45,23 @@ public class ImpShopkeeper extends Shopkeeper {
 	@Override
 	protected boolean act() {
 		if (!seenBefore && Dungeon.level.heroFOV[pos]) {
-			yell( Messages.get(this, "greetings", Dungeon.hero.name() ) );
+			yellgood( Messages.get(this, "greetings", Dungeon.hero.name() ) );
 			seenBefore = true;
 		}
 		
 		return super.act();
 	}
+    @Override
+    public boolean interact(Char c) {
+        if (c != Dungeon.hero) {
+            return true;
+        }
+        Game.runOnRenderThread(new Callback() {
+            @Override
+            public void call() {
+
+            }
+        });
+        return true;
+    }
 }

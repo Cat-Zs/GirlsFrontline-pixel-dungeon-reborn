@@ -44,7 +44,7 @@ import com.watabou.utils.Random;
 
 public class Shopkeeper extends NPC {
 
-    private int turnsSinceHarmed;
+    protected int turnsSinceHarmed;
 
     {
 		spriteClass = ShopkeeperSprite.class;
