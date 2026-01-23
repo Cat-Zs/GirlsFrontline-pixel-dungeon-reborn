@@ -165,7 +165,7 @@ public class Grass extends Item {
                     return;
                 }
                 Char ch = Actor.findChar(target);
-                if (ch!=null){
+                if (ch!=null&&ch!=Dungeon.hero){
                     GLog.n(cant_select);
                     return;
                 }

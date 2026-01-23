@@ -227,6 +227,9 @@ public class SPDSettings extends GameSettings {
 	public static int challenges() {
 		return getInt( KEY_CHALLENGES, 0, 0, Challenges.MAX_VALUE );
 	}
+    public static boolean isChallenged( int mask ) {
+        return (challenges() & mask) != 0;
+    }
 
 	public static void supportNagged( boolean value ) {
 		put( KEY_SUPPORT_NAGGED, value );

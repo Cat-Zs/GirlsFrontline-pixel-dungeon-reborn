@@ -26,10 +26,16 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
+
+import java.util.ArrayList;
 
 public class Cannon extends UniversaleGun {
 
@@ -41,6 +47,28 @@ public class Cannon extends UniversaleGun {
         ACC = 20f;
         DLY = 0.1f;
         DEF = 30;
+        defaultAction = AC_CHANGE;
+    }
+
+    private static final String AC_CHANGE = "AC_CHANGE";
+    private boolean mustDie = true;
+
+    @Override
+    public ArrayList<String> actions(Hero hero) {
+        ArrayList<String> actions = super.actions(hero);
+        actions.add(AC_CHANGE);
+        return actions;
+    }
+    @Override
+    public void execute(Hero hero, String action) {
+        super.execute(hero, action);
+        if (action.equals(AC_CHANGE)){
+            mustDie = !mustDie;
+            if(mustDie)
+                GLog.p("切换至秒杀模式。");
+            else
+                GLog.n("切换至正常攻击模式。");
+        }
     }
 
     @Override
@@ -55,26 +83,47 @@ public class Cannon extends UniversaleGun {
             Hero hero = (Hero)owner;
             Char enemy = hero.enemy();
             Buff.affect(hero, Light.class, 10);
-            Buff.prolong(hero, Speed.class, 10);
             //Dungeon.Flag = true;
-            if (enemy instanceof Mob && ((Mob) enemy).surprisedBy(hero)) {
-                //deals 75% toward max to max on surprise, instead of min to max.
-                int diff = max() - min();
-                int damage = augment.damageFactor(Random.NormalIntRange(
-                        min() + Math.round(diff*3.75f),
-                        max()));
-                int exStr = hero.STR() - STRReq();
-                if (exStr > 0) {
-                    damage += Random.IntRange(0, exStr);
+            if (enemy instanceof Mob){
+                if (mustDie){
+                    if (enemy instanceof Tengu||enemy instanceof Elphelt){
+                        if (enemy.HP>enemy.HT/2){
+                            enemy.HP=enemy.HT/2+1;
+                            enemy.damage(999999,this);
+                        }else {
+                            enemy.HP=1;
+                            enemy.damage(999999,this);
+                        }
+                    }else {
+                        enemy.die(this);
+                    }
+                    return 0;
+                }else if(((Mob) enemy).surprisedBy(hero)) {
+                    //deals 75% toward max to max on surprise, instead of min to max.
+                    int diff = max() - min();
+                    int damage = augment.damageFactor(Random.NormalIntRange(
+                            min() + Math.round(diff*3.75f),
+                            max()));
+                    int exStr = hero.STR() - STRReq();
+                    if (exStr > 0) {
+                        damage += Random.IntRange(0, exStr);
+                    }
+                    owner.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
+                    hero.HP += Math.min(damage, hero.HT-hero.HP);
+                    return damage;
                 }
-                owner.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
-                hero.HP += Math.min(damage, hero.HT-hero.HP);
-                return damage;
             }
         }
         owner.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
         int damage = super.damageRoll(owner);
         owner.HP += Math.min(damage, owner.HT-owner.HP);
         return damage;
+    }
+    @Override
+    public String info(){
+        String info = super.info();
+        if (mustDie)
+            info+="\n\n已开启秒杀模式。";
+        return info;
     }
 }
