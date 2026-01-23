@@ -76,6 +76,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.DeathMark;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.warrior.Endure;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elemental;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Ghoul;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.ImmortalShieldAffecter;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.glyphs.AntiMagic;
@@ -94,6 +97,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Blocki
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Grim;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.enchantments.Shocking;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ShootGun;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.darts.ShockingDart;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
@@ -331,6 +335,7 @@ public abstract class Char extends Actor {
 						&& !Dungeon.level.adjacent(h.pos, enemy.pos)){
 					dr = 0;
 				}
+
 			}else{
 				Barkskin bark = enemy.buff(Barkskin.class);
 				if (bark != null)   dr += Random.NormalIntRange( 0 , bark.level() );
@@ -458,6 +463,24 @@ public abstract class Char extends Actor {
 		float acuStat = attacker.attackSkill( defender );
 		float defStat = defender.defenseSkill( attacker );
 
+        if (attacker instanceof Hero) {
+            Cannon cannon = Dungeon.hero.belongings.getItem(Cannon.class);
+            if (cannon != null && cannon.mustDie) {
+                if (defender instanceof Tengu || defender instanceof Elphelt) {
+                    if (defender.HP > defender.HT / 2) {
+                        defender.HP = defender.HT / 2 + 1;
+                        defender.damage(1, cannon);
+                    } else {
+                        defender.HP = 1;
+                        defender.damage(1, cannon);
+                    }
+                } else if (defender instanceof Ghoul) {
+                    ((Ghoul) defender).dieA(true, cannon);
+                } else {
+                    defender.die(cannon);
+                }
+            }
+        }
 		//if accuracy or evasion are large enough, treat them as infinite.
 		//note that infinite evasion beats infinite accuracy
 		if (defStat >= INFINITE_EVASION){

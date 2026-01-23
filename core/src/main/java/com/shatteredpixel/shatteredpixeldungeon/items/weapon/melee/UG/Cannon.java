@@ -27,6 +27,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Ghoul;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -51,7 +52,7 @@ public class Cannon extends UniversaleGun {
     }
 
     private static final String AC_CHANGE = "AC_CHANGE";
-    private boolean mustDie = true;
+    public boolean mustDie = true;
 
     @Override
     public ArrayList<String> actions(Hero hero) {
@@ -86,17 +87,6 @@ public class Cannon extends UniversaleGun {
             //Dungeon.Flag = true;
             if (enemy instanceof Mob){
                 if (mustDie){
-                    if (enemy instanceof Tengu||enemy instanceof Elphelt){
-                        if (enemy.HP>enemy.HT/2){
-                            enemy.HP=enemy.HT/2+1;
-                            enemy.damage(999999,this);
-                        }else {
-                            enemy.HP=1;
-                            enemy.damage(999999,this);
-                        }
-                    }else {
-                        enemy.die(this);
-                    }
                     return 0;
                 }else if(((Mob) enemy).surprisedBy(hero)) {
                     //deals 75% toward max to max on surprise, instead of min to max.
