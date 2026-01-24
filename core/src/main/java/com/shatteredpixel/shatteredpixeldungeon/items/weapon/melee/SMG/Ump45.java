@@ -112,25 +112,19 @@ public class Ump45 extends SubMachineGun {
             else if (cooldownLeft > 0) {
                 GLog.w(Messages.get(this, "cooldown", cooldownLeft));
             }
-            //没有进入上述if，即满足全部要求之后，进入此处executeSMOKE动作
+            //没有进入上述if，即满足全部要求之后，进入此处ThrowSmoke动作
             else {
-                executeSMOKE();
+                GameScene.selectCell(SmokeSelector);
             }
         }
     }
-    //SMOKEA转SMOKEB
-    public SMOKEB SMOKEA(){
-        return new SMOKEB();
-    }
-    /*Selector的目标不为空的时候，对改位置引用SMOKEA，SMOKEA转SMOKEB，
-      SMOKEB使用Honeypot的方法，对目标位置使用弹道学的cast，cast有丢弃物品的动画，
-      Honeypot有shatter方法，这里进行了覆写shatter*/
-    private final CellSelector.Listener SMOKESelector = new CellSelector.Listener() {
+    private final CellSelector.Listener SmokeSelector = new CellSelector.Listener() {
         @Override
         public void onSelect(Integer target) {
             if (target != null) {
                 //使用SMOKEB中的cast操作，Potion的cast不会保留掉落物
-                SMOKEA().cast(curUser, target);
+                Smoke smoke = new Smoke();
+                smoke.cast(curUser, target);
                 //对冲掉物品的丢弃时间
                 hero.spendAndNext(-TIME_TO_THROW);
                 //往下的是复制灵刀的
@@ -150,19 +144,13 @@ public class Ump45 extends SubMachineGun {
             return Messages.get(Ump45.class, "select_target");
         }
     };
-    //executeSMOKE动作进入Selector界面
-    private void executeSMOKE() {
-        GameScene.selectCell(SMOKESelector);
-    }
-    //SMOKEB有丢出物品的贴图及文案
-    private class SMOKEB extends Honeypot {
+    private static class Smoke extends Item {
 
         {
             image = ItemSpriteSheet.SMOKEUmp45;
         }
-        //shatter为从大隐身处复制过来的扩散逻辑，但生成的气体复制电击
 
-        public Item shatter( Char owner, int cell ) {
+        public void explore( int cell ) {
             //气体音效
             if (Dungeon.level.heroFOV[cell]) {
                 Sample.INSTANCE.play( Assets.Sounds.GAS );
@@ -189,15 +177,11 @@ public class Ump45 extends SubMachineGun {
                     }
                 }
             }
-            //返回值为掉落物品，此处设置为空
-            return null;
         }
 
-        public void cast(final Hero user, final int dst){
-            final int cell = throwPos( user, dst );
-            super.cast( user, cell );
-//          Potion的cast自带使用shatter
-//          shatter(cell);
+        @Override
+        public void onThrow( int cell ){
+            explore(cell);
         }
 
     }
@@ -229,7 +213,7 @@ public class Ump45 extends SubMachineGun {
 
                     if (blade.cooldownLeft > 0) {
                         blade.cooldownLeft--;
-                        blade.updateQuickslot();
+                        updateQuickslot();
                     }
 
                     // 当冷却时间结束时，移除Buff

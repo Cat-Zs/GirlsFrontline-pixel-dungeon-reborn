@@ -118,7 +118,7 @@ public class RingOfWealth extends Ring {
 			dropsToEquip = Random.NormalIntRange(4, 8);
             if (bonus<0)
                 triesToDrop+=bonus;
-		}
+        }
 
 		//now handle reward logic
 		ArrayList<Item> drops = new ArrayList<>();
