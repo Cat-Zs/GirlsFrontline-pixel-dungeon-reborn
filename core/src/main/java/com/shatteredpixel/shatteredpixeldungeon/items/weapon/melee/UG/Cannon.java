@@ -51,7 +51,7 @@ public class Cannon extends UniversaleGun {
         defaultAction = AC_CHANGE;
     }
 
-    private static final String AC_CHANGE = "AC_CHANGE";
+    private static final String AC_CHANGE = "CHANGE";
     public boolean mustDie = true;
 
     @Override
