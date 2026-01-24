@@ -463,21 +463,35 @@ public class Dungeon {
 	public static int curDepth(){
 		return depth;
 	}
+    public static int curSub(){
+        return SUBId;
+    }
 
 	public static long seedCurDepth(){
-		return seedForDepth(curDepth()+1000*SUBId);
+		return seedForDepth(curDepth()+1000*SUBId, curSub());
 	}
 
-	public static long seedForDepth(int depth){
+	public static long seedForDepth(int depth, int sub){
 		Random.pushGenerator( seed );
+        //以存档种子为开始的随机数序列
+        if (sub<0)
+            sub=-sub;
+        for (int i = 0; i < sub; i ++) {
+            Random.Long(); //先过掉当前子层序号的随机数，以做到同楼层子层之间的区分
+        }
         if (depth<0) {
             depth=-depth;
+            for (int i = 0; i < depth%1000; i ++) {
+                Random.Long(); //负数子层要与正数子层做出区分，这里先过掉楼层深度个随机数
+            }
             depth += (int) (depth&Random.Long());
+            //然后让后续要过掉的随机数的个数，加伤楼层与目前的随机数的按位与算法结果
         }
 			for (int i = 0; i < depth; i ++) {
 				Random.Long(); //we don't care about these values, just need to go through them
 			}
 			long result = Random.Long();
+            //过掉楼层深度个随机数，以获得即将要使用的随机数
 
 		Random.popGenerator();
 		return result;
