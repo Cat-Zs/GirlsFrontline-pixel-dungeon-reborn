@@ -752,7 +752,10 @@ public abstract class Mob extends Char {
 			}
 		}
 	}
-
+    @Override
+    public void MustDie( Object cause ){
+        this.die(cause);
+    }
 	public float lootChance(){
 		float lootChance = this.lootChance;
 
@@ -780,7 +783,7 @@ public abstract class Mob extends Char {
 			if (properties.contains(Property.BOSS)) rolls = 15;
 			else if (properties.contains(Property.MINIBOSS)) rolls = 5;
 			ArrayList<Item> bonus = RingOfWealth.tryForBonusDrop(Dungeon.hero, rolls);
-			if (bonus != null && !bonus.isEmpty()) {
+			if (!bonus.isEmpty()) {
 				for (Item b : bonus) Dungeon.level.drop(b, pos).sprite.drop();
 				RingOfWealth.showFlareForBonusDrop(sprite);
 			}

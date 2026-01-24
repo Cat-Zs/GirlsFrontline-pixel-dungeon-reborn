@@ -274,6 +274,10 @@ public class SentryRoom extends SpecialRoom {
 			}
 			return true;
 		}
+        @Override
+        public void MustDie( Object cause ){
+            die(cause);
+        }
 
 		public void onZapComplete(){
 			Dungeon.hero.damage(Random.NormalIntRange(2+Dungeon.curDepth()/2, 4+Dungeon.curDepth()), new Eye.DeathGaze());

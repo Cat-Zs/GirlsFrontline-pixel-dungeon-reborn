@@ -23,40 +23,20 @@ package com.shatteredpixel.shatteredpixeldungeon.items.bombs;
 
 import static com.shatteredpixel.shatteredpixeldungeon.levels.Level.set;
 
-import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Ghoul;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Scarecrow;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Tengu;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Blacksmith;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
-import com.shatteredpixel.shatteredpixeldungeon.effects.SpellSprite;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
-import com.shatteredpixel.shatteredpixeldungeon.levels.CavesBossLevel;
-import com.shatteredpixel.shatteredpixeldungeon.levels.DeepCaveBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
-import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
-import com.shatteredpixel.shatteredpixeldungeon.levels.SewerBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
-import com.watabou.utils.Rect;
 
 public class TestBomb extends Bomb {
 	
@@ -69,6 +49,12 @@ public class TestBomb extends Bomb {
         Point p = Dungeon.level.cellToPoint(cell);
         return p.x <= 0 || p.y <= 0 || p.x >= Dungeon.level.width() - 1 || p.y >= Dungeon.level.height() - 1;
     }
+
+    @Override
+    protected void onThrow( int cell ) {
+        explode( cell );
+    }
+
 	@Override
 	public void explode(int ignore) {
         int length = Dungeon.level.length();
@@ -92,21 +78,7 @@ public class TestBomb extends Bomb {
             if (outMap(j))
                 continue;
             if (target != null && target.alignment != Char.Alignment.ALLY) {
-                if (target instanceof Tengu || target instanceof Elphelt) {
-                    if (target.HP > target.HT / 2) {
-                        target.HP = target.HT / 2 + 1;
-                        target.damage(1, this);
-                    } else {
-                        target.HP = 1;
-                        target.damage(1, this);
-                    }
-                } else if (target instanceof Ghoul) {
-                    ((Ghoul) target).dieA(true, this);
-                } else if (target instanceof Shopkeeper||target instanceof Ghost|| target instanceof Wandmaker||target instanceof Blacksmith||target instanceof Imp){
-
-                } else {
-                    target.die(this);
-                }
+                target.MustDie( this );
             }
         }
 

@@ -403,9 +403,12 @@ public abstract class Char extends Actor {
 
 			enemy.damage( effectiveDamage, this );
 
-			if (buff(FireImbue.class) != null)  buff(FireImbue.class).proc(enemy);
-			if (buff(FrostImbue.class) != null) buff(FrostImbue.class).proc(enemy);
-            if (buff(ShootGun.EMPCharge.class) != null) buff(ShootGun.EMPCharge.class).proc(enemy);
+			if (buff(FireImbue.class) != null)
+                buff(FireImbue.class).proc(enemy);
+			if (buff(FrostImbue.class) != null)
+                buff(FrostImbue.class).proc(enemy);
+            if (buff(ShootGun.EMPCharge.class) != null)
+                buff(ShootGun.EMPCharge.class).proc(enemy);
 
 			if (enemy.isAlive() && enemy.alignment != alignment && prep != null && prep.canKO(enemy)){
 				enemy.HP = 0;
@@ -466,19 +469,7 @@ public abstract class Char extends Actor {
         if (attacker instanceof Hero) {
             Cannon cannon = Dungeon.hero.belongings.getItem(Cannon.class);
             if (cannon != null && cannon.mustDie) {
-                if (defender instanceof Tengu || defender instanceof Elphelt) {
-                    if (defender.HP > defender.HT / 2) {
-                        defender.HP = defender.HT / 2 + 1;
-                        defender.damage(1, cannon);
-                    } else {
-                        defender.HP = 1;
-                        defender.damage(1, cannon);
-                    }
-                } else if (defender instanceof Ghoul) {
-                    ((Ghoul) defender).dieA(true, cannon);
-                } else {
-                    defender.die(cannon);
-                }
+                defender.MustDie( cannon );
             }
         }
 		//if accuracy or evasion are large enough, treat them as infinite.
@@ -711,6 +702,9 @@ public abstract class Char extends Actor {
 		if (src != Chasm.class) sprite.die();
 	}
 
+    public void MustDie( Object cause ){
+        this.die(cause);
+    }
 	//we cache this info to prevent having to call buff(...) in isAlive.
 	//This is relevant because we call isAlive during drawing, which has both performance
 	//and thread coordination implications

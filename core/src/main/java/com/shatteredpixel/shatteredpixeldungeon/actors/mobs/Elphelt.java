@@ -382,6 +382,17 @@ public class Elphelt extends Mob {
 
 		yell( Messages.get(this, "defeated") );
 	}
+    @Override
+    public void MustDie( Object cause ){
+        if (HP>HT/2) {
+            HP = HT / 2 + 1;
+            damage(1, cause);
+        }
+        else{
+            HP = 1;
+            damage(1, cause);
+        }
+    }
 
 	public void fireGenoise( int pos ) {
 		boolean terrainAffected = false;

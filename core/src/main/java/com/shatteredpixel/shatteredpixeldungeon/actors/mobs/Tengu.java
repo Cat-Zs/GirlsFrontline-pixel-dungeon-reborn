@@ -213,7 +213,17 @@ public class Tengu extends Mob {
 		
 		yell( Messages.get(this, "defeated") );
 	}
-	
+	@Override
+    public void MustDie( Object cause ){
+        if (HP>HT/2) {
+            HP = HT / 2 + 1;
+            damage(1, cause);
+        }
+        else{
+            HP = 1;
+            damage(1, cause);
+        }
+    }
 	@Override
 	protected boolean canAttack( Char enemy ) {
 		return new Ballistica( pos, enemy.pos, Ballistica.PROJECTILE).collisionPos == enemy.pos;

@@ -10,6 +10,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -199,11 +200,16 @@ public class WandOfReflectDisintegration extends WandOfDisintegration {
         int lvl = level;
         for (Char ch : chars) {
             wandProc(ch, chargesPerCast());
-            int damage = Math.round(damageRoll(lvl)*reflectionDamageFactor(reflection));
-            if(!ch.equals(curUser)) {
-                ch.damage(damage, this);
-            }else{
-                ch.damage(damage/6, this);
+            Cannon cannon = Dungeon.hero.belongings.getItem(Cannon.class);
+            if (ch.alignment!= Char.Alignment.ALLY && cannon != null && cannon.mustDie) {
+                ch.MustDie( cannon );
+            }else {
+                int damage = Math.round(damageRoll(lvl) * reflectionDamageFactor(reflection));
+                if (!ch.equals(curUser)) {
+                    ch.damage(damage, this);
+                } else {
+                    ch.damage(damage / 6, this);
+                }
             }
             ch.sprite.centerEmitter().burst( PurpleParticle.BURST, Random.IntRange( 1, 2 ) );
             ch.sprite.flash();
@@ -303,6 +309,14 @@ public class WandOfReflectDisintegration extends WandOfDisintegration {
         }
     }
 
+    public String info(){
+        String info = super.info();
+        Cannon cannon = Dungeon.hero.belongings.getItem(Cannon.class);
+        if ( cannon != null && cannon.mustDie ){
+            info += "\n\n已开启秒杀模式。";
+        }
+        return info;
+    }
 
 }
 

@@ -41,6 +41,10 @@ public abstract class NPC extends Mob {
 		alignment = Alignment.NEUTRAL;
 		state = PASSIVE;
 	}
+    @Override
+    public void MustDie( Object cause ){
+
+    }
 
 /*    public float lootChance(){
         return this.lootChance;
