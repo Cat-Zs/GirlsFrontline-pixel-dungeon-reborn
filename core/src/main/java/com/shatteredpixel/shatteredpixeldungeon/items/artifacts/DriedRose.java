@@ -106,17 +106,13 @@ public class DriedRose extends Artifact {
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
 		ArrayList<String> actions = super.actions( hero );
-		if (!Ghost.Quest.completed()){
-			actions.remove(AC_EQUIP);
-			return actions;
-		}
-		if (isEquipped( hero ) && charge == chargeCap && !cursed && ghostID == 0) {
+		if (Ghost.Quest.completed() && isEquipped( hero ) && charge == chargeCap && !cursed && ghostID == 0) {
 			actions.add(AC_SUMMON);
 		}
-		if (ghostID != 0){
+		if (Ghost.Quest.completed() && ghostID != 0){
 			actions.add(AC_DIRECT);
 		}
-		if (isIdentified() && !cursed){
+		if (Ghost.Quest.completed() && isIdentified() && !cursed){
 			actions.add(AC_OUTFIT);
 		}
 		
