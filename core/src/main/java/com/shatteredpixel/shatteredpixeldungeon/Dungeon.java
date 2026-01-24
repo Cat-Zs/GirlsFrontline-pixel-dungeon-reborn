@@ -233,7 +233,8 @@ public class Dungeon {
 	public static int energy;
     //public static boolean ExtractSummoned;提取升级是否生成的计数
 
-    public static int RollTimes      = 0;
+    public static int RollTimes     = 0;
+    public static int ConnectLevel  = 1;
 	public static HashSet<Integer> chapters;
 
 	public static SparseArray<ArrayList<Item>> droppedItems;
@@ -405,15 +406,29 @@ public class Dungeon {
 
     private static Level newSUBLevel(int id,int SUBId){
         Level level;
+        if (SUBId<0) {
+            return newMissionLevel(id, SUBId);
+        }
+        if (SUBId>Dungeon.ConnectLevel)
+            return new DeadEndLevel();
+        //新增衔接子层请更新最大连接数，尝试生成的子层大于最大连接数将会返回默认层
         switch (id){
-            case 10:
-                if (SUBId==1) {
-                    level = new RabbitBossLevel();
-                    break;
-                }
             case 25:
                 if (SUBId==1) {
                     level = new LastShopLevel();
+                    break;
+                }
+            default:
+                level = new DeadEndLevel();
+                break;
+        }
+        return level;
+    }
+    private static Level newMissionLevel(int id, int SUBId){
+        switch (id){
+            case 10:
+                if (SUBId==-1) {
+                    level = new RabbitBossLevel();
                     break;
                 }
             default:
@@ -446,16 +461,19 @@ public class Dungeon {
 	}
 
 	public static int curDepth(){
-		return depth%1000;
+		return depth;
 	}
 
 	public static long seedCurDepth(){
-		return seedForDepth(depth);
+		return seedForDepth(curDepth()+1000*SUBId);
 	}
 
 	public static long seedForDepth(int depth){
 		Random.pushGenerator( seed );
-
+        if (depth<0) {
+            depth=-depth;
+            depth += (int) (depth&Random.Long());
+        }
 			for (int i = 0; i < depth; i ++) {
 				Random.Long(); //we don't care about these values, just need to go through them
 			}

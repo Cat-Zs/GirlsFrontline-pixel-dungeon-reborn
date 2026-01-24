@@ -104,10 +104,10 @@ public class HallsLevel extends RegularLevel {
 	}
 	
 	@Override
-	public void create(int depth,int levelId, int sonId) {
+	public void create(int depth,int levelDepth, int SUBId) {
 		addItemToSpawn( new Torch() );
 		addItemToSpawn( new Torch() );
-		super.create(depth,levelId,sonId);
+		super.create(depth,levelDepth+1000*SUBId,SUBId);
 	}
 	
 	@Override

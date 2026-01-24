@@ -66,8 +66,8 @@ public class LastLevel extends Level {
 	}
 
 	@Override
-	public void create(int depth,int levelId, int sonId) {
-		super.create(depth,levelId, sonId);
+	public void create(int depth,int levelDepth, int SUBId) {
+		super.create(depth,levelDepth+1000*SUBId,SUBId);
 		for (int i=0; i < length(); i++) {
 			int flags = Terrain.flags[map[i]];
 			if ((flags & Terrain.PIT) != 0){
