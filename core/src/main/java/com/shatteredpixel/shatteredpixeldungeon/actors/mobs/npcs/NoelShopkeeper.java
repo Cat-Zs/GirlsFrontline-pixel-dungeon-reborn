@@ -30,7 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.minigames.PlayGame;
 import com.shatteredpixel.shatteredpixeldungeon.minigames.WndPlayGame;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.RabbitShopKeeperSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.NoelShopKeeperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
@@ -40,7 +40,7 @@ import com.watabou.utils.Random;
 public class NoelShopkeeper extends ImpShopkeeper {
 
 	{
-        spriteClass = RabbitShopKeeperSprite.class;
+        spriteClass = NoelShopKeeperSprite.class;
         turnsSinceHarmed = -1;
         properties.add(Property.IMMOVABLE);
 	}

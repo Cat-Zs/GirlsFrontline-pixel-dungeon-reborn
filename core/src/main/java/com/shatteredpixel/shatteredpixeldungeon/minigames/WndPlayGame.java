@@ -11,7 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Grass;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.RabbitShopKeeperSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.NoelShopKeeperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -209,7 +209,7 @@ public class WndPlayGame extends Window {
     @Override
     public void onBackPressed() {
         GameScene.show(
-                new WndOptions(new RabbitShopKeeperSprite(),
+                new WndOptions(new NoelShopKeeperSprite(),
                         Messages.titleCase(Messages.get(this, "stop")),
                         Messages.get(this, "lose_warn"),
                         Messages.get(this, "yes"),
