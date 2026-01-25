@@ -91,14 +91,14 @@ public class WarpBeacon extends ArmorAbility {
 				protected void onSelect(int index) {
 					if (index == 0){
 
-						if (tracker.depth != Dungeon.depth && !hero.hasTalent(Talent.LONGRANGE_WARP)){
+						if ((tracker.SUBId!=Dungeon.SUBId||tracker.depth != Dungeon.depth) && !hero.hasTalent(Talent.LONGRANGE_WARP)){
 							GLog.w( Messages.get(WarpBeacon.class, "depths") );
 							return;
 						}
 
 						float chargeNeeded = chargeUse(hero);
 
-						if (tracker.depth != Dungeon.depth){
+						if (tracker.SUBId!=Dungeon.SUBId||tracker.depth != Dungeon.depth){
 							chargeNeeded *= 1.833f - 0.333f*Dungeon.hero.pointsInTalent(Talent.LONGRANGE_WARP);
 						}
 
@@ -110,7 +110,7 @@ public class WarpBeacon extends ArmorAbility {
 						armor.charge -= chargeNeeded;
 						armor.updateQuickslot();
 
-						if (tracker.depth == Dungeon.depth){
+						if (tracker.SUBId==Dungeon.SUBId&&tracker.depth == Dungeon.depth){
 							Char existing = Actor.findChar(tracker.pos);
 
 							ScrollOfTeleportation.appear(hero, tracker.pos);
@@ -172,6 +172,7 @@ public class WarpBeacon extends ArmorAbility {
 
 							InterlevelScene.mode = InterlevelScene.Mode.RETURN;
 							InterlevelScene.returnDepth = tracker.depth;
+                            InterlevelScene.SUBId = tracker.SUBId;
 							InterlevelScene.returnPos = tracker.pos;
 							Game.switchScene( InterlevelScene.class );
 						}
@@ -203,6 +204,7 @@ public class WarpBeacon extends ArmorAbility {
 			WarpBeaconTracker tracker = new WarpBeaconTracker();
 			tracker.pos = target;
 			tracker.depth = Dungeon.depth;
+            tracker.SUBId = Dungeon.SUBId;
 			tracker.attachTo(hero);
 
 			hero.sprite.operate(target);
@@ -220,12 +222,13 @@ public class WarpBeacon extends ArmorAbility {
 
 		int pos;
 		int depth;
+        int SUBId;
 
 		Emitter e;
 
 		@Override
 		public void fx(boolean on) {
-			if (on && depth == Dungeon.depth) {
+			if (on && depth == Dungeon.depth&&SUBId==Dungeon.SUBId) {
 				e = CellEmitter.center(pos);
 				e.pour(MagicMissile.WardParticle.UP, 0.05f);
 			}
@@ -234,12 +237,14 @@ public class WarpBeacon extends ArmorAbility {
 
 		public static final String POS = "pos";
 		public static final String DEPTH = "depth";
+        public static final String SUBID = "subid";
 
 		@Override
 		public void storeInBundle(Bundle bundle) {
 			super.storeInBundle(bundle);
 			bundle.put(POS, pos);
 			bundle.put(DEPTH, depth);
+            bundle.put(SUBID, SUBId);
 		}
 
 		@Override
@@ -247,6 +252,7 @@ public class WarpBeacon extends ArmorAbility {
 			super.restoreFromBundle(bundle);
 			pos = bundle.getInt(POS);
 			depth = bundle.getInt(DEPTH);
+            SUBId = bundle.getInt(SUBID);
 		}
 	}
 

@@ -306,6 +306,8 @@ public class CursedWand {
 					InterlevelScene.mode = InterlevelScene.Mode.RETURN;
 					InterlevelScene.returnDepth = depth;
 					InterlevelScene.returnPos = -1;
+                    InterlevelScene.SUBId = 0;
+                    //诅咒法杖传送回主层
 					Game.switchScene(InterlevelScene.class);
 
 				} else {
