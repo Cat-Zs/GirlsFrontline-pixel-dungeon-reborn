@@ -93,6 +93,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.CloakOfShadows;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.EtherealChains;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.MasterThievesArmband;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
@@ -1417,7 +1418,11 @@ public class Hero extends Char {
 	@Override
 	public int attackProc( final Char enemy, int damage ) {
 		damage = super.attackProc( enemy, damage );
-		
+        if (Dungeon.hero.buff(LloydsBeacon.beaconRecharge.class)!=null
+                && Dungeon.hero.buff(LloydsBeacon.beaconRecharge.class).isCursed()){
+            //装备诅咒鸽子时攻击视为拥有转移
+            LloydsBeacon.proc(enemy);
+        }
 		KindOfWeapon wep = belongings.weapon();
 
 		if (wep != null) damage = wep.proc( this, enemy, damage );
@@ -1465,7 +1470,11 @@ public class Hero extends Char {
 			Berserk berserk = Buff.affect(this, Berserk.class);
 			berserk.damage(damage);
 		}
-		
+
+        if (Dungeon.hero.buff(LloydsBeacon.beaconRecharge.class)!=null
+                && Dungeon.hero.buff(LloydsBeacon.beaconRecharge.class).isCursed()){
+            LloydsBeacon.proc(this);
+        }
 		if (belongings.armor() != null) {
 			damage = belongings.armor().proc( enemy, this, damage );
 		}

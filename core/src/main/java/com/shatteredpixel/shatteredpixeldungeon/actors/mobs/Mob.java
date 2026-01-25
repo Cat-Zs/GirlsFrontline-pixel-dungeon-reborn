@@ -708,6 +708,7 @@ public abstract class Mob extends Char {
             LloydsBeacon beacon = Dungeon.hero.belongings.getItem(LloydsBeacon.class);
             if (beacon != null) {
                 beacon.upgrade();
+                GLog.p( Messages.get(LloydsBeacon.class, "levelup") );
             }
         }
 		if (cause == Chasm.class){

@@ -3,6 +3,7 @@ package com.shatteredpixel.shatteredpixeldungeon.custom.testmode.generator;
 import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
 
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
@@ -29,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.InfernalBrew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfCleansing;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.exotic.PotionOfMagicalSight;
+import com.shatteredpixel.shatteredpixeldungeon.items.quest.DwarfToken;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.GooBlob;
 import com.shatteredpixel.shatteredpixeldungeon.items.quest.MetalShard;
 import com.shatteredpixel.shatteredpixeldungeon.items.rings.RingOfAccuracy;
@@ -118,8 +120,8 @@ public class LazyTest extends TestGenerator {
 
             new Bomb().quantity(100).collect();
 
-            new TengusMask().collect();
-            new KingsCrown().collect();
+            new TengusMask().quantity(100).collect();
+            new KingsCrown().quantity(100).collect();
 
             new Honeypot().quantity(100).collect();
 
@@ -168,6 +170,8 @@ public class LazyTest extends TestGenerator {
             new MetalShard().quantity(100).collect();
             new InfernalBrew().quantity(100).collect();
 
+            new DwarfToken().quantity(100).collect();
+            new Ankh().quantity(100).collect();
             new SummonElemental().quantity(100).collect();
 
             detach(hero.belongings.backpack);

@@ -264,11 +264,6 @@ public class Armor extends EquipableItem {
 	}
 
 	@Override
-	protected float time2equip( Hero hero ) {
-		return 2 / hero.speed();
-	}
-
-	@Override
 	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
 		if (super.doUnequip( hero, collect, single )) {
 

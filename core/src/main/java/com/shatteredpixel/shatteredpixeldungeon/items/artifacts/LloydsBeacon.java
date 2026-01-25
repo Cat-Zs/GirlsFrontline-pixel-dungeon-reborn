@@ -29,9 +29,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
+import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
@@ -47,6 +51,7 @@ import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
+import com.watabou.utils.Random;
 
 import java.util.ArrayList;
 
@@ -298,7 +303,6 @@ public class LloydsBeacon extends Artifact {
 	public Item upgrade() {
 		if (level() == levelCap) return this;
 		chargeCap ++;
-		GLog.p( Messages.get(this, "levelup") );
 		return super.upgrade();
 	}
 
@@ -341,4 +345,28 @@ public class LloydsBeacon extends Artifact {
 			return true;
 		}
 	}
+
+    public static void proc(Char defender) {
+        //复制的转移
+        float procChance = 1/20f;
+        if (Random.Float() < procChance && !defender.properties().contains(Char.Property.IMMOVABLE)){
+
+            int oldpos = defender.pos;
+            if (ScrollOfTeleportation.teleportChar(defender)){
+                if (Dungeon.level.heroFOV[oldpos]) {
+                    CellEmitter.get( oldpos ).start( Speck.factory( Speck.LIGHT ), 0.2f, 3 );
+                }
+
+                if (defender instanceof Mob && ((Mob) defender).state == ((Mob) defender).HUNTING){
+                    ((Mob) defender).state = ((Mob) defender).WANDERING;
+                }
+            }
+        }
+    }
+
+    public static void proc(Hero hero) {
+        if ( Random.Int(20) == 0 ){
+            ScrollOfTeleportation.teleportChar(hero);
+        }
+    }
 }
