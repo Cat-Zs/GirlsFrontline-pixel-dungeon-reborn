@@ -24,6 +24,7 @@ package com.shatteredpixel.shatteredpixeldungeon.items;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicImmune;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -119,8 +120,12 @@ public abstract class EquipableItem extends Item {
 
 	public boolean doUnequip( Hero hero, boolean collect, boolean single ) {
 
+        if (hero.buff(LostInventory.class)!=null&& !this.keptThoughLostInvent){
+            //进入十字架复活且未选中的物品，允许被脱下
+            //留空不做处理以进入正常脱下装备的下一步
+        }
 		// 检查是否被诅咒且没有魔法免疫buff
-		if (cursed && hero.buff(MagicImmune.class) == null) {
+		else if (cursed && hero.buff(MagicImmune.class) == null) {
 			// 检查GSH18_DOCTOR_INTUITION天赋
 			boolean hasDoctorIntuition = hero.hasTalent(Talent.GSH18_DOCTOR_INTUITION);
 			if (hasDoctorIntuition) {
