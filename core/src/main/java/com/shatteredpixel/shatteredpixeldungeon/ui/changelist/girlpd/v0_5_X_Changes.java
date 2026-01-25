@@ -56,14 +56,19 @@ public class v0_5_X_Changes {
         Image gun561 = new Image(HeroSprite.avatar(HeroClass.TYPE561, 5));
 		gun561.scale.set(0.75f);
 		changes.addButton( new ChangeButton(gun561, "56-1式",
-        "_-_ 在本次更新中56-1式角色获得了_专属的护甲技能_\n" +
-        "_-_ 56-1式角色将不再必须回到5层从FNC处获取护甲技能了！\n" +
-        "_-_ 专属护甲技能详情请前往游戏内阅读。"
+        "_-_ 全面重置了角色_56-1式_的基础能力及天赋，以及其他联带道具，以期增强其游戏性与平衡性。\n" +
+        "_-_ 同时，在本次更新中56-1式角色获得了_专属的护甲技能_\n" +
+        "_-_ 这意味着56-1式角色将不再必须回到5层从FNC处获取护甲技能了！\n" +
+        "_-_ 更多角色能力详情请前往游戏内阅读。"
          ));
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.RING_DIAMOND, null), "战术瞄准镜",
         "_-_ 增强了_战术瞄准镜_对攻击_速度极慢_的武器的增幅效果。\n" +
         "_-_ 这意味着，那些需要极长回合才能攻击一次的_狙击枪类武器_会从中获取更高的_攻击速度_收益。"
+        ));
+
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ANKH, null), "快速修复契约",
+        "_-_ 未强化的_快速修复契约_现在可以用以替换被感染的装备。"
         ));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
@@ -113,7 +118,14 @@ public class v0_5_X_Changes {
         pageContents1.add(
             "_-_ 新增了装备同类瞄准镜，将显示_连携升级_提供的属性。\n\n" +
             "_-_ 扩充了_排行榜_可显示查看的游戏记录上限，为30条，可翻页进行查阅。\n\n" +
+            "_-_ 测试模式道具_测试书_，新增一键完成局内NPC任务的功能。\n\n" +
+            "_-_ 测试模式新增道具_清图炸弹_，可以高效肃清楼层的_一切_（包括地形），请谨慎使用。\n\n" +
             "_-_ _诅咒的财富瞄准镜_也会掉落额外物品，但概率更低，甚至会掉落负等级的物品。\n" 
+        );
+        pageContents1.add(
+            "_-_ _遗留的武器库_新增_秒杀模式_,可以从代码层面秒杀敌人。\n\n" +
+            "_-_ 遗物_某人的刺刀_现在不需要完成AR15的任务也可以装备，但依然不能使用，这样可以提前_至少2层_的探索来获取心智碎片。\n\n" +
+            "_-_ 测试模式道具_测试书_，新增一键完成局内NPC任务的功能。\n\n" 
         );
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY,null), "水晶房间",
@@ -186,6 +198,20 @@ public class v0_5_X_Changes {
             "_-_ 若未来加入了更多此类敌人，此能力将同步更新。"
         ));
 
+        Image kr = new Image(Assets.Sprites.KEEPER, 0 ,0 ,26 ,19);
+        kr.scale.x=0.8f;
+        kr.scale.y=0.8f;
+        changes.addButton(new ChangeButton(kr, "商店", 
+            "_-_ 在25层加入了_商店_，为玩家提供先前在深入下层时缺少的补给。\n"+
+            "_-_ 该商店同样需要玩家完成_P7的任务_以开启。\n"+ 
+            "_-_ 该商店额外配置了_21点游戏_与_抽奖机_，玩家可以在此消耗掉多余的钻石来获取随机优质资源。\n"+ 
+            "_-_ 该商店会出售_带等级_的强力武器，但价格十分_高昂_！"
+        )); 
+
+        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_BEACON, null), "空降妖精",
+            "_-_ _空降妖精_新增被感染的效果，当玩家装备被感染的空降妖精时，将概率被_随机传送_！"
+        )); 
+
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
 		changes.hardlight( CharSprite.NEGATIVE );
 		changeInfos.add(changes);
@@ -194,6 +220,12 @@ public class v0_5_X_Changes {
         changes.addButton(new ChangeButton(ac,"烈焰精英",
             "_-_ 削弱了_烈焰精英_类敌人的点燃能力，烈焰精英将不能点燃站在水面上的单位。\n"+
             "_-_ 同时，当_烈焰精英_在_水面上_被击败时，其不再会_点燃周围_。"
+        ));
+
+        Image aa = new Image(Assets.ACYCLOPS, 0 ,0 ,16 ,19);
+        changes.addButton(new ChangeButton(aa,"独眼巨人A型",
+            "_-_ 较大幅度的削弱了_独眼巨人A型_过于强悍的_闪避与命中_数值。\n"+
+            "_-_ 尽管玩家不再需要在战斗中对独眼巨人望而生畏了，但并不意味着独眼巨人没有战斗力了，请注意。"
         ));
     }
 
@@ -288,29 +320,34 @@ public class v0_5_X_Changes {
         "_-_ 此类房间将有概率变体为共有6个小间，玩家可以进行6选3猜选奖励的特殊房间。"
         ));
 
-		changes = new ChangeInfo("0.5.6-A", false, null);
+		changes = new ChangeInfo("测试条目", false, null);
         changes.hardlight( CharSprite.WARNING );
         changeInfos.add(changes);
 
         ArrayList<String> pageContents = new ArrayList<>();
         pageContents.add(
-            "_-_ 优化小版本的版本号在更新界面的显示。\n" +
-            "_-_ 写入了新的多页内容，使得文本可阅读性变高。\n" +
-            "_-_ 修复了一些UI显示问题。\n"+
-			"_-_ 新加入了2区怪物：_歌莉娅工厂_(原破碎_骷髅法师_)。\n"
+            "_-_ 这一条目是为了测试更新公告新的新呈现形式——翻页模式而写在这里的，我会在这里写一些不知所云的东西以测试稳定性。\n" +
+            "_-_ 卡尔卡诺M91/38小姐说的话大多是相反的假话，但是你该如何判断哪一些是正面的真话呢？\n" +
+            "_-_ 虽然AUG小姐喜欢在雨中散步以抒发哀思，但是你不能真的让她一直淋雨，至少给她打把伞……\n"+
+			"_-_ 不要给HK416提供烈性酒！你不会想知道这条经验是怎么总结出来的。\n"
         );
         pageContents.add(
-            "_-_ 交互优化：将主界面的退出按键添加回来。\n" +
-            "_-_ 新增测试道具：_测试书_可以在测试模式下使用，用于测试游戏的功能。\n" +
-            "_-_ 优化测试书，完善功能性。\n"
+            "_-_ 艾莫号是指挥官所拥有的大型陆地移动单元，它不能展开成固定基地！\n" +
+            "_-_ 要找什么东西先自己动手，而不是直接去问马卡洛夫，否则她会告诉你“没有，滚吧”。\n" +
+            "_-_ M200小姐是一个身高足够捅破云层，喜欢把脚架在矮个子人形的肩膀上，内置了完整的维修手册和烹饪手册的全能型人形。\n"
         );
         pageContents.add(
-            "_-_ 调整：削弱了烈焰精英怪物的强度。\n" +
-            "_-_ 补充各个boss层的召唤陷阱的刷怪列表。\n" +
-            "_-_ 兼容了彩蛋武器的旧存档，防止崩溃。\n"
+            "_-_ 和索米分享耳机的时候一定要小心，如果你不想耳膜爆炸的话……\n" +
+            "_-_ 萨曼莎·肖博士真是一个武器天才，可惜……\n" +
+            "_-_ 格里芬不是一个地方，而是一群人，只要他们依然坚守信仰，格里芬就依然存在。\n"
+        );
+        pageContents.add(
+            "_-_ 曾经我们执握烽火，守望寂寂黎明\n" +
+            "_-_ 现在我们高擎火炬，只为点燃这片理想的天空\n" +
+            "_-_ 此致，更新世界的锋芒！\n"
         );
 
-        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "改动-系统优化", pageContents));
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY, null), "测试条目", pageContents));
     }
 
 
@@ -580,7 +617,6 @@ public class v0_5_X_Changes {
         ep.scale.y=0.8f;
         changes.addButton(new ChangeButton(ep,"BUG修复",
         	"_-_ 修复了一系列和_艾尔菲尔特_有关的BUG\n\n"+
-
         	"_-_ 在与艾尔菲尔特的战斗中退出游戏，而后返回游戏将不会再崩溃了（但依然请不要在战斗中多次退出重进）\n"+
         	"_-_ 在特殊条件下，使用刺客斩杀艾尔菲尔特将不会再导致卡关了\n"+
         	"_-_ 一些情况下BOSS血条无端消失的问题得到了修复"
@@ -594,7 +630,7 @@ public class v0_5_X_Changes {
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.MEAT_PIE,null), "挑战：饥饿游戏",
 			"_-_ 挑战_饥饿游戏_优化，降低了不必要的游戏难度\n\n"+
 			"_-_ 移除了挑战中所有食物生成减半的特性，仅保留食物回复饱食度降低为原来的33%\n"+
-			"_-_ 玩家将不需要再面对_饥饿游戏_挑战中理论饱食度获取率降低了正常的87%的极端饥荒环境。"
+			"_-_ 玩家将不需要再面对_饥饿游戏_挑战中理论饱食度获取率降低为正常的87%的极端饥荒环境。"
 		));
 
 		changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
