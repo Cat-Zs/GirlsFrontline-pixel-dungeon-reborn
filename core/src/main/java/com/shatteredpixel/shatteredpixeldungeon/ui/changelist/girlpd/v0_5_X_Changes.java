@@ -124,8 +124,8 @@ public class v0_5_X_Changes {
         );
         pageContents1.add(
             "_-_ _遗留的武器库_新增_秒杀模式_,可以从代码层面秒杀敌人。\n\n" +
-            "_-_ 遗物_某人的刺刀_现在不需要完成AR15的任务也可以装备，但依然不能使用，这样可以提前_至少2层_的探索来获取心智碎片。\n\n" +
-            "_-_ 测试模式道具_测试书_，新增一键完成局内NPC任务的功能。\n\n" 
+            "_-_ 修复了_物品标签_在部分情况下退出游戏重进后消失的BUG。\n\n" +
+            "_-_ 遗物_某人的刺刀_现在不需要完成AR15的任务也可以装备，但依然不能使用，这样可以提前_至少2层_的探索来获取心智碎片。" 
         );
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY,null), "水晶房间",
