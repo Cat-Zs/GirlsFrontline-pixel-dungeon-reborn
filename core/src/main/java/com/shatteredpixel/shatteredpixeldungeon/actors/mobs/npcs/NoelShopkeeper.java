@@ -30,11 +30,9 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.minigames.PlayGame;
 import com.shatteredpixel.shatteredpixeldungeon.minigames.WndPlayGame;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.NoelSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.RabbitShopKeeperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
 import com.watabou.noosa.Game;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.Callback;
 import com.watabou.utils.PathFinder;
 import com.watabou.utils.Random;
@@ -42,7 +40,7 @@ import com.watabou.utils.Random;
 public class NoelShopkeeper extends ImpShopkeeper {
 
 	{
-        spriteClass = NoelSprite.class;
+        spriteClass = RabbitShopKeeperSprite.class;
         turnsSinceHarmed = -1;
         properties.add(Property.IMMOVABLE);
 	}
@@ -55,20 +53,20 @@ public class NoelShopkeeper extends ImpShopkeeper {
         Game.runOnRenderThread(new Callback() {
             @Override
             public void call() {
-                NoelShopkeeper noelShopkeeper = new NoelShopkeeper();
+                NoelShopkeeper rabbitShopkeeper = new NoelShopkeeper();
                 String[] options = new String[3];
                 int i = 0;
-                options[i++] = Messages.get(noelShopkeeper, "sell");
-                options[i++] = Messages.get(noelShopkeeper, "roll", NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1));
-                options[i++] = Messages.get(noelShopkeeper, "play");
+                options[i++] = Messages.get(rabbitShopkeeper, "sell");
+                options[i++] = Messages.get(rabbitShopkeeper, "roll", NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1));
+                options[i++] = Messages.get(rabbitShopkeeper, "play");
 
-                GameScene.show(new WndOptions(noelShopkeeper.sprite(), Messages.titleCase(noelShopkeeper.name()), noelShopkeeper.WndInfo(), options) {
+                GameScene.show(new WndOptions(rabbitShopkeeper.sprite(), Messages.titleCase(rabbitShopkeeper.name()), rabbitShopkeeper.WndInfo(), options) {
                     protected void onSelect(int index) {
                         super.onSelect(index);
                         if (index == 0) {
                             Shopkeeper.sell();
                         } else if (index == 1) {
-                            Dungeon.gold-=NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1);
+                            Dungeon.gold-= NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1);
                             Dungeon.RollTimes++;
                             Item item = Generator.randomUsingDefaults();
                             int place;
@@ -81,7 +79,7 @@ public class NoelShopkeeper extends ImpShopkeeper {
                             );
                             Dungeon.level.drop(item, place).sprite.drop(Dungeon.hero.pos);
                         } else if (index == 2) {
-                            Dungeon.gold-=NoelShopkeeper.PlayNeed;
+                            Dungeon.gold-= NoelShopkeeper.PlayNeed;
                             PlayGame.gameStart();
                             GameScene.show(new WndPlayGame(false));
                         }
@@ -91,9 +89,9 @@ public class NoelShopkeeper extends ImpShopkeeper {
                         if (index == 0) {
                             return true;
                         } else if (index == 1){
-                            return Dungeon.gold>=NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1);
+                            return Dungeon.gold>= NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1);
                         } else if (index == 2){
-                            return Dungeon.gold>=NoelShopkeeper.PlayNeed;
+                            return Dungeon.gold>= NoelShopkeeper.PlayNeed;
                         }else
                             return super.enabled(index);
                     }

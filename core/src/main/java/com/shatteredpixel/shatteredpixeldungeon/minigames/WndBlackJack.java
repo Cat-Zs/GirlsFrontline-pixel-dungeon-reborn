@@ -143,7 +143,10 @@ public class WndBlackJack extends Window {
             }
 
             String msg;
-            if (BlackJack.PCnum > BlackJack.AInum) {
+            if (BlackJack.PCnum >= 21) {
+                msg = Messages.get(this, "price");
+                win();
+            } else if (BlackJack.PCnum > BlackJack.AInum) {
                 msg = Messages.get(this, "win");
                 win();
             } else if (BlackJack.PCnum < BlackJack.AInum) {

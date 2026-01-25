@@ -37,6 +37,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.wands.Wand;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cypros;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
+import com.shatteredpixel.shatteredpixeldungeon.levels.LastShopLevel;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
@@ -656,6 +657,8 @@ public class debugBook extends TestItem {
     }
     private void resetLevel(){//mark
         InterlevelScene.returnDepth = Dungeon.depth;
+        if (Dungeon.level instanceof LastShopLevel)
+            Dungeon.RollTimes=0;
         InterlevelScene.mode = InterlevelScene.Mode.RESET;
         Game.switchScene( InterlevelScene.class );
     }

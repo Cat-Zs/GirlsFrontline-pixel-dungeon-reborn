@@ -89,18 +89,23 @@ public class ImpShopkeeper extends Shopkeeper {
                             if (index == 0) {
                                 Shopkeeper.sell();
                             } else if (index == 1) {
-                                Dungeon.gold-= RollNeed *(Dungeon.RollTimes +1);
-                                Dungeon.RollTimes++;
-                                Item item = Generator.randomUsingDefaults();
-                                int place;
-                                Char target;
-                                do{
-                                    place = Dungeon.hero.pos + PathFinder.NEIGHBOURS9[Random.Int(9)];
-                                    target = Actor.findChar(place);
-                                }while(
-                                        target!=null&&target.properties().contains(Property.IMMOVABLE)
-                                );
-                                Dungeon.level.drop(item, place).sprite.drop(Dungeon.hero.pos);
+                                if (Random.Int(5)==0) {
+                                    impShopkeeper.yellnormal("谢谢惠顾~");
+                                }
+                                else {
+                                    Dungeon.gold -= RollNeed * (Dungeon.RollTimes + 1);
+                                    Dungeon.RollTimes++;
+                                    Item item = Generator.randomUsingDefaults();
+                                    int place;
+                                    Char target;
+                                    do {
+                                        place = Dungeon.hero.pos + PathFinder.NEIGHBOURS9[Random.Int(9)];
+                                        target = Actor.findChar(place);
+                                    } while (
+                                            target != null && target.properties().contains(Property.IMMOVABLE)
+                                    );
+                                    Dungeon.level.drop(item, place).sprite.drop(Dungeon.hero.pos);
+                                }
                             }
                         }
 

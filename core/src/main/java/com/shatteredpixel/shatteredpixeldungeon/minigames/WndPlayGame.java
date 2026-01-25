@@ -11,7 +11,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Grass;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.NoelSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.RabbitShopKeeperSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -174,12 +174,12 @@ public class WndPlayGame extends Window {
                 protected void onClick() {
                     WndPlayGame.this.hide();
                     PlayGame.gameStart();
-                    Dungeon.gold-=NoelShopkeeper.PlayNeed;
+                    Dungeon.gold-= NoelShopkeeper.PlayNeed;
                     GameScene.show(new WndPlayGame(false));
                 }
             };
             btnAgain.setRect(0.0F, 90.0F, 55.0F, 20.0F);
-            btnAgain.enable(Dungeon.gold>=NoelShopkeeper.PlayNeed);
+            btnAgain.enable(Dungeon.gold>= NoelShopkeeper.PlayNeed);
             this.add(btnAgain);
             RedButton btnClose = new RedButton(Messages.get(this, "nomoregame")) {
                 protected void onClick() {
@@ -204,12 +204,12 @@ public class WndPlayGame extends Window {
         }
     }
     private void tie(){
-        Dungeon.gold+=NoelShopkeeper.PlayNeed;
+        Dungeon.gold+= NoelShopkeeper.PlayNeed;
     }
     @Override
     public void onBackPressed() {
         GameScene.show(
-                new WndOptions(new NoelSprite(),
+                new WndOptions(new RabbitShopKeeperSprite(),
                         Messages.titleCase(Messages.get(this, "stop")),
                         Messages.get(this, "lose_warn"),
                         Messages.get(this, "yes"),
