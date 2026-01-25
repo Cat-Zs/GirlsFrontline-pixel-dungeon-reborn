@@ -35,6 +35,7 @@ import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTerrainTilemap;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndKeyBindings;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndQuickBag;
+import com.watabou.noosa.Image;
 import com.watabou.input.GameAction;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Game;
@@ -64,7 +65,20 @@ public class Toolbar extends Component {
 		GROUP,
 		CENTER
 	}
-	
+
+	// 获取当前的toolbar资源
+	public static String getToolbarAsset() {
+		// 根据整数设置返回对应的贴图
+		switch (SPDSettings.statusPaneStyle()) {
+			case 1: // 新版UI
+				return Assets.Interfaces.TOOLBAR_1;
+			case 2: // 第三种UI风格
+				return Assets.Interfaces.TOOLBAR_2;
+			default: // 默认/旧版UI
+				return Assets.Interfaces.TOOLBAR;
+		}
+	}
+
 	public Toolbar() {
 		super();
 
@@ -397,7 +411,7 @@ public class Toolbar extends Component {
 		protected void createChildren() {
 			super.createChildren();
 			
-			base = new Image( Assets.Interfaces.TOOLBAR );
+			base = new Image( Toolbar.getToolbarAsset() );
 			add( base );
 		}
 		

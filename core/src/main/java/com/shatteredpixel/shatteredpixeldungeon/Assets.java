@@ -133,6 +133,8 @@ public class Assets {
 		public static final String MENU     = "interfaces/menu_pane.png";
 		public static final String MENU_BTN = "interfaces/menu_button.png";
 		public static final String TOOLBAR  = "interfaces/toolbar.png";
+		public static final String TOOLBAR_1 = "interfaces/toolbar1.png";
+		public static final String TOOLBAR_2 = "interfaces/toolbar2.png";
 		public static final String SHADOW   = "interfaces/shadow.png";
 		public static final String BOSSHP   = "interfaces/boss_hp.png";
 

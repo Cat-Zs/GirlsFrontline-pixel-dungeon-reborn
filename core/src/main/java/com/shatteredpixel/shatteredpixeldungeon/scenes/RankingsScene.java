@@ -39,8 +39,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.StyledButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndError;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndRanking;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
+import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.watabou.noosa.BitmapText;
 import com.watabou.noosa.Camera;
 import com.watabou.noosa.Image;
@@ -211,10 +210,22 @@ public class RankingsScene extends PixelScene {
 		ExitButton btnExit = new ExitButton() {
 			@Override
 			protected void onClick() {
-				//如果上一个场景是游戏场景，返回到游戏场景，否则返回到标题场景
+				//如果上一个场景是游戏场景
 				if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class) {
+					//尝试使用 InterlevelScene.restore() 来恢复游戏状态，因为它会加载 level
+					try {
+						//保存当前的槽位
+						int currentSlot = GamesInProgress.curSlot;
+						//尝试恢复游戏状态
+						InterlevelScene.restore();
+					} catch (Exception e) {
+						//如果加载失败，忽略错误
+					}
+					//返回到游戏场景
 					GirlsFrontlinePixelDungeon.switchNoFade(GameScene.class);
-				} else {
+				} 
+				//否则返回到标题场景
+				else {
 					GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
 				}
 			}
@@ -227,10 +238,22 @@ public class RankingsScene extends PixelScene {
 	
 	@Override
 	protected void onBackPressed() {
-		//如果上一个场景是游戏场景，返回到游戏场景，否则返回到标题场景
+		//如果上一个场景是游戏场景
 		if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class) {
+			//尝试使用 InterlevelScene.restore() 来恢复游戏状态，因为它会加载 level
+			try {
+				//保存当前的槽位
+				int currentSlot = GamesInProgress.curSlot;
+				//尝试恢复游戏状态
+				InterlevelScene.restore();
+			} catch (Exception e) {
+				//如果加载失败，忽略错误
+			}
+			//返回到游戏场景
 			GirlsFrontlinePixelDungeon.switchNoFade(GameScene.class);
-		} else {
+		} 
+		//否则返回到标题场景
+		else {
 			GirlsFrontlinePixelDungeon.switchNoFade(TitleScene.class);
 		}
 	}
