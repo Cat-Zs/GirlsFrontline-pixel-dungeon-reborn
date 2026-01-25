@@ -38,10 +38,10 @@ public class TalentSecondSight extends Buff {
         revivePersists = true;
     }
 
-    private static ArrayList<Integer> LevelID = new ArrayList<>() ;
-    private static ArrayList<Integer> CoolDown = new ArrayList<>() ;
-    private static final String ID = "ID";
-    private static final String CD = "CD";
+    public ArrayList<String> LevelID = new ArrayList<>() ;
+    public ArrayList<Integer> CoolDown = new ArrayList<>() ;
+    private static final String ID = "TSCID";
+    private static final String CD = "TSCCD";
     @Override
     public String toString() {
         return Messages.get(this, "name");
@@ -80,11 +80,14 @@ public class TalentSecondSight extends Buff {
         }
         return desc;
     }
-    public void Set(int id, int cd){
-        if (LevelID.contains(id)){
+    public void Set(int id, int sub, int cd){
+        String level = "["+id+"]";
+        if (sub!=0)
+            level += "/"+sub;
+        if (LevelID.contains(level)){
             int j = 0;
-            for (int i :LevelID){
-                if (i == id){
+            for (String i :LevelID){
+                if (i.equals(level)){
                     break;
                 }else {
                     j++;
@@ -92,15 +95,18 @@ public class TalentSecondSight extends Buff {
             }
             CoolDown.set(j, cd);
         }else {
-            LevelID.add(id);
+            LevelID.add(level);
             CoolDown.add(cd);
         }
     }
-    public boolean EndCD(int id){
-        if (LevelID.contains(id)){
+    public boolean EndCD(int id, int sub){
+        String level = "["+id+"]";
+        if (sub!=0)
+            level += "/"+sub;
+        if (LevelID.contains(level)){
             int j = 0;
-            for (int i :LevelID){
-                if (i == id){
+            for (String i :LevelID){
+                if (i.equals(level)){
                     break;
                 }else {
                     j++;
@@ -108,16 +114,23 @@ public class TalentSecondSight extends Buff {
             }
             return CoolDown.get(j)==0;
         }else {
-            Set(id, 0);
+            Set(id, sub,0);
             return true;
         }
     }
     @Override
     public boolean act() {
+        String level = "["+Dungeon.depth+"]";
+        if (Dungeon.SUBId!=0)
+            level += "/"+Dungeon.SUBId;
         int j = 0;
-        for (int i : CoolDown){
-            if (i>0) {
-                CoolDown.set(j, i-1);
+        for (String i : LevelID){
+            if (i.equals(level)) {
+                int cd = CoolDown.get(j);
+                if (cd>0) {
+                    CoolDown.set(j,cd-1);
+                }
+                break;
             }
             j++;
         }
@@ -130,20 +143,23 @@ public class TalentSecondSight extends Buff {
 	public void storeInBundle(Bundle bundle) {
 		super.storeInBundle(bundle);
         int countA = 0;
-        int[] IDToSave = new int[LevelID.size()];
-        for(int i :LevelID){
-            IDToSave[countA++] = i;
+        if (!LevelID.isEmpty()) {
+            String[] IDToSave = new String[LevelID.size()];
+            for (String i : LevelID) {
+                IDToSave[countA++] = i;
+            }
+            bundle.put(ID, IDToSave);
+            //楼层编号
         }
-        bundle.put(ID,IDToSave);
-        //楼层编号
-
-        int countB = 0;
-        int[] CDToSave = new int[CoolDown.size()];
-        for(int j :CoolDown){
-            CDToSave[countB++] = j;
+        if (!CoolDown.isEmpty()){
+            int countB = 0;
+            int[] CDToSave = new int[CoolDown.size()];
+            for (int j : CoolDown) {
+                CDToSave[countB++] = j;
+            }
+            bundle.put(CD, CDToSave);
+            //对应楼层CD
         }
-        bundle.put(CD,CDToSave);
-        //对应楼层CD
 	}
 
 	@Override
@@ -151,7 +167,7 @@ public class TalentSecondSight extends Buff {
 		super.restoreFromBundle(bundle);
 
         LevelID = new ArrayList<>();
-        int[] IDToLoad = bundle.getIntArray(ID);
+        String[] IDToLoad = bundle.getStringArray(ID);
         if (IDToLoad != null) {
             for (int j = 0; j < IDToLoad.length; j++) {
                 try {

@@ -491,7 +491,7 @@ public class Hero extends Char {
 		}
 		Buff.affect( this, Regeneration.class );
 		Buff.affect( this, Hunger.class );
-        Buff.affect( this, TalentSecondSight.class).Set(0, 0);
+        Buff.affect( this, TalentSecondSight.class).Set(0,0, 0);
 	}
 	
 	public int tier() {
@@ -847,7 +847,7 @@ public class Hero extends Char {
 	
 	@Override
 	public boolean act() {
-        Dungeon.GetSight();
+        Dungeon.GetSight(Dungeon.level);
         if (Dungeon.hero.buff(ActHPtoGetFood.LockReg.class)!=null){
             if (ActHPtoGetFood.LockReg.lost >=Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).cooldown()){
                 Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).detach();

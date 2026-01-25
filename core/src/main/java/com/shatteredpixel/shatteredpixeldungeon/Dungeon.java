@@ -899,28 +899,28 @@ public class Dungeon {
 		}
 
 	}
-    public static void GetSight(){
+    public static void GetSight(Level level){
         if (Dungeon.hero!=null){
             if(Dungeon.hero.hasTalent(Talent.Type56Two_Sight)) {
                 TalentSecondSight Sec = Dungeon.hero.buff(TalentSecondSight.class);
                 if (Sec==null){
-                    Buff.affect( Dungeon.hero, TalentSecondSight.class).Set(0, 0);
+                    Buff.affect( Dungeon.hero, TalentSecondSight.class).Set(0,0, 0);
                     Sec = Dungeon.hero.buff(TalentSecondSight.class);
                     GLog.p("重新赋予");
                 }
-                if (Dungeon.level.FirstSight){
-                    Dungeon.level.FirstSight = false;
+                if (level.FirstSight){
+                    level.FirstSight = false;
                     Buff.affect(Dungeon.hero, MindVision.class, 3);
                     //首次进入获得三回合灵视
 
                     if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2) {
-                        Sec.Set(Dungeon.depth, 25);
+                        Sec.Set(level.levelDepth, level.SUBId,25);
                         //天赋2级时才会计时25回合
                     }
                 }
 
-                if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2 && Sec.EndCD(Dungeon.depth)&&Dungeon.level.SecondSight) {
-                    Dungeon.level.SecondSight = false;
+                if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2 && Sec.EndCD(level.levelDepth, level.SUBId)&& level.SecondSight) {
+                    level.SecondSight = false;
                     Buff.affect(Dungeon.hero, MindVision.class, 3);
                 }//计时结束后进入该楼层
             }
@@ -928,20 +928,29 @@ public class Dungeon {
     }
 
 	public static Level tryLoadLevel(int depth,int SUBId, int copy){//mark
-		final int save=GamesInProgress.curSlot;
-		final String fileName=GamesInProgress.depthFile(save,depth,SUBId,copy);
-		if(FileUtils.fileExists(fileName)){
-			//file may be deleted between fileExists and loadLevel,who knows.
-			try{
-                GetSight();
-				return loadLevel(save,depth,SUBId,copy);
-			}catch(IOException e){
-				Game.reportException(e);
-			}
-		}
-
+        Level level = TryToLoad(depth, SUBId, copy);
+        if (level!=null){
+            if (!(level instanceof RabbitBossLevel)) {
+                GetSight(level);
+            }
+            return level;
+        }
 		return null;
 	}
+    private static Level TryToLoad(int depth,int SUBId, int copy){
+        final int save=GamesInProgress.curSlot;
+        final String fileName=GamesInProgress.depthFile(save,depth,SUBId,copy);
+        if(FileUtils.fileExists(fileName)){
+            //file may be deleted between fileExists and loadLevel,who knows.
+            try{
+                return loadLevel(save,depth,SUBId,copy);
+            }catch(IOException e){
+                Game.reportException(e);
+            }
+        }
+
+        return null;
+    }
 	
 	public static Level loadLevel(int save,int levelId,int SUBId, int copy) throws IOException {
 		Dungeon.level = null;
