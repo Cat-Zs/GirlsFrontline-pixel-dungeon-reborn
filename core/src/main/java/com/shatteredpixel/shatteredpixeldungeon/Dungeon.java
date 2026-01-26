@@ -329,6 +329,7 @@ public class Dungeon {
 		Dungeon.level = null;
 		Actor.clear();
 
+        depth=levelDepth;
 		if (depth > Statistics.deepestFloor) {
 			Statistics.deepestFloor = levelDepth;
 			
@@ -340,7 +341,6 @@ public class Dungeon {
 		}
 
 		level.create(levelDepth,id);
-        depth=levelDepth;
 		Statistics.qualifiedForNoKilling = !bossLevel();
 		return level;
 	}
