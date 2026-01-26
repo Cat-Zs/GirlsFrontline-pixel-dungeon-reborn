@@ -81,10 +81,10 @@ public class CoffeeRoom extends Level {
         exit = entrance;
 
         // 添加向上的楼梯(连接回ZeroLevelSub)
-        placeTrigger(new Teleporter().create(toZeroLevelSub, ZeroLevelSub.toCoffeeRoom, 0,1));
+        placeTrigger(new Teleporter().create(toZeroLevelSub, ZeroLevelSub.toCoffeeRoom, 1000));
         
         // 添加到Workshop的传送触发器
-        placeTrigger(new Teleporter().create(toWorkshop, Workshop.toCoffeeRoom, 0,4));
+        placeTrigger(new Teleporter().create(toWorkshop, Workshop.toCoffeeRoom, 4000));
 
         // 添加底部覆盖贴图
         CustomTilemap customBottomTile = new CustomBottomTile();

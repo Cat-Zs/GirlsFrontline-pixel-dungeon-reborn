@@ -38,10 +38,10 @@ public class TalentSecondSight extends Buff {
         revivePersists = true;
     }
 
-    public ArrayList<String> LevelID = new ArrayList<>() ;
+    public ArrayList<Integer> LevelID = new ArrayList<>() ;
     public ArrayList<Integer> CoolDown = new ArrayList<>() ;
-    private static final String ID = "TSCID";
-    private static final String CD = "TSCCD";
+    private static final String ID = "ID";
+    private static final String CD = "CD";
     @Override
     public String toString() {
         return Messages.get(this, "name");
@@ -74,20 +74,29 @@ public class TalentSecondSight extends Buff {
                 if (desc!=""){
                     desc+="\n";
                 }
-                desc+="楼层"+LevelID.get(j)+"仍需："+CoolDown.get(j)+" 回合";
+                int sub=0;
+                int levelId = LevelID.get(j);
+                String level;
+                while (levelId != LevelID.get(j) % 1000) {
+                    sub++;
+                    levelId -= 1000;
+                    if (levelId<0)
+                        break;
+                }
+                level = String.valueOf(levelId);
+                if (sub!=0)
+                    level+="/"+sub;
+                desc+="楼层"+level+"仍需："+CoolDown.get(j)+" 回合";
             }
             j++;
         }
         return desc;
     }
-    public void Set(int id, int sub, int cd){
-        String level = "["+id+"]";
-        if (sub!=0)
-            level += "/"+sub;
-        if (LevelID.contains(level)){
+    public void Set(int id, int cd){
+        if (LevelID.contains(id)){
             int j = 0;
-            for (String i :LevelID){
-                if (i.equals(level)){
+            for (int i :LevelID){
+                if (i==id){
                     break;
                 }else {
                     j++;
@@ -95,18 +104,15 @@ public class TalentSecondSight extends Buff {
             }
             CoolDown.set(j, cd);
         }else {
-            LevelID.add(level);
+            LevelID.add(id);
             CoolDown.add(cd);
         }
     }
-    public boolean EndCD(int id, int sub){
-        String level = "["+id+"]";
-        if (sub!=0)
-            level += "/"+sub;
-        if (LevelID.contains(level)){
+    public boolean EndCD(int id){
+        if (LevelID.contains(id)){
             int j = 0;
-            for (String i :LevelID){
-                if (i.equals(level)){
+            for (int i :LevelID){
+                if (i==id){
                     break;
                 }else {
                     j++;
@@ -114,18 +120,15 @@ public class TalentSecondSight extends Buff {
             }
             return CoolDown.get(j)==0;
         }else {
-            Set(id, sub,0);
+            Set(id, 0);
             return true;
         }
     }
     @Override
     public boolean act() {
-        String level = "["+Dungeon.depth+"]";
-        if (Dungeon.SUBId!=0)
-            level += "/"+Dungeon.SUBId;
         int j = 0;
-        for (String i : LevelID){
-            if (i.equals(level)) {
+        for (int i : LevelID){
+            if (i==Dungeon.levelId) {
                 int cd = CoolDown.get(j);
                 if (cd>0) {
                     CoolDown.set(j,cd-1);
@@ -144,8 +147,8 @@ public class TalentSecondSight extends Buff {
 		super.storeInBundle(bundle);
         int countA = 0;
         if (!LevelID.isEmpty()) {
-            String[] IDToSave = new String[LevelID.size()];
-            for (String i : LevelID) {
+            int[] IDToSave = new int[LevelID.size()];
+            for (int i : LevelID) {
                 IDToSave[countA++] = i;
             }
             bundle.put(ID, IDToSave);
@@ -167,27 +170,25 @@ public class TalentSecondSight extends Buff {
 		super.restoreFromBundle(bundle);
 
         LevelID = new ArrayList<>();
-        String[] IDToLoad = bundle.getStringArray(ID);
-        if (IDToLoad != null) {
-            for (int j = 0; j < IDToLoad.length; j++) {
-                try {
-                    LevelID.add(IDToLoad[j]);
-                } catch (Exception e) {
-                    GirlsFrontlinePixelDungeon.reportException(e);
+        CoolDown = new ArrayList<>();
+        int[] IDToLoad;
+        int[] CDToLoad;
+        if (bundle.contains(ID)){
+            IDToLoad = bundle.getIntArray(ID);
+            CDToLoad = bundle.getIntArray(CD);
+            if (IDToLoad != null) {
+                for (int i = 0; i < IDToLoad.length; i++) {
+                    if (i>=CDToLoad.length)
+                        break;
+                    try {
+                        LevelID.add(IDToLoad[i]);
+                        CoolDown.add(CDToLoad[i]);
+                    } catch (Exception e) {
+                        GirlsFrontlinePixelDungeon.reportException(e);
+                    }
                 }
             }
         }
 
-        CoolDown = new ArrayList<>();
-        int[] CDToLoad = bundle.getIntArray(CD);
-        if (CDToLoad != null) {
-            for (int i = 0; i < CDToLoad.length; i++) {
-                try {
-                    CoolDown.add(CDToLoad[i]);
-                } catch (Exception e) {
-                    GirlsFrontlinePixelDungeon.reportException(e);
-                }
-            }
-        }
 	}
 }

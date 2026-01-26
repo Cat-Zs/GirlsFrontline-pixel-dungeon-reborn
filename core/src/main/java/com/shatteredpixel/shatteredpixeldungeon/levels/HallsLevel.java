@@ -45,6 +45,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.traps.StormTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.SummoningTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WarpingTrap;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.WeakeningTrap;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.tiles.DungeonTilemap;
 import com.watabou.glwrap.Blending;
@@ -81,6 +82,14 @@ public class HallsLevel extends RegularLevel {
 		return rooms;
 	}
 
+
+    @Override
+    protected boolean build() {
+        boolean b =super.build();
+        if (b&&Dungeon.levelId==25)
+            placeTrigger(new Teleporter().create(entrance,-2,1025));
+        return b;
+    }
 	@Override
 	protected int standardRooms(boolean forceMax) {
 		if (forceMax) return 9;
@@ -104,10 +113,10 @@ public class HallsLevel extends RegularLevel {
 	}
 	
 	@Override
-	public void create(int depth,int levelDepth, int SUBId) {
+	public void create(int depth,int levelId) {
 		addItemToSpawn( new Torch() );
 		addItemToSpawn( new Torch() );
-		super.create(depth,levelDepth+1000*SUBId,SUBId);
+		super.create(depth,levelId);
 	}
 	
 	@Override

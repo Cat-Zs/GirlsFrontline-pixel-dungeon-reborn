@@ -79,7 +79,7 @@ public class Noel extends NPC {
 				@Override
 				protected void onSelect(int index) {
 					if(index==0){
-						new Teleporter().create(0,-1,10,-1).activate(c);
+						new Teleporter().create(0,-1,1010).activate(c);
 						noel.destroy();
 						noel.sprite.killAndErase();
 					}else{

@@ -304,9 +304,8 @@ public class CursedWand {
 					if (timeBubble != null) timeBubble.disarmPressedTraps();
 
 					InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-					InterlevelScene.returnDepth = depth;
+					InterlevelScene.returnLevel = depth;
 					InterlevelScene.returnPos = -1;
-                    InterlevelScene.SUBId = 0;
                     //诅咒法杖传送回主层
 					Game.switchScene(InterlevelScene.class);
 

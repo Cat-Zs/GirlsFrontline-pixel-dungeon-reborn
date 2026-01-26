@@ -157,7 +157,7 @@ public class WndStartGame extends Window {
 				GamesInProgress.curSlot = slot;
 				InterlevelScene.seedCode=SPDSettings.seedCode();
 				InterlevelScene.mode = InterlevelScene.Mode.DESCEND;
-                InterlevelScene.resetFadeTime(DeviceCompat.isDebug()|| SPDSettings.isChallenged(Challenges.TEST_MODE));
+                InterlevelScene.isStart=DeviceCompat.isDebug()|| SPDSettings.isChallenged(Challenges.TEST_MODE);
 				if (SPDSettings.intro()) {
 					SPDSettings.intro( false );
 					Game.switchScene( IntroScene.class );

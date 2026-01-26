@@ -8,6 +8,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.ImpShopRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.standard.NoelShopRoom;
+import com.shatteredpixel.shatteredpixeldungeon.levels.triggers.Teleporter;
 import com.watabou.noosa.audio.Music;
 import com.watabou.utils.Bundle;
 
@@ -22,6 +23,8 @@ public class LastShopLevel extends Level {
     }
     private static final int WIDTH = 35;
     private static final int HEIGHT = 45;
+    public static final int entrance = 40*WIDTH+31;
+    public static final int exit = 4*WIDTH+4;
     private static final int center = 21*WIDTH+16;
     private static final ArrayList<Integer> TradeItem = new ArrayList<>(Arrays.asList(
             18*WIDTH+13,18*WIDTH+14,18*WIDTH+15,18*WIDTH+16,18*WIDTH+17,18*WIDTH+18,18*WIDTH+19,
@@ -55,11 +58,10 @@ public class LastShopLevel extends Level {
 
         // 使用硬编码的地图
         map = MAP.clone();
-
+        placeTrigger(new Teleporter().create(exit, -1, 26));
+        placeTrigger(new Teleporter().create(entrance, -2, 25));
         buildFlagMaps();
         cleanWalls();
-        exit = 4*WIDTH+4;
-        entrance = 40*WIDTH+31;
         if (NoelShopRoom.openShop()){
             Keeper.PlaceShop(this,center,TradeItem);
             open = true;

@@ -33,9 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.MagicMissile;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
-import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Swiftthistle;
@@ -63,9 +61,8 @@ public class LloydsBeacon extends Artifact {
 	public static final String AC_SET		= "SET";
 	public static final String AC_RETURN	= "RETURN";
 	
-	public int returnDepth	= -1;
+	public int returnLevelId	= -1;
 	public int returnPos;
-    public int SUBId;
 	
 	{
 		image = ItemSpriteSheet.ARTIFACT_BEACON;
@@ -81,24 +78,21 @@ public class LloydsBeacon extends Artifact {
 	
 	private static final String DEPTH	= "depth";
 	private static final String POS		= "pos";
-    private static final String SUBID		= "SUBID";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( DEPTH, returnDepth );
-		if (returnDepth != -1) {
+		bundle.put( DEPTH, returnLevelId );
+		if (returnLevelId != -1) {
 			bundle.put( POS, returnPos );
-            bundle.put( SUBID, SUBId );
 		}
 	}
 	
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle(bundle);
-		returnDepth	= bundle.getInt( DEPTH );
+        returnLevelId	= bundle.getInt( DEPTH );
 		returnPos	= bundle.getInt( POS );
-        SUBId       = bundle.getInt( SUBID );
 	}
 	
 	@Override
@@ -106,7 +100,7 @@ public class LloydsBeacon extends Artifact {
 		ArrayList<String> actions = super.actions( hero );
 		actions.add( AC_ZAP );
 		actions.add( AC_SET );
-		if (returnDepth != -1) {
+		if (returnLevelId != -1) {
 			actions.add( AC_RETURN );
 		}
 		return actions;
@@ -152,10 +146,9 @@ public class LloydsBeacon extends Artifact {
 			}
 
 		} else if (action == AC_SET) {
-			
-			returnDepth = Dungeon.depth;
+
+            returnLevelId = Dungeon.levelId;
 			returnPos   = hero.pos;
-			SUBId       = Dungeon.SUBId;
 			hero.spend( LloydsBeacon.TIME_TO_USE );
 			hero.busy();
 			
@@ -166,7 +159,7 @@ public class LloydsBeacon extends Artifact {
 			
 		} else if (action == AC_RETURN) {
 			
-			if (returnDepth == Dungeon.depth&&SUBId==Dungeon.SUBId) {
+			if (returnLevelId == Dungeon.levelId) {
 				ScrollOfTeleportation.appear( hero, returnPos );
 				for(Mob m : Dungeon.level.mobs){
 					if (m.pos == hero.pos){
@@ -191,9 +184,8 @@ public class LloydsBeacon extends Artifact {
 				if (timeBubble != null) timeBubble.disarmPressedTraps();
 
 				InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-				InterlevelScene.returnDepth = returnDepth;
+				InterlevelScene.returnLevel = returnLevelId;
 				InterlevelScene.returnPos = returnPos;
-                InterlevelScene.SUBId = SUBId;
 				Game.switchScene( InterlevelScene.class );
 			}
 			
@@ -309,8 +301,20 @@ public class LloydsBeacon extends Artifact {
 	@Override
 	public String desc() {
 		String desc = super.desc();
-		if (returnDepth != -1){
-			desc += "\n\n" + Messages.get(this, "desc_set", returnDepth);
+		if (returnLevelId != -1){
+            int sub=0;
+            int levelId = returnLevelId;
+            String level;
+            while (levelId != returnLevelId % 1000) {
+                sub++;
+                levelId -= 1000;
+                if (levelId<0)
+                    break;
+            }
+            level = String.valueOf(levelId);
+            if (sub!=0)
+                level+="/"+sub;
+			desc += "\n\n" + Messages.get(this, "desc_set", level);
 		}
 		return desc;
 	}
@@ -319,7 +323,7 @@ public class LloydsBeacon extends Artifact {
 	
 	@Override
 	public Glowing glowing() {
-		return returnDepth != -1 ? WHITE : null;
+		return returnLevelId != -1 ? WHITE : null;
 	}
 
 	public class beaconRecharge extends ArtifactBuff{

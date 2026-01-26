@@ -341,7 +341,7 @@ public static class AchievementButton extends WindowTrigger{
 		placeTrigger(new AchievementButton().create(achievementButtonPos));
 
 		// 添加向下的楼梯触发器
-		placeTrigger(new Teleporter().create(toZeroLevelSub,ZeroLevelSub.toForwardCamp,0,1));
+		placeTrigger(new Teleporter().create(toZeroLevelSub,ZeroLevelSub.toForwardCamp,1000));
 
 		// 创建并添加自定义底部瓦片
 		CustomTilemap customBottomTile=new CustomBottomTile();

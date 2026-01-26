@@ -529,19 +529,18 @@ public class GameScene extends PixelScene {
 			} else {
 				// 根据当前levelId显示不同的进入消息
 				if (InterlevelScene.mode == InterlevelScene.Mode.ACCESS) {
-					switch (Dungeon.level.SUBId) {
-						case 0: // ZeroLevel
-							GLog.h(Messages.get(InterlevelScene.class, "access_zero_level"));
-							break;
-						case 1: // ZeroLevelSub
-							GLog.h(Messages.get(InterlevelScene.class, "access_zero_level_sub"));
-							break;
-						case 2: // Room404
-							GLog.h(Messages.get(InterlevelScene.class, "access_room404"));
-							break;
-						case 3: // CoffeeRoom
-							GLog.h(Messages.get(InterlevelScene.class, "access_coffee_room"));
-							break;
+                    switch (Dungeon.level.levelId) {
+                        case 0: // ZeroLevel
+                            GLog.h(Messages.get(InterlevelScene.class, "access_zero_level"));
+                            break;
+                        case 1000: // ZeroLevelSub
+                            GLog.h(Messages.get(InterlevelScene.class, "access_zero_level_sub"));
+                            break;
+                        case 2000: // Room404
+                            GLog.h(Messages.get(InterlevelScene.class, "access_room404"));
+                            break;
+                        case 3000: // CoffeeRoom
+                            GLog.h(Messages.get(InterlevelScene.class, "access_coffee_room"));
 						default:
 							GLog.h(Messages.get(this, "return"), Dungeon.depth);
 							break;

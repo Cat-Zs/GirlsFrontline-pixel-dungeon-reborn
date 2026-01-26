@@ -385,7 +385,7 @@ public enum Talent {
 			Dungeon.observe();
 		}
         if (talent == Type56Two_Sight){
-            Buff.affect( Dungeon.hero, TalentSecondSight.class).Set(Dungeon.depth, Dungeon.SUBId,0);
+            Buff.affect( Dungeon.hero, TalentSecondSight.class).Set(Dungeon.levelId, 0);
             if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 1){
                 Dungeon.level.FirstSight = false;
                 Buff.affect(Dungeon.hero, MindVision.class, 3);

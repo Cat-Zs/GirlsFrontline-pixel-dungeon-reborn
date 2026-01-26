@@ -124,8 +124,7 @@ public abstract class Level implements Bundlable {
     public boolean FirstSight = true;
     public boolean SecondSight = true;
 
-	public int SummonId;
-    public int SUBId;
+    public int levelId;
 	public int version;
 	
 	public int[] map;
@@ -176,8 +175,7 @@ public abstract class Level implements Bundlable {
 	public int color2 = 0x88CC44;
 
 	private static final String LEVEL_DEPTH = "levelDepth";
-	private static final String SUMMON_ID    = "SummonId";
-    private static final String SUB_ID    = "SUBId";
+    private static final String LEVEL_ID    = "levelId";
 	private static final String VERSION     = "version";
 	private static final String WIDTH       = "width";
 	private static final String HEIGHT      = "height";
@@ -200,10 +198,9 @@ public abstract class Level implements Bundlable {
     private static final String FIRSTSIGHT   = "FIRSTSIGHT";
     private static final String SECONDSIGHT   = "SECONDSIGHT";
 
-	public void create(int levelDepth,int id, int SUBId){
+	public void create(int levelDepth,int levelId){
 		this.levelDepth=levelDepth;
-		SummonId   = id;
-        this.SUBId   =SUBId;
+        this.levelId   =levelId;
 		Random.pushGenerator( Dungeon.seedCurDepth() );
 		
 		if (!(Dungeon.bossLevel())) {
@@ -350,8 +347,7 @@ public abstract class Level implements Bundlable {
         FirstSight=bundle.getBoolean(FIRSTSAVE);
         SecondSight=bundle.getBoolean(SECONDSIGHT);
 		levelDepth=bundle.getInt(LEVEL_DEPTH);
-		SummonId   =bundle.getInt(SUMMON_ID   );
-        SUBId   =bundle.getInt(SUB_ID   );
+        levelId   =bundle.getInt(LEVEL_ID   );
 		version   =bundle.getInt(VERSION    );
 		
 		//saves from before v0.9.2b are not supported
@@ -453,8 +449,7 @@ public abstract class Level implements Bundlable {
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put(LEVEL_DEPTH,levelDepth);
-		bundle.put(SUMMON_ID,SummonId);
-        bundle.put(SUB_ID,SUBId);
+        bundle.put(LEVEL_ID,levelId);
 		bundle.put(VERSION, Game.versionCode );
 		bundle.put(WIDTH, width );
 		bundle.put(HEIGHT, height );

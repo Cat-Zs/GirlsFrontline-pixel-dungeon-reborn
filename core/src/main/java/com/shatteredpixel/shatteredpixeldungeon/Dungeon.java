@@ -241,8 +241,7 @@ public class Dungeon {
 	public static SparseArray<ArrayList<Item>> portedItems;
 
 	public static int version;
-	public static int SummonId;
-    public static int SUBId;
+    public static int levelId;
 
 	public static long seed;
 
@@ -326,13 +325,12 @@ public class Dungeon {
 		return (challenges & mask) != 0;
 	}
 	
-	public static Level newLevel(Level level,int levelDepth, int SUBId){
+	public static Level newLevel(Level level,int levelDepth,int id){
 		Dungeon.level = null;
 		Actor.clear();
 
-		depth=levelDepth;
 		if (depth > Statistics.deepestFloor) {
-			Statistics.deepestFloor = depth;
+			Statistics.deepestFloor = levelDepth;
 			
 			if (Statistics.qualifiedForNoKilling) {
 				Statistics.completedWithNoKilling = true;
@@ -341,116 +339,118 @@ public class Dungeon {
 			}
 		}
 
-		level.create(depth,levelDepth+1000*SUBId,SUBId);
+		level.create(levelDepth,id);
+        depth=levelDepth;
 		Statistics.qualifiedForNoKilling = !bossLevel();
 		return level;
 	}
-    private static Level normalLevel(int id){
+    private static Level newZeroLevel(int id){
         Level level;
-        switch(id){
-            case 1: case 2:case 3:case 4:
-                level = new SewerLevel();break;
-            case 5:
-                level = new SewerBossLevel();break;
-            case 6:case 7:case 8:case 9:
-                level = new PrisonLevel();break;
-            case 10:
-                level = new PrisonBossLevel();break;
-            case 11:case 12:case 13:case 14:
-                level = new CavesLevel();break;
-            case 15:
-                level = new CavesBossLevel();break;
-            case 16:case 17:case 18:case 19:
-                level = new CityLevel();break;
-            case 20:
-                level = new CityBossLevel();break;
-            case 21:case 22:case 23:case 24:
-                level = new DeepCaveLevel();break;
-            case 25:
-                level = new DeepCaveBossLevel();break;
-            case 26: case 27:case 28: case 29:
-                level = new HallsLevel();break;
-            case 30:
-                level = new HallsBossLevel();break;
-            case 31:
-                level = new LastLevel();break;
+        switch (id){
             default:
-                level = new DeadEndLevel();
-        }
-        return level;
-    }
-    private static Level ZeroLevel(int SUB){
-        Level level;
-        switch (SUB){
+                level = new DeadEndLevel();break;
             case 0:
-                level = new ZeroLevel();
-                break;
-            case 1:
+                level = new ZeroLevel();break;
+            case 1000:
                 level = new ZeroLevelSub();
                 break;
-            case 2:
+            case 2000:
                 level = new Room404();
                 break;
-            case 3:
+            case 3000:
                 level = new CoffeeRoom();
                 break;
-            case 4:
+            case 4000:
                 level = new Workshop();
                 break;
-            default:
-                level = new DeadEndLevel();
-                break;
         }
         return level;
     }
-
-    private static Level newSUBLevel(int id,int SUBId){
+    private static Level newSubLevel(int id){
         Level level;
-        if (SUBId<0) {
-            return newMissionLevel(id, SUBId);
-        }
-        if (SUBId>Dungeon.ConnectLevel)
-            return new DeadEndLevel();
-        //新增衔接子层请更新最大连接数，尝试生成的子层大于最大连接数将会返回默认层
-        switch (id){
-            case 25:
-                if (SUBId==1) {
-                    level = new LastShopLevel();
-                    break;
-                }
+        switch(id){
             default:
-                level = new DeadEndLevel();
-                break;
+                level = new DeadEndLevel();break;
+            case 1010:
+                level = new RabbitBossLevel();break;
+            case 1025:
+                level = new LastShopLevel();break;
         }
         return level;
     }
-    private static Level newMissionLevel(int id, int SUBId){
-        switch (id){
-            case 10:
-                if (SUBId==-1) {
-                    level = new RabbitBossLevel();
-                    break;
-                }
-            default:
-                level = new DeadEndLevel();
-                break;
-        }
-        return level;
-    }
-	public static Level newLevel(int depth,int SUBId){
+	public static Level newLevel(int id){
         resetGenerator();
 		Level level;
-        if (depth==0){
-            level = ZeroLevel(SUBId);
-        }else {
-            if (SUBId == 0) {
-                level = normalLevel(depth);
-            } else {
-                level = newSUBLevel(depth, SUBId);
+        if (id%1000==0)
+            level = newZeroLevel(id);
+        else if (id%1000!=id)
+            level = newSubLevel(id);
+        else {
+            switch (id) {
+                case 1:
+                case 2:
+                case 3:
+                case 4:
+                    level = new SewerLevel();
+                    break;
+                case 5:
+                    level = new SewerBossLevel();
+                    break;
+                case 6:
+                case 7:
+                case 8:
+                case 9:
+                    level = new PrisonLevel();
+                    break;
+                case 10:
+                    level = new PrisonBossLevel();
+                    break;
+                case 11:
+                case 12:
+                case 13:
+                case 14:
+                    level = new CavesLevel();
+                    break;
+                case 15:
+                    level = new CavesBossLevel();
+                    break;
+                case 16:
+                case 17:
+                case 18:
+                case 19:
+                    level = new CityLevel();
+                    break;
+                case 20:
+                    level = new CityBossLevel();
+                    break;
+                case 21:
+                case 22:
+                case 23:
+                case 24:
+                    level = new DeepCaveLevel();
+                    break;
+                case 25:
+                    level = new DeepCaveBossLevel();
+                    break;
+                case 26:
+                case 27:
+                case 28:
+                case 29:
+                    level = new HallsLevel();
+                    break;
+                case 30:
+                    level = new HallsBossLevel();
+                    break;
+                case 31:
+                    level = new LastLevel();
+                    break;
+                default:
+                    level = new DeadEndLevel();
             }
         }
-		return newLevel(level,depth,SUBId);
-	}
+
+        return newLevel(level,id%1000,id);
+    }
 	
 	public static void resetLevel() {
 		
@@ -461,32 +461,16 @@ public class Dungeon {
 	}
 
 	public static int curDepth(){
-		return depth;
+		return levelId;
 	}
-    public static int curSub(){
-        return SUBId;
-    }
 
 	public static long seedCurDepth(){
-		return seedForDepth(curDepth()+1000*SUBId, curSub());
+		return seedForDepth(curDepth());
 	}
 
-	public static long seedForDepth(int depth, int sub){
+	public static long seedForDepth(int depth){
 		Random.pushGenerator( seed );
         //以存档种子为开始的随机数序列
-        if (sub<0)
-            sub=-sub;
-        for (int i = 0; i < sub; i ++) {
-            Random.Long(); //先过掉当前子层序号的随机数，以做到同楼层子层之间的区分
-        }
-        if (depth<0) {
-            depth=-depth;
-            for (int i = 0; i < depth%1000; i ++) {
-                Random.Long(); //负数子层要与正数子层做出区分，这里先过掉楼层深度个随机数
-            }
-            depth += (int) (depth&Random.Long());
-            //然后让后续要过掉的随机数的个数，加伤楼层与目前的随机数的按位与算法结果
-        }
 			for (int i = 0; i < depth; i ++) {
 				Random.Long(); //we don't care about these values, just need to go through them
 			}
@@ -518,9 +502,8 @@ public class Dungeon {
 		}
 		
 		PathFinder.setMapSize(level.width(), level.height());
-		
-		SummonId=level.SummonId;
-        SUBId  =level.SUBId;
+
+        levelId=level.levelId;
 		Dungeon.level = level;
 		Mob.restoreAllies( level, pos );
 		Actor.init();
@@ -604,9 +587,8 @@ public class Dungeon {
 		//chance is floors left / scrolls left
 		return Random.Int(5 - floorThisSet) < asLeftThisSet;
 	}
-	
-	private static final String SUMMON_ID        = "summonid";
-    private static final String SUB_ID          = "SUB_id";
+
+    private static final String LEVEL_ID        = "level_id";
 	private static final String VERSION		    = "version";
 	private static final String SEED		    = "seed";
 	private static final String CHALLENGES	    = "challenges";
@@ -631,8 +613,13 @@ public class Dungeon {
 		try {
 			Bundle bundle = new Bundle();
 
-			bundle.put( SUMMON_ID,SummonId);
-            bundle.put( SUB_ID,SUBId);
+
+            if (levelId!=0) {
+                bundle.put(LEVEL_ID, levelId);
+            }else {
+                level.levelId=depth;
+                bundle.put(LEVEL_ID, depth);
+            }
 			version = Game.versionCode;
 			bundle.put( VERSION, version );
 			bundle.put( SEED, seed );
@@ -718,24 +705,11 @@ public class Dungeon {
 	public static void saveLevel( int save ) throws IOException {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
-        int depth=level.levelDepth;
-        int SUB=level.SUBId;
         if(level.FirstSave){//mark
             level.FirstSave = false;
-            FileUtils.bundleToFile(GamesInProgress.depthFile(save,depth, SUB,1),bundle);
+            FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId, 1),bundle);
         }
-        FileUtils.bundleToFile(GamesInProgress.depthFile(save,depth, SUB,0),bundle);
-	}
-    public static void saveLevel( Level level ) throws IOException {
-        Bundle bundle = new Bundle();
-        bundle.put( LEVEL, level );
-        int depth=level.levelDepth;
-        int SUB=level.SUBId;
-        if(level.FirstSave){//mark
-            level.FirstSave = false;
-            FileUtils.bundleToFile(GamesInProgress.depthFile(GamesInProgress.curSlot,depth, SUB,1),bundle);
-        }
-        FileUtils.bundleToFile(GamesInProgress.depthFile(GamesInProgress.curSlot,depth, SUB,0),bundle);
+        FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId, 0),bundle);
     }
 	
 	public static void saveAll() throws IOException {
@@ -758,8 +732,8 @@ public class Dungeon {
         resetTest();
 		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.gameFile( save ) );
 
-		SummonId = bundle.getInt( SUMMON_ID );
-        SUBId   = bundle.getInt( SUB_ID );
+        levelId = bundle.getInt( LEVEL_ID );
+
 		version = bundle.getInt( VERSION );
         RollTimes = bundle.getInt( ROLLTIMES );
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
@@ -899,67 +873,63 @@ public class Dungeon {
 		}
 
 	}
-    public static void GetSight(Level level){
-        if (Dungeon.hero!=null){
+    public static void GetSight(){
+        if (Dungeon.hero!=null&&Dungeon.level!=null){
             if(Dungeon.hero.hasTalent(Talent.Type56Two_Sight)) {
                 TalentSecondSight Sec = Dungeon.hero.buff(TalentSecondSight.class);
                 if (Sec==null){
-                    Buff.affect( Dungeon.hero, TalentSecondSight.class).Set(0,0, 0);
+                    Buff.affect( Dungeon.hero, TalentSecondSight.class).Set(0, 0);
                     Sec = Dungeon.hero.buff(TalentSecondSight.class);
                     GLog.p("重新赋予");
                 }
-                if (level.FirstSight){
-                    level.FirstSight = false;
+                if (Dungeon.level.FirstSight){
+                    Dungeon.level.FirstSight = false;
                     Buff.affect(Dungeon.hero, MindVision.class, 3);
                     //首次进入获得三回合灵视
 
                     if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2) {
-                        Sec.Set(level.levelDepth, level.SUBId,25);
+                        Sec.Set(Dungeon.levelId, 25);
                         //天赋2级时才会计时25回合
                     }
                 }
 
-                if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2 && Sec.EndCD(level.levelDepth, level.SUBId)&& level.SecondSight) {
-                    level.SecondSight = false;
+                if (Dungeon.hero.pointsInTalent(Talent.Type56Two_Sight) == 2 && Sec.EndCD(Dungeon.levelId)&&Dungeon.level.SecondSight) {
+                    Dungeon.level.SecondSight = false;
                     Buff.affect(Dungeon.hero, MindVision.class, 3);
                 }//计时结束后进入该楼层
             }
         }
     }
 
-	public static Level tryLoadLevel(int depth,int SUBId, int copy){//mark
-        Level level = TryToLoad(depth, SUBId, copy);
+    public static Level tryLoadLevel(int levelId, int copy){//mark
+        Level level = BeforeTryLoadLevel(levelId, copy);
         if (level!=null){
-            if (!(level instanceof RabbitBossLevel)) {
-                GetSight(level);
-            }
+            GetSight();
             return level;
         }
-		return null;
-	}
-    private static Level TryToLoad(int depth,int SUBId, int copy){
+        return null;
+    }
+
+    private static Level BeforeTryLoadLevel(int levelId, int copy){
         final int save=GamesInProgress.curSlot;
-        final String fileName=GamesInProgress.depthFile(save,depth,SUBId,copy);
+        final String fileName=GamesInProgress.depthFile(save,levelId,copy);
         if(FileUtils.fileExists(fileName)){
             //file may be deleted between fileExists and loadLevel,who knows.
             try{
-                return loadLevel(save,depth,SUBId,copy);
+                return loadLevel(save,levelId,copy);
             }catch(IOException e){
                 Game.reportException(e);
             }
         }
-
         return null;
     }
-	
-	public static Level loadLevel(int save,int levelId,int SUBId, int copy) throws IOException {
-		Dungeon.level = null;
-		Actor.clear();
-		
-		Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId,SUBId,copy));
-		
-		Level level = (Level)bundle.get( LEVEL );
-		
+    public static Level loadLevel(int save,int levelId, int copy) throws IOException {
+        Dungeon.level = null;
+        Actor.clear();
+
+        Bundle bundle = FileUtils.bundleFromFile( GamesInProgress.depthFile(save,levelId, copy));
+
+        Level level = (Level)bundle.get( LEVEL );
 		if (level == null){
 			throw new IOException();
 		} else {
@@ -985,7 +955,6 @@ public class Dungeon {
 	
 	public static void preview( GamesInProgress.Info info, Bundle bundle ) {
 		info.depth = bundle.getInt( DEPTH );
-        info.SUBId = bundle.getInt( SUB_ID );
 		info.version = bundle.getInt( VERSION );
 		info.challenges = bundle.getInt( CHALLENGES );
 		Hero.preview( info, bundle.getBundle( HERO ) );

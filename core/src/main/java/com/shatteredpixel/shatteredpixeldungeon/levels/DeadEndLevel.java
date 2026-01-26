@@ -55,7 +55,7 @@ public class DeadEndLevel extends Level {
 		int center=(max+min)/2;
 		entrance  =center*width()+center;
 		exit      =center*width()+center;
-		placeTrigger(new Teleporter().create(exit,78,0,0));
+		placeTrigger(new Teleporter().create(exit,78,0));
 		
 		return true;
 	}

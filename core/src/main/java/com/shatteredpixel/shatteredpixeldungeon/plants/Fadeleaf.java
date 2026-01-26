@@ -64,12 +64,10 @@ public class Fadeleaf extends Plant {
 				if (timeBubble != null) timeBubble.disarmPressedTraps();
 				
 				InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-                if (Dungeon.SUBId==0) {
-                    InterlevelScene.returnDepth = Math.max(1, (Dungeon.depth - 1));
-                    InterlevelScene.SUBId = Dungeon.ConnectLevel;
-                }else {
-                    InterlevelScene.returnDepth = Dungeon.depth;
-                    InterlevelScene.SUBId = Dungeon.SUBId-1;
+                if (Dungeon.levelId%1000!=Dungeon.levelId)
+                    InterlevelScene.returnLevel=Dungeon.depth;
+                else {
+                    InterlevelScene.returnLevel = Math.max(1, (Dungeon.depth - 1));
                 }
 				InterlevelScene.returnPos = -2;
 				Game.switchScene( InterlevelScene.class );

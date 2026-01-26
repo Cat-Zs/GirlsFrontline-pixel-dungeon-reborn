@@ -115,11 +115,13 @@ public class Food extends Item {
     }
 	public static float eatingTimeStatic(){
 		if(Dungeon.hero.hasTalent(Talent.IRON_STOMACH)
-		|| Dungeon.hero.hasTalent(Talent.ENERGIZING_MEAL)
-		|| Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
-		|| Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)
-		|| Dungeon.hero.hasTalent(Talent.Type56Two_FOOD)
-		|| Dungeon.hero.hasTalent(Talent.GSH18_ENERGIZING_MEAL)){
+                || Dungeon.hero.hasTalent(Talent.ENERGIZING_MEAL)
+                || Dungeon.hero.hasTalent(Talent.MYSTICAL_MEAL)
+                || Dungeon.hero.hasTalent(Talent.INVIGORATING_MEAL)
+                || Dungeon.hero.hasTalent(Talent.Type56Two_FOOD)
+                || Dungeon.hero.hasTalent(Talent.GSH18_ENERGIZING_MEAL)
+                || Dungeon.hero.hasTalent(Talent.Type56_21V2)
+                || Dungeon.hero.hasTalent(Talent.Type56_21V3)){
 			return TIME_TO_EAT - 2;
 		} else {
 			return TIME_TO_EAT;

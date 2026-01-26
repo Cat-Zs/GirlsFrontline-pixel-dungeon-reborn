@@ -33,9 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.LostBackpack;
-import com.shatteredpixel.shatteredpixeldungeon.levels.DeadEndLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
-import com.shatteredpixel.shatteredpixeldungeon.levels.RabbitBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.features.Chasm;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -72,6 +70,7 @@ public class InterlevelScene extends PixelScene {
 	private static final float FAST_FADE = 0.50f; //.33 in, .33 steady, .33 out, 1 second total
 	
 	public static float fadeTime;
+    public static boolean isStart = false;
 	
 	public enum Mode {
 		ACCESS,DESCEND, ASCEND, CONTINUE, RESURRECT, RETURN, FALL, NONE, RESET
@@ -80,12 +79,11 @@ public class InterlevelScene extends PixelScene {
 
 	public static String seedCode=null;
 
-	public static int returnDepth;
+	public static int returnLevel;
 	public static int returnPos;
 
 	public static int accessPos;
-	public static int accessLevelDepth;
-    public static int SUBId = 0;
+    public static int accessLevelId;
 
 	public static boolean fallIntoPit;
 
@@ -150,8 +148,8 @@ public class InterlevelScene extends PixelScene {
 				scrollSpeed = -5;
 				break;
 			case RETURN:
-				loadingDepth = returnDepth;
-				scrollSpeed = returnDepth > Dungeon.depth ? 15 : -15;
+				loadingDepth = returnLevel%1000;
+				scrollSpeed = returnLevel%1000 > Dungeon.depth ? 15 : -15;
 				break;
 		}
 
@@ -169,12 +167,9 @@ public class InterlevelScene extends PixelScene {
 		else if (lastRegion == 5)    loadingAsset = Assets.Interfaces.LOADING_HALLS;
 		else                         loadingAsset = Assets.Interfaces.SHADOW;
 
-        boolean isTest = false;
-        GamesInProgress.Info gameInfo = GamesInProgress.check(GamesInProgress.curSlot);
-        if (gameInfo!=null) {
-            isTest = GamesInProgress.isChallenged(gameInfo.challenges,Challenges.TEST_MODE);
-        }
-        resetFadeTime(DeviceCompat.isDebug()|| Dungeon.isChallenged(Challenges.TEST_MODE)||isTest);
+        resetFadeTime(DeviceCompat.isDebug()|| Dungeon.isChallenged(Challenges.TEST_MODE)||isStart);
+        if (isStart)
+            isStart = false;
 
 		SkinnedBlock bg = new SkinnedBlock(Camera.main.width, Camera.main.height, loadingAsset ){
 			@Override
@@ -421,205 +416,64 @@ public class InterlevelScene extends PixelScene {
 		Dungeon.init("ANEWWORLD",0);
 		GameLog.wipe();
 		Dungeon.depth=Statistics.deepestFloor=-1;
-		Level level = Dungeon.newLevel(0,0);
+        Level level = Dungeon.newLevel(0);
 		Dungeon.switchLevel(level,level.entrance);
 	}
 
 	private void access(){
-		Mob.holdAllies(Dungeon.level);
-		try{Dungeon.saveAll();}
-		catch(IOException e){Game.reportException(e);}
 
-		Level level;
-        if (SUBId!=0) {
-            //先尝试新子层
-            level = Dungeon.tryLoadLevel(accessLevelDepth, SUBId, 0);
-            if (null == level) {
-                level = Dungeon.tryLoadLevel(accessLevelDepth + 1000 * SUBId, 0, 0);
-                //没有新子层尝试旧子层
-            }
-            if (null == level) {
-                //没有旧子层则新建
-                level = Dungeon.newLevel(accessLevelDepth, SUBId);
-            }
-        }else {
-            level = Dungeon.tryLoadLevel(accessLevelDepth, 0, 0);
-            if (null == level) {
-                level = Dungeon.newLevel(accessLevelDepth, 0);
-            }
+        Mob.holdAllies(Dungeon.level);
+        try{Dungeon.saveAll();}
+        catch(IOException e){Game.reportException(e);}
+
+        Level level=Dungeon.tryLoadLevel(accessLevelId,0);
+        if(null==level){
+            level=Dungeon.newLevel(accessLevelId);
         }
-
-		Dungeon.depth=level.levelDepth;
-        Dungeon.SUBId=level.SUBId;
-        SUBId = 0;
-        //特殊前进时使用子层标签读取或生成，结束后清零
+        Dungeon.depth=level.levelDepth;
 		Dungeon.switchLevel(level,accessPos);
 	}
 
 	private static void descend() throws IOException {
-		if (Dungeon.hero == null) {
-			Mob.clearHeldAllies();
-			Dungeon.init(seedCode);
-			GameLog.wipe();
-		} else {
-			Mob.holdAllies( Dungeon.level );
-			Dungeon.saveAll();
-		}
 
-		Level level;
-        int depth = Dungeon.depth;
-        int SUB = Dungeon.SUBId;
-        Level TryToNew = null;
-        if (depth!=0
-                &&SUB>=0
-                &&SUB<Dungeon.ConnectLevel) {
-            //非0层（以免开始游戏被0层触发）
-            // 且当前子层序号不是任务层(负数)
-            // 且当前子层序号未达到衔接层上限
-            int SUBA=SUB;
-
-            do {
-                SUBA++;
-                //遍历最大子层数量
-                TryToNew = Dungeon.tryLoadLevel(depth, SUBA ,0);
-                if (TryToNew == null || TryToNew instanceof RabbitBossLevel) {
-                    //尝试读取当前序号子层，没有则创建,读取结果为兔子层则要覆盖
-                    TryToNew = Dungeon.newLevel(depth, SUBA);
-                }
-            }
-            while (SUBA<Dungeon.ConnectLevel && (TryToNew instanceof DeadEndLevel || TryToNew instanceof RabbitBossLevel));
-                //尝试次数小于最大衔接层且尝试子层结果是默认层时，重新尝试
-
-            if (TryToNew instanceof DeadEndLevel || TryToNew instanceof RabbitBossLevel) {
-                //遍历最大子层数量均不是衔接层时，进入主层的下一层
-                depth++;
-                SUB = 0;
-                TryToNew =  Dungeon.tryLoadLevel(depth, SUB ,0);
-                if (TryToNew == null) {
-                    //尝试读取当前序号子层，没有则创建
-                    TryToNew = Dungeon.newLevel(depth, SUB);
-                }
-            }
-        }else {
-            depth++;
-            SUB = 0;
-            //0层开局到1层主层
-            // 任务层默认进入下一层主层
-            // 当前子层已经是衔接层下限进入下一层主层
+        if (Dungeon.hero == null) {
+            Mob.clearHeldAllies();
+            Dungeon.init(seedCode);
+            GameLog.wipe();
+        } else {
+            Mob.holdAllies( Dungeon.level );
+            Dungeon.saveAll();
         }
-
-        if (TryToNew!=null
-                // 当前楼层允许有衔接层子层
-                &&!(TryToNew instanceof DeadEndLevel || TryToNew instanceof RabbitBossLevel)
-                // 且以此法得到的子层不是默认层
-        ) {
-            //TryToNew在上面已经tryLoadLevel再newLevel了，为避免影响物品生成，将其赋值给level
-            level = TryToNew;
-        }else {
-            //将要进入主层时的操作，等效旧版
-            if (Dungeon.depth >= Statistics.deepestFloor) {
-                //进入更深楼层，会新增楼层
-                level = Dungeon.newLevel(depth, SUB);
-            } else {
-                level = Dungeon.tryLoadLevel(depth, SUB, 0);
-            }
-        }
-        if (level != null) {
-            Dungeon.depth = depth;
-            Dungeon.switchLevel( level, level.entrance );
-        }else {
-            GLog.n("该楼层已损坏，请节哀");
-        }
-    }
-
-	private void fall() throws IOException {
-
-		Mob.holdAllies( Dungeon.level );
-
-		Buff.affect( Dungeon.hero, Chasm.Falling.class );
-		Dungeon.saveAll();
 
         Level level;
-        int depth = Dungeon.depth;
-        int SUB = Dungeon.SUBId;
-        Level TryToNew = null;
-        if(fallIntoPit){
-            Dungeon.SUBId=0;
-            depth++;
-            Dungeon.depth = depth;
-            if (depth >= Statistics.deepestFloor) {
-                level = Dungeon.newLevel(depth, 0);
-            } else {
-                level = Dungeon.tryLoadLevel(depth,0,0);
-                //坠落回主层
-            }
+        if (Dungeon.depth >= Statistics.deepestFloor) {
+            level = Dungeon.newLevel(Dungeon.depth+1);
+        } else {
+            Dungeon.depth++;
+            level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
         }
-        else {
-            if (SUB >= 0
-                    && SUB < Dungeon.ConnectLevel) {
-                // 且当前子层序号不是任务层(负数)
-                // 且当前子层序号未达到衔接层上限
-                int SUBA = SUB;
+        Dungeon.switchLevel( level, level.entrance );
+    }
+    private void fall() throws IOException {
 
-                do {
-                    SUBA++;
-                    //遍历最大子层数量
-                    TryToNew = Dungeon.tryLoadLevel(depth, SUBA, 0);
-                    if (TryToNew == null || TryToNew instanceof RabbitBossLevel) {
-                        //尝试读取当前序号子层，没有则创建,读取结果为兔子层则要覆盖
-                        TryToNew = Dungeon.newLevel(depth, SUBA);
-                    }
-                }
-                while (SUBA < Dungeon.ConnectLevel && (TryToNew instanceof DeadEndLevel || TryToNew instanceof RabbitBossLevel));
-                //尝试次数小于最大衔接层且尝试子层结果是默认层时，重新尝试
+        Mob.holdAllies( Dungeon.level );
 
-                if (TryToNew instanceof DeadEndLevel || TryToNew instanceof RabbitBossLevel) {
-                    //遍历最大子层数量均不是衔接层时，进入主层的下一层
-                    depth++;
-                    SUB = 0;
-                    TryToNew = Dungeon.tryLoadLevel(depth, SUB, 0);
-                    if (TryToNew == null) {
-                        //尝试读取当前序号子层，没有则创建
-                        TryToNew = Dungeon.newLevel(depth, SUB);
-                    }
-                }
-            } else {
-                depth++;
-                SUB = 0;
-                //0层开局到1层主层
-                // 任务层默认进入下一层主层
-                // 当前子层已经是衔接层下限进入下一层主层
-            }
+        Buff.affect( Dungeon.hero, Chasm.Falling.class );
+        Dungeon.saveAll();
 
+        Level level;
+        if (Dungeon.depth >= Statistics.deepestFloor) {
+            level = Dungeon.newLevel(Dungeon.depth+1);
+        } else {
+            Dungeon.depth++;
+            level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
 
-            if (TryToNew != null
-                    // 当前楼层允许有衔接层子层
-                    && !(TryToNew instanceof DeadEndLevel || TryToNew instanceof RabbitBossLevel)
-                // 且以此法得到的子层不是默认层
-            ) {
-                //TryToNew在上面已经tryLoadLevel再newLevel了，为避免影响物品生成，将其赋值给level
-                level = TryToNew;
-            } else {
-                //将要进入主层时的操作，等效旧版
-                if (Dungeon.depth >= Statistics.deepestFloor) {
-                    //进入更深楼层，会新增楼层
-                    level = Dungeon.newLevel(depth, SUB);
-                } else {
-                    Dungeon.depth = depth;
-                    level = Dungeon.tryLoadLevel(depth, SUB, 0);
-                }
-            }
         }
-        if (level != null) {
-            Dungeon.depth = depth;
-            Dungeon.switchLevel( level, level.fallCell( fallIntoPit ) );
-        }else {
-            GLog.n("该楼层已损坏，请节哀");
-        }
-	}
+        Dungeon.switchLevel( level, level.fallCell( fallIntoPit ));
+    }
     private void reset() throws IOException {
         Actor.fixTime();
-        Level copyLevel = Dungeon.tryLoadLevel(Dungeon.depth,Dungeon.SUBId,1);
+        Level copyLevel = Dungeon.tryLoadLevel(Dungeon.depth,1);
         //重置楼层，所以以当前楼层子标签读取
         if (copyLevel == null) {
             GLog.n("未读取到复制存档，即将重新保存");
@@ -630,128 +484,33 @@ public class InterlevelScene extends PixelScene {
     }
 	
 	private void ascend() throws IOException {
-		
-		Mob.holdAllies( Dungeon.level );
 
-		Dungeon.saveAll();
-        int depth = Dungeon.depth;
-        int SUB = Dungeon.SUBId;
-        int SUBA;
-        Level level;
-        Level TryToLoad = null;
-        if (SUB<0){
-            SUB=0;
-            //任务层默认上楼到当前主层
-        }else if (SUB>0){
-            //衔接子层返回
-            SUBA = SUB;
-            do {
-                SUBA--;
-                TryToLoad = Dungeon.tryLoadLevel(depth,SUBA,0);
-                //尝试读取子层序号-1的楼层
-                if (TryToLoad==null || TryToLoad instanceof RabbitBossLevel){
-                    TryToLoad = Dungeon.newLevel(depth, SUBA);
-                    //读取结果为空则为新增的子层衔接层，读取结果为兔子层则要覆盖，新建一个
-                }
-            }while (SUBA>0 &&(TryToLoad instanceof DeadEndLevel || TryToLoad instanceof RabbitBossLevel));
-            //在当前尝试楼层序号大于0（处于子层中）且读取结果是默认层的时候重新尝试
+        Mob.holdAllies( Dungeon.level );
 
-            if (TryToLoad instanceof DeadEndLevel || TryToLoad instanceof RabbitBossLevel) {
-                //从当前子层遍历到子层1，均不是衔接层时，返回主层
-                SUB = 0;
-                depth--;
-            }
-
-        }else {
-            //主层向上返回
-            depth--;
-            Dungeon.depth=depth;
-            SUBA = Dungeon.ConnectLevel;
-            do {
-                TryToLoad = Dungeon.tryLoadLevel(depth,SUBA,0);
-                //从最大衔接层往下遍历
-                if (TryToLoad==null){
-                    TryToLoad = Dungeon.newLevel(depth, SUBA);
-                    //读取结果为空则为新增的子层衔接层，新建一个
-                }
-                SUBA--;
-            }while (SUBA>0 && (TryToLoad instanceof DeadEndLevel || TryToLoad instanceof RabbitBossLevel));
-            //在当前尝试楼层序号大于0（处于子层中）且读取结果是默认层的时候重新尝试
-            if (TryToLoad instanceof DeadEndLevel || TryToLoad instanceof RabbitBossLevel) {
-                //遍历最大子层数量均不是衔接层时，返回主层
-                TryToLoad = Dungeon.tryLoadLevel(depth,SUBA,0);
-            }
-        }
-        if (TryToLoad!=null
-                //往上楼层允许有衔接层子层
-                &&!(TryToLoad instanceof DeadEndLevel || TryToLoad instanceof RabbitBossLevel)
-                //且以此法得到的子层不是默认层
-        ) {
-            //TryToLoad在上面已经tryLoadLevel再newLevel了，为避免影响物品生成，将其赋值给level
-            level = TryToLoad;
-        }else {
-            //没有衔接层时的操作，等效旧版无子层
-            level = Dungeon.tryLoadLevel(depth,SUB,0);
-        }
-        if (level != null) {
-            Dungeon.depth=depth;
-            Dungeon.switchLevel( level, level.exit );
-        }else
-            GLog.n("该楼层已损坏，节哀");
+        Dungeon.saveAll();
+        Dungeon.depth--;
+        Level level = Dungeon.loadLevel(GamesInProgress.curSlot,Dungeon.depth,0);
+        Dungeon.switchLevel( level, level.exit );
     }
 	
 	private void returnTo() throws IOException {
-		
-		Mob.holdAllies( Dungeon.level );
 
-		Dungeon.saveAll();
-		int depth = returnDepth;
-		Level level;
-        int SUBA = SUBId;
-        level = Dungeon.tryLoadLevel(depth, SUBA, 0);
-        if(level == null) {
-            level = Dungeon.tryLoadLevel(depth+1000*SUBId, 0, 0);
-            //对旧版本子层兼容
-        }
-        if (level==null||level instanceof RabbitBossLevel) {
-            do {
-                level = Dungeon.tryLoadLevel(depth, SUBA, 0);
-                if (level == null)
-                    level = Dungeon.newLevel(depth, SUBA);
-                SUBA--;
-            } while (SUBA > 0 && level instanceof DeadEndLevel);
-        }
-        SUBId = 0;
-        if (!(level instanceof DeadEndLevel)) {
-            Dungeon.depth = depth;
-            Dungeon.SUBId = SUBA;
-            //大传、大传送的用处，先赋予子层标签再进入此处，返回之后子层临时参数清零
-            Dungeon.switchLevel(level, returnPos);
-        }else {
-            GLog.n("该楼层已损坏，请节哀");
-        }
+        Mob.holdAllies( Dungeon.level );
+
+        Dungeon.saveAll();
+        Dungeon.depth = returnLevel%1000;
+        Level level = Dungeon.loadLevel(GamesInProgress.curSlot,returnLevel,0);
+        Dungeon.switchLevel( level, returnPos );
 	}
 	
 	public static void restore() throws IOException {
 		Mob.clearHeldAllies();
 
 		GameLog.wipe();
-
-		Level level;
         Dungeon.loadGame( GamesInProgress.curSlot );
-        int SUB = 0;
-        GamesInProgress.Info gameInfo = GamesInProgress.check(GamesInProgress.curSlot);
-        if (gameInfo!=null) {
-            SUB = gameInfo.SUBId;
-        }
-        Dungeon.SUBId=SUB;
-        try{
-            level = Dungeon.loadLevel(GamesInProgress.curSlot, Dungeon.depth, SUB, 0);
-            //尝试新子层
-        } catch (IOException e) {
-            level = Dungeon.loadLevel(GamesInProgress.curSlot, Dungeon.depth + 1000*SUB, 0, 0);
-            //未建立则尝试旧子层
-        }
+        Level level = Dungeon.tryLoadLevel(Dungeon.levelId,0);
+        if (level==null)
+            level = Dungeon.tryLoadLevel(Dungeon.depth,0);
         //读档
 		Dungeon.switchLevel(level,Dungeon.hero.pos);
 	}
@@ -765,8 +524,7 @@ public class InterlevelScene extends PixelScene {
 			ArrayList<Item> preservedItems = Dungeon.level.getItemsToPreserveFromSealedResurrect();
 
 			Dungeon.hero.resurrect();
-			level = Dungeon.newLevel(Dungeon.depth, Dungeon.SUBId);
-            //以当前楼层深度、子层序号重建
+            level = Dungeon.newLevel(Dungeon.levelId);
 			Dungeon.hero.pos = level.randomRespawnCell(Dungeon.hero);
 
 			for (Item i : preservedItems){

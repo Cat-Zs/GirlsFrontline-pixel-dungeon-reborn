@@ -113,7 +113,7 @@ public class WndGameInProgress extends Window {
                 if (gameInfo!=null) {
                     isTest = GamesInProgress.isChallenged(gameInfo.challenges,Challenges.TEST_MODE);
                 }
-                InterlevelScene.resetFadeTime(DeviceCompat.isDebug()|| isTest);
+                InterlevelScene.isStart=DeviceCompat.isDebug()|| isTest;
 				Dungeon.hero = null;
 				ActionIndicator.action = null;
 				GamesInProgress.curSlot = slot;

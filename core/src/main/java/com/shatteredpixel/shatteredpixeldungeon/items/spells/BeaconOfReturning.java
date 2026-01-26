@@ -49,14 +49,13 @@ public class BeaconOfReturning extends Spell {
 		image = ItemSpriteSheet.RETURN_BEACON;
 	}
 	
-	public int returnDepth	= -1;
+	public int returnLevelId	= -1;
 	public int returnPos;
-    public int SUBId = 0;
 	
 	@Override
 	protected void onCast(final Hero hero) {
 		
-		if (returnDepth == -1){
+		if (returnLevelId == -1){
 			setBeacon(hero);
 		} else {
 			GameScene.show(new WndOptions(new ItemSprite(this),
@@ -82,20 +81,19 @@ public class BeaconOfReturning extends Spell {
 	
 	@Override
 	protected void onThrow(int cell) {
-		returnDepth = -1;
-		super.onThrow(cell);
-	}
-	
-	@Override
-	public void doDrop(Hero hero) {
-		returnDepth = -1;
-		super.doDrop(hero);
-	}
-	
-	private void setBeacon(Hero hero ){
-		returnDepth = Dungeon.depth;
-        SUBId       = Dungeon.SUBId;
-		returnPos   = hero.pos;
+        returnLevelId = -1;
+        super.onThrow(cell);
+    }
+
+    @Override
+    public void doDrop(Hero hero) {
+        returnLevelId = -1;
+        super.doDrop(hero);
+    }
+
+    private void setBeacon(Hero hero) {
+        returnLevelId = Dungeon.levelId;
+        returnPos = hero.pos;
 		
 		hero.spend( 1f );
 		hero.busy();
@@ -132,7 +130,7 @@ public class BeaconOfReturning extends Spell {
 		hero.busy();
 		
 		
-		if (returnDepth == Dungeon.depth&&SUBId==Dungeon.SUBId) {
+		if (returnLevelId == Dungeon.levelId) {
 			if (!Dungeon.level.passable[returnPos] && !Dungeon.level.avoid[returnPos]){
 				returnPos = Dungeon.level.entrance;
 			}
@@ -160,9 +158,8 @@ public class BeaconOfReturning extends Spell {
 			if (timeBubble != null) timeBubble.disarmPressedTraps();
 			
 			InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-			InterlevelScene.returnDepth = returnDepth;
+			InterlevelScene.returnLevel = returnLevelId;
 			InterlevelScene.returnPos = returnPos;
-            InterlevelScene.SUBId = SUBId;
 			Game.switchScene( InterlevelScene.class );
 		}
 		detach(hero.belongings.backpack);
@@ -171,8 +168,20 @@ public class BeaconOfReturning extends Spell {
 	@Override
 	public String desc() {
 		String desc = super.desc();
-		if (returnDepth != -1){
-			desc += "\n\n" + Messages.get(this, "desc_set", returnDepth);
+		if (returnLevelId != -1){
+            int sub=0;
+            int levelId = returnLevelId;
+            String level;
+            while (levelId != returnLevelId % 1000) {
+                sub++;
+                levelId -= 1000;
+                if (levelId<0)
+                    break;
+            }
+            level = String.valueOf(levelId);
+            if (sub!=0)
+                level+="/"+sub;
+			desc += "\n\n" + Messages.get(this, "desc_set", level);
 		}
 		return desc;
 	}
@@ -181,19 +190,17 @@ public class BeaconOfReturning extends Spell {
 	
 	@Override
 	public ItemSprite.Glowing glowing() {
-		return returnDepth != -1 ? WHITE : null;
+		return returnLevelId != -1 ? WHITE : null;
 	}
 	
-	private static final String DEPTH	= "depth";
+	private static final String LEVELID	= "levelid";
 	private static final String POS		= "pos";
-    private static final String SUBID		= "SUBid";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle( bundle );
-		bundle.put( DEPTH, returnDepth );
-        bundle.put( SUBID, SUBId );
-		if (returnDepth != -1) {
+		bundle.put( LEVELID, returnLevelId );
+		if (returnLevelId != -1) {
 			bundle.put( POS, returnPos );
 		}
 	}
@@ -201,9 +208,8 @@ public class BeaconOfReturning extends Spell {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle(bundle);
-		returnDepth	= bundle.getInt( DEPTH );
+        returnLevelId	= bundle.getInt( LEVELID );
 		returnPos	= bundle.getInt( POS );
-        SUBId       = bundle.getInt(SUBID);
 	}
 	
 	@Override
@@ -215,8 +221,8 @@ public class BeaconOfReturning extends Spell {
 	public static class Recipe extends com.shatteredpixel.shatteredpixeldungeon.items.Recipe.SimpleRecipe {
 		
 		{
-			inputs =  new Class[]{ScrollOfPassage.class, ArcaneCatalyst.class};
-			inQuantity = new int[]{1, 1};
+            inputs = new Class[]{ScrollOfPassage.class, ArcaneCatalyst.class};
+            inQuantity = new int[]{1, 1};
 			
 			cost = 6;
 			

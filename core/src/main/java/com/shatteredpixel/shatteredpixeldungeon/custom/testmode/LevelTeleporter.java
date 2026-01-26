@@ -23,7 +23,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
@@ -177,7 +176,7 @@ public class LevelTeleporter extends TestItem {
                     buff = Dungeon.hero.buff(Swiftthistle.TimeBubble.class);
                     if (buff != null) buff.detach();
                     InterlevelScene.mode = InterlevelScene.Mode.RETURN;
-                    InterlevelScene.returnDepth = selectedLevel;
+                    InterlevelScene.returnLevel = selectedLevel;
                     InterlevelScene.returnPos = -1;
                     Game.switchScene( InterlevelScene.class );
                 }

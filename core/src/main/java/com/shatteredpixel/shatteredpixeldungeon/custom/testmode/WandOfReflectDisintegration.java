@@ -1,5 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.custom.testmode;
 
+import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
+
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
@@ -8,6 +10,7 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.utils.BallisticaReal;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Beam;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.PurpleParticle;
+import com.shatteredpixel.shatteredpixeldungeon.items.KindOfWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.wands.WandOfDisintegration;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MagesStaff;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
@@ -200,9 +203,9 @@ public class WandOfReflectDisintegration extends WandOfDisintegration {
         int lvl = level;
         for (Char ch : chars) {
             wandProc(ch, chargesPerCast());
-            Cannon cannon = Dungeon.hero.belongings.getItem(Cannon.class);
-            if (ch.alignment!= Char.Alignment.ALLY && cannon != null && cannon.mustDie) {
-                ch.MustDie( cannon );
+            KindOfWeapon w =  hero.belongings.weapon;
+            if (ch.alignment!= Char.Alignment.ALLY && w instanceof Cannon && ((Cannon) w).mustDie) {
+                ch.MustDie( w );
             }else {
                 int damage = Math.round(damageRoll(lvl) * reflectionDamageFactor(reflection));
                 if (!ch.equals(curUser)) {
@@ -311,8 +314,8 @@ public class WandOfReflectDisintegration extends WandOfDisintegration {
 
     public String info(){
         String info = super.info();
-        Cannon cannon = Dungeon.hero.belongings.getItem(Cannon.class);
-        if ( cannon != null && cannon.mustDie ){
+        KindOfWeapon w =  hero.belongings.weapon;
+        if (w instanceof Cannon && ((Cannon) w).mustDie){
             info += "\n\n已开启秒杀模式。";
         }
         return info;

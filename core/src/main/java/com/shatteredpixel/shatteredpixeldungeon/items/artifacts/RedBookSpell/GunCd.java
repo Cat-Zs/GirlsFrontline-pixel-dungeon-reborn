@@ -24,7 +24,7 @@ public class GunCd extends ItemSpell{
 
     @Override
     protected void onItemAct( Item item ){
-        ((ShootGun) item).cooldownLeft=Math.max(0, ((ShootGun) item).cooldownLeft-10);
+        ((ShootGun) item).cooldownLeft=Math.min(15, ((ShootGun) item).cooldownLeft/2);
     }
 
 }
