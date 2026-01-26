@@ -42,7 +42,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 public class Type56FourTwo extends ArmorAbility {
 
 	{
-		baseChargeUse = 60f;
+		baseChargeUse = 50f;
 	}
 
 	@Override

@@ -56,7 +56,7 @@ import com.watabou.utils.Random;
 public class Type56FourOne extends ArmorAbility {
 
 	{
-		baseChargeUse = 60f;
+		baseChargeUse = 50f;
 	}
 
 

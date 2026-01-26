@@ -229,7 +229,9 @@ public class Grass extends Item {
                     if (Dungeon.level.passable[target]&&Dungeon.level.map[target] != Terrain.ENTRANCE
                             &&Dungeon.level.map[target] != Terrain.UNLOCKED_EXIT&&Dungeon.level.map[target] != Terrain.EXIT
                             //从passable中去除入口和出口
-                            || Dungeon.level.map[target] == Terrain.TRAP || Dungeon.level.map[target] == Terrain.TRAP_GRASS) {
+                            || Dungeon.level.map[target] == Terrain.TRAP || Dungeon.level.map[target] == Terrain.INACTIVE_TRAP
+                            //9草料处理一个地表电线，倒也算正常消耗
+                            || Dungeon.level.map[target] == Terrain.TRAP_GRASS) {
                         set(target, Terrain.BARRICADE);
                         GameScene.updateMap(target);
                         Dungeon.observe();
