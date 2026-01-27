@@ -21,7 +21,7 @@ public class GetShield extends BookSpell{
 
     @Override
     public void onCast(RedBook book, Hero hero) {
-        Buff.affect(hero, Barrier.class).setShield(7);
+        Buff.affect(hero, Barrier.class).setShield(10);
         super.onCast(book, hero);
     }
 
