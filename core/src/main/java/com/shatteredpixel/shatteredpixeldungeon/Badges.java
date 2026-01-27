@@ -169,6 +169,7 @@ public class Badges {
 		GAMES_PLAYED_4              ( 99, true ),
 		CHAMPION_1                  ( 100 ),
 		KILL_ELPHELT				(  101),
+        ELPHELT_WEAPON				(  93),
 		//diamond
 		GAMES_PLAYED_5              ( 112, true ),
 		CHAMPION_2                  ( 113 ),
@@ -913,6 +914,9 @@ public class Badges {
 	public static void validateElpheltKilled() {
 		displayBadge( Badge.KILL_ELPHELT );
 	}
+    public static void RabbitWeaponWin() {
+        displayBadge( Badge.ELPHELT_WEAPON );
+    }
     public static void validateXMASGift() {
         displayBadge( Badge.XMASGift );
     }

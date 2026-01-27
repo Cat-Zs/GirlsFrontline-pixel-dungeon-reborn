@@ -121,7 +121,7 @@ public class DeepCaveBossLevel extends Level {
                 Random.Int( ROOM_TOP + 1, ROOM_BOTTOM - 1 ) * width();
         map[entrance] = Terrain.ENTRANCE;
 
-        placeTrigger(new Teleporter().create(exit, -1, 1025));
+        placeTrigger(new Teleporter().create(exit, LastShopLevel.entrance, 1025));
         boolean[] patch = Patch.generate( width, height, 0.30f, 6, true );
         for (int i=0; i < length(); i++) {
             if (map[i] == Terrain.EMPTY && patch[i]) {

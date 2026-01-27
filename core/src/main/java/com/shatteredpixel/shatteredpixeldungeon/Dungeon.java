@@ -705,7 +705,7 @@ public class Dungeon {
 	public static void saveLevel( int save ) throws IOException {
 		Bundle bundle = new Bundle();
 		bundle.put( LEVEL, level );
-        if(level.FirstSave){//mark
+        if(level!=null&&level.FirstSave){//mark
             level.FirstSave = false;
             FileUtils.bundleToFile(GamesInProgress.depthFile(save,level.levelId, 1),bundle);
         }

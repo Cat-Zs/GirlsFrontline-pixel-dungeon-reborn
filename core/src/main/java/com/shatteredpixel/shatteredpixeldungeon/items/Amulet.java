@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cypros;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.AmuletScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.watabou.noosa.Game;
@@ -65,8 +66,10 @@ public class Amulet extends Item {
 	@Override
 	public boolean doPickUp(Hero hero, int pos) {
 		if (super.doPickUp( hero, pos )) {
-			
-			if (!Statistics.amuletObtained) {
+            Cypros cypros = hero.belongings.getItem(Cypros.class);
+            if (cypros.level() >= 22)
+                Badges.RabbitWeaponWin();
+            if (!Statistics.amuletObtained) {
 				Statistics.amuletObtained = true;
 				hero.spend(-TIME_TO_PICK_UP);
 

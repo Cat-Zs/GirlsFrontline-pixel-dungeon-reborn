@@ -87,7 +87,7 @@ public class HallsLevel extends RegularLevel {
     protected boolean build() {
         boolean b =super.build();
         if (b&&Dungeon.levelId==25)
-            placeTrigger(new Teleporter().create(entrance,-2,1025));
+            placeTrigger(new Teleporter().create(entrance,LastShopLevel.exit,1025));
         return b;
     }
 	@Override
