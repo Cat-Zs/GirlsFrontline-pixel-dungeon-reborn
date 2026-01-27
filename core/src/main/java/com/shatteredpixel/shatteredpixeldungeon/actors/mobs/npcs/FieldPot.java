@@ -30,13 +30,9 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.rogue.ShadowClone;
-import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
+import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.PathFinder;
-import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 
 public class FieldPot extends NPC {
@@ -48,26 +44,29 @@ public class FieldPot extends NPC {
         properties.add(Property.IMMOVABLE);
 		state = WANDERING;
         viewDistance = 3;
-        HP = HT = 20+10*Dungeon.hero.pointsInTalent(Talent.Type56_431);
 	}
 
 	@Override
 	protected boolean act() {
         super.act();
-        for (int i : PathFinder.NEIGHBOURS25){
-            int cell = pos+i;
-            Char ch = findChar(cell);
-            if (ch!=null&&ch instanceof Mob &&ch.alignment!=Alignment.ALLY){
-                ((Mob) ch).aggro(this);
-            }
-        }
+        StoneOfAggression stone = new StoneOfAggression();
+        stone.activate(pos);
         if (--HP <= 0){
-            destroy();
-            sprite.die();
+            die("fall");
         }
-
+        spend(TICK);
         return true;
 	}
+
+    @Override
+    protected boolean getCloser(int target) {
+        return true;
+    }
+
+    @Override
+    protected boolean getFurther(int target) {
+        return true;
+    }
 
     @Override
     public int attackSkill( Char target ) {
@@ -76,7 +75,7 @@ public class FieldPot extends NPC {
 
     @Override
     protected boolean canAttack( Char enemy ){
-        return Dungeon.hero.pointsInTalent(Talent.Type56_433)>0;
+        return Dungeon.hero.pointsInTalent(Talent.Type56_433)>0&&distance(enemy)<=2;
     }
 
     @Override
@@ -89,6 +88,7 @@ public class FieldPot extends NPC {
         Buff.affect(enemy, Blindness.class,5);
         return super.doAttack(enemy);
     }
+
     @Override
     public float attackDelay() {
         return 10-2*Dungeon.hero.pointsInTalent(Talent.Type56_433);
@@ -106,13 +106,6 @@ public class FieldPot extends NPC {
 	@Override
 	public void add( Buff buff ) {
 	}
-
-    @Override
-    public void destroy() {
-        super.destroy();
-        Dungeon.observe();
-        GameScene.updateFog(pos, viewDistance+1);
-    }
 
 	
 	@Override
@@ -133,7 +126,12 @@ public class FieldPot extends NPC {
     public static FieldPot getPot(){
         for (Char ch : Actor.chars()){
             if (ch instanceof FieldPot){
-                return (FieldPot) ch;
+                if (ch.isAlive()&&ch.HP>0)
+                    return (FieldPot) ch;
+                else {
+                    ch.die("fall");
+                    return null;
+                }
             }
         }
         return null;

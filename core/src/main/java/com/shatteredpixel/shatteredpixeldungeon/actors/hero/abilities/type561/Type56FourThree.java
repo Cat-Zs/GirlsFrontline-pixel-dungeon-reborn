@@ -49,7 +49,7 @@ public class Type56FourThree extends ArmorAbility {
 
     @Override
     public float chargeUse(Hero hero) {
-        if (FieldPot.getPot() == null) {
+        if (FieldPot.getPot()==null) {
             return super.chargeUse(hero);
         } else {
             return 0;
@@ -76,6 +76,7 @@ public class Type56FourThree extends ArmorAbility {
 
         if (FieldPot.getPot()==null) {
             FieldPot pot = new FieldPot();
+            pot.HT = pot.HP = 20+10*Dungeon.hero.pointsInTalent(Talent.Type56_431);
             pot.pos = target;
             GameScene.add(pot);
             armor.charge -= chargeUse(hero);
@@ -84,6 +85,8 @@ public class Type56FourThree extends ArmorAbility {
             }
         }else {
             FieldPot.getPot().pos = target;
+            GameScene.updateMap(target);
+            Dungeon.observe();
         }
         //消耗充能
 		armor.updateQuickslot();
