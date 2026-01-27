@@ -73,6 +73,7 @@ public class Cypros extends MeleeWeapon {
 
     public Wand wand;
 
+    public Boolean GetBadge = false;
     public Item identifyA(){
         return identify();
     }
@@ -369,18 +370,21 @@ public class Cypros extends MeleeWeapon {
 
     private static final String WAND        = "wand";
     private static final String MODE        = "mode";
+    private static final String GETBADGE        = "getbadge";
 
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
         bundle.put(WAND, wand);
         bundle.put(MODE, mode.ordinal());
+        bundle.put(GETBADGE, GetBadge);
     }
 
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
         wand = (Wand) bundle.get(WAND);
+        GetBadge = bundle.getBoolean(GETBADGE);
         Mode newMode;
         switch (bundle.getInt(MODE)) {
             case 0: default:

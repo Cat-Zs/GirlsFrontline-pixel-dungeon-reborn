@@ -463,8 +463,10 @@ public class YogDzewa extends Mob {
 		}
 
         Cypros cypros = Dungeon.hero.belongings.getItem(Cypros.class);
-        if (cypros.level()>=22)
+        if (cypros!=null&&!cypros.GetBadge&&cypros.level() >= 22) {
+            cypros.GetBadge = true;
             Badges.RabbitWeaponWin();
+        }
 		updateVisibility(Dungeon.level);
 
 		GameScene.bossSlain();
