@@ -297,10 +297,7 @@ public class RankingsScene extends PixelScene {
 				addToBack( flare );
 			}
 
-			if (pos != Rankings.TABLE_SIZE-1) {
-				position.text(Integer.toString(pos + 1));
-			} else
-				position.text(" ");
+            position.text(Integer.toString(pos + 1));
 			position.measure();
 			
 			desc.text( Messages.titleCase(rec.desc()) );

@@ -58,6 +58,7 @@ public enum Rankings {
 	public int lastRecord;
 	public int totalNumber;
 	public int wonNumber;
+    public int LockNumber;
 
 	public void submit( boolean win, Class cause ) {
 
@@ -83,7 +84,8 @@ public enum Rankings {
 		rec.customSeed = !SPDSettings.seedCode().equals(SPDSettings.SEED_CODE_RANDOM);
 		rec.depth     = Dungeon.curDepth();
 		rec.score     = score( win );
-		
+		rec.isLock    = false;
+        //默认不锁定
 		INSTANCE.saveGameData(rec);
 
 		rec.gameID = UUID.randomUUID().toString();
@@ -93,17 +95,29 @@ public enum Rankings {
 		Collections.sort( records, scoreComparator );
 		
 		lastRecord = records.indexOf( rec );
+        //最后一次存档的序号
 		int size = records.size();
-		while (size > TABLE_SIZE) {
-
+		while (size > TABLE_SIZE+LockNumber) {
+            int rem = size-1;
 			if (lastRecord == size - 1) {
-				records.remove( size - 2 );
+                //最后一次在存档末尾时
+                rem--;
+                //将要删除倒数第二位
 				lastRecord--;
-			} else {
-				records.remove( size - 1 );
+                //最后一次存档序号提前
 			}
-
+            while (rem>=0){
+                if (records.get(rem).isLock) {
+                    //所要删除的存档是锁定的
+                    rem--;
+                    //跳过这一位判断下一位
+                    continue;
+                }
+                records.remove(rem);
+                break;
+            }
 			size = records.size();
+            //更新存档数量
 		}
 		
 		totalNumber++;
@@ -210,6 +224,7 @@ public enum Rankings {
 	private static final String LATEST	= "latest";
 	private static final String TOTAL	= "total";
 	private static final String WON     = "won";
+    private static final String LOCKNUM     = "locknum";
 
 	public void save() {
 		Bundle bundle = new Bundle();
@@ -217,7 +232,7 @@ public enum Rankings {
 		bundle.put( LATEST, lastRecord );
 		bundle.put( TOTAL, totalNumber );
 		bundle.put( WON, wonNumber );
-
+        bundle.put( LOCKNUM, LockNumber );
 		try {
 			FileUtils.bundleToFile( RANKINGS_FILE, bundle);
 		} catch (IOException e) {
@@ -241,7 +256,7 @@ public enum Rankings {
 				records.add( (Record)record );
 			}
 			lastRecord = bundle.getInt( LATEST );
-			
+			LockNumber = bundle.getInt( LOCKNUM );
 			totalNumber = bundle.getInt( TOTAL );
 			if (totalNumber == 0) {
 				totalNumber = records.size();
@@ -273,6 +288,7 @@ public enum Rankings {
 		private static final String DEPTH	= "depth";
 		private static final String DATA	= "gameData";
 		private static final String ID      = "gameID";
+        private static final String isLOCK      = "gameLOCK";
 
 		public Class cause;
 		public boolean win;
@@ -287,6 +303,7 @@ public enum Rankings {
 		public String gameID;
 
 		public int score;
+        public boolean isLock;
 
 		public String desc(){
 			if (cause == null) {
@@ -312,7 +329,7 @@ public enum Rankings {
 			
 			win		= bundle.getBoolean( WIN );
 			score	= bundle.getInt( SCORE );
-			
+			isLock    = bundle.getBoolean( isLOCK );
 			heroClass	= bundle.getEnum( CLASS, HeroClass.class );
 			armorTier	= bundle.getInt( TIER );
 			
@@ -335,7 +352,7 @@ public enum Rankings {
 
 			bundle.put( WIN, win );
 			bundle.put( SCORE, score );
-			
+			bundle.put( isLOCK, isLock);
 			bundle.put( CLASS, heroClass );
 			bundle.put( TIER, armorTier );
 			bundle.put( LEVEL, herolevel );

@@ -40,6 +40,7 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BadgesGrid;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BadgesList;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
+import com.shatteredpixel.shatteredpixeldungeon.ui.CheckBox;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ItemSlot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
@@ -68,6 +69,7 @@ public class WndRanking extends WndTabbed {
 	private String error = null;
 	
 	private Image busy;
+    private Rankings.Record record;
 	
 	public WndRanking( final Rankings.Record rec ) {
 		
@@ -76,6 +78,7 @@ public class WndRanking extends WndTabbed {
 		
 		if (thread != null){
 			hide();
+            record = null;
 			return;
 		}
 		
@@ -85,6 +88,7 @@ public class WndRanking extends WndTabbed {
 				try {
 					Badges.loadGlobal();
 					Rankings.INSTANCE.loadGameData( rec );
+                    record = rec;
 				} catch ( Exception e ) {
 					error = Messages.get(WndRanking.class, "error");
                     error += String.valueOf(e);
@@ -181,7 +185,26 @@ public class WndRanking extends WndTabbed {
 			title.color(Window.TITLE_COLOR);
 			title.setRect( 0, 0, WIDTH, 0 );
 			add( title );
-			
+
+            CheckBox Lock = new CheckBox("") {
+                @Override
+                protected void onClick() {
+                    super.onClick();
+                    int i = Rankings.INSTANCE.records.indexOf( record );
+                    record.isLock = checked();
+                    Rankings.INSTANCE.records.set(i,record);
+                    if (checked()) {
+                        Rankings.INSTANCE.LockNumber++;
+                    }
+                    else {
+                        Rankings.INSTANCE.LockNumber--;
+                    }
+                    Rankings.INSTANCE.save();
+                }
+            };
+            Lock.checked(record.isLock);
+            Lock.setRect(WIDTH-18, 2, 16, 16);
+            add(Lock);
 			float pos = title.bottom() + GAP;
 
 			RedButton btnTalents = new RedButton( Messages.get(this, "talents") ){
