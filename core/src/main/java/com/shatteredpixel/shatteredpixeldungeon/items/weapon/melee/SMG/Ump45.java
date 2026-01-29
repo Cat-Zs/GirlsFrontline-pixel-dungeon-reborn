@@ -30,6 +30,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -200,10 +201,13 @@ public class Ump45 extends SubMachineGun {
     public static class CooldownTracker extends AllyBuff {
         {
             type = buffType.POSITIVE;
+            revivePersists = true;
         }
 
         @Override
         public boolean act() {
+            if (Dungeon.hero.buff(LostInventory.class)!=null)
+                return true;
             if (target instanceof Hero) {
                 Hero hero = (Hero) target;
                 Item weapon = hero.belongings.weapon;

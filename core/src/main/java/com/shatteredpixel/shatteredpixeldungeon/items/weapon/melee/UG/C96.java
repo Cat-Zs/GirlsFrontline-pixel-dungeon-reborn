@@ -23,10 +23,12 @@ package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG;
 
 import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
 
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Light;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Speed;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
@@ -165,10 +167,13 @@ public class C96 extends UniversaleGun {
     public static class CooldownTracker extends AllyBuff {
         {
             type = buffType.POSITIVE;
+            revivePersists = true;
         }
 
         @Override
         public boolean act() {
+            if (Dungeon.hero.buff(LostInventory.class)!=null)
+                return true;
             if (target instanceof Hero) {
                 Hero hero = (Hero) target;
                 Item weapon = hero.belongings.weapon;
