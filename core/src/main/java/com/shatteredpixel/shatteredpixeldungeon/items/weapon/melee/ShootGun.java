@@ -10,6 +10,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Cripple;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Empulse;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Vulnerable;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
@@ -420,8 +421,14 @@ public class ShootGun extends MeleeWeapon {
     }
 
     public class Charger extends Buff {
+        {
+            revivePersists = true;
+            type = buffType.POSITIVE;
+        }
         @Override
         public boolean act() {
+            if (Dungeon.hero.buff(LostInventory.class)!=null)
+                return true;
             cooldownLeft=Math.max(0,cooldownLeft);
             //小于0则幅值0
             LockedFloor lock = target.buff(LockedFloor.class);
