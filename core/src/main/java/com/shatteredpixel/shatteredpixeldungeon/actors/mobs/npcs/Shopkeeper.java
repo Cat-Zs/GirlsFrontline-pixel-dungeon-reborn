@@ -123,14 +123,20 @@ public class Shopkeeper extends NPC {
 		&& item instanceof Food){
 			rate-=0.2f*Dungeon.hero.pointsInTalent(Talent.Type56Two_FOOD);
 		}
-        int pay = Math.max(item.value()*2,(int)(item.value()*rate*(Dungeon.curDepth()+4f)));
+        int mul;
+        if (Dungeon.depth%5==0) {
+            mul = Dungeon.depth/5+1;
+        }else {
+            mul = (int) Math.ceil(Dungeon.depth * 0.2f);
+        }//乘数等效于下一个boss层的楼层数
+        int pay = Math.max(item.value()*2,(int)(item.value()*rate*(mul*5)));
 
-        if(item.selled){
-            return item.value()*10;
+        if (item.selled) {
+            return item.value() * 10;
         }
 
-		return pay;
-	}
+        return pay;
+    }
 	
 	public static WndBag sell() {
 		return GameScene.selectItem( itemSelector );

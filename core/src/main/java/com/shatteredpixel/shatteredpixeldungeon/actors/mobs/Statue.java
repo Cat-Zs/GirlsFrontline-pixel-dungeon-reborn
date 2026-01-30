@@ -48,6 +48,9 @@ public class Statue extends Mob {
 	}
 	
 	protected Weapon weapon;
+    public Weapon weapon(){
+        return weapon;
+    }
 	
 	public Statue() {
 		super();

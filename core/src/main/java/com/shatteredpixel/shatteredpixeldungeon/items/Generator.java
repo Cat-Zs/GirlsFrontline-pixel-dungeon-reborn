@@ -703,9 +703,12 @@ public class Generator {
                 }
             }
         }
-		return (Artifact) item.random();
+        if (item != null) {
+            return (Artifact) item.random();
+        }else
+            return null;
 
-	}
+    }
 
 	public static boolean removeArtifact(Class<?extends Artifact> artifact) {
 		Category cat = Category.ARTIFACT;

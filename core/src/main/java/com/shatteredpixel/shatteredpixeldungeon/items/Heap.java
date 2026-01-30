@@ -363,8 +363,12 @@ public class Heap implements Bundlable {
 	@Override
 	public String toString(){
 		switch(type){
-			case FOR_SALE:
-				return peek().toString()+"\n价格 : "+Shopkeeper.sellPrice(peek());
+            case FOR_SALE:
+                Item i = this.peek();
+                if (this.size() == 1) {
+                    return Messages.get(this, "for_sale", Shopkeeper.sellPrice(i), i.name());
+                }
+                return i.name();
 			case CHEST:
 				return Messages.get(this, "chest");
 			case LOCKED_CHEST:

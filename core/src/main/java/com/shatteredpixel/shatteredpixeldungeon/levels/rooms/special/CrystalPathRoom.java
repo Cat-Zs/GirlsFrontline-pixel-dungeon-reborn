@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder.SeedFinder;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
@@ -270,9 +271,9 @@ public class CrystalPathRoom extends SpecialRoom {
             Painter.fill(level, room, 14);
         }
         //药水物品链表
-        ArrayList<Item> potions = new ArrayList();
+        ArrayList<Item> potions = new ArrayList<>();
         //磁盘物品链表
-        ArrayList<Item> scrolls = new ArrayList();
+        ArrayList<Item> scrolls = new ArrayList<>();
         //填充药水链表
         potions.add(Generator.random(Random.oneOf(Generator.Category.POTION)));//potion[0]
         potions.add(Generator.random(Random.oneOf(Generator.Category.POTION)));//potion[1]
@@ -282,16 +283,16 @@ public class CrystalPathRoom extends SpecialRoom {
         Potion p = new PotionOfExperience();
         Scroll s = new ScrollOfTransmutation();
         boolean isEXP = false;
-        if(p.isKnown()&&s.isKnown()){
+        if(p.isKnown()&&s.isKnown()&&!SeedFinder.SeedFinding){
             potions.add(p);
             scrolls.add(s);
         } else {
             if (Random.Int(2) == 0) {
                 scrolls.add(new ScrollOfTransmutation());
-                potions.add(Generator.random(Random.oneOf(Generator.Category.POTION)));
+                potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));
                 isEXP = false;
             } else {
-                scrolls.add(Generator.random(Random.oneOf(Generator.Category.SCROLL)));
+                scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));
                 potions.add(new PotionOfExperience());
                 isEXP = true;
             }
@@ -311,15 +312,15 @@ public class CrystalPathRoom extends SpecialRoom {
         /*以下为物品生成并掉落，读取对应链表的第0位，将其生成并移除（移除后后续物品填充上来）
         然后在对应的room将生成的物品drop到地上*/
         //以下是药水的生成，同侧room为0,2,4
-        level.drop((Item)potions.remove(0), level.pointToCell(rooms[0].center()));
-        level.drop((Item)potions.remove(0), level.pointToCell(rooms[2].center()));
-        level.drop((Item)potions.remove(0), prize1);
+        level.drop(potions.remove(0), level.pointToCell(rooms[0].center()));
+        level.drop(potions.remove(0), level.pointToCell(rooms[2].center()));
+        level.drop(potions.remove(0), prize1);
         /*prize为破碎的机制，意为六选三的基座所在格，让保底经验/升级放置在基座上
         这里移除与否都没有影响，而且不移除可以让物品显得不那么凌乱*/
         //以下是磁盘的生成，同侧room为1,3,5
-        level.drop((Item)scrolls.remove(0), level.pointToCell(rooms[1].center()));
-        level.drop((Item)scrolls.remove(0), level.pointToCell(rooms[3].center()));
-        level.drop((Item)scrolls.remove(0), prize2);
+        level.drop(scrolls.remove(0), level.pointToCell(rooms[1].center()));
+        level.drop(scrolls.remove(0), level.pointToCell(rooms[3].center()));
+        level.drop(scrolls.remove(0), prize2);
         level.addItemToSpawn(new CrystalKey(Dungeon.depth));
         level.addItemToSpawn(new CrystalKey(Dungeon.depth));
         level.addItemToSpawn(new CrystalKey(Dungeon.depth));

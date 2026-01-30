@@ -10,6 +10,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.ImpShopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NoelShopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
+import com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder.SeedFinder;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
@@ -20,7 +21,6 @@ import java.util.ArrayList;
 
 public class NoelShopRoom extends ShopRoom {
     private boolean KeeperSpawned = false;
-
     public Room.Door entrance() {
         return connected.isEmpty() ? new Room.Door(left, top + 2) : super.entrance();
     }
@@ -73,9 +73,9 @@ public class NoelShopRoom extends ShopRoom {
 
     public static boolean openShop(){
         if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
-            return Dungeon.hero.buff(Elphelt.Finish.class)!=null;
+            return Dungeon.hero.buff(Elphelt.Finish.class)!=null|| SeedFinder.SeedFinding;
         }else
-            return Imp.Quest.isCompleted();
+            return Imp.Quest.isCompleted()||SeedFinder.SeedFinding;
     }
     public void PlaceShop(Level level, int center, ArrayList<Integer> list){
         placeShopkeeper(level, center);

@@ -214,7 +214,7 @@ public class ShopRoom extends SpecialRoom {
 			break;
         case 25:
             w = (MeleeWeapon) Generator.random(Generator.wepTiers[5]);
-            m = (MissileWeapon) Generator.random(Generator.misTiers[4]).quantity(2);
+            m = (MissileWeapon) Generator.random(Generator.misTiers[4]).quantity(3);
             a = (Armor) new PlateArmor().identify(false);
             itemsToSpawn.add(new Torch());
             itemsToSpawn.add(new Torch());
@@ -360,7 +360,9 @@ public class ShopRoom extends SpecialRoom {
 				case 16:
 					bags = (int)Math.ceil(( 5-hourglass.sandBags) * 0.50f ); break;
 				case 20: case 21:
-					bags = (int)Math.ceil(( 5-hourglass.sandBags) * 1f ); break;
+					bags = (int)Math.ceil(( 5-hourglass.sandBags) * 0.8f ); break;
+                case 25:
+                    bags = (int)Math.ceil(( 5-hourglass.sandBags) * 1f ); break;
 			}
 
 			for(int i = 1; i <= bags; i++){
@@ -373,11 +375,16 @@ public class ShopRoom extends SpecialRoom {
 		switch (Random.Int(10)){
 			case 0:
 				rare = Generator.random( Generator.Category.WAND );
-				rare.level( 0 );
+                if (!(Dungeon.depth == 25)) {
+                    rare.level(0);
+                }
+                rare.identify(false);
 				break;
 			case 1:
 				rare = Generator.random(Generator.Category.RING);
-				rare.level( 0 );
+                if (!(Dungeon.depth == 25)) {
+                    rare.level(0);
+                }
 				break;
 			case 2:
 				rare = Generator.random( Generator.Category.ARTIFACT );

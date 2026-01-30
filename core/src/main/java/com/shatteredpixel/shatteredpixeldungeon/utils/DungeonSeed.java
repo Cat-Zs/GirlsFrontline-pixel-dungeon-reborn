@@ -28,11 +28,18 @@ import java.util.Locale;
 //This class defines the parameters for seeds in ShatteredPD and contains a few convenience methods
 public class DungeonSeed {
 
-	private static long TOTAL_SEEDS = 5429503678976L; //26^9 possible seeds
+	public static long TOTAL_SEEDS = 5429503678976L; //26^9 possible seeds
 
-	public static long randomSeed(){
-		return Random.Long( TOTAL_SEEDS );
-	}
+    public static long randomSeed() {
+        long seed;
+        String seedText;
+        do {
+            seed = Random.Long(TOTAL_SEEDS);
+            seedText = convertToCode(seed);
+        } while(seedText.contains("A") || seedText.contains("E") || seedText.contains("I") || seedText.contains("O") || seedText.contains("U"));
+
+        return seed;
+    }
 
 	//Seed codes take the form @@@-@@@-@@@ where @ is any letter from A to Z (only uppercase)
 	//This is effectively a base-26 number system, therefore 26^9 unique seeds are possible.
