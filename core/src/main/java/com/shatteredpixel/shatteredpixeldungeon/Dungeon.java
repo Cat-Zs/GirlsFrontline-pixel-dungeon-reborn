@@ -234,7 +234,6 @@ public class Dungeon {
     //public static boolean ExtractSummoned;提取升级是否生成的计数
 
     public static int RollTimes     = 0;
-    public static int ConnectLevel  = 1;
 	public static HashSet<Integer> chapters;
 
 	public static SparseArray<ArrayList<Item>> droppedItems;
@@ -249,6 +248,68 @@ public class Dungeon {
 		init(seedCode,SPDSettings.challenges());
 	}
 
+    public static void CustomInit(long seedNum,int paramChallenges) {
+        if(Game.lockXMAS){
+            lockXMAS = true;
+        }
+        itemAOfSave = new ArrayList<>();
+        NOTEAOfSave = new ArrayList<>();
+        Item.itemA = new ArrayList<>();
+        Item.NOTEA = new ArrayList<>();
+        version = Game.versionCode;
+        challenges = paramChallenges;
+        mobsToChampion = -1;
+
+        seed = seedNum;
+
+        Actor.clear();
+        Actor.resetNextID();
+
+        Random.pushGenerator( seed );
+
+        Scroll.initLabels();
+        Potion.initColors();
+        Ring.initGems();
+        resetTest();
+
+        SpecialRoom.initForRun();
+        SecretRoom.initForRun();
+
+        Random.resetGenerators();
+
+        // 添加农历节日检测
+        Gregorian.LunarCheckDate();
+
+        Statistics.reset();
+        Notes.reset();
+
+        quickslot.reset();
+        QuickSlotButton.reset();
+
+        depth = 0;
+        gold = 0;
+        energy = 0;
+        //ExtractSummoned = false;初始化计数为未生成
+
+        droppedItems = new SparseArray<>();
+        portedItems = new SparseArray<>();
+
+        LimitedDrops.reset();
+
+        chapters = new HashSet<>();
+
+        Ghost.Quest.reset();
+        Wandmaker.Quest.reset();
+        Blacksmith.Quest.reset();
+        Imp.Quest.reset();
+
+        Generator.fullReset();
+        hero = new Hero();
+        hero.live();
+        Badges.reset();
+
+        GamesInProgress.selectedClass.initHero( hero );
+    }
 	public static void init(String seedCode,int paramChallenges) {
         if(Game.lockXMAS){
             Game.lockXMAS = false;
@@ -272,7 +333,7 @@ public class Dungeon {
 		Actor.resetNextID();
 
 		Random.pushGenerator( seed );
-	
+
 			Scroll.initLabels();
 			Potion.initColors();
 			Ring.initGems();
@@ -280,7 +341,7 @@ public class Dungeon {
 
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
-	
+
 		Random.resetGenerators();
 		
 		// 添加农历节日检测
