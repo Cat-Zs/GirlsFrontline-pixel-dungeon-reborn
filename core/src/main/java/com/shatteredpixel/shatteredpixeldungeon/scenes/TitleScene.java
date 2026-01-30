@@ -4,6 +4,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.TierOfTalent;
+import com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder.SeedFindScene;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ActionIndicator;
@@ -114,20 +115,6 @@ public class TitleScene extends PixelScene {
 		btnPlay.icon(Icons.get(Icons.ENTER));
 		add(btnPlay);
 
-		StyledButton btnZeroLevel=null;
-		if (Badges.isUnlocked(Badges.Badge.HAPPY_END) || DeviceCompat.isDebug()){
-			btnZeroLevel = new StyledButton(GREY_BUTTON,"返回地表"){
-				@Override
-				protected void onClick() {
-					enterMainGame();
-				}
-			};
-		}else{
-			btnZeroLevel = new StyledButton(GREY_BUTTON_TR,"返回地表(未解锁)");
-		}
-		btnZeroLevel.icon(Icons.get(Icons.ENTER));
-		add(btnZeroLevel);
-
 		StyledButton btnRankings = new StyledButton(GREY_BUTTON,"排行榜"){
 			@Override
 			protected void onClick() {
@@ -160,6 +147,20 @@ public class TitleScene extends PixelScene {
 		btnAbout.icon(xs);
 		add(btnAbout);
 
+        StyledButton NextTitle;
+        if (Badges.isUnlocked(Badges.Badge.HAPPY_END) || DeviceCompat.isDebug()){
+            NextTitle = new StyledButton(GREY_BUTTON,"下一页"){
+                @Override
+                protected void onClick() {
+                    GirlsFrontlinePixelDungeon.switchNoFade(SecondTitleScene.class);
+                }
+            };
+        }else{
+            NextTitle = new StyledButton(GREY_BUTTON_TR,"下一页(未解锁)");
+        }
+        NextTitle.icon(Icons.get(Icons.ENTER));
+        add(NextTitle);
+
 		StyledButton btnChanges = new GDChangesButton(TOAST_TR,"更改");
 		btnChanges.icon(new Image(Icons.get(Icons.CHANGESLOG)));
 		btnChanges.setRect(0, h - 20, 50, 20);
@@ -171,19 +172,19 @@ public class TitleScene extends PixelScene {
 		if (landscape()) {
 			btnPlay.setRect(title.x - 50, topRegion + GAP, title.width() + 100 - 1, BTN_HEIGHT);
 			align(btnPlay);
-			btnZeroLevel.setRect(btnPlay.left(),btnPlay.bottom()+GAP,btnPlay.width()  ,BTN_HEIGHT);
-			btnRankings.setRect(btnZeroLevel.left()     ,btnZeroLevel.bottom()+GAP     ,btnZeroLevel.width()/2f    ,BTN_HEIGHT);
-			btnBadges  .setRect(btnRankings.left() ,btnRankings.bottom()+GAP ,btnZeroLevel.width()/2f    ,BTN_HEIGHT);
-			btnSettings.setRect(btnBadges.right()+2,btnRankings.top()        ,btnZeroLevel.width()/2f-GAP,BTN_HEIGHT);
-			btnAbout   .setRect(btnSettings.left() ,btnSettings.bottom()+GAP ,btnZeroLevel.width()/2f-GAP,BTN_HEIGHT);
+			NextTitle.setRect(btnPlay.left(),btnPlay.bottom()+GAP,btnPlay.width()  ,BTN_HEIGHT);
+			btnRankings.setRect(NextTitle.left()     ,NextTitle.bottom()+GAP     ,NextTitle.width()/2f    ,BTN_HEIGHT);
+			btnBadges  .setRect(btnRankings.left() ,btnRankings.bottom()+GAP ,NextTitle.width()/2f    ,BTN_HEIGHT);
+			btnSettings.setRect(btnBadges.right()+2,btnRankings.top()        ,NextTitle.width()/2f-GAP,BTN_HEIGHT);
+			btnAbout   .setRect(btnSettings.left() ,btnSettings.bottom()+GAP ,NextTitle.width()/2f-GAP,BTN_HEIGHT);
 		} else {
 			btnPlay.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
 			align(btnPlay);
-			btnZeroLevel.setRect(btnPlay.left(),btnPlay.bottom()+GAP,btnPlay.width()  ,BTN_HEIGHT);
-			btnRankings.setRect(btnZeroLevel.left(),btnZeroLevel    .bottom()+GAP,btnZeroLevel.width(),BTN_HEIGHT);
-			btnBadges  .setRect(btnZeroLevel.left(),btnRankings.bottom()+GAP,btnZeroLevel.width(),BTN_HEIGHT);
-			btnSettings.setRect(btnZeroLevel.left(),btnBadges  .bottom()+GAP,btnZeroLevel.width(),BTN_HEIGHT);
-			btnAbout   .setRect(btnZeroLevel.left(),btnSettings.bottom()+GAP,btnZeroLevel.width(),BTN_HEIGHT);
+			btnRankings.setRect(btnPlay.left(),btnPlay    .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnBadges  .setRect(btnPlay.left(),btnRankings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnSettings.setRect(btnPlay.left(),btnBadges  .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnAbout   .setRect(btnPlay.left(),btnSettings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+            NextTitle  .setRect(btnPlay.left(),btnAbout.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
 		}
 
 		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
@@ -240,23 +241,6 @@ public class TitleScene extends PixelScene {
 		}
 	}
 
-	private static void enterMainGame(){
-		Dungeon.hero=null;
-		ActionIndicator.action  = null;
-		GamesInProgress.curSlot = 0;
-		GamesInProgress.selectedClass = HeroClass.TYPE561;
-		GamesInProgress.Info gameInfo = GamesInProgress.check(GamesInProgress.curSlot);
-		if(gameInfo == null){
-			InterlevelScene.start();
-		}else if(gameInfo.version < Game.versionCode){
-			Dungeon.deleteGame(GamesInProgress.curSlot, true);
-			InterlevelScene.start();
-		}else{
-			try{InterlevelScene.restore();}
-			catch(IOException e){Game.reportException(e);}
-		}
-		Game.switchScene(GameScene.class);
-	}
 
 	@Override
 	protected void onBackPressed() {
