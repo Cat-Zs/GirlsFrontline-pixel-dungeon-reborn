@@ -1,5 +1,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBookSpell;
 
+import com.shatteredpixel.shatteredpixeldungeon.Challenges;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ActHPtoGetFood;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
@@ -25,7 +27,10 @@ public class GetLight extends BookSpell{
 
     @Override
     public void onCast(RedBook book, Hero hero) {
-        Buff.prolong(hero, Light.class, 10);
+        int light = 75;
+        if (Dungeon.isChallenged(Challenges.DARKNESS))
+            light/=5;
+        Buff.prolong(hero, Light.class, light);
         int changeC = ActHPtoGetFood.changeC;
         if (changeC== 0) {
             Buff.prolong(hero, Haste.class, 3);

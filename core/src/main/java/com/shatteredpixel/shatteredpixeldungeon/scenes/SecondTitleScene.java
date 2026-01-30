@@ -133,21 +133,6 @@ public class SecondTitleScene extends PixelScene {
             NextTitle.setRect(btnZeroLevel.left(),LastTitle.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
 		}
 
-		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
-		version.measure();
-		version.hardlight( 0x888888 );
-		version.x = w - version.width() - 4;
-		version.y = h - version.height() - 2;
-		add( version );
-
-        ErrorButton btnError = new ErrorButton();
-        btnError.setPos( w-25, version.y-20 );
-        add(btnError);
-
-        ExitButton btnExit = new ExitButton();
-        btnExit.setPos(w - 25, 0);
-        add(btnExit);
-
 		fadeIn();
 	}
 

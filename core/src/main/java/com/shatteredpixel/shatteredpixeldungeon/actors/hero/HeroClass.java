@@ -148,11 +148,13 @@ public enum HeroClass {
 //			new MapEditor().collect();
 //		}
 
+        LevelTeleporter LevelTP = new LevelTeleporter();
+        TestBomb testBomb       = new TestBomb();
 		if (DeviceCompat.isDebug() || Dungeon.isChallenged(Challenges.TEST_MODE)){
 			CustomWeapon customWeapon = new CustomWeapon();
 			customWeapon.adjustStatus();
 			customWeapon.identify().collect();
-			new TestBomb().quantity(100).collect();
+			testBomb.quantity(100).collect();
 			new TestBag().collect();
             new debugBook().collect();
             
@@ -168,7 +170,7 @@ public enum HeroClass {
 			
 			new BackpackCleaner().collect();
 			
-			new LevelTeleporter().collect();
+			LevelTP.collect();
 			
 			new LazyTest().collect();
             new MapEditor().collect();
@@ -230,7 +232,10 @@ public enum HeroClass {
 				break;
 			}
 		}
-
+        if (DeviceCompat.isDebug() || Dungeon.isChallenged(Challenges.TEST_MODE)){
+            Dungeon.quickslot.setSlot(0, LevelTP);
+            Dungeon.quickslot.setSlot(1, testBomb);
+        }
 		if (Dungeon.isChallenged(Challenges.NO_FOOD)){
 			new SmallRation().collect();
 		}

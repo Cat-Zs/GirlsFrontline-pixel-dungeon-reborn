@@ -23,12 +23,11 @@ package com.shatteredpixel.shatteredpixeldungeon.windows;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.InterlevelScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.RankingsScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.SecondTitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.TitleScene;
 import com.shatteredpixel.shatteredpixeldungeon.services.updates.Updates;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
@@ -37,7 +36,6 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.watabou.noosa.Game;
 
 import java.io.IOException;
-import java.util.ArrayList;
 
 public class WndGame extends Window {
 
@@ -108,7 +106,8 @@ public class WndGame extends Window {
 			RedButton resetBtn = new RedButton( Messages.get(this, "kill") ) {
 				@Override
 				protected void onClick() {//mark
-					Dungeon.hero.damage(9999999,Dungeon.hero);
+                    Dungeon.hero.damage(9999999,Dungeon.hero);
+                    hide();
 				}
 			};
 			resetBtn.icon(Icons.get(Icons.EXIT));
@@ -119,27 +118,30 @@ public class WndGame extends Window {
 				protected void onClick() {
 					try{Dungeon.saveAll();
 					}catch(IOException e){Game.reportException(e);}
-					Game.switchScene(TitleScene.class);
+					Game.switchScene(SecondTitleScene.class);
 				}
 			};
 			mainMenuBtn.icon(Icons.get(Icons.DISPLAY));
 			
 			// 并排添加两个按钮，每个宽度为原来的1/2
-			addButtons(resetBtn, mainMenuBtn);
+//			addButtons(resetBtn, mainMenuBtn);
+            addButton(resetBtn);
+            addButton(mainMenuBtn);
 		}
 
 		//exit
-		if(0==GamesInProgress.curSlot){
-			addButton(curBtn = new RedButton( Messages.get(this, "exit") ) {
-				@Override
-				protected void onClick() {
-					try{Dungeon.saveAll();
-					}catch(IOException e){Game.reportException(e);}
-					Game.instance.finish();
-				}
-			} );
-			curBtn.icon(Icons.get(Icons.EXIT));
-		}
+//		if(0==GamesInProgress.curSlot){
+//			addButton(curBtn = new RedButton( Messages.get(this, "exit") ) {
+//				@Override
+//				protected void onClick() {
+//					try{Dungeon.saveAll();
+//					}catch(IOException e){Game.reportException(e);}
+//					Game.instance.finish();
+//				}
+//			} );
+//			curBtn.icon(Icons.get(Icons.EXIT));
+//		}
+        //0层暂不需要直接退出游戏的按钮
 
 		resize( WIDTH, pos );
 	}

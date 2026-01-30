@@ -60,7 +60,7 @@ public class Grass extends Item {
         if (enough(2)){
             actions.add(ActB);
         }
-        if (enough(9)){
+        if (enough(3456)){
             actions.add(ActC);
         }
 		return actions;
@@ -188,7 +188,7 @@ public class Grass extends Item {
                         removeGrass(2);
                         Dungeon.hero.spend(1);
                     } else {
-                        GLog.n(Messages.get(this, "cant_put"));
+                        GLog.n(cant_build);
                     }
                 }
                 else {
@@ -225,7 +225,7 @@ public class Grass extends Item {
                     GLog.n(cant_select);
                     return;
                 }
-                if (enough(9)){
+                if (enough(3456)){
                     if (Dungeon.level.passable[target]&&Dungeon.level.map[target] != Terrain.ENTRANCE
                             &&Dungeon.level.map[target] != Terrain.UNLOCKED_EXIT&&Dungeon.level.map[target] != Terrain.EXIT
                             //从passable中去除入口和出口
@@ -235,7 +235,7 @@ public class Grass extends Item {
                         set(target, Terrain.BARRICADE);
                         GameScene.updateMap(target);
                         Dungeon.observe();
-                        removeGrass(9);
+                        removeGrass(81);
                         Dungeon.hero.spend(2);
                     } else {
                         GLog.n(cant_build);
@@ -261,7 +261,7 @@ public class Grass extends Item {
         if (grass.quantity>=2){
             info +="\n" + Messages.get(this,"ActBB");
         }
-        if (grass.quantity>=9){
+        if (grass.quantity>=3456){
             info +="\n" + Messages.get(this,"ActCB");
         }
         return info;

@@ -47,7 +47,7 @@ public class SeedFindScene extends PixelScene {
 
         // 初始化实时种子显示文本（无间隔刷新）
         currentSeedText = PixelScene.renderTextBlock("", 6);
-        currentSeedText.setRect(((float) Camera.main.width - 120.0F) / 2.0F, 12.0F, 120.0F, 0.0F);
+        currentSeedText.setRect(((float) Camera.main.width - 100.0F) / 2.0F, 12.0F, 120.0F, 0.0F);
         currentSeedText.hardlight(0xFFFFFF);
         this.add(currentSeedText);
 
