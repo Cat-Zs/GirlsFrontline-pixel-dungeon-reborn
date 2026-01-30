@@ -179,6 +179,7 @@ public class SeedFindScene extends PixelScene {
                 if (findSeedThread != null && findSeedThread.isAlive()) {
                     findSeedThread.interrupt();
                 }
+                SeedFinder.SeedFinding = false;
                 GirlsFrontlinePixelDungeon.switchNoFade(SecondTitleScene.class);
             }
         };
