@@ -169,7 +169,7 @@ public class SeedFindScene extends PixelScene {
             }
         };
         notice.setSize(20,20);
-        notice.setPos( (float) Camera.main.width - notice.width(), (float) Camera.main.height - notice.height() );
+        notice.setPos( (float) Camera.main.width - notice.width()-5, (float) Camera.main.height - notice.height()-5 );
         add(notice);
 
         ExitButton exitBtn = new ExitButton() {
