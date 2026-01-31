@@ -427,8 +427,10 @@ public class ShootGun extends MeleeWeapon {
         }
         @Override
         public boolean act() {
-            if (Dungeon.hero.buff(LostInventory.class)!=null)
-                return true;
+            if (Dungeon.hero.buff(LostInventory.class)!=null && !keptThoughLostInvent) {
+                //进入重生且没有在重生时选中的56榴弹不允许充能cd
+                spend(1.0F);
+                return true;}
             cooldownLeft=Math.max(0,cooldownLeft);
             //小于0则幅值0
             LockedFloor lock = target.buff(LockedFloor.class);
