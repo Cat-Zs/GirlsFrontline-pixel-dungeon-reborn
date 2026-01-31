@@ -541,6 +541,10 @@ public class GameScene extends PixelScene {
                             break;
                         case 3000: // CoffeeRoom
                             GLog.h(Messages.get(InterlevelScene.class, "access_coffee_room"));
+                            break;
+                        case 4000: //workshop
+                            GLog.h(Messages.get(InterlevelScene.class, "access_workshop"));
+                            break;
 						default:
 							GLog.h(Messages.get(this, "return"), Dungeon.depth);
 							break;
