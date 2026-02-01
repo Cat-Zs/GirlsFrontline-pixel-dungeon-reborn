@@ -122,15 +122,15 @@ public class SecondTitleScene extends PixelScene {
 		if (landscape()) {
             btnZeroLevel.setRect(title.x - 50, topRegion + GAP, title.width() + 100 - 1, BTN_HEIGHT);
 			align(btnZeroLevel);
-			SeedFinder.setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
-            LastTitle.setRect(btnZeroLevel.left(),SeedFinder.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
-            NextTitle.setRect(btnZeroLevel.left(),LastTitle.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
+			LastTitle.setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
+			SeedFinder.setRect(btnZeroLevel.left(),LastTitle.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
+            NextTitle.setRect(btnZeroLevel.left(),SeedFinder.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
 		} else {
             btnZeroLevel.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
 			align(btnZeroLevel);
-			SeedFinder.setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
-            LastTitle.setRect(btnZeroLevel.left(),SeedFinder.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
-            NextTitle.setRect(btnZeroLevel.left(),LastTitle.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
+			LastTitle.setRect(btnZeroLevel.left(),btnZeroLevel.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
+			SeedFinder.setRect(btnZeroLevel.left(),LastTitle.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
+            NextTitle.setRect(btnZeroLevel.left(),SeedFinder.bottom()+GAP,btnZeroLevel.width()  ,BTN_HEIGHT);
 		}
 
 		fadeIn();

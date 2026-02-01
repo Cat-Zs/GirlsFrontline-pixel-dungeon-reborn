@@ -180,11 +180,11 @@ public class TitleScene extends PixelScene {
 		} else {
 			btnPlay.setRect(title.x, topRegion+GAP, title.width(), BTN_HEIGHT);
 			align(btnPlay);
-			btnRankings.setRect(btnPlay.left(),btnPlay    .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			NextTitle.setRect(btnPlay.left(),btnPlay.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
+			btnRankings.setRect(btnPlay.left(),NextTitle.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
 			btnBadges  .setRect(btnPlay.left(),btnRankings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
 			btnSettings.setRect(btnPlay.left(),btnBadges  .bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
 			btnAbout   .setRect(btnPlay.left(),btnSettings.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
-            NextTitle  .setRect(btnPlay.left(),btnAbout.bottom()+GAP,btnPlay.width(),BTN_HEIGHT);
 		}
 
 		BitmapText version = new BitmapText( "v" + Game.version, pixelFont);
