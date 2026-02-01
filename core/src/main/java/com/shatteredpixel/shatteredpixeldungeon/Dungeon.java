@@ -522,11 +522,11 @@ public class Dungeon {
 	}
 
 	public static int curDepth(){
-		return levelId;
+		return depth;
 	}
 
 	public static long seedCurDepth(){
-		return seedForDepth(curDepth());
+		return seedForDepth(levelId);
 	}
 
 	public static long seedForDepth(int depth){
