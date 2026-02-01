@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
+import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.Rankings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
@@ -210,8 +211,9 @@ public class RankingsScene extends PixelScene {
 		ExitButton btnExit = new ExitButton() {
 			@Override
 			protected void onClick() {
-				//如果上一个场景是游戏场景
-				if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class) {
+				//如果上一个场景是游戏场景且角色还活着
+				if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class 
+					&& Dungeon.hero != null && Dungeon.hero.isAlive()) {
 					//尝试使用 InterlevelScene.restore() 来恢复游戏状态，因为它会加载 level
 					try {
 						//保存当前的槽位
@@ -238,8 +240,9 @@ public class RankingsScene extends PixelScene {
 	
 	@Override
 	protected void onBackPressed() {
-		//如果上一个场景是游戏场景
-		if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class) {
+		//如果上一个场景是游戏场景且角色还活着
+		if (GirlsFrontlinePixelDungeon.previousSceneClass == GameScene.class 
+			&& Dungeon.hero != null && Dungeon.hero.isAlive()) {
 			//尝试使用 InterlevelScene.restore() 来恢复游戏状态，因为它会加载 level
 			try {
 				//保存当前的槽位
