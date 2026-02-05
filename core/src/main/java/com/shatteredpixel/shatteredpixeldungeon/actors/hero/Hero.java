@@ -31,6 +31,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ActHPtoGetFood;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AdrenalineSurge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Amok;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AnkhInvulnerability;
@@ -809,16 +810,20 @@ public class Hero extends Char {
 			return 0;
 		}
 
+        float delay;
 		if (belongings.weapon() != null) {
 			
-			return belongings.weapon().delayFactor( this );
+			delay = belongings.weapon().delayFactor( this );
 			
 		} else {
 			//Normally putting furor speed on unarmed attacks would be unnecessary
 			//But there's going to be that one guy who gets a furor+force ring combo
 			//This is for that one guy, you shall get your fists of fury!
-			return 1f/RingOfFuror.attackSpeedMultiplier(this);
+			delay = 1f/RingOfFuror.attackSpeedMultiplier(this);
 		}
+
+        if ( buff(Adrenaline.class) != null) delay /= 1.5f;
+        return delay;
 	}
 
 	@Override
