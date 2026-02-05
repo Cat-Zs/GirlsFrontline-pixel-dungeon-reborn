@@ -96,6 +96,7 @@ public class Item implements Bundlable {
 	public boolean dropsDownHeap = false;
 	
 	private int level = 0;
+    public int BuffLevelPoint = 0;
     public String noted = "";
     public boolean canNote = true;
     public boolean canShowNote = true;
@@ -463,6 +464,8 @@ public class Item implements Bundlable {
 	//returns the level of the item, after it may have been modified by temporary boosts/reductions
 	//note that not all item properties should care about buffs/debuffs! (e.g. str requirement)
 	public int buffedLvl(){
+        if (BuffLevelPoint!=0)
+            return level()+BuffLevelPoint;
 		if (hero.buff( Degrade.class ) != null) {
 			return Degrade.reduceLevel(level());
 		} else {
@@ -625,16 +628,18 @@ public class Item implements Bundlable {
 	private static final String CURSED_KNOWN	= "cursedKnown";
 	private static final String QUICKSLOT		= "quickslotpos";
 	private static final String KEPT_LOST       = "kept_lost";
-    private static final String UPGRADEUSED       = "UpgradeUSED";
+    private static final String UPGRADEUSED     = "UpgradeUSED";
     private static final String NOTESAVEA       = "NOTESAVEA";
     private static final String NOTESAVEB       = "NOTESAVEB";
-    private static String NOTED			= "noted";
+    private static final String NOTED           = "noted";
+    private static final String BUFFLEVELPOINT  = "BUFFLEVELPOINT";
 
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put( QUANTITY, quantity );
 		bundle.put( LEVEL, level );
+        bundle.put( BUFFLEVELPOINT, BuffLevelPoint );
         bundle.put( UPGRADEUSED, UpgradeUSED );
 		bundle.put( LEVEL_KNOWN, levelKnown );
 		bundle.put( CURSED, cursed );
@@ -659,7 +664,7 @@ public class Item implements Bundlable {
 		} else if (level < 0) {
 			degrade( -level );
 		}
-		
+		BuffLevelPoint = bundle.getInt(BUFFLEVELPOINT);
 		cursed	= bundle.getBoolean( CURSED );
 
 		//only want to populate slot on first load.

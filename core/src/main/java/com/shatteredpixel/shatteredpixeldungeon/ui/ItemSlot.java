@@ -42,6 +42,7 @@ public class ItemSlot extends Button {
 	public static final int FADED       = 0x999999;
 	public static final int WARNING		= 0xFF8800;
 	public static final int ENHANCED	= 0x3399FF;
+    public static final int MASTERED = 16777028;
 	
 	private static final float ENABLED	= 1.0f;
 	private static final float DISABLED	= 0.3f;
@@ -221,9 +222,13 @@ public class ItemSlot extends Button {
 				extra.text( Messages.format( TXT_STRENGTH, str ) );
 				if (str > Dungeon.hero.STR()) {
 					extra.hardlight( DEGRADED );
-				} else {
-					extra.resetColor();
-				}
+				} else if (item instanceof Weapon && ((Weapon)item).masteryPotionBonus) {
+                    extra.hardlight( MASTERED );
+                } else if (item instanceof Armor && ((Armor)item).masteryPotionBonus) {
+                    extra.hardlight( MASTERED );
+                } else {
+                    extra.resetColor();
+                }
 			} else {
 				int str = item instanceof Weapon ? ((Weapon)item).STRReq(0) : ((Armor)item).STRReq(0);
 				extra.text( Messages.format( TXT_TYPICAL_STR, str ) );
