@@ -162,7 +162,30 @@ public class AboutScene extends PixelScene {
 		sea.setSize(colWidth/3f, 0);
         sea.setPos(catz.right(), catz.top());
 		content.add(sea);
-		addLine(sea.top()+32, content);
+        /*模板从此处开始*/
+		CreditsBlock onw = new CreditsBlock(true,Blink(),
+                /*是否闪光、闪光颜色，闪光颜色是十六进制六位数，从0x000000到0xFFFFFF*/
+		        "　",
+                /*标题*/
+		        Icons.ONWARD.get(),
+                /*贴图*/
+		        "ONWARD!", null, null);
+        /*名字、null、null*/
+		onw.setSize(colWidth/3f, 0);
+        /*宽度看情况设置，目前要加人，宽度基本上就是该行将由多少人平分colWidth
+        * 高度设置为0将会去读取贴图的height，设置非0就会只计算写进去的数值，所以height保持为0，
+        * 然后引用到某人的y的时候，把要添加的高度写在引用的位置，例如下面的sea.bottom()+8*/
+        onw.setPos(wolf.right(), sea.bottom()+8);
+        /*设上面设置的东西所在位置，left和top是自身的x、y，
+        right是left+width，width为设置的宽度，
+        bottom是top+height，height为设置的高度，如果高度设置为0则为贴图的高度*/
+		content.add(onw);
+        /*实行上面设置的那一堆，到这里就完成加人了*/
+		addLine(onw.top()+32, content);
+        /*这个是分割线，只需要给每一块最底下的人的y引用一次就好了，addLine多次跟一次没啥两样
+        分割线的高度并没有固定值，选定了某人的y值之后，多试几次调出来一个满意的相对y值*/
+        //到此结束
+
 		//*** Update Credits ***
 		CreditsBlock ling = new CreditsBlock(true, 0xffb0ca,
 		        "　",
@@ -171,7 +194,7 @@ public class AboutScene extends PixelScene {
 		        null,
 		        null);
 		ling.setSize(colWidth/3f, 0);
-		ling.setPos(wolf.left(), sea.bottom()+15);
+		ling.setPos(wolf.left(), onw.bottom()+15);
 		content.add(ling);
 
 		CreditsBlock shower = new CreditsBlock(true,0xb9f0fd,
@@ -201,9 +224,19 @@ public class AboutScene extends PixelScene {
 		        "Awsl",
 		        null,
 		        null);
-		awsl.setSize(colWidth/2f, 0);
+		awsl.setSize(colWidth/3f, 0);
 		awsl.setPos(ling.left(), cola.bottom()+14);
 		content.add(awsl);
+
+        CreditsBlock onw2 = new CreditsBlock(true,Blink(),
+                " 测  试  协  力 ",
+                Icons.ONWARD.get(),
+                "TO ME!",
+                null,
+                null);
+        onw2.setSize(colWidth/3f, 0);
+        onw2.setPos(awsl.right(), awsl.top());
+        content.add(onw2);
 
         CreditsBlock alex2 = new CreditsBlock(true,0xffca18,
 		        " ",
@@ -211,8 +244,8 @@ public class AboutScene extends PixelScene {
 		        "Alex",
 		        null,
 		        null);
-		alex2.setSize( colWidth/2f, 0);
-        alex2.setPos(awsl.right(), awsl.top());
+		alex2.setSize( colWidth/3f, 0);
+        alex2.setPos(onw2.right(), awsl.top());
 		content.add(alex2);
 		addLine(awsl.top()+34, content);
 
@@ -287,6 +320,56 @@ public class AboutScene extends PixelScene {
 		line.y = y;
 		content.add(line);
 	}
+    //转十六进制
+    private int change(int j){
+        if(j == 0){
+            return 0x000000;
+        }else if( j == 1){
+            return 0x000001;
+        }else if( j == 2){
+            return 0x000002;
+        }else if( j == 3){
+            return 0x000003;
+        }else if( j == 4){
+            return 0x000004;
+        }else if( j == 5){
+            return 0x000005;
+        }else if( j == 6){
+            return 0x000006;
+        }else if( j == 7){
+            return 0x000007;
+        }else if( j == 8){
+            return 0x000008;
+        }else if( j == 9){
+            return 0x000009;
+        }else if( j == 10){
+            return 0x00000A;
+        }else if( j == 11){
+            return 0x00000B;
+        }else if( j == 12){
+            return 0x00000C;
+        }else if( j == 13){
+            return 0x00000D;
+        }else if( j == 14){
+            return 0x00000E;
+        }else{
+            return 0x00000F;
+        }
+    }
+    //颜色是一个6位的十六进制数，这里对每一位随机一个数，然后转换成十六进制后再加到一起
+    private int Blink(){
+        int RP = Random.Int(16);
+        int GP = Random.Int(16);
+        int BP = Random.Int(16);
+        int RT = Random.Int(16);
+        int GT = Random.Int(16);
+        int BT = Random.Int(16);
+        int R = change(RP)*0x010000+change(RT)*0x100000;
+        int G = change(GP)*0x000100+change(GT)*0x001000;
+        int B = change(BP)*0x000001+change(BT)*0x000010;
+        int i =R+G+B;
+        return i;
+    }
 
 	private static class CreditsBlock extends Component {
 
