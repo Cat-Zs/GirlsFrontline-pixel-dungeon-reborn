@@ -243,7 +243,7 @@ public class Dungeon {
     public static int levelId;
 
 	public static long seed;
-
+    public static String customSeedText = "";
 	public static void init(String seedCode){
 		init(seedCode,SPDSettings.challenges());
 	}
@@ -274,6 +274,7 @@ public class Dungeon {
 
         SpecialRoom.initForRun();
         SecretRoom.initForRun();
+        Generator.fullReset();
 
         Random.resetGenerators();
 
@@ -303,7 +304,6 @@ public class Dungeon {
         Blacksmith.Quest.reset();
         Imp.Quest.reset();
 
-        Generator.fullReset();
         hero = new Hero();
         hero.live();
         Badges.reset();
@@ -326,7 +326,8 @@ public class Dungeon {
 		if (SPDSettings.SEED_CODE_RANDOM==seedCode){
 			seed = DungeonSeed.randomSeed();
 		} else{
-			seed = DungeonSeed.convertFromText(seedCode);
+            customSeedText = seedCode;
+			seed = DungeonSeed.convertFromText(customSeedText);
 		}
 	
 		Actor.clear();
@@ -341,6 +342,7 @@ public class Dungeon {
 
 			SpecialRoom.initForRun();
 			SecretRoom.initForRun();
+            Generator.fullReset();
 
 		Random.resetGenerators();
 		
@@ -370,16 +372,15 @@ public class Dungeon {
 		Blacksmith.Quest.reset();
 		Imp.Quest.reset();
 
-		Generator.fullReset();
 		hero = new Hero();
 		hero.live();
 		Badges.reset();
 		
 		GamesInProgress.selectedClass.initHero( hero );
         if(hero.heroClass==HeroClass.TYPE561) {
-            Hunger.minlevel = -100;
-            Buff.affect(hero, Hunger.class).satisfy(100);
+            Hunger.minlevel = -150;
         }
+        Buff.affect(hero, Hunger.class).satisfy(Hunger.minlevel);
 	}
 
 	public static boolean isChallenged( int mask ) {
@@ -529,10 +530,10 @@ public class Dungeon {
 		return seedForDepth(levelId);
 	}
 
-	public static long seedForDepth(int depth){
+	public static long seedForDepth(int levelId){
 		Random.pushGenerator( seed );
         //以存档种子为开始的随机数序列
-			for (int i = 0; i < depth; i ++) {
+			for (int i = 0; i < levelId; i ++) {
 				Random.Long(); //we don't care about these values, just need to go through them
 			}
 			long result = Random.Long();
@@ -652,6 +653,7 @@ public class Dungeon {
     private static final String LEVEL_ID        = "level_id";
 	private static final String VERSION		    = "version";
 	private static final String SEED		    = "seed";
+    private static final String SEED_CODE        = "seed_code";
 	private static final String CHALLENGES	    = "challenges";
 	private static final String MOBS_TO_CHAMPION= "mobs_to_champion";
 	private static final String HERO		    = "hero";
@@ -684,6 +686,7 @@ public class Dungeon {
 			version = Game.versionCode;
 			bundle.put( VERSION, version );
 			bundle.put( SEED, seed );
+            bundle.put( SEED_CODE, customSeedText);
 			bundle.put( CHALLENGES, challenges );
 			bundle.put( MOBS_TO_CHAMPION, mobsToChampion );
 			bundle.put( HERO, hero );
@@ -798,7 +801,7 @@ public class Dungeon {
 		version = bundle.getInt( VERSION );
         RollTimes = bundle.getInt( ROLLTIMES );
 		seed = bundle.contains( SEED ) ? bundle.getLong( SEED ) : DungeonSeed.randomSeed();
-
+        customSeedText = bundle.contains( SEED_CODE ) ? bundle.getString( SEED_CODE ) : "";
         itemAOfSave = new ArrayList<>();
         if (bundle.contains(NOTESAVEA)) {
             Class[] ItemToSave = bundle.getClassArray(NOTESAVEA);

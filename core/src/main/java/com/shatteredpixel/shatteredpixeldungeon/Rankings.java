@@ -62,6 +62,13 @@ public enum Rankings {
 
 	public void submit( boolean win, Class cause ) {
 
+        for (Item i :Dungeon.hero.belongings){
+            if (i.buffedLvl()!=i.level()) {
+                int lvlPoint = i.buffedLvl() - i.level();
+                i.BuffLevelPoint = lvlPoint;
+            }
+        }
+
 		if(Dungeon.isChallenged(Challenges.TEST_MODE)){
 			return;
 		}
@@ -81,7 +88,7 @@ public enum Rankings {
 		rec.herolevel = Dungeon.hero.lvl;
 		rec.seed      = Dungeon.seed;
 		// 检查是否使用了自定义种子
-		rec.customSeed = !SPDSettings.seedCode().equals(SPDSettings.SEED_CODE_RANDOM);
+		rec.customSeed = !Dungeon.customSeedText.isEmpty();
 		rec.depth     = Dungeon.curDepth();
 		rec.score     = score( win );
 		rec.isLock    = false;

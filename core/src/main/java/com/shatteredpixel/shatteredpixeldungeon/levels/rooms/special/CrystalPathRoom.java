@@ -145,10 +145,10 @@ public class CrystalPathRoom extends SpecialRoom {
                     item = new Gold().random();
                     break;
                 case 1:
-                    item = Generator.random(Random.oneOf(Generator.Category.POTION));
+                    item = Generator.randomUsingDefaults(Generator.Category.POTION);
                     break;
                 case 2:
-                    item = Generator.random(Random.oneOf(Generator.Category.SCROLL));
+                    item = Generator.randomUsingDefaults(Generator.Category.SCROLL);
                     break;
                 case 3:
                     int roll = Random.Int(3);
@@ -275,11 +275,13 @@ public class CrystalPathRoom extends SpecialRoom {
         //磁盘物品链表
         ArrayList<Item> scrolls = new ArrayList<>();
         //填充药水链表
-        potions.add(Generator.random(Random.oneOf(Generator.Category.POTION)));//potion[0]
-        potions.add(Generator.random(Random.oneOf(Generator.Category.POTION)));//potion[1]
+        potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));//potion[0]
+        potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));//potion[1]
+        potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));//potion[2]
         //填充磁盘链表
-        scrolls.add(Generator.random(Random.oneOf(Generator.Category.SCROLL)));//scroll[0]
-        scrolls.add(Generator.random(Random.oneOf(Generator.Category.SCROLL)));//scroll[1]
+        scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[0]
+        scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[1]
+        scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[2]
         Potion p = new PotionOfExperience();
         Scroll s = new ScrollOfTransmutation();
         boolean isEXP = false;
@@ -288,12 +290,10 @@ public class CrystalPathRoom extends SpecialRoom {
             scrolls.add(s);
         } else {
             if (Random.Int(2) == 0) {
-                scrolls.add(new ScrollOfTransmutation());
-                potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));
+                scrolls.set(2, s);
                 isEXP = false;
             } else {
-                scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));
-                potions.add(new PotionOfExperience());
+                potions.set(2, p);
                 isEXP = true;
             }
         }

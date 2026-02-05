@@ -47,7 +47,7 @@ public class SeedFindScene extends PixelScene {
 
         // 初始化实时种子显示文本（无间隔刷新）
         currentSeedText = PixelScene.renderTextBlock("", 6);
-        currentSeedText.setRect(((float) Camera.main.width - 100.0F) / 2.0F, 12.0F, 120.0F, 0.0F);
+        currentSeedText.setRect(((float) Camera.main.width - 90.0F) / 2.0F, 12.0F, 120.0F, 0.0F);
         currentSeedText.hardlight(0xFFFFFF);
         this.add(currentSeedText);
 
@@ -151,6 +151,14 @@ public class SeedFindScene extends PixelScene {
                     });
                     findSeedThread.start(); // 无间隔启动线程
 
+                }else if (!positive&&text!=""){
+                    content.clear();
+                    CreditsBlock txt = new CreditsBlock(true, 16777028, (new SeedFinder()).checkSeed(text, HeroClass.WARRIOR));
+                    txt.setRect(((float)Camera.main.width - 120.0F) / 2.0F, 12.0F, 120.0F, 0.0F);
+                    content.add(txt);
+                    content.setSize(fullWidth, txt.bottom() + 10.0F);
+                    list.setRect(0.0F, 0.0F, (float)w, (float)h);
+                    list.scrollTo(0.0F, 0.0F);
                 } else {
                     stopThread = true;
                     if (findSeedThread != null && findSeedThread.isAlive()) {

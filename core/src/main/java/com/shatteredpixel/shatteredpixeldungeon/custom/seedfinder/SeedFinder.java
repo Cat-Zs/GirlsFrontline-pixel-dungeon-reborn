@@ -2,6 +2,7 @@ package com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
+import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredStatue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalMimic;
@@ -95,6 +96,11 @@ public class SeedFinder {
         return findSeed(wanted, floor, Challenges, heroclass);
     }
 
+    public String checkSeed(String seedCode, HeroClass heroclass){
+        seedCode = DungeonSeed.formatText(seedCode);
+        long seedNum = DungeonSeed.convertFromText(seedCode);
+        return this.logSeedItems(seedNum, 31, SPDSettings.challenges(), heroclass);
+    }
     public String findSeed(ArrayList<String> wanted, int floor, int Challenges, HeroClass heroclass) {
         String result = "NONE";
         SeedFinding = true;
