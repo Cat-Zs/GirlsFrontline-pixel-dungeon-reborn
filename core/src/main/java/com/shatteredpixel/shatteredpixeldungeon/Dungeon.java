@@ -523,11 +523,12 @@ public class Dungeon {
 	}
 
 	public static int curDepth(){
+        //mark without %1000, may cause error when depth >= 1000
 		return depth;
 	}
 
 	public static long seedCurDepth(){
-		return seedForDepth(levelId);
+		return seedForDepth(curDepth());
 	}
 
 	public static long seedForDepth(int levelId){
