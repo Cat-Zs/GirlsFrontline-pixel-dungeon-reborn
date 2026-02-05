@@ -685,7 +685,10 @@ public class Generator {
 	public static Artifact randomArtifact(boolean trans) {
 
 		Category cat = Category.ARTIFACT;
-		int i = Random.chances( cat.probs );
+        Random.pushGenerator(Dungeon.seed);
+
+        int i = Random.chances(cat.probs);
+        Random.popGenerator();
 
 		//if no artifacts are left, return null
 		if (i == -1){
