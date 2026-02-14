@@ -16,7 +16,7 @@ public class ElpheltSprite extends MobSprite {
 
     private int zapPos;
 
-    private Animation charging;
+    public Animation charging;
     private Animation genoise;
 
     private Emitter chargeParticles;
@@ -36,9 +36,11 @@ public class ElpheltSprite extends MobSprite {
         charging.frames( frames, 17 );
 
         chargeParticles = centerEmitter();
-        chargeParticles.autoKill = false;
-        chargeParticles.pour(MagicMissile.MagicParticle.ATTRACTING, 0.05f);
-        chargeParticles.on = false;
+        if(chargeParticles!=null){
+            chargeParticles.autoKill = false;
+            chargeParticles.pour(MagicMissile.MagicParticle.ATTRACTING, 0.05f);
+            chargeParticles.on = false;
+        }
 
         run = new Animation( 15, true );
         run.frames( frames, 8, 9, 10, 11, 12, 13 );
@@ -68,8 +70,10 @@ public class ElpheltSprite extends MobSprite {
     @Override
     public void update() {
         super.update();
-        chargeParticles.pos(center());
-        chargeParticles.visible = visible;
+        if (chargeParticles!=null) {
+            chargeParticles.pos(center());
+            chargeParticles.visible = visible;
+        }
     }
 
     public void charge( int pos ){
@@ -100,7 +104,9 @@ public class ElpheltSprite extends MobSprite {
 
     @Override
     public void play(Animation anim) {
-        chargeParticles.on = anim == charging;
+        if (chargeParticles!=null) {
+            chargeParticles.on = anim == charging;
+        }
         super.play(anim);
     }
 

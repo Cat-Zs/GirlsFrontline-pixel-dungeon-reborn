@@ -333,7 +333,7 @@ public class SentryRoom extends SpecialRoom {
 
 	public static class SentrySprite extends MobSprite {
 
-		private Animation charging;
+		public Animation charging;
 		private Emitter chargeParticles;
 
 		public SentrySprite(){

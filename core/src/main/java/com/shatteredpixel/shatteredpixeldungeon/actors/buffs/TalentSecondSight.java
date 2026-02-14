@@ -51,11 +51,15 @@ public class TalentSecondSight extends Buff {
     }
     public int icon() {
         boolean on = false;
+        int num = 0;
         for (int i : CoolDown){
-            if (i>0) {
+            if (i>0
+                    &&LevelID.get(num)%1000<=Dungeon.depth+2
+                    &&LevelID.get(num)%1000>=Dungeon.depth-2) {
                 on = true;
                 break;
             }
+            num++;
         }
         if (on){
             return BuffIndicator.MIND_VISION;
@@ -74,19 +78,22 @@ public class TalentSecondSight extends Buff {
                 if (desc!=""){
                     desc+="\n";
                 }
-                int sub=0;
-                int levelId = LevelID.get(j);
-                String level;
-                while (levelId != LevelID.get(j) % 1000) {
-                    sub++;
-                    levelId -= 1000;
-                    if (levelId<0)
-                        break;
+                if (LevelID.get(j)%1000<=Dungeon.depth+2
+                        &&LevelID.get(j)%1000>=Dungeon.depth-2){
+                    int sub = 0;
+                    int levelId = LevelID.get(j);
+                    String level;
+                    while (levelId != LevelID.get(j) % 1000) {
+                        sub++;
+                        levelId -= 1000;
+                        if (levelId <= 0)
+                            break;
+                    }
+                    level = String.valueOf(levelId);
+                    if (sub != 0)
+                        level += "/" + sub;
+                    desc += "楼层" + level + "仍需：" + CoolDown.get(j) + " 回合";
                 }
-                level = String.valueOf(levelId);
-                if (sub!=0)
-                    level+="/"+sub;
-                desc+="楼层"+level+"仍需："+CoolDown.get(j)+" 回合";
             }
             j++;
         }

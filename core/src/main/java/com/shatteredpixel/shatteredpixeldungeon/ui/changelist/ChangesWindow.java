@@ -22,25 +22,40 @@
 package com.shatteredpixel.shatteredpixeldungeon.ui.changelist;
 
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.CharSprite;
+import com.shatteredpixel.shatteredpixeldungeon.windows.IconTitle;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTitledMessage;
 import com.watabou.input.PointerEvent;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.MovieClip;
 import com.watabou.noosa.PointerArea;
+import com.watabou.noosa.ui.Component;
+
+import java.util.Objects;
 
 public class ChangesWindow extends WndTitledMessage {
-	
-	public ChangesWindow(Image icon, String title, String message ) {
-		super( icon, title, message);
-		
-		PointerArea blocker = new PointerArea( 0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height ) {
-			@Override
-			protected void onClick( PointerEvent event ) {
-				onBackPressed();
-			}
-		};
-		blocker.camera = PixelScene.uiCamera;
-		add(blocker);
-		
-	}
-	
+    public ChangesWindow(Image icon, float size, MovieClip.Animation action, Boolean cycle, int color , String title, String message) {
+        this(titleBar(icon, size, action, cycle, color, title), message);
+    }
+    public ChangesWindow(Component title, String message ) {
+        super( title, message==null?"":message);
+
+        PointerArea blocker = new PointerArea( 0, 0, PixelScene.uiCamera.width, PixelScene.uiCamera.height ) {
+            @Override
+            protected void onClick( PointerEvent event ) {
+                onBackPressed();
+            }
+        };
+        blocker.camera = PixelScene.uiCamera;
+        add(blocker);
+
+    }
+    private static Component titleBar(Image icon, float size, MovieClip.Animation action, Boolean cycle, int color, String title ){
+        if (title == null)
+            title = "";
+        if (icon instanceof CharSprite)
+            return new ChangeButton.MobTitle((CharSprite) icon, title, size, action, color, cycle);
+        else
+            return new IconTitle(new Image(icon), title);
+    }
 }

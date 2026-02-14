@@ -172,8 +172,10 @@ public class C96 extends UniversaleGun {
 
         @Override
         public boolean act() {
-            if (Dungeon.hero.buff(LostInventory.class)!=null)
+            if (Dungeon.hero.buff(LostInventory.class)!=null) {
+                spend(1);
                 return true;
+            }
             if (target instanceof Hero) {
                 Hero hero = (Hero) target;
                 Item weapon = hero.belongings.weapon;

@@ -65,7 +65,7 @@ public class IconTitle extends Component {
 	public IconTitle( Image icon, String label ) {
 		super();
 
-		icon( icon );
+		icon( new Image(icon) );
 		label( label );
 	}
 

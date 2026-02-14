@@ -87,13 +87,13 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 	}
 	private int stunStates = 0;
 	
-	protected Animation idle;
-	protected Animation run;
-	protected Animation attack;
-	protected Animation operate;
-	protected Animation zap;
-	protected Animation die;
-	
+	public Animation idle;
+	public Animation run;
+	public Animation attack;
+	public Animation operate;
+	public Animation zap;
+	public Animation die;
+
 	protected Callback animCallback;
 	
 	protected PosTweener motion;
@@ -131,7 +131,6 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 		super();
 		listener = this;
 	}
-	
 	@Override
 	public void play(Animation anim) {
 		//Shouldn't interrupt the dieing animation
@@ -139,6 +138,15 @@ public class CharSprite extends MovieClip implements Tweener.Listener, MovieClip
 			super.play(anim);
 		}
 	}
+    public void playCycle(Animation anim, Boolean cycle) {
+        //Shouldn't interrupt the dieing animation
+        if (curAnim == null || curAnim != die) {
+            Animation animA = anim.clone();
+            if (cycle!=null)
+                animA.looped = cycle;
+            super.play(animA);
+        }
+    }
 	
 	//intended to be used for placing a character in the game world
 	public void link( Char ch ) {

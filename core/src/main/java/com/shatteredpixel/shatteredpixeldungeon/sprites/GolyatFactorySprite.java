@@ -33,7 +33,7 @@ import com.watabou.noosa.particles.Emitter;
 
 public class GolyatFactorySprite extends MobSprite {
 
-	private Animation charging;
+	public Animation charging;
 	private Emitter summoningBones;
 
 	public GolyatFactorySprite(){

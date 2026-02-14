@@ -34,7 +34,9 @@ public class Image extends Visual {
 
 	public SmartTexture texture;
 	protected RectF frame;
-
+    public Glow glow;
+    private float phase;
+    private boolean glowUp;
 	public boolean flipHorizontal;
 	public boolean flipVertical;
 
@@ -93,6 +95,7 @@ public class Image extends Visual {
 		texture = other.texture;
 		frame = new RectF( other.frame );
 
+        glow = other.glow;
 		width = other.width;
 		height = other.height;
 
@@ -151,6 +154,30 @@ public class Image extends Visual {
 		dirty = true;
 	}
 
+    @Override
+    public synchronized void update() {
+        super.update();
+        if (visible && glow != null) {
+            if (glowUp && (phase += Game.elapsed) > glow.period) {
+
+                glowUp = false;
+                phase = glow.period;
+
+            } else if (!glowUp && (phase -= Game.elapsed) < 0) {
+
+                glowUp = true;
+                phase = 0;
+
+            }
+
+            float value = phase / glow.period * 0.6f;
+
+            rm = gm = bm = 1 - value;
+            ra = glow.red * value;
+            ga = glow.green * value;
+            ba = glow.blue * value;
+        }
+    }
 	@Override
 	public void draw() {
 
@@ -205,4 +232,26 @@ public class Image extends Visual {
 
 	protected void layout() {
 	}
+    public static class Glow {
+
+        public int color;
+        public float red;
+        public float green;
+        public float blue;
+        public float period;
+
+        public Glow( int color ) {
+            this(color,1);
+        }
+        public Glow( int color ,int period ) {
+
+            this.color = color;
+
+            red = (color >> 16) / 255f;
+            green = ((color >> 8) & 0xFF) / 255f;
+            blue = (color & 0xFF) / 255f;
+
+            this.period = period;
+        }
+    }
 }

@@ -26,6 +26,7 @@ import static com.shatteredpixel.shatteredpixeldungeon.items.Item.updateQuickslo
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Adrenaline;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ArtifactRecharge;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EquipLevelUp;
@@ -61,12 +62,10 @@ public class Type56FourTwo extends ArmorAbility {
 //        if(wellFed.left<left)//这个判断是在饱腹剩余buff小于要添加的回合数时，把回合数加到饱腹上面
         wellFed.left += left; // 当前是不做判断直接增加饱腹回合
 
-        ArtifactRecharge buff = Buff.affect(hero, ArtifactRecharge.class);
-        if (buff.left() < 3 + (hero.pointsInTalent(Talent.Type56FourTwoThree))) {
-            Buff.affect(hero, ArtifactRecharge.class).set(3 + (hero.pointsInTalent(Talent.Type56FourTwoThree))).ignoreHornOfPlenty = false;
-        }
+        Buff.affect(hero, Adrenaline.class, 5+2*Dungeon.hero.pointsInTalent(Talent.Type56FourTwoThree));
+
         //当前大充能的代码是玩家身上剩余回合小于要设置的回合时，才给予大充能并设置为对应的回合，如有需要可以改为在现有的基础上增加
-        ScrollOfRecharging.chargeParticle(hero);
+//        ScrollOfRecharging.chargeParticle(hero);
         //充能的粒子效果，如有需要可移除
 
 //        EquipLevelUp lvlup = hero.buff(EquipLevelUp.class);
