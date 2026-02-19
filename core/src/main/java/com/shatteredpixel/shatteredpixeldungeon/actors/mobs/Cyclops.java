@@ -45,7 +45,7 @@ public class Cyclops extends Mob {
         properties.add(Property.ARMO);
 
         loot = Generator.Category.POTION;
-        lootChance = 0.5f;
+        lootChance = 0.333f;
     }
 
     private boolean enraged = false;

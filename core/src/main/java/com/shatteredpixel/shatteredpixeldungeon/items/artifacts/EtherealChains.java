@@ -301,7 +301,7 @@ public class EtherealChains extends Artifact {
 				Buff.prolong( target, Cripple.class, 10f);
 			}
 
-			if (partialCharge >= 1) {
+			while (partialCharge >= 1) {
 				partialCharge --;
 				charge ++;
 			}

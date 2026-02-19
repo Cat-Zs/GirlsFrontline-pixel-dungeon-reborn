@@ -81,11 +81,11 @@ public class HeroIcon extends Image {
 	}
 
     public HeroIcon(BookSpell spell) {
-        super("interfaces/new_icons.png");
+        super( Assets.Interfaces.HERO_ICONS );
         if (film == null) {
-            film = new TextureFilm(this.texture, 16, 16);
+            film = new TextureFilm(texture, SIZE, SIZE);
         }
 
-        this.frame(film.get(spell.icon()));
+        frame(film.get(spell.icon()));
     }
 }

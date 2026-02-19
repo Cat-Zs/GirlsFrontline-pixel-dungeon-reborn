@@ -289,7 +289,7 @@ public class UnstableSpellbook extends Artifact {
 				chargeGain *= RingOfEnergy.artifactChargeMultiplier(target);
 				partialCharge += chargeGain;
 
-				if (partialCharge >= 1) {
+				while (partialCharge >= 1) {
 					partialCharge --;
 					charge ++;
 

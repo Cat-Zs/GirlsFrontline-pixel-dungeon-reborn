@@ -150,9 +150,9 @@ public class HornOfPlenty extends Artifact {
 	@Override
 	public void charge(Hero target, float amount) {
 		if (charge < chargeCap){
-			partialCharge += 0.25f*amount;
-			while (partialCharge >= 1){
-				partialCharge--;
+			partialCharge += 0.25f*amount*Hunger.STARVING/5;
+			while (partialCharge >= Hunger.STARVING/5){
+				partialCharge-=Hunger.STARVING/5;
 				charge++;
 				
 				if (charge == chargeCap){

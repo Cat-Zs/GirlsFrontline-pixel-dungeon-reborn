@@ -11,7 +11,6 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Bee;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
@@ -21,7 +20,7 @@ public class DeadBomb extends TargetSpell{
     public static final DeadBomb INSTANCE = new DeadBomb();
 
     public int icon() {
-        return 49;
+        return 1;
     }
 
     {
@@ -31,7 +30,7 @@ public class DeadBomb extends TargetSpell{
     @Override
     protected void onSelectA(Integer cell){
         Char target=Char.findChar(cell);
-        if (target==null || !(target instanceof Mob || target instanceof Hero)){
+        if (!(target instanceof Mob || target instanceof Hero)){
             Stop = true;
             return;
         }if(target.alignment==Char.Alignment.ENEMY){

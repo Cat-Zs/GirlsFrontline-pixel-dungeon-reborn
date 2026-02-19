@@ -470,6 +470,14 @@ public enum Talent {
                 Buff.count(hero, GSH18EnergizingMealTracker.class, 1);
             }
         }
+
+        if (Dungeon.hero.hasTalent(Talent.Type56_21V2)){
+            if (Dungeon.hero.HP < Dungeon.hero.HT) {
+                int add = (int) (Dungeon.hero.HT*(0.02*Dungeon.hero.pointsInTalent(Talent.Type56_21V2)+0.01F));
+                Dungeon.hero.HP = Math.min( Dungeon.hero.HP + add, Dungeon.hero.HT );
+                Dungeon.hero.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
+            }
+        }
     }
 
 	public static class WarriorFoodImmunity extends FlavourBuff{
@@ -813,7 +821,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, INVIGORATING_MEAL, RESTORED_NATURE, REJUVENATING_STEPS, HEIGHTENED_SENSES, DURABLE_PROJECTILES);
 				break;
 			case TYPE561:
-				Collections.addAll(tierTalents, Type56Two_FOOD, Type56Two_Armor, Type56Two_Grass, Type56Two_Sight, Type56Two_Damage);
+				Collections.addAll(tierTalents, Type56Two_FOOD, Type56Two_Armor, Type56_23V4, Type56Two_Sight, Type56Two_Damage);
 				break;
 			case GSH18:
 				Collections.addAll(tierTalents, GSH18_ENERGIZING_MEAL, GSH18_CHAIN_SHOCK, GSH18_LOGISTICS_SUPPORT, GSH18_COMIC_HEART, GSH18_MEDICAL_COMPATIBILITY
@@ -904,7 +912,7 @@ public enum Talent {
 				Collections.addAll(tierTalents, EMP_One, EMP_Two, EMP_Three);
 				break;
 			case GUN_MASTER: case MODERN_REBORNER:
-				Collections.addAll(tierTalents, GUN_1, GUN_2, GUN_3);
+				Collections.addAll(tierTalents, GUN_1V2, GUN_2V2, GUN_3);
 				break;
 			case FUTURE_STAR:
 				Collections.addAll(tierTalents, GSH18_INTELLIGENCE_AWARENESS, GSH18_SIRIUS_HEART);

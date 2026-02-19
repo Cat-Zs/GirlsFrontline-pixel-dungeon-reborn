@@ -59,6 +59,7 @@ import com.shatteredpixel.shatteredpixeldungeon.journal.Document;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Journal;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.secret.SecretRoom;
 import com.shatteredpixel.shatteredpixeldungeon.levels.traps.Trap;
@@ -243,7 +244,7 @@ public class GameScene extends PixelScene {
 		ripples = new Group();
 		terrain.add( ripples );
 
-		DungeonTileSheet.setupVariance(Dungeon.level.map.length, Dungeon.seedCurDepth());
+		DungeonTileSheet.setupVariance(Dungeon.level.map.length, Dungeon.seedCurLevel());
 		
 		tiles = new DungeonTerrainTilemap();
 		terrain.add( tiles );
@@ -556,14 +557,19 @@ public class GameScene extends PixelScene {
 
 			if (Dungeon.hero.hasTalent(Talent.ROGUES_FORESIGHT)
 					&& Dungeon.level instanceof RegularLevel){
-				int reqSecrets = Dungeon.level.feeling == Level.Feeling.SECRETS ? 2 : 1;
+				int reqSecrets = 0;
 				for (Room r : ((RegularLevel) Dungeon.level).rooms()){
-					if (r instanceof SecretRoom) reqSecrets--;
+					if (r instanceof SecretRoom) {
+                        int doorPos = Dungeon.level.pointToCell(((SecretRoom) r).entrance());
+                        if (Dungeon.level.map[doorPos] == Terrain.SECRET_DOOR) {
+                            reqSecrets++;
+                        }
+                    }
 				}
 
-				//50%/75% chance, use level's seed so that we get the same result for the same level
-				Random.pushGenerator(Dungeon.seedCurDepth());
-					if (reqSecrets <= 0 && Random.Int(3) <= Dungeon.hero.pointsInTalent(Talent.ROGUES_FORESIGHT)){
+				//50%/100% chance, use level's seed so that we get the same result for the same level
+				Random.pushGenerator(Dungeon.seedCurLevel());
+					if (reqSecrets > 0 && Random.Int(2)+1 <= Dungeon.hero.pointsInTalent(Talent.ROGUES_FORESIGHT)){
 						GLog.p(Messages.get(this, "secret_hint"));
 					}
 				Random.popGenerator();

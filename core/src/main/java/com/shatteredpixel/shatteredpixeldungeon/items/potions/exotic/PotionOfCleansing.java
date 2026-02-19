@@ -79,7 +79,7 @@ public class PotionOfCleansing extends ExoticPotion {
 				b.detach();
 			}
 			if (b instanceof Hunger){
-				((Hunger) b).satisfy(Hunger.STARVING-Hunger.minlevel);
+				((Hunger) b).satisfy(Hunger.STARVING-Hunger.minLevel);
 			}
 		}
 		Buff.affect(ch, Cleanse.class, duration);

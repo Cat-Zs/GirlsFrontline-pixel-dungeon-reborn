@@ -38,6 +38,7 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.CityBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
+import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,7 +100,10 @@ public class SeedFinder {
     public String checkSeed(String seedCode, HeroClass heroclass){
         seedCode = DungeonSeed.formatText(seedCode);
         long seedNum = DungeonSeed.convertFromText(seedCode);
-        return this.logSeedItems(seedNum, 31, SPDSettings.challenges(), heroclass);
+        SeedFinding = true;
+        String text = this.logSeedItems(seedNum, 31, SPDSettings.challenges(), heroclass);
+        SeedFinding = false;
+        return text;
     }
     public String findSeed(ArrayList<String> wanted, int floor, int Challenges, HeroClass heroclass) {
         String result = "NONE";
@@ -120,7 +124,16 @@ public class SeedFinder {
                 sceneRef.updateCurrentSeed(currentSeed);
             }
 
-            if (this.testSeedALL(currentSeed, floor, Challenges, heroclass)) {
+            if (this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)
+                    &&this.testSeedALL(currentSeed, floor, heroclass)) {
                 result = this.logSeedItems(currentSeed, floor, Challenges, heroclass);
                 break;
             }
@@ -170,10 +183,15 @@ public class SeedFinder {
         return heaps;
     }
 
-    private boolean testSeedALL(long seed, int floors, int Challenges, HeroClass heroclass) {
+    private boolean testSeedALL(long seed, int floors, HeroClass heroclass) {
         Dungeon.hero = null;
         GamesInProgress.selectedClass = heroclass;
-        Dungeon.CustomInit(seed, Challenges);
+        String seedCode = DungeonSeed.convertToCode(seed);
+        if (Game.lockXMAS) {
+            Dungeon.init(seedCode);
+            Game.lockXMAS = true;
+        }else
+            Dungeon.init(seedCode);
         boolean[] itemsFound = new boolean[this.itemList.size()];
         Arrays.fill(itemsFound, false);
         int LevelSub = 0;
@@ -294,7 +312,11 @@ public class SeedFinder {
         SeedFindScene.seedCode= seedCode;
         Dungeon.hero = null;
         GamesInProgress.selectedClass = heroclass;
-        Dungeon.CustomInit(seed, Challenges );
+        if (Game.lockXMAS) {
+            Dungeon.init(seedCode);
+            Game.lockXMAS = true;
+        }else
+            Dungeon.init(seedCode);
         StringBuilder result = new StringBuilder(Messages.get(this, "seed") + seedCode + " (" + seed + ") " + Messages.get(this, "items") + ":\n\n");
         this.blacklist = Arrays.asList(Dewdrop.class, IronKey.class, GoldenKey.class, CrystalKey.class, EnergyCrystal.class, CorpseDust.class, Embers.class, CeremonialCandle.class, Pickaxe.class);
         int LevelSub = 0;

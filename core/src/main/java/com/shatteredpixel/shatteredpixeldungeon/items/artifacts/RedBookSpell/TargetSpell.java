@@ -7,8 +7,6 @@ import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 
-import java.util.ArrayList;
-
 public class TargetSpell extends BookSpell {
     protected RedBook bookA;
     protected Hero heroA;

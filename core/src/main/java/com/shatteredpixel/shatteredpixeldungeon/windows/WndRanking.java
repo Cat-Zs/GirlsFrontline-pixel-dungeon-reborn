@@ -43,6 +43,7 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
 import com.shatteredpixel.shatteredpixeldungeon.ui.CheckBox;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ItemSlot;
+import com.shatteredpixel.shatteredpixeldungeon.ui.LockButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentButton;
@@ -186,7 +187,7 @@ public class WndRanking extends WndTabbed {
 			title.setRect( 0, 0, WIDTH, 0 );
 			add( title );
 
-            CheckBox Lock = new CheckBox("") {
+            LockButton Lock = new LockButton("") {
                 @Override
                 protected void onClick() {
                     super.onClick();

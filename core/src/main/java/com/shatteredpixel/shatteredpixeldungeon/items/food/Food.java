@@ -84,7 +84,6 @@ public class Food extends Item {
 
 			satisfy(hero);
             EatText();
-            TalentHeal();
 
 			hero.sprite.operate( hero.pos );
 			hero.busy();
@@ -104,15 +103,6 @@ public class Food extends Item {
         GLog.i( Messages.get(this, "eat_msg") );
     }
 
-    private void TalentHeal(){
-        if (Dungeon.hero.hasTalent(Talent.Type56_21V2)){
-            if (Dungeon.hero.HP < Dungeon.hero.HT) {
-                int add = (int) (Dungeon.hero.HT*(0.02*Dungeon.hero.pointsInTalent(Talent.Type56_21V2)+0.01F));
-                Dungeon.hero.HP = Math.min( Dungeon.hero.HP + add, Dungeon.hero.HT );
-                Dungeon.hero.sprite.emitter().burst( Speck.factory( Speck.HEALING ), 1 );
-            }
-        }
-    }
 	public static float eatingTimeStatic(){
 		if(Dungeon.hero.hasTalent(Talent.IRON_STOMACH)
                 || Dungeon.hero.hasTalent(Talent.ENERGIZING_MEAL)

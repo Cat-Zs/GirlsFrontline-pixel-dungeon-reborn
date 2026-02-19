@@ -67,6 +67,8 @@ public class Amulet extends Item {
 	public boolean doPickUp(Hero hero, int pos) {
 		if (super.doPickUp( hero, pos )) {
             Cypros cypros = hero.belongings.getItem(Cypros.class);
+            if (cypros == null && hero.belongings.weapon instanceof Cypros)
+                cypros = (Cypros) hero.belongings.weapon;
             if (cypros!=null&&!cypros.GetBadge&&cypros.level() >= 22) {
                 cypros.GetBadge = true;
                 Badges.RabbitWeaponWin();

@@ -388,7 +388,7 @@ public abstract class RegularLevel extends Level {
 		}
 
 		//use a separate generator for this to prevent held items, meta progress, and talents from affecting levelgen
-		Random.pushGenerator( Dungeon.seedCurDepth() );
+		Random.pushGenerator( Dungeon.seedToCreate() );
 
 		Item item = Bones.get();
 		if (item != null) {

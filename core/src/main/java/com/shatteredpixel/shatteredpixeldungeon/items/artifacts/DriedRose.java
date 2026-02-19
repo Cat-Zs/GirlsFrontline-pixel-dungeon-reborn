@@ -419,7 +419,7 @@ public class DriedRose extends Artifact {
 					partialCharge += (ghost.HT / 500f) * RingOfEnergy.artifactChargeMultiplier(target);
 					updateQuickslot();
 					
-					if (partialCharge > 1) {
+					while (partialCharge > 1) {
 						ghost.HP++;
 						partialCharge--;
 					}

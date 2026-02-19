@@ -52,7 +52,7 @@ public class Cannon extends UniversaleGun {
     }
 
     private static final String AC_CHANGE = "CHANGE";
-    public boolean mustDie = true;
+    public boolean mustDie = false;
 
     @Override
     public ArrayList<String> actions(Hero hero) {

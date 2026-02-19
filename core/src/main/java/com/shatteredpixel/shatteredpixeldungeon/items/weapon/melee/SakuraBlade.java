@@ -25,14 +25,10 @@ import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.BlastParticle;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.SmokeParticle;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
@@ -43,19 +39,17 @@ import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
-import com.watabou.utils.Point;
 import com.watabou.utils.Random;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.EnergyParticle; 
 import java.util.ArrayList;
 
 public class SakuraBlade extends MeleeWeapon {
 
-    private static final String AC_IAIDO = "IAIDO";
     private static final int IAIDO_COST = 2; // 消耗2回合
     private static final int MAX_TARGET_DISTANCE = 2; // 目标距离限制
-    private static final int BASE_COOLDOWN_TURNS = 100; // 基础冷却时间100回合   
-    private int cooldownLeft = 0; // 当前剩余冷却时间
-    private static final String COOLDOWN_LEFT = "cooldownLeft";
+    {
+        BASE_COOLDOWN_TURNS = 100;
+    }
     private static final int MAX_BUFFED_LEVELS = 5; // 最多获得5级buff等级
     private int skillBuffedLevels = 0; // 记录通过技能获得的buff等级
     private static final String SKILL_BUFFED_LEVELS = "skillBuffedLevels"; // 用于保存/加载
@@ -63,7 +57,7 @@ public class SakuraBlade extends MeleeWeapon {
     {
         image = ItemSpriteSheet.GREATAXE;
         tier = 5;
-        defaultAction = AC_IAIDO;
+        defaultAction = AC_SKILL;
     }
 
     // 保存冷却状态
@@ -71,7 +65,6 @@ public class SakuraBlade extends MeleeWeapon {
     @Override
     public void storeInBundle(Bundle bundle) {
         super.storeInBundle(bundle);
-        bundle.put(COOLDOWN_LEFT, cooldownLeft);
         bundle.put(SKILL_BUFFED_LEVELS, skillBuffedLevels); // 保存buff等级
     }
     
@@ -79,7 +72,6 @@ public class SakuraBlade extends MeleeWeapon {
     @Override
     public void restoreFromBundle(Bundle bundle) {
         super.restoreFromBundle(bundle);
-        cooldownLeft = bundle.getInt(COOLDOWN_LEFT);
         skillBuffedLevels = bundle.getInt(SKILL_BUFFED_LEVELS); // 恢复buff等级
     }
     
@@ -108,7 +100,7 @@ public class SakuraBlade extends MeleeWeapon {
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add(AC_IAIDO);
+        actions.add(AC_SKILL);
         return actions;
     }
     
@@ -116,7 +108,7 @@ public class SakuraBlade extends MeleeWeapon {
     public void execute(Hero hero, String action) {
         super.execute(hero, action);
         
-        if (action.equals(AC_IAIDO)) {
+        if (action.equals(AC_SKILL)) {
             // 检查武器是否在英雄手中
             // 检查武器是否在英雄手中
             if (this != hero.belongings.weapon) {
@@ -124,8 +116,8 @@ public class SakuraBlade extends MeleeWeapon {
             // 检查英雄力量是否达到武器要求
             } else if (hero.STR() < STRReq()) {
                 GLog.w(Messages.get(Weapon.class, "too_heav"));
-            } else if (cooldownLeft > 0) {
-                GLog.w(Messages.get(this, "cooldown", cooldownLeft));
+            } else if (coolDownLeft > 0) {
+                GLog.w(Messages.get(this, "cooldown", coolDownLeft));
             } else {
                 executeIaiDo();
             }
@@ -218,10 +210,7 @@ public class SakuraBlade extends MeleeWeapon {
                 hero.spendAndNext(IAIDO_COST);
                 
                 // 设置冷却时间（固定为基础冷却时间，不受天赋影响）
-                cooldownLeft = BASE_COOLDOWN_TURNS;
-                
-                // 附加冷却Buff以处理冷却时间递减
-                Buff.affect(hero, CooldownTracker.class);
+                coolDownLeft = BASE_COOLDOWN_TURNS;
                 
                 // 更新快捷栏显示
                 updateQuickslot();
@@ -233,71 +222,5 @@ public class SakuraBlade extends MeleeWeapon {
             return Messages.get(SakuraBlade.class, "select_target");
         }
     };
-    
-    // 添加冷却状态显示方法
-    @Override
-    public String status() {
-        if (cooldownLeft > 0) {
-            return "CD:" + cooldownLeft;
-        } else {
-            return super.status();
-        }
-    }
-    
-    // 修改现有Cooldown类为CooldownTracker，负责冷却时间递减
-    public static class CooldownTracker extends AllyBuff {
-        {
-            type = buffType.NEGATIVE;
-        }
-        
-        @Override
-        public boolean act() {
-            if (target instanceof Hero) {
-                Hero hero = (Hero) target;
-                Item weapon = hero.belongings.weapon;
-                
-                if (weapon instanceof SakuraBlade) {
-                    SakuraBlade blade = (SakuraBlade) weapon;
-                    
-                    if (blade.cooldownLeft > 0) {
-                        blade.cooldownLeft--;
-                        blade.updateQuickslot();
-                    }
-                    
-                    // 当冷却时间结束时，移除Buff
-                    if (blade.cooldownLeft <= 0) {
-                        detach();
-                    }
-                } else {
-                    // 如果武器不是SakuraBlade或已不再装备，移除Buff
-                    detach();
-                }
-            }
-            
-            spend(TICK);
-            return true;
-        }
-    }
-    
-    // 确保在收集武器时检查冷却状态
-    @Override
-    public boolean collect(Bag container) {
-        if (super.collect(container)) {
-            if (container.owner instanceof Hero && cooldownLeft > 0) {
-                Buff.affect((Hero)container.owner, CooldownTracker.class);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-    
-    // 确保在装备武器时检查冷却状态
-    @Override
-    public void activate(Char owner) {
-        super.activate(owner);
-        if (owner instanceof Hero && cooldownLeft > 0) {
-            Buff.affect((Hero)owner, CooldownTracker.class);
-        }
-    }
+
 }

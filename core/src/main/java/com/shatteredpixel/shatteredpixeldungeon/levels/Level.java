@@ -201,7 +201,7 @@ public abstract class Level implements Bundlable {
 	public void create(int levelDepth,int levelId){
 		this.levelDepth=levelDepth;
         this.levelId   =levelId;
-		Random.pushGenerator( Dungeon.seedCurDepth() );
+		Random.pushGenerator( Dungeon.seedToCreate() );
 		
 		if (!(Dungeon.bossLevel())) {
 

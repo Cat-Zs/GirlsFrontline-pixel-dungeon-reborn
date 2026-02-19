@@ -334,7 +334,7 @@ public class LloydsBeacon extends Artifact {
 			if (charge < chargeCap && !cursed && (lock == null || lock.regenOn())) {
 				partialCharge += 1 / (100f - (chargeCap - charge)*10f);
 
-				if (partialCharge >= 1) {
+				while (partialCharge >= 1) {
 					partialCharge --;
 					charge ++;
 

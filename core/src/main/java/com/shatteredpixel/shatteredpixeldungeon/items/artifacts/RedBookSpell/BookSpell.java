@@ -3,7 +3,6 @@ package com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBookSpell;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ActHPtoGetFood;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
@@ -44,7 +43,7 @@ public class BookSpell {
     }
 
     public int icon() {
-        return 127;
+        return 0;
     }
 
     public String name() {

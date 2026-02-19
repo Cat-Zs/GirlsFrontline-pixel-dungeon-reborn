@@ -283,6 +283,8 @@ public class Goo extends Mob {
 		Badges.validateBossSlain(Badges.Badge.BOSS_SLAIN_1);
 		
 		yell( Messages.get(this, "defeated") );
+        if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)||Challenges.activeChallenges()>=2)
+            GLog.p("在10层击败衔尾蛇之后可以选择是否对战艾尔菲尔特。");
 	}
 	
 	@Override

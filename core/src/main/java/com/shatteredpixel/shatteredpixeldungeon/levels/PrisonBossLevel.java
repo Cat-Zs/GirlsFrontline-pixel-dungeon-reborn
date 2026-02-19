@@ -333,7 +333,7 @@ public class PrisonBossLevel extends Level {
 			}
 		}
 
-		if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
+		if(Dungeon.isChallenged(Challenges.STRONGER_BOSSES)||Challenges.activeChallenges()>=2){
 			Noel noel=new Noel();
 			noel.pos=7+18*width();
 			GameScene.add(noel);

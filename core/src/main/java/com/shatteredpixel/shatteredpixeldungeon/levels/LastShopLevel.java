@@ -40,14 +40,14 @@ public class LastShopLevel extends Level {
 
     @Override
     public String tilesTex() {
-        return Dungeon.isChallenged(Challenges.STRONGER_BOSSES)?
+        return Dungeon.isChallenged(Challenges.STRONGER_BOSSES)||Challenges.activeChallenges()>=2?
                 Assets.Environment.TILES_HALLS:
                 Assets.Environment.TILES_CITY;
     }
 
     @Override
     public String waterTex() {
-        return Dungeon.isChallenged(Challenges.STRONGER_BOSSES)?
+        return Dungeon.isChallenged(Challenges.STRONGER_BOSSES)||Challenges.activeChallenges()>=2?
                 Assets.Environment.WATER_HALLS:
                 Assets.Environment.WATER_CITY;
     }

@@ -282,7 +282,7 @@ public class RankingsScene extends PixelScene {
 			private BitmapText depth;
 			private Image classIcon;
 			private BitmapText level;
-			private ItemSprite seedIcon; // 种子图标，用于标识自定义种子记录
+        private Image notice; // 种子图标，用于标识自定义种子记录
 		public Record( int pos, boolean latest, Rankings.Record rec ) {
 			super();
 			
@@ -292,11 +292,11 @@ public class RankingsScene extends PixelScene {
 				flare = new Flare( 6, 24 );
 				flare.angularSpeed = 90;
 				// 根据是否使用自定义种子设置不同的flare颜色
-				if (rec.customSeed) {
-					flare.color( rec.win ? FLARE_WIN_SEED : FLARE_LOSE_SEED );
-				} else {
-					flare.color( rec.win ? FLARE_WIN : FLARE_LOSE );
-				}
+//				if (rec.customSeed) {
+//					flare.color( rec.win ? FLARE_WIN_SEED : FLARE_LOSE_SEED );
+//				} else {
+//					flare.color( rec.win ? FLARE_WIN : FLARE_LOSE );
+//				}
 				addToBack( flare );
 			}
 
@@ -306,58 +306,36 @@ public class RankingsScene extends PixelScene {
 			desc.text( Messages.titleCase(rec.desc()) );
 
 			int odd = pos % 2;
-			
-			// 根据是否使用自定义种子设置不同的文本颜色
-			if (rec.customSeed) {
-				// 使用自定义种子的颜色
-				if (rec.win) {
-					shield.view( ItemSpriteSheet.AMULET, null );
-					position.hardlight( TEXT_WIN_SEED[odd] );
-					desc.hardlight( TEXT_WIN_SEED[odd] );
-					depth.hardlight( TEXT_WIN_SEED[odd] );
-					level.hardlight( TEXT_WIN_SEED[odd] );
-				} else {
-					position.hardlight( TEXT_LOSE_SEED[odd] );
-					desc.hardlight( TEXT_LOSE_SEED[odd] );
-					depth.hardlight( TEXT_LOSE_SEED[odd] );
-					level.hardlight( TEXT_LOSE_SEED[odd] );
+            // 默认颜色
+            if (rec.win) {
+                shield.view(ItemSpriteSheet.AMULET, null);
+                position.hardlight(TEXT_WIN[odd]);
+                desc.hardlight(TEXT_WIN[odd]);
+                depth.hardlight(TEXT_WIN[odd]);
+                level.hardlight(TEXT_WIN[odd]);
+            } else {
+                position.hardlight(TEXT_LOSE[odd]);
+                desc.hardlight(TEXT_LOSE[odd]);
+                depth.hardlight(TEXT_LOSE[odd]);
+                level.hardlight(TEXT_LOSE[odd]);
 
-					if (rec.depth != 0){
-						depth.text( Integer.toString(rec.depth) );
-						depth.measure();
-						steps.copy(Icons.STAIRS.get());
+                if (rec.depth != 0) {
+                    depth.text(Integer.toString(rec.depth));
+                    depth.measure();
+                    steps.copy(Icons.STAIRS.get());
 
-						add(steps);
-						add(depth);
-					}
-				}
-				// 添加种子图标
-				add(seedIcon);
-			} else {
-				// 默认颜色
-				if (rec.win) {
-					shield.view( ItemSpriteSheet.AMULET, null );
-					position.hardlight( TEXT_WIN[odd] );
-					desc.hardlight( TEXT_WIN[odd] );
-					depth.hardlight( TEXT_WIN[odd] );
-					level.hardlight( TEXT_WIN[odd] );
-				} else {
-					position.hardlight( TEXT_LOSE[odd] );
-					desc.hardlight( TEXT_LOSE[odd] );
-					depth.hardlight( TEXT_LOSE[odd] );
-					level.hardlight( TEXT_LOSE[odd] );
-
-					if (rec.depth != 0){
-						depth.text( Integer.toString(rec.depth) );
-						depth.measure();
-						steps.copy(Icons.STAIRS.get());
-
-						add(steps);
-						add(depth);
-					}
-				}
-			}
-
+                    add(steps);
+                    add(depth);
+                }
+            }
+            if (rec.isLock)
+                notice = new Image(Icons.get(Icons.LOCK));
+            else if (rec.customSeed) {
+                // 添加种子图标
+                notice = new ItemSprite( ItemSpriteSheet.SEED_SUNGRASS, null );
+            }
+            if (notice!=null)
+                add(notice);
 			if (rec.herolevel != 0){
 				level.text( Integer.toString(rec.herolevel) );
 				level.measure();
@@ -386,8 +364,6 @@ public class RankingsScene extends PixelScene {
 			add( classIcon );
 			level = new BitmapText( PixelScene.pixelFont);
 			// 使用ItemSprite代替Image来显示种子图标
-			seedIcon = new ItemSprite( ItemSpriteSheet.SEED_SUNGRASS, null );
-			seedIcon.scale.set(0.75f);
 		}
 		
 		@Override
@@ -416,12 +392,12 @@ public class RankingsScene extends PixelScene {
 			align(depth);
 			// 根据是否显示种子图标调整描述文本的最大宽度
 			float descMaxWidth;
-			if (rec.customSeed) {
+			if (rec.customSeed||rec.isLock) {
 				// 显示种子图标，调整文本宽度
 				descMaxWidth = steps.x - (shield.x + shield.width + GAP) - 16;
 				// 设置种子图标位置
-				seedIcon.x = steps.x - 16;
-				seedIcon.y = shield.y;
+				notice.x = steps.x - 16;
+				notice.y = shield.y;
 				// ItemSprite不需要align，它会自动处理位置
 			} else {
 				descMaxWidth = steps.x - (shield.x + shield.width + GAP);

@@ -42,16 +42,18 @@ public class Hunger extends Buff implements Hero.Doom {
 
 	public static final float HUNGRY	= 300f;
 	public static final float STARVING	= 450f;
-    public static float minlevel = 0;
+    public static float minLevel = 0;
 	private float level;
 	private float partialDamage;
 
 	private static final String LEVEL			= "level";
+    private static final String MINLEVEL        = "minLevel";
 	private static final String PARTIALDAMAGE 	= "partialDamage";
 
 	@Override
 	public void storeInBundle( Bundle bundle ) {
 		super.storeInBundle(bundle);
+        bundle.put( MINLEVEL, minLevel);
 		bundle.put( LEVEL, level );
 		bundle.put( PARTIALDAMAGE, partialDamage );
 	}
@@ -59,6 +61,7 @@ public class Hunger extends Buff implements Hero.Doom {
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		super.restoreFromBundle( bundle );
+        minLevel = bundle.getInt(MINLEVEL);
 		level = bundle.getFloat( LEVEL );
 		partialDamage = bundle.getFloat(PARTIALDAMAGE);
 	}
@@ -146,9 +149,9 @@ public class Hunger extends Buff implements Hero.Doom {
 		}
 
 		level -= energy;
-		if (level < minlevel && !overrideLimits) {
-            float over = minlevel-level;
-			level = minlevel;
+		if (level < minLevel && !overrideLimits) {
+            float over = minLevel -level;
+			level = minLevel;
             if (Dungeon.hero.buff(ActHPtoGetFood.LockReg.class)!=null){
                 ActHPtoGetFood.LockReg.lost += over;
                 if (ActHPtoGetFood.LockReg.lost >=Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).cooldown()){
@@ -176,7 +179,7 @@ public class Hunger extends Buff implements Hero.Doom {
         return STARVING-level;
     }
 	public float hunger() {
-		return level-minlevel;
+		return level- minLevel;
 	}
 
 	@Override

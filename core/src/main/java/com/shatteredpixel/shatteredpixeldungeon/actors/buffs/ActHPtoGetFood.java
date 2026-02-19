@@ -67,9 +67,9 @@ public class ActHPtoGetFood extends CounterBuff implements ActionIndicator.Actio
     private static String CanUse = "CanUse";
     private static boolean can;
     private static String ChangeA = "ChangeA";
-    public static int changeA;
+    public static int changeA = 3;
     private static String ChangeB = "ChangeB";
-    public static int changeB;
+    public static int changeB = 2;
     private static String ChangeC = "ChangeC";
     public static int changeC = 1;
 

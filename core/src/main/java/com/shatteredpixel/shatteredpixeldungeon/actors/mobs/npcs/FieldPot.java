@@ -31,14 +31,14 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroAction;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.items.stones.StoneOfAggression;
-import com.shatteredpixel.shatteredpixeldungeon.sprites.GhostSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.PotSprite;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Random;
 
 public class FieldPot extends NPC {
 
 	{
-        spriteClass = GhostSprite.class;
+        spriteClass = PotSprite.class;
         alignment = Alignment.ALLY;
         properties.add(Property.INORGANIC);
         properties.add(Property.IMMOVABLE);
@@ -46,9 +46,16 @@ public class FieldPot extends NPC {
         viewDistance = 3;
 	}
 
+    public int targetPos = -1;
+    @Override
+    public float speed() {
+        return 2;
+    }
 	@Override
 	protected boolean act() {
         super.act();
+        if (targetPos==pos)
+            targetPos=-1;
         StoneOfAggression stone = new StoneOfAggression();
         stone.activate(pos);
         if (--HP <= 0){
@@ -60,12 +67,18 @@ public class FieldPot extends NPC {
 
     @Override
     protected boolean getCloser(int target) {
-        return true;
+        if (targetPos!=-1)
+            return super.getCloser(targetPos);
+        else
+            return true;
     }
 
     @Override
     protected boolean getFurther(int target) {
-        return true;
+        if (targetPos!=-1)
+            return super.getCloser(targetPos);
+        else
+            return true;
     }
 
     @Override
@@ -126,7 +139,7 @@ public class FieldPot extends NPC {
     public static FieldPot getPot(){
         for (Char ch : Actor.chars()){
             if (ch instanceof FieldPot){
-                if (ch.isAlive()&&ch.HP>0)
+                if (ch.isAlive()&&ch.HP>1)
                     return (FieldPot) ch;
                 else {
                     ch.die("fall");

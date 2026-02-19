@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.ArmorAbility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Education;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.huntress.NaturesPower;
@@ -106,6 +107,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.UG.Cannon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingKnife;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.ThrowingStone;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
+import com.watabou.noosa.Game;
 import com.watabou.utils.DeviceCompat;
 
 import java.util.Arrays;
@@ -199,6 +201,7 @@ public enum HeroClass {
 
 		new ScrollOfIdentify().identify();
 
+        Hunger.minLevel = 0;
 		switch (this) {
 			case WARRIOR:
 				initWarrior( hero );
@@ -224,8 +227,10 @@ public enum HeroClass {
 				initGSH18( hero );
 				break;
 
-			}
+        }
 
+        if (Game.isDebug)
+            initDebugItem(hero);
 		for (int s = 0; s < QuickSlot.SIZE; s++){
 			if (Dungeon.quickslot.getItem(s) == null){
 				Dungeon.quickslot.setSlot(s, waterskin);
@@ -259,7 +264,10 @@ public enum HeroClass {
 	}
 		return null;
 	}
-
+    private static void initDebugItem(Hero hero){
+        if (hero.heroClass == TYPE561)
+            new debug().collect();
+    }
 	private static void initWarrior( Hero hero ) {
 		(hero.belongings.weapon = new Ump45()).identify();
 		new PotionOfHealing().identify().collect();
@@ -314,6 +322,7 @@ public enum HeroClass {
 	}
 
 	private static void initType561( Hero hero ) {
+        Hunger.minLevel = -150;
 		Gun561 gun561=new Gun561();
 		(hero.belongings.weapon=gun561).identify();
 		hero.belongings.weapon.activate(hero);
@@ -328,7 +337,6 @@ public enum HeroClass {
         new ScrollOfTerror().identify().collect();
 		new SaltyZongzi().collect();
         new SugarZongzi().collect();
-        new debug().collect();
 	}
 	
 	private static void initGSH18( Hero hero ) {

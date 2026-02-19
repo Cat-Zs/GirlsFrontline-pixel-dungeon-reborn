@@ -72,7 +72,7 @@ public class NoelShopRoom extends ShopRoom {
     }
 
     public static boolean openShop(){
-        if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
+        if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)||Challenges.activeChallenges()>=2){
             return Dungeon.hero.buff(Elphelt.Finish.class)!=null|| SeedFinder.SeedFinding;
         }else
             return Imp.Quest.isCompleted()||SeedFinder.SeedFinding;
@@ -83,7 +83,7 @@ public class NoelShopRoom extends ShopRoom {
     }
     protected void placeShopkeeper(Level level, int center) {
         Shopkeeper shopkeeper;
-        if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
+        if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)||Challenges.activeChallenges()>=2){
             shopkeeper = new NoelShopkeeper();
         }else {
             shopkeeper = new ImpShopkeeper();
@@ -94,7 +94,7 @@ public class NoelShopRoom extends ShopRoom {
     protected void placeShopkeeper(Level level) {
         int pointToCell = level.pointToCell(center());
         Shopkeeper shopkeeper;
-        if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)){
+        if (Dungeon.isChallenged(Challenges.STRONGER_BOSSES)||Challenges.activeChallenges()>=2){
             shopkeeper = new NoelShopkeeper();
         }else {
             shopkeeper = new ImpShopkeeper();

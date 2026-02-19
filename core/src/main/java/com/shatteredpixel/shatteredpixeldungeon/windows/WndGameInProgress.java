@@ -108,11 +108,7 @@ public class WndGameInProgress extends Window {
 			@Override
 			protected void onClick() {
 				super.onClick();
-                boolean isTest = false;
-                GamesInProgress.Info gameInfo = GamesInProgress.check(GamesInProgress.curSlot);
-                if (gameInfo!=null) {
-                    isTest = GamesInProgress.isChallenged(gameInfo.challenges,Challenges.TEST_MODE);
-                }
+                boolean isTest = GamesInProgress.isChallenged(info.challenges,Challenges.TEST_MODE);
                 InterlevelScene.isStart=DeviceCompat.isDebug()|| isTest;
 				Dungeon.hero = null;
 				ActionIndicator.action = null;

@@ -18,7 +18,7 @@ public class HPtoFood extends BookSpell{
     public static final HPtoFood INSTANCE = new HPtoFood();
 
     public int icon() {
-        return 53;
+        return 8;
     }
 
     {

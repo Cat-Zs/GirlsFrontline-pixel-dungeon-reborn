@@ -199,8 +199,10 @@ public class WndPlayGame extends Window {
         Dungeon.gold += 2* NoelShopkeeper.PlayNeed;
     }
     private void lose(){
-        if (Random.Int(5)==0) {
-            new Grass().doPickUp(Dungeon.hero);
+        if (Random.Int(10)==0) {
+            Grass grass = new Grass();
+            if (!grass.doPickUp(Dungeon.hero))
+                Dungeon.level.drop(grass, Dungeon.hero.pos);
         }
     }
     private void tie(){

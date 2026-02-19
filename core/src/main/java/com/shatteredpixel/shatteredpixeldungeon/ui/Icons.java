@@ -70,6 +70,8 @@ public enum Icons {
 	//misc icons, mainly used for buttons, spacing for 16x16 until the smaller icons at the end
 	UNCHECKED,
 	CHECKED,
+    UNLOCK,
+    LOCK,
 	CLOSE,
 	PLUS,
 	ARROW,
@@ -250,12 +252,18 @@ public enum Icons {
 				icon.frame( icon.texture.uvRectBySize( 208, 32, 14, 8 ) );
 				break;
 
-			case UNCHECKED:
-				icon.frame( icon.texture.uvRectBySize( 0, 48, 12, 12 ) );
-				break;
-			case CHECKED:
-				icon.frame( icon.texture.uvRectBySize( 16, 48, 12, 12 ) );
-				break;
+            case UNCHECKED:
+                icon.frame( icon.texture.uvRectBySize( 0, 48, 12, 12 ) );
+                break;
+            case CHECKED:
+                icon.frame( icon.texture.uvRectBySize( 16, 48, 12, 12 ) );
+                break;
+            case UNLOCK:
+                icon.frame( icon.texture.uvRectBySize( 192, 64, 11, 10 ) );
+                break;
+            case LOCK:
+                icon.frame( icon.texture.uvRectBySize( 176, 64, 11, 10 ) );
+                break;
 			case CLOSE:
 				icon.frame( icon.texture.uvRectBySize( 32, 48, 11, 11 ) );
 				break;

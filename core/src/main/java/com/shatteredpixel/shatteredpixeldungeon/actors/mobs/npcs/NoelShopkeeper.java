@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.minigames.PlayGame;
@@ -68,7 +69,10 @@ public class NoelShopkeeper extends ImpShopkeeper {
                         } else if (index == 1) {
                             Dungeon.gold-= NoelShopkeeper.RollNeed *(Dungeon.RollTimes +1);
                             Dungeon.RollTimes++;
-                            Item item = Generator.randomUsingDefaults();
+                            Item item;
+                            do {
+                                item = Generator.randomUsingDefaults();
+                            }while (item instanceof Gold);
                             int place;
                             Char target;
                             do{

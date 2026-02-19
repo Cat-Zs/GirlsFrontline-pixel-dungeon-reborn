@@ -28,6 +28,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.NPC;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
@@ -36,7 +37,9 @@ import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
+import com.watabou.utils.PathFinder;
 import com.watabou.utils.Point;
+import com.watabou.utils.Random;
 
 public class TestBomb extends Bomb {
 	
@@ -61,9 +64,11 @@ public class TestBomb extends Bomb {
         for (int i = 0; i < length; i++) {
             if (outMap(i))
                 continue;
-            if (Dungeon.level.map[i] == Terrain.ENTRANCE||Dungeon.level.map[i] == Terrain.EXIT||Dungeon.level.map[i] == Terrain.LOCKED_EXIT||Dungeon.level.map[i] == Terrain.UNLOCKED_EXIT) {
+            if (Dungeon.level.map[i] == Terrain.ENTRANCE||Dungeon.level.map[i] == Terrain.EXIT||Dungeon.level.map[i] == Terrain.UNLOCKED_EXIT) {
 
-            }else {
+            }else if(Dungeon.level.map[i] == Terrain.LOCKED_EXIT)
+                set(i, Terrain.UNLOCKED_EXIT);
+            else {
                 set(i, Terrain.GRASS);
             }
             Heap heap = Dungeon.level.heaps.get(i);
@@ -77,8 +82,16 @@ public class TestBomb extends Bomb {
             Char target = Actor.findChar(j);
             if (outMap(j))
                 continue;
-            if (target != null && target.alignment != Char.Alignment.ALLY) {
-                target.MustDie( this );
+            if (target != null&&target!= Dungeon.hero) {
+                if (target instanceof NPC) {
+                    int pos;
+                    do {
+                        pos = Dungeon.hero.pos + PathFinder.NEIGHBOURS25[Random.Int(25)];
+                    }while (outMap(pos));
+                    target.pos = pos;
+                }
+                else
+                    target.MustDie( this );
             }
         }
 

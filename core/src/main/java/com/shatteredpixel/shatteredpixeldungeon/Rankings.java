@@ -72,10 +72,6 @@ public enum Rankings {
 		if(Dungeon.isChallenged(Challenges.TEST_MODE)){
 			return;
 		}
-        if (Dungeon.hero.heroClass == HeroClass.TYPE561){
-            //当前版本561暂不进入排行榜
-            return;
-        }
 
 		load();
 		

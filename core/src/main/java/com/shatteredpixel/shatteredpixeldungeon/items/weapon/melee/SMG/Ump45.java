@@ -21,20 +21,12 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG;
 
-import static com.shatteredpixel.shatteredpixeldungeon.Dungeon.hero;
-
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SmokeScreen;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.AllyBuff;
-import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
-import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
@@ -42,18 +34,15 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.audio.Sample;
-import com.watabou.utils.Bundle;
 import com.watabou.utils.PathFinder;
 
 import java.util.ArrayList;
 
 public class Ump45 extends SubMachineGun {
 
-    private static final String AC_SMOKE = "SMOKE";
-    private static final int SMOKE_COST = 1; // 消耗X回合
-    private static final int BASE_COOLDOWN_TURNS = 300; // 基础冷却时间X回合
-    private int cooldownLeft = 0; // 当前剩余冷却时间
-    private static final String COOLDOWN_LEFT = "cooldownLeft";
+    {
+        BASE_COOLDOWN_TURNS = 300;
+    }
     {
         image = ItemSpriteSheet.UMP45;
 
@@ -63,7 +52,7 @@ public class Ump45 extends SubMachineGun {
         DEF = 1;
         DEFUPGRADE = 1;
 
-        defaultAction = AC_SMOKE;
+        defaultAction = AC_SKILL;
         usesTargeting = true;
     }
 /**/
@@ -73,22 +62,10 @@ public class Ump45 extends SubMachineGun {
                 lvl*(tier+1);   //scaling unchanged
     }
 
-    // 保存冷却状态
-    @Override
-    public void storeInBundle(Bundle bundle) {
-        super.storeInBundle(bundle);
-        bundle.put(COOLDOWN_LEFT, cooldownLeft);
-    }
-
-    @Override
-    public void restoreFromBundle(Bundle bundle) {
-        super.restoreFromBundle(bundle);
-        cooldownLeft = bundle.getInt(COOLDOWN_LEFT);
-    }
     @Override
     public ArrayList<String> actions(Hero hero) {
         ArrayList<String> actions = super.actions(hero);
-        actions.add(AC_SMOKE);
+        actions.add(AC_SKILL);
         return actions;
     }
 
@@ -96,7 +73,7 @@ public class Ump45 extends SubMachineGun {
     public void execute(Hero hero, String action) {
         super.execute(hero, action);
 
-        if (action.equals(AC_SMOKE)) {
+        if (action.equals(AC_SKILL)) {
             //检查是否装备，复制的TimekeepersHourglass
             if (!isEquipped( hero )) {
                 GLog.w(Messages.get(this, "must_hold"));
@@ -110,8 +87,8 @@ public class Ump45 extends SubMachineGun {
                 GLog.w(Messages.get(Weapon.class, "too_heav"));
             }
             //检查是否cd
-            else if (cooldownLeft > 0) {
-                GLog.w(Messages.get(this, "cooldown", cooldownLeft));
+            else if (coolDownLeft > 0) {
+                GLog.w(Messages.get(this, "cooldown", coolDownLeft));
             }
             //没有进入上述if，即满足全部要求之后，进入此处ThrowSmoke动作
             else {
@@ -126,15 +103,7 @@ public class Ump45 extends SubMachineGun {
                 //使用SMOKEB中的cast操作，Potion的cast不会保留掉落物
                 Smoke smoke = new Smoke();
                 smoke.cast(curUser, target);
-                //对冲掉物品的丢弃时间
-                hero.spendAndNext(-TIME_TO_THROW);
-                //往下的是复制灵刀的
-                //固定消耗时间
-                hero.spendAndNext(SMOKE_COST);
-                // 设置冷却时间（固定为基础冷却时间，不受天赋影响）
-                cooldownLeft = BASE_COOLDOWN_TURNS;
-                // 附加冷却Buff以处理冷却时间递减
-                Buff.affect(hero, Ump45.CooldownTracker.class);
+                coolDownLeft = BASE_COOLDOWN_TURNS;
                 // 更新快捷栏显示
                 updateQuickslot();
             }
@@ -185,78 +154,6 @@ public class Ump45 extends SubMachineGun {
             explore(cell);
         }
 
-    }
-    //下面的全都是直接复制灵刀的代码
-    // 添加冷却状态显示方法
-    @Override
-    public String status() {
-        if (cooldownLeft > 0) {
-            return "CD:" + cooldownLeft;
-        } else {
-            return super.status();
-        }
-    }
-
-    // 修改现有Cooldown类为CooldownTracker，负责冷却时间递减
-    public static class CooldownTracker extends AllyBuff {
-        {
-            type = buffType.POSITIVE;
-            revivePersists = true;
-        }
-
-        @Override
-        public boolean act() {
-            if (Dungeon.hero.buff(LostInventory.class)!=null) {
-                spend(1);
-                return true;
-            }
-            if (target instanceof Hero) {
-                Hero hero = (Hero) target;
-                Item weapon = hero.belongings.weapon;
-
-                if (weapon instanceof Ump45) {
-                    Ump45 blade = (Ump45) weapon;
-
-                    if (blade.cooldownLeft > 0) {
-                        blade.cooldownLeft--;
-                        updateQuickslot();
-                    }
-
-                    // 当冷却时间结束时，移除Buff
-                    if (blade.cooldownLeft <= 0) {
-                        detach();
-                    }
-                } else {
-                    // 如果武器不是Ump45或已不再装备，移除Buff
-                    detach();
-                }
-            }
-
-            spend(TICK);
-            return true;
-        }
-    }
-
-    // 确保在收集武器时检查冷却状态
-    @Override
-    public boolean collect(Bag container) {
-        if (super.collect(container)) {
-            if (container.owner instanceof Hero && cooldownLeft > 0) {
-                Buff.affect((Hero)container.owner, Ump45.CooldownTracker.class);
-            }
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    // 确保在装备武器时检查冷却状态
-    @Override
-    public void activate(Char owner) {
-        super.activate(owner);
-        if (owner instanceof Hero && cooldownLeft > 0) {
-            Buff.affect((Hero)owner, Ump45.CooldownTracker.class);
-        }
     }
 
 }

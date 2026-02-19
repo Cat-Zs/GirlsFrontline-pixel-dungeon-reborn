@@ -103,7 +103,7 @@ public class WelcomeScene extends PixelScene {
 			@Override
 			protected void onClick() {
 				super.onClick();
-				if (previousVersion == 0 || SPDSettings.intro()){
+				if (previousVersion < GirlsFrontlinePixelDungeon.versionCode || SPDSettings.intro()){
 					SPDSettings.version(GirlsFrontlinePixelDungeon.versionCode);
 				} else {
 					updateVersion(previousVersion);
@@ -123,7 +123,7 @@ public class WelcomeScene extends PixelScene {
 			message = Messages.get(this, "coutinue_msg");
 		}else if (previousVersion == 0 || SPDSettings.intro()) {
 			message = Messages.get(this, "welcome_msg");
-		} else if (previousVersion <= GirlsFrontlinePixelDungeon.versionCode) {
+		} else if (previousVersion < GirlsFrontlinePixelDungeon.versionCode) {
 			message = Messages.get(this, "update_msg");
 		} else {
 			message = Messages.get(this, "what_msg");

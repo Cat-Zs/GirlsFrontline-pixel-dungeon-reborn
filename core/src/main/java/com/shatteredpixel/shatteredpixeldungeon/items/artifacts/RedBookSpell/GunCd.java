@@ -2,19 +2,18 @@ package com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBookSpell;
 
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.ShootGun;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 
 public class GunCd extends ItemSpell{
 
     public static final GunCd INSTANCE = new GunCd();
 
     public int icon() {
-        return 41;
+        return 7;
     }
 
     {
         chargeUse=1;
-        timeUse=0;
+        timeUse=1;
     }
 
     @Override
@@ -24,7 +23,7 @@ public class GunCd extends ItemSpell{
 
     @Override
     protected void onItemAct( Item item ){
-        ((ShootGun) item).cooldownLeft-=Math.min(15, ((ShootGun) item).cooldownLeft/2);
+        ((ShootGun) item).cooldownLeft-=Math.min(20, ((ShootGun) item).cooldownLeft/2);
     }
 
 }

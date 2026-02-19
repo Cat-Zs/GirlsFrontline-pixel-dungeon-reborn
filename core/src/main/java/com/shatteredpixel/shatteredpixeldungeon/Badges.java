@@ -797,7 +797,14 @@ public class Badges {
 	public static void validateRatmogrify(){
 		addGlobal(Badge.FOUND_RATMOGRIFY);
 	}
-	
+	public static void unlockForPlay(){
+        displayBadge( Badge.KILL_CALC);
+        displayBadge( Badge.UNLOCK_MAGE);
+        displayBadge( Badge.UNLOCK_ROGUE);
+        displayBadge( Badge.UNLOCK_HUNTRESS);
+        displayBadge( Badge.UNLOCK_TYPE561);
+        displayBadge( Badge.UNLOCK_GSH18);
+    }
 	public static void validateMageUnlock(){
 		if (Statistics.upgradesUsed >= 1 && !isUnlocked(Badge.UNLOCK_MAGE)){
 			displayBadge( Badge.UNLOCK_MAGE );
@@ -940,7 +947,7 @@ public class Badges {
 		displayBadge( badge );
 	}
 	
-	private static void displayBadge( Badge badge ) {
+	private static void displayBadge(Badge badge) {
 		
 		if (badge == null || Dungeon.isChallenged(TEST_MODE) || SeedFinder.SeedFinding) {
 			return;

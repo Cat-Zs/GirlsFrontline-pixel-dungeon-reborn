@@ -189,7 +189,6 @@ public class Dungeon {
         ArmorLock = false;
         ArtifactLock = false;
         WandLock = false;
-        Hunger.minlevel = 0;
     }
 
     public static ArrayList<Class> HolidayFood = new ArrayList<>(Arrays.asList(Pasty.class, XMasSugar.class)) ;
@@ -241,76 +240,14 @@ public class Dungeon {
 
 	public static int version;
     public static int levelId;
-
+    public static int CreateId;
 	public static long seed;
     public static String customSeedText = "";
 	public static void init(String seedCode){
 		init(seedCode,SPDSettings.challenges());
 	}
 
-    public static void CustomInit(long seedNum,int paramChallenges) {
-        if(Game.lockXMAS){
-            lockXMAS = true;
-        }
-        itemAOfSave = new ArrayList<>();
-        NOTEAOfSave = new ArrayList<>();
-        Item.itemA = new ArrayList<>();
-        Item.NOTEA = new ArrayList<>();
-        version = Game.versionCode;
-        challenges = paramChallenges;
-        mobsToChampion = -1;
-
-        seed = seedNum;
-
-        Actor.clear();
-        Actor.resetNextID();
-
-        Random.pushGenerator( seed );
-
-        Scroll.initLabels();
-        Potion.initColors();
-        Ring.initGems();
-        resetTest();
-
-        SpecialRoom.initForRun();
-        SecretRoom.initForRun();
-        Generator.fullReset();
-
-        Random.resetGenerators();
-
-        // 添加农历节日检测
-        Gregorian.LunarCheckDate();
-
-        Statistics.reset();
-        Notes.reset();
-
-        quickslot.reset();
-        QuickSlotButton.reset();
-
-        depth = 0;
-        gold = 0;
-        energy = 0;
-        //ExtractSummoned = false;初始化计数为未生成
-
-        droppedItems = new SparseArray<>();
-        portedItems = new SparseArray<>();
-
-        LimitedDrops.reset();
-
-        chapters = new HashSet<>();
-
-        Ghost.Quest.reset();
-        Wandmaker.Quest.reset();
-        Blacksmith.Quest.reset();
-        Imp.Quest.reset();
-
-        hero = new Hero();
-        hero.live();
-        Badges.reset();
-
-        GamesInProgress.selectedClass.initHero( hero );
-    }
-	public static void init(String seedCode,int paramChallenges) {
+    public static void init(String seedCode,int paramChallenges) {
         if(Game.lockXMAS){
             Game.lockXMAS = false;
             lockXMAS = true;
@@ -356,6 +293,7 @@ public class Dungeon {
 		QuickSlotButton.reset();
 		
 		depth = 0;
+        CreateId = 0;
 		gold = 0;
 		energy = 0;
         //ExtractSummoned = false;初始化计数为未生成
@@ -377,10 +315,7 @@ public class Dungeon {
 		Badges.reset();
 		
 		GamesInProgress.selectedClass.initHero( hero );
-        if(hero.heroClass==HeroClass.TYPE561) {
-            Hunger.minlevel = -150;
-        }
-        Buff.affect(hero, Hunger.class).satisfy(Hunger.minlevel);
+        Buff.affect(hero, Hunger.class).satisfy(-Hunger.minLevel);
 	}
 
 	public static boolean isChallenged( int mask ) {
@@ -391,7 +326,8 @@ public class Dungeon {
 		Dungeon.level = null;
 		Actor.clear();
 
-        depth=levelDepth;
+        depth       = levelDepth;
+        CreateId    = id;
 		if (depth > Statistics.deepestFloor) {
 			Statistics.deepestFloor = levelDepth;
 			
@@ -527,14 +463,17 @@ public class Dungeon {
 		return depth;
 	}
 
-	public static long seedCurDepth(){
-		return seedForDepth(curDepth());
+	public static long seedToCreate(){
+		return seedForLevel(CreateId);
 	}
 
-	public static long seedForDepth(int levelId){
+    public static long seedCurLevel(){
+        return seedForLevel(levelId);
+    }
+	public static long seedForLevel(int createId){
 		Random.pushGenerator( seed );
         //以存档种子为开始的随机数序列
-			for (int i = 0; i < levelId; i ++) {
+        for (int i = 0; i < createId; i ++) {
 				Random.Long(); //we don't care about these values, just need to go through them
 			}
 			long result = Random.Long();
@@ -693,19 +632,11 @@ public class Dungeon {
 			bundle.put( HERO, hero );
 			bundle.put( DEPTH, depth );
             bundle.put( ROLLTIMES, RollTimes);
-            int countA = 0;
-            Class ItemToSave[]= new Class[itemAOfSave.size()];
-            for(Class i :itemAOfSave){
-                ItemToSave[countA++] = i;
-            }
+
+            Class[] ItemToSave = itemAOfSave.toArray(new Class[0]);
             bundle.put(NOTESAVEA,ItemToSave);
             //物品类型
-
-            int countB = 0;
-            String NoteToSave[]= new String[NOTEAOfSave.size()];
-            for(String j :NOTEAOfSave){
-                NoteToSave[countB++] = j;
-            }
+            String[] NoteToSave =NOTEAOfSave.toArray(new String[0]);
             bundle.put(NOTESAVEB,NoteToSave);
             //对应物品类型的标签
             bundle.put( LOCKXMAS, lockXMAS );
@@ -805,16 +736,7 @@ public class Dungeon {
         customSeedText = bundle.contains( SEED_CODE ) ? bundle.getString( SEED_CODE ) : "";
         itemAOfSave = new ArrayList<>();
         if (bundle.contains(NOTESAVEA)) {
-            Class[] ItemToSave = bundle.getClassArray(NOTESAVEA);
-            if (ItemToSave != null) {
-                for (int j = 0; j < ItemToSave.length; j++) {
-                    try {
-                        itemAOfSave.add(ItemToSave[j]);
-                    } catch (Exception e) {
-                        GirlsFrontlinePixelDungeon.reportException(e);
-                    }
-                }
-            }
+            itemAOfSave = new ArrayList<>(Arrays.asList(bundle.getClassArray(NOTESAVEA)));
             Item.itemA = itemAOfSave;
         }else {
             Item.itemA = new ArrayList<>();
@@ -822,16 +744,7 @@ public class Dungeon {
 
         NOTEAOfSave = new ArrayList<>();
         if (bundle.contains(NOTESAVEB)) {
-            String[] NoteToSave = bundle.getStringArray(NOTESAVEB);
-            if (NoteToSave != null) {
-                for (int i = 0; i < NoteToSave.length; i++) {
-                    try {
-                        NOTEAOfSave.add(NoteToSave[i]);
-                    } catch (Exception e) {
-                        GirlsFrontlinePixelDungeon.reportException(e);
-                    }
-                }
-            }
+            NOTEAOfSave = new ArrayList<>(Arrays.asList(bundle.getStringArray(NOTESAVEB)));
             Item.NOTEA = NOTEAOfSave;
         }else {
             Item.NOTEA = new ArrayList<>();
@@ -900,9 +813,6 @@ public class Dungeon {
 
 		hero = null;
 		hero = (Hero)bundle.get( HERO );
-        if(hero.heroClass== HeroClass.TYPE561){
-            Hunger.minlevel = -100;
-        }
 		depth = bundle.getInt( DEPTH );
 
 		gold = bundle.getInt( GOLD );

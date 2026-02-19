@@ -27,12 +27,12 @@ import static com.watabou.utils.Reflection.newInstance;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
-import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Actor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Blindness;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Degrade;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LostInventory;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
@@ -43,11 +43,8 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.brews.Brew;
 import com.shatteredpixel.shatteredpixeldungeon.items.potions.elixirs.Elixir;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTransmutation;
-import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.exotic.ExoticScroll;
-import com.shatteredpixel.shatteredpixeldungeon.items.spells.Alchemize;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.missiles.MissileWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Catalog;
-import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.mechanics.Ballistica;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
@@ -55,8 +52,6 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
-import com.shatteredpixel.shatteredpixeldungeon.ui.WndTextInput;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndStartGame;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
@@ -66,7 +61,6 @@ import com.watabou.utils.Callback;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 
 public class Item implements Bundlable {
     public static ArrayList<Class> itemA = new ArrayList<>();
@@ -79,7 +73,9 @@ public class Item implements Bundlable {
 	protected static final float TIME_TO_PICK_UP	= 1.0f;
 	protected static final float TIME_TO_DROP		= 1.0f;
     public int UpgradeUSED = 0;
-	
+    public int BASE_COOLDOWN_TURNS; //技能时间
+    public int coolDownLeft; // 当前剩余冷却时间
+    protected static final String AC_SKILL = "SKILL";
 	public static final String AC_DROP		= "DROP";
 	public static final String AC_THROW		= "THROW";
 	
@@ -220,8 +216,10 @@ public class Item implements Bundlable {
 				doThrow(hero);
 			}
 			
-		}
-	}
+		} else if (action.equals( AC_SKILL )&&coolDownLeft>0)
+            if (Dungeon.hero.buff(CooldownTracker.class)==null)
+                Buff.affect(Dungeon.hero, CooldownTracker.class);
+    }
     public void notedSet(String text) {
         if(this instanceof Scroll||(this instanceof Potion&&!(this instanceof Brew)&&!(this instanceof Elixir)&&!(this instanceof AlchemicalCatalyst))){
             Item changItem = ScrollOfTransmutation.changeItem(this);
@@ -614,6 +612,8 @@ public class Item implements Bundlable {
 	}
 	
 	public String status() {
+        if (coolDownLeft > 0)
+            return "CD:" + coolDownLeft;
 		return quantity != 1 ? Integer.toString( quantity ) : null;
 	}
 
@@ -633,7 +633,7 @@ public class Item implements Bundlable {
     private static final String NOTESAVEB       = "NOTESAVEB";
     private static final String NOTED           = "noted";
     private static final String BUFFLEVELPOINT  = "BUFFLEVELPOINT";
-
+    private static final String COOLDOWN_LEFT = "cooldownLeft";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -650,6 +650,7 @@ public class Item implements Bundlable {
 		bundle.put( KEPT_LOST, keptThoughLostInvent );
 
         bundle.put(NOTED,noted);
+        bundle.put(COOLDOWN_LEFT, coolDownLeft);
 	}
 	
 	@Override
@@ -677,6 +678,7 @@ public class Item implements Bundlable {
 		keptThoughLostInvent = bundle.getBoolean( KEPT_LOST );
 
         noted = bundle.getString(NOTED);
+        coolDownLeft = bundle.getInt(COOLDOWN_LEFT);
 	}
 
 	public int targetingPos( Hero user, int dst ){
@@ -767,4 +769,32 @@ public class Item implements Bundlable {
 			return Messages.get(Item.class, "prompt");
 		}
 	};
+    public static class CooldownTracker extends Buff {
+        {
+            type = buffType.POSITIVE;
+            revivePersists = true;
+        }
+
+        @Override
+        public boolean act() {
+            if (target instanceof Hero) {
+                Hero hero = (Hero) target;
+                Item weapon = hero.belongings.weapon;
+
+                if (weapon!=null){
+                    if (hero.buff(LostInventory.class)!=null&&!weapon.keptThoughLostInvent) {
+                        spend(TICK);
+                        return true;
+                    }
+                    if (weapon.coolDownLeft > 0) {
+                        weapon.coolDownLeft--;
+                        updateQuickslot();
+                    }
+                }
+            }
+
+            spend(TICK);
+            return true;
+        }
+    }
 }

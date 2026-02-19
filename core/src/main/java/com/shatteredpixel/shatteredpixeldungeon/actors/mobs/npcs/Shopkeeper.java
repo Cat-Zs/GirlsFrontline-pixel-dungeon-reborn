@@ -22,6 +22,7 @@
 package com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
@@ -29,8 +30,8 @@ import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
-import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
+import com.shatteredpixel.shatteredpixeldungeon.items.food.Food;
 import com.shatteredpixel.shatteredpixeldungeon.journal.Notes;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -39,19 +40,22 @@ import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndTradeItem;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Callback;
-import com.watabou.utils.PathFinder;
-import com.watabou.utils.Random;
 
 public class Shopkeeper extends NPC {
 
     protected int turnsSinceHarmed;
 
     {
-		spriteClass = ShopkeeperSprite.class;
+		spriteClass = ShopKeeperSprite();
         turnsSinceHarmed = -1;
 		properties.add(Property.IMMOVABLE);
 	}
 
+    private static Class<? extends ShopkeeperSprite> ShopKeeperSprite(){
+        if ((Dungeon.depth-1)/5< Statistics.deepestFloor/5&&Dungeon.depth!=16)
+            return ShopkeeperSprite.MirrorShopkeeper.class;
+        return ShopkeeperSprite.class;
+    }
 
     protected boolean act() {
         if (this.turnsSinceHarmed >= 0) {

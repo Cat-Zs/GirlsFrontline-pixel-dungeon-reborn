@@ -21,6 +21,8 @@
 
 package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
+import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
@@ -28,10 +30,12 @@ import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
+import com.shatteredpixel.shatteredpixeldungeon.ui.pngImage;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.input.PointerEvent;
 import com.watabou.noosa.Camera;
-import com.watabou.noosa.Game;
 import com.watabou.noosa.ColorBlock;
+import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
 import com.watabou.noosa.PointerArea;
@@ -57,10 +61,7 @@ public class AboutScene extends PixelScene {
 		//darkens the arches
 		add(new ColorBlock(w, h, 0x88000000));
 
-		ScrollPane list = new ScrollPane( new Component() );
-		add( list );
-
-		Component content = list.content();
+		Component content = new Component();
 		content.clear();
 
 		//*** Shattered Pixel Dungeon Credits ***
@@ -79,10 +80,10 @@ public class AboutScene extends PixelScene {
         int firstLine = 76;
 		addLine(firstLine, content);
 
-		CreditsBlock alex = new CreditsBlock(false, 0xffbfa6,
+		CreditsBlock alex = new CreditsBlock(true, Blink(),
 				"项目发起人",
-				Icons.BAKA.get(),
-				"西露库",
+                new pngImage("onward.png", 16F, true),
+				"等待响应",
 				null,
 				null);
 		alex.setSize(colWidth/2f, 0);
@@ -98,7 +99,7 @@ public class AboutScene extends PixelScene {
 		charlie.setSize( colWidth/2f, 0);
         charlie.setPos(alex.right(), alex.top());
 		content.add(charlie);
-		addLine(firstLine+28, content);
+		addLine(firstLine+40, content);
 
 		//*** Art Credits ***
 		CreditsBlock arcnor = new CreditsBlock(true, 0xcf3227,
@@ -108,7 +109,7 @@ public class AboutScene extends PixelScene {
 				null,
 				null);
 		arcnor.setSize(colWidth/3f, 0);
-		arcnor.setPos(alex.left(), charlie.bottom()+10);
+		arcnor.setPos(alex.left(), charlie.bottom()+20);
 		content.add(arcnor);
 
 		CreditsBlock purigro = new CreditsBlock(true,0xffd2d2,
@@ -167,7 +168,7 @@ public class AboutScene extends PixelScene {
                 /*是否闪光、闪光颜色，闪光颜色是十六进制六位数，从0x000000到0xFFFFFF*/
 		        "　",
                 /*标题*/
-		        Icons.ONWARD.get(),
+		        new pngImage("to_me.png", 16F, true),
                 /*贴图*/
 		        "ONWARD!", null, null);
         /*名字、null、null*/
@@ -305,6 +306,21 @@ public class AboutScene extends PixelScene {
 
 		content.setSize( fullWidth, freesound.bottom()+10 );
 
+        ScrollPane list = new ScrollPane(content){
+            @Override
+            public void onClick(float x, float y) {
+                if (x>=onw.left()&&x<=onw.right()&&y>=onw.top()&&y<= onw.bottom()) {
+                    Game.unlockClickTime++;
+                    if (Game.unlockClickTime==10)
+                        Game.isDebug = true;
+                    else if (Game.unlockClickTime==100)
+                        Badges.unlockForPlay();
+                    else if (Game.unlockClickTime==1000)
+                        Badges.validateHappyEnd();
+                }
+            }
+        };
+        add( list );
 		list.setRect( 0, 0, w, h );
 		list.scrollTo(0, 0);
 

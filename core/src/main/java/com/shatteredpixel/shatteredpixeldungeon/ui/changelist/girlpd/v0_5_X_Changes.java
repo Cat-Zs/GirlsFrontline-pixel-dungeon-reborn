@@ -2,15 +2,33 @@ package com.shatteredpixel.shatteredpixeldungeon.ui.changelist.girlpd;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
+import com.shatteredpixel.shatteredpixeldungeon.actors.Char;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.EquipLevelUp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Talent;
+import com.shatteredpixel.shatteredpixeldungeon.actors.hero.abilities.Education;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Cyclops;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Elphelt;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GolyatFactory;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Guard;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Succubus;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Warlock;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogFist;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.FieldPot;
 import com.shatteredpixel.shatteredpixeldungeon.effects.BadgeBanner;
 import com.shatteredpixel.shatteredpixeldungeon.items.Amulet;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
+import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
+import com.shatteredpixel.shatteredpixeldungeon.items.spells.Recycle;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SentryRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.ChangesScene;
@@ -37,19 +55,25 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.SpawnerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SpinnerCatSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.SpinnerSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.TyphoonSprite;
+import com.shatteredpixel.shatteredpixeldungeon.sprites.WandmakerSprite;
+import com.shatteredpixel.shatteredpixeldungeon.ui.BuffIcon;
+import com.shatteredpixel.shatteredpixeldungeon.ui.HeroIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentIcon;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.ChangeButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.changelist.ChangeInfo;
 import com.watabou.noosa.Image;
+import com.watabou.noosa.MovieClip;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
-    	add_0_5_7_Changes(changeInfos);
-		add_0_5_6_Changes(changeInfos);
+        add_0_5_7_1_Changes(changeInfos);
+        add_0_5_7_Changes(changeInfos);
+        add_0_5_6_Changes(changeInfos);
     	add_0_5_5_4_Changes(changeInfos);
     	add_0_5_5_3_Changes(changeInfos);
     	add_0_5_5_2_Changes(changeInfos);
@@ -62,6 +86,48 @@ public class v0_5_X_Changes {
 		add_0_5_2_Changes(changeInfos);
 		add_0_5_1_Changes(changeInfos);
 		add_0_5_0_Changes(changeInfos);
+    }
+
+    public static void add_0_5_7_1_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.7v1", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+        changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
+        changes.hardlight( Window.TITLE_COLOR );
+        changeInfos.add(changes);
+
+        changes.addButton( new ChangeButton(new BuffIcon(new EquipLevelUp(), false),1.8F, "临时升级", "现在所有的临时升级都可以保存到排行榜了，那么现在排行榜武器最高等级是多少呢？"));
+        changes.addButton( new ChangeButton(new HeroIcon(new Education()), 0.8F, "高等教育",
+                "_-_ 新增一个通用的四层转职，以放弃护甲技能为代价，将四层天赋点轮流加到前三层。\n\n"+
+                "某人依旧没有考过四级......QAQ"
+        ));
+        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.SEED_SUNGRASS), "查种器",
+                "_-_ 现在把破碎的查种器搬了过来了，这个查种器的逻辑就是依赖物品的文本查询的，我仔细想了想，好像也没有更好的方案来了。\n\n"
+                +"_-_ 建议先仔细阅读查询界面右下角感叹号的注意事项再进行使用，不要再说什么查询了一个多小时都没有查询到啦！！！"
+        ));
+        changes.addButton( new ChangeButton(new TyphoonSprite(),0.3F,
+                new TyphoonSprite().zap, true,
+                "代码整理",
+                "_-_ 我对更改界面的按钮爆改了三轮，从几十行改到一千三，删掉重做，改到八九百，删掉重做，最后就是现在这样的一千两百行的成品了。\n\n" +
+                        "_-_ 最终得到现在这样的作品，能够在更改界面给物品显示变色，给怪物显示精英光环、执行动作。\n\n"+
+                        "_-_ 在此界面滑动到最下方，右侧的提丰就是_见面送十炮_了。\n\n"+
+                        "_-_ 激光类的四个敌人的逻辑依旧是瞄准一个格子之后必定释放而非储存，在释放的那一回合会进行二次校准。\n\n"+
+                        "_-_ 如果有啥好玩的想法也能够向我提议，我会挑选一些我也觉得不错的点子加进来。鉴于我现在不在群里了，可以向2085785947QQ邮箱发送邮件向我发表提议。"
+                )
+        );
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+        changes.hardlight( CharSprite.POSITIVE );
+        changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(new Elphelt(), 0.8F, new ElpheltSprite().run, "加回0.4.9及以前的彩蛋触发方式，并且保留当前的开启_ 深入敌腹 _的触发方式。"));
+        changes.addButton(new ChangeButton(new Recycle(), "_-_ 对磁盘、药水使用转换棱晶不再占用楼层物品生成的概率。\n\n_-_ 现在转换棱晶对磁盘和药水使用获得道具的概率与两种催化剂一致"));
+        changes.addButton(new ChangeButton(new Ump45(), "代码整理", "我将Ump45、C96、灵刀的CD相关代码整理了一下，旧版本的这三个武器有可能CD不动了，这种情况下再用一下技能就又能动了。"));
+        changes.addButton(new ChangeButton(new FieldPot(), 0.8F, "修复了行军锅卡死、不消耗护甲充能等的bug。"));
+        changes.addButton(new ChangeButton(new HeroSprite(HeroClass.TYPE561, 6), 0.8F, "56-1式", "修复了56-1式初始饱食度上限少了300点的bug。"));
+        changes.addButton(new ChangeButton(new WandmakerSprite(), 0.8F, "未知小彩蛋", "为了方便新玩家尽快玩到想玩的内容，我在某些地方留了点后门，快去找一找吧~awa"));
+        changes.addButton(new ChangeButton(new Image(Icons.WARNING.get()), "代码整理", "由于1月底到2月中旬期间的一系列改动与回退，我不经意间把0.5.3前后因修改底层导致在此之前的存档作废这个问题给修好了。(如果还有人保留着0.5.3及以前的存档的话)"));
     }
     public static void add_0_5_7_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.7", true, "");
@@ -107,28 +173,24 @@ public class v0_5_X_Changes {
             );
             pageMessage2.add(
                     "_-_ _测试模式_的道具_测试书_内容得到了丰富，玩家可以_更加自由_的在测试模式下调节一些不易调节的属性数值。\n\n" +
-                            "_-_ 在_手机版_加入独立_退出游戏按钮_，玩家可以不必使用手机的_返回按钮_来非正式的退出游戏了。(此举为避免一些极端情况下游戏没能正常保存而产生问题）\n\n" +
+                            "_-_ 在_手机版_加入独立_退出游戏按钮_，玩家可以不必使用手机的_返回按钮_来非正式的退出游戏了。(防止手机端在主菜单使用手机的返回键无法退出游戏的极端情况）\n\n" +
                             "_-_ 优化了_角色选择界面_，可以使用翻页按钮切换角色栏目，避免界面拥挤。\n\n" +
-                            "_-_ 修复了作为_主脑护卫_的铁血BOSS_攻击特效_错误的BUG\n\n" +
-                            "_-_ 修复了_空降妖精_击败BOSS无法获得升级的BUG"
+                            "_-_ 修复了作为_主脑护卫_的铁血BOSS_攻击特效_错误的BUG\n\n"
             );
             pageMessage2.add(
-                    "_-_ 挑战_精英强敌_不再会令_切割者_初始处于敌对状态。\n\n" +
+                    "_-_ 挑战_精英强敌_不再会令_初始中立_的怪物初始处于敌对状态。\n\n" +
                             "_-_ _二选一水晶补给箱_逻辑优化，在获取了所有的遗物后，补给箱将不会_同时刷新_两个瞄准镜宝箱。\n\n" +
-                            "_-_ 修复了_空降妖精_在不该出现的地方被刷新出的BUG。\n\n" +
-                            "_-_ 改动了UMP45的_受击音效_（鼻梁骨警告）。\n\n" +
-                            "_-_ 修复了出售给商人的物品与_商人重叠_而无法购回的BUG。\n"
+                            "_-_ 改动了UMP45的_受击音效_（鼻梁骨警告）。\n\n"+
+                            "_-_ 修复了部分极端情况下，特效_大量堆叠_造成崩溃的BUG。\n\n"
             );
             pageMessage2.add(
-                    "_-_ 修复了部分情况下商店有空地格但_出售失败_的问题。\n\n" +
-                            "_-_ 修复了因为消耗物品时机改动而导致的，_嬗变磁盘_可以_嬗变自身_的BUG。\n\n" +
+                    "_-_ 修复了因为消耗物品时机改动而导致的，_嬗变磁盘_可以_嬗变自身_的BUG。\n\n" +
                             "_-_ 修复了UMP45的2层天赋_+2 刻印转移_总保留护甲刻印而无法_自选刻印_的BUG。\n\n" +
                             "_-_ 优化了测试模式的_地形编辑器_，现在会自动更新改动_地格的视野_。\n\n" +
                             "_-_ 修复了玩家死亡导致游戏结束后，_不显示GAME OVER标志_的BUG。\n"
             );
             pageMessage2.add(
-                    "_-_ 修复了部分极端情况下，特效_大量堆叠_造成崩溃的BUG。\n\n" +
-                            "_-_ 修复了PC版_移动按键_在部分情况下实际功能错乱的BUG。\n\n" +
+                    "_-_ 修复了PC版_移动按键_在部分情况下实际功能错乱的BUG。\n\n" +
                             "_-_ 在_设置界面_加入了_切换UI风格_的按钮。\n\n" +
                             "_-_ _启用种子_进行的游戏将在_排行榜_有标记以_区分_。\n\n" +
                             "_-_ 在角色属性界面增加了_复制按钮_，以便捷的_复制种子_。\n"
@@ -136,33 +198,38 @@ public class v0_5_X_Changes {
             pageMessage2.add(
                     "_-_ 新增了装备同类瞄准镜，将显示_连携升级_提供的属性。\n\n" +
                             "_-_ 扩充了_排行榜_可显示查看的游戏记录上限，为30条，可翻页进行查阅。\n\n" +
-                            "_-_ 测试模式道具_测试书_，新增一键完成局内NPC任务的功能。\n\n" +
                             "_-_ 测试模式新增道具_清图炸弹_，可以高效肃清楼层的_一切_（包括地形），请谨慎使用。\n\n" +
-                            "_-_ _诅咒的财富瞄准镜_也会掉落额外物品，但概率更低，甚至会掉落负等级的物品。\n"
+                            "_-_ 修复了_物品标签_在部分情况下退出游戏重进后消失的BUG。对各种物品窗口适配标签系统。\n\n" +
+                            "_-_ _诅咒的财富瞄准镜_视为等级-3，但加成不超过0%。负等级的财富也可以掉落额外的物品，但其每拥有的1级负数等级都会使掉落额外物品所需的击杀数+1。\n"
             );
-            pageMessage2.add(
-                    "_-_ _遗留的武器库_新增_秒杀模式_,可以从代码层面秒杀敌人。\n\n" +
-                            "_-_ 修复了_物品标签_在部分情况下退出游戏重进后消失的BUG。\n\n" +
-                            "_-_ 遗物_某人的刺刀_现在不需要完成AR15的任务也可以装备，但依然不能使用，这样可以提前_至少2层_的探索来获取心智碎片。"
-            );
-        }
-        changes.addButton( new ChangeButton(new BlacksmithSprite(),
+        }        changes.addButton( new ChangeButton(new BlacksmithSprite(),
                 0.8F,
                 "游戏优化", pageMessage2));
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.CRYSTAL_KEY,null),
                 "水晶房间",
         "_-_ 对需要三把钥匙才能完全开启的_水晶房间_的六选三变体进行了优化。\n\n"+
-        "_-_ 只有玩家在_鉴定了_经验或嬗变时，对应的最后一个房间才必然刷新其，否则将为随机刷新。"
+                "_-_ 只有玩家在经验药水与嬗变磁盘都_已鉴定_的情况下，两边的最后的房间才会同时刷新，否则将为随机刷新。\n\n"+
+                "_-_ 不过在只鉴定了其中一者的情况下，非保底稀有道具的基座将会被毁坏，即便经验/嬗变从默认池子的1/30的概率杀了出来()。"
         ));
 
-        changes.addButton(new ChangeButton(new Image(Assets.ACYCLOPS, 0 ,0 ,16 ,19),
-                "第六作战区域怪组",
-            "_-_ 调整了_26-29层_部分敌人不合理的掉落物获取限制规则。\n\n"+
-            "_-_ _达克堤利_掉落等级上限提高，击败可掉落_随机磁盘_。\n\n"+
-            "_-_ _九头蛇_可获取经验上限提高。\n\n"+
-            "_-_ _独眼巨人A_掉落等级上限提高，击败可掉落_随机药水_（不包括治疗）。\n\n"+
-            "_-_ 想要快速达到_40级_，玩家依然需要依靠_击杀提丰_获取高额经验。\n"
+        ArrayList<Char> MobChange = new ArrayList<>(Arrays.asList(new Rat(), new GolyatFactory(), new Guard(), new Cyclops(), new Succubus(), new Warlock()));
+        MovieClip.Animation[] GolyatFactoryAction = new MovieClip.Animation[2];
+        GolyatFactoryAction[1]=new GolyatFactorySprite().charging;
+        ArrayList<String> MobChangeBody = new ArrayList<>(Arrays.asList(
+                "_-_ 此版本新增了一些怪物。\n"+
+                        "_-_ 修改了部分掉落治疗药水的的怪物可掉落数量。\n"+
+                        "_-_ 修改了部分怪物不合理的经验等级。\n"+
+                        "_-_ 为部分怪物补充了掉落物。",
+                "_-_ 加入了新敌人_歌利亚工厂_，将在_8-9层_随机刷新，击败后掉落随机药水（概率为治疗）。\n" +
+                        "_-_ 歌利亚工厂没有主动攻击手段，但在遇敌后将制造一个歌利亚或者将已制造的歌利亚传送过来进行作战，然后对其加血或者赋予激素涌动。\n"+
+                        "_-_ 歌利亚工厂被击败后，由其制造的歌利亚将_同步死亡_。\n\n"+
+                        "_-_ 放轻松，歌利亚工厂制造的歌利亚_大小不一_是正常情况。\n",
+                "盾娘的可获取经验等级提高到28级，可掉落治疗药水数量提高到9瓶。",
+                "为独眼巨人A型补充掉落物-随机药水，但不包括治疗。",
+                "为蜘蛛雷的可获取经验等级提高到33，以减少通过五区就超出蜘蛛雷可掉落物品等级的情况，",
+                "4区狙娘可掉落治疗数量从实际的7瓶修复到理应的8瓶。"
         ));
+        changes.addButton(new ChangeButton(MobChange, GolyatFactoryAction, "怪物改动",new Float[]{1F, 0.6F, 0.8F ,0.8F, 0.8F, 0.8F}, MobChangeBody));
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "new"), false, null);
         changes.hardlight( Window.TITLE_COLOR );
@@ -180,7 +247,7 @@ public class v0_5_X_Changes {
         ArrayList<String> pageMessage1 = new ArrayList<>();
         {
             pageMessage1.add(
-                    "_-_ 点击主页面_返回地表_将进入0层基地，返回地表将在第一次带_获救的M4A1_从1层上楼解锁\n\n" +
+                    "_-_ 点击主页面_下一页_，再点击_返回地表_将进入0层基地，返回地表将在第一次带_获救的M4A1_从1层上楼解锁\n\n" +
                             "_-_ 若遇见0层基地_背景未刷新_的问题（通常出现在旧版本创建的0层存档被带到了新版本），需点击右上角菜单_重置楼层_，而后重新进入\n\n" +
                             "_-_ _重置楼层_按钮同样可以用于应对在0层基地中因任何未知原因卡死但未崩溃的情况"
             );
@@ -198,10 +265,11 @@ public class v0_5_X_Changes {
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.IRON_KEY, null),
                 "0层基地指南", pageMessage1));
 
-        Hero hero = new Hero();
-        hero.heroClass = HeroClass.TYPE561;
-        Object[] aaaa = new Object[]{new YogFist.DarkFist(), new Hero(), new Waterskin(),hero,new Amulet(), new Gold(10), new Dewdrop()};
-        changes.addButton(new ChangeButton("标题","内容",aaaa));
+        changes.addButton( new ChangeButton(Icons.get(Icons.CHALLENGE_ON),"排行榜调整","_-_现在排行榜默认保存30个记录。\n\n_-_新增锁定排行榜记录功能，在对应记录的窗口的右上角，点击其可以将此记录锁定，不再会被清理。\n\n_-_被锁定的记录不会占用默认保存数量的30次。"));
+//        Hero hero = new Hero();
+//        hero.heroClass = HeroClass.TYPE561;
+//        Object[] aaaa = new Object[]{new YogFist.DarkFist(), new Hero(), new Waterskin(),hero,new Amulet(), new Gold(10), new Dewdrop()};
+//        changes.addButton(new ChangeButton("标题","内容",aaaa));
         //现在加入了自动分拣，所以可以任意缺项、打乱顺序，只需要明确末端是数组（Object[]或者ArrayList）还是值即可
         //可以接受贴图、生物（包括怪物和玩家）、物品
         //由于自动分拣过程中，需要对空的标题列表和内容列表按照生物/物品的相关文案填充
@@ -224,43 +292,47 @@ public class v0_5_X_Changes {
         //大小、颜色只在正数部分生效，输入非正数的话，就什么改动也没有
         //大小很好理解，字面意思，颜色的话，对于贴图/物品，是令得到的贴图闪光，对于生物，是令得到的贴图发光
         //目前闪光和发光不可共存，我在考虑要不要再引入一个参数Long来控制按照哪一种来使用
-        changes.addButton(new ChangeButton(new GolyatFactorySprite(), 0.6F,
-                new GolyatFactorySprite().charging,
-                "歌利亚工厂",
-        "_-_ 加入了新敌人_歌利亚工厂_，将在_8-9层_随机刷新，击败后掉落随机药水（概率为治疗）。\n" +
-        "_-_ 歌利亚工厂没有主动攻击手段，但在遇敌后将持续_制造歌利亚_。\n"+
-        "_-_ 歌利亚工厂被击败后，所有由其制造的歌利亚将_同步死亡_。\n\n"+
-        "_-_ 放轻松，歌利亚工厂制造的歌利亚_大小不一_是正常情况。\n"
-        ));
-
-        changes.addButton(new ChangeButton(new AgentSprite(),0.6F,
+        changes.addButton(new ChangeButton(new AgentSprite(), 0.6F,
                 new AgentSprite().zap,
                 "代理人",
         "_-_ 加入了敌人_代理人_作为主脑可呼叫护卫的其中之一。\n"+
         "_-_ 代理人替换了_黑暗之拳_，但在未来将获得全新的战斗方式和能力\n\n"+
-        "_-_ 她刚刚是不是_眨眼了_？"
+        "_-_ 她刚刚是不是_开火_？"
         ));
 
         changes.addButton( new ChangeButton(new TyphoonSprite(), 0.3F,
                 new TyphoonSprite().charging,
                 "弹道测算",
             "_-_ 为人形安装了弹道测算装置，当你被高能武器瞄准时会_提示其弹道_。\n"+
-            "_-_ 这意味着，玩家将更不易被_提丰_类敌人在_视野外斩杀_。\n\n"+
+            "_-_ 这意味着，玩家将更不易被_激光_类敌人在_视野外斩杀_。\n\n"+
             "_-_ 若未来加入了更多此类敌人，此能力将同步更新。"
         ));
 
         changes.addButton(new ChangeButton(new ShopkeeperSprite(), 0.8F,
                 "商店",
             "_-_ 在25层加入了_商店_，为玩家提供先前在深入下层时缺少的补给。\n"+
-            "_-_ 该商店同样需要玩家完成_P7的任务_以开启。\n"+ 
-            "_-_ 该商店额外配置了_21点游戏_与_抽奖机_，玩家可以在此消耗掉多余的钻石来获取随机优质资源。\n"+ 
-            "_-_ 该商店会出售_带等级_的强力武器，但价格十分_高昂_！"
+                    "_-_ 该商店同样需要玩家完成_一些任务_以开启。(需要完成什么任务呢？)\n"+
+                    "_-_ 该商店额外配置了_抽奖机_，玩家可以在此消耗掉多余的钻石来获取随机优质资源。\n"+
+                    "_-_ 该商店允许出售_带等级_的强力武器，但价格十分_高昂_！\n" +
+                    "_-_ 修复了部分情况下商店有空地格但_出售失败_的问题。\n" +
+                    "_-_ 修复了出售给商人的物品与_商人重叠_而无法购回的BUG。\n" +
+                    "_-_ 格琳娜进入更深入的楼层开店后，前面楼层的商店将由其幻影负责。"
         )); 
 
-        changes.addButton(new ChangeButton(new ItemSprite(ItemSpriteSheet.ARTIFACT_BEACON, null),
-                -1,0x000000,
-                "空降妖精",
-            "_-_ _空降妖精_新增被感染的效果，当玩家装备被感染的空降妖精时，将概率被_随机传送_！"
+        ArrayList<?> ArtifactChange = new ArrayList<>(Arrays.asList(new ItemSprite(ItemSpriteSheet.ARTIFACT_HOLDER, null), new HornOfPlenty(), new LloydsBeacon(), new DriedRose()));
+        ArrayList<String> ArtifactBody = new ArrayList<>(Arrays.asList(
+                "_-_ 充能逻辑调整：当遗物单回合回复充能数量大于1点的情况下，将会一次性全部生效，而非一回合一点。\n"+
+                        "_-_ 依赖经验升级的遗物，在获取经验的时候将会消耗经验尽可能的升级，而非只升一级然后暂存剩下的经验。\n"+
+                        "_-_ 由于现在加入了查种器，所以顺便将遗物的生成顺序依据种子固定化了。",
+                "_-_ 修复了炊事妖精将不同算法的充能计数混用导致瞬间满充能的bug。",
+                "_-_ 新增被感染的效果，当玩家装备被感染的空降妖精时，在玩家进行攻击或者被攻击的时候，空降妖精可能会将被攻击的单位视为要保护的目标，令其_随机传送_！\n"+
+                        "_-_ 修复了携带未满级空降妖精击杀部分boss时，空降妖精没有升级的bug。\n"+
+                        "_-_ 现在空降妖精仅能从刽子手的掉落物或者嬗变遗物的方式获得。",
+                "_-_ 现在未完成ST-AR15的任务也能装备刺刀并在正常楼层生成心智碎片以进行升级，召唤ST-AR15及为其穿戴装备依旧需要完成任务。"
+        ));
+        changes.addButton(new ChangeButton(ArtifactChange,
+                "遗物改动",
+            ArtifactBody
         )); 
 
         changes = new ChangeInfo(Messages.get(ChangesScene.class, "nerfs"), false, null);
@@ -268,10 +340,11 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
         changes.addButton(new ChangeButton(new CrabSprite(), 1,
+                new CrabSprite().attack, true,
                 0xFF8800,
                 "烈焰精英",
             "_-_ 削弱了_烈焰精英_类敌人的点燃能力，烈焰精英将不能点燃站在水面上的单位。\n"+
-            "_-_ 同时，当_烈焰精英_在_水面上_被击败时，其不再会_点燃周围_。"
+            "_-_ 同时，当_烈焰精英_被击败时，其不再会点燃_周围水格_。"
         ));
 
         changes.addButton(new ChangeButton(new CyclopsSprite(), 1,
@@ -417,7 +490,7 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
        changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.ARMOR_SCALE, null),
-               -1,0xFF4400,
+               0xFF4400,
                "狱火附魔",
 		"_-_ _狱火附魔_强化了其能力，使其回归到过往版本的强度\n" +
 		"_-_ _狱火附魔_除了完全免疫火焰的能力外，处于燃烧状态还将概率获得_护盾_。"
@@ -449,7 +522,7 @@ public class v0_5_X_Changes {
 		));
 
         changes.addButton( new ChangeButton(new TalentIcon(Talent.RUNIC_TRANSFERENCE),
-                0.9F,-1,
+                0.9F,
                 "刻印转移",
 		"_-_ UMP45角色2层天赋_刻印转移_效果改动，现在破碎的外骨骼配件_在角色6级后_就可以携带_普通或稀有护甲刻印_。\n" +
 		"_-_ _刻印转移_+1效果改动，破碎的外骨骼配件可以携带_全稀有度的护甲刻印_。\n"+
@@ -558,7 +631,7 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
         changes.addButton( new ChangeButton(new ItemSprite(ItemSpriteSheet.RETURN_BEACON,null),
-                -1, 0xFFFFFF,
+                 0xFFFFFF,
                 "返回结晶",
         "_-_ _返回结晶_的传送功能不再因为周围存在敌人而被_禁用_。\n"+
         "_-_ 取而代之的代价是传送需要_多消耗一个回合_。\n"
@@ -574,11 +647,7 @@ public class v0_5_X_Changes {
         "_-_ 房间内的随机_武器/外骨骼_奖励改为了_稀有药水/磁盘/符石_奖励"
         ));
 
-        Image ep = new Image(Assets.Sprites.RED_SENTRY, 0 ,0 ,27 ,27);
-        ep.scale.x=0.8f;
-        ep.scale.y=0.8f;
         changes.addButton(new ChangeButton(new SentryRoom.SentrySprite(), 0.8F,
-                new SentryRoom.SentrySprite().charging,
                 "指南针",
         	"_-_ _指南针_现在不会对心智不完整的人形发动攻击了。\n"+
         	"_-_ 这意味着现在如果意外死亡在_哨卫房间_里，玩家不会因为无法取回_遗物_而变为死局了。"
@@ -588,8 +657,9 @@ public class v0_5_X_Changes {
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
 
-        changes.addButton(new ChangeButton(new CrabSprite(),
-                -1,0x0000FF,
+        changes.addButton(new ChangeButton(new CrabSprite(), new CrabSprite().run,
+                true,
+                0x0000FF,
                 "索敌精英",
         	"_-_ 优化了_索敌精英_类敌人的索敌逻辑，索敌精英将不能越过单位直接攻击玩家。\n"+
         	"_-_ 这意味着现在不会在被围困时被_索敌精英_类敌人从远处直接攻击到了。"
@@ -643,7 +713,7 @@ public class v0_5_X_Changes {
 		));
 
 		changes.addButton( new ChangeButton(new SpinnerCatSprite(),0.8F,
-                new SpinnerCatSprite().run,
+                new SpinnerCatSprite().attack, true,
                 "圆头耄蛛",
 			"_-_ 为稀有敌人_耄耋_增加了稀有掉落物，以符合其_稀有_的特性。"
 		));
@@ -664,7 +734,6 @@ public class v0_5_X_Changes {
         	"_-_ 现在分解不需要的魔药能获得更高的炼金能量收益"
         ));
 
-        
     changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
 		changes.hardlight( CharSprite.WARNING );
 		changeInfos.add(changes);
@@ -676,7 +745,8 @@ public class v0_5_X_Changes {
 			"_-_ 我们正在努力的修正其它已知的BUG以保障玩家的良好游戏体验。\n"
         ));  
 
-        changes.addButton(new ChangeButton(new ElpheltSprite(),0.8F,
+        changes.addButton(new ChangeButton(new ElpheltSprite(), 0.8F,
+                new ElpheltSprite().attack, true,
                 "BUG修复",
         	"_-_ 修复了一系列和_艾尔菲尔特_有关的BUG\n\n"+
         	"_-_ 在与艾尔菲尔特的战斗中退出游戏，而后返回游戏将不会再崩溃了（但依然请不要在战斗中多次退出重进）\n"+
@@ -852,6 +922,7 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
         changes.addButton(new ChangeButton(new ElpheltSprite(),0.8F,
+                new ElpheltSprite().run,
                 "BUG修复",
         	"_-_ 将_【少女前线X罪恶装备/苍翼默示录】_相关联动内容作为彩蛋加入游戏，玩家在开启_深入敌腹_挑战后进行闯关即可体验！\n"
         ));
@@ -942,7 +1013,7 @@ public class v0_5_X_Changes {
 			"_-_ 补充、修改了元素风暴的文本\n"+
 			"_-_ 修复了军方小队boss层两个梯子的问题"
 		));
-	};
+	}
 
     public static void add_0_5_2_Changes( ArrayList<ChangeInfo> changeInfos ){
 		ChangeInfo changes = new ChangeInfo("v0.5.2", true, "");
@@ -971,7 +1042,7 @@ public class v0_5_X_Changes {
 				"_-_ 现在鼠王护甲能正常使用了，561也可以使用鼠王护甲了\n"+
 				"_-_ 修复了护卫者无限掉落血瓶的问题，现在上限为5"
 		));
-	};
+	}
 
     public static void add_0_5_1_Changes( ArrayList<ChangeInfo> changeInfos ){
 		ChangeInfo changes = new ChangeInfo("v0.5.1", true, "");
@@ -1053,7 +1124,7 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
 		changes.addButton( new ChangeButton(Icons.get(Icons.GIRLPDS),
-                0.5F,-1,
+                0.5F,
                 "新版少前地牢制作组",
 			"_-_ 2025新版少前地牢是基于破碎1.2.3底层进行开发\n" +
 				"_-_ 这是一个全新的开始，我们会在未来带来更多内容\n" +
@@ -1164,10 +1235,10 @@ public class v0_5_X_Changes {
 		changeInfos.add(changes);
 
 		changes.addButton( new ChangeButton(new TyphoonSprite(),0.3F,
-                new TyphoonSprite().charging,
-                "AI优化",
-			"现在 _提丰/钢狮/九头蛇/木星_ 这四个敌人不会将蓄力激光攒着" +
-				"\n\n瞄准一个区域后必定释放(也就是和破碎原版大眼一致的AI)"));
-
+                new TyphoonSprite().zap, true,
+                "难度调整",
+			"由于现在的少前地牢难度太低了，现决定对 _提丰/钢狮/九头蛇/木星_ 这四个敌人进行调整，以期平衡难度。" +
+				"\n\n现在这四个敌人将会_ 见面送十炮 _。")
+        );
     }
 }

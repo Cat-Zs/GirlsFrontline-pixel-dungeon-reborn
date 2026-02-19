@@ -4,14 +4,13 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.FlavourBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.RedBook;
-import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 
 public class ExtraFood extends BookSpell{
 
     public static final ExtraFood INSTANCE = new ExtraFood();
 
     public int icon() {
-        return 55;
+        return 2;
     }
 
 
