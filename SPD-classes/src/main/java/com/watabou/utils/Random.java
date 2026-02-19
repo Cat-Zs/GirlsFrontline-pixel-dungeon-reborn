@@ -48,9 +48,21 @@ public class Random {
 		generators.push( new java.util.Random() );
 	}
 
-	public static synchronized void pushGenerator( long seed ){
-		generators.push( new java.util.Random( seed ) );
-	}
+    public static synchronized void pushGenerator(long seed) {
+        generators.push(new java.util.Random(scrambleSeed(seed)));
+    }
+
+    private static synchronized long scrambleSeed(long seed) {
+        seed ^= seed >>> 32;
+        seed *= -4710160504952957587L;
+        seed ^= seed >>> 29;
+        seed *= -4710160504952957587L;
+        seed ^= seed >>> 32;
+        seed *= -4710160504952957587L;
+        seed ^= seed >>> 29;
+        return seed;
+    }
+
 
 	public static synchronized void popGenerator(){
 		if (generators.size() == 1){
