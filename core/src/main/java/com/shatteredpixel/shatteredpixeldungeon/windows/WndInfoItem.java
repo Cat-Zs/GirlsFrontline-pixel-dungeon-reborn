@@ -157,7 +157,7 @@ public class WndInfoItem extends Window {
 			info.maxWidth(width);
 		}
 
-		title.setRect( 0, 0, width-20, 0 );
+		title.setRect( 0, 0, width-16, 0 );
 		add( title );
 
 		info.setPos(title.left(), title.bottom() + GAP);

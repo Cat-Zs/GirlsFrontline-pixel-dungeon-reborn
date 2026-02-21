@@ -110,6 +110,8 @@ public class Cypros extends MeleeWeapon {
         wand.identify(false);
         
         this.wand = wand;
+        DEF = 5;
+        DEFUPGRADE = 2;
     }
 
     public void setMode(Mode newMode,boolean doShow) {
