@@ -363,7 +363,7 @@ public class DungeonTileSheet {
 
 		directVisuals.put(Terrain.SECRET_TRAP,      directVisuals.get(Terrain.EMPTY));
 		directVisuals.put(Terrain.TRAP,             directVisuals.get(Terrain.EMPTY));
-        directVisuals.put(Terrain.TRAP_GRASS,       directVisuals.get(Terrain.PEDESTAL));
+        directVisuals.put(Terrain.TRAP_GRASS,       directVisuals.get(Terrain.EMPTY));
 		directVisuals.put(Terrain.INACTIVE_TRAP,    directVisuals.get(Terrain.EMPTY));
 
 		directVisuals.put(Terrain.EMPTY_DECO,       FLOOR_DECO);

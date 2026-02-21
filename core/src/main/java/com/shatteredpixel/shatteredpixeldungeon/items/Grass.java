@@ -130,6 +130,7 @@ public class Grass extends Item {
                         }
                     } else if (Dungeon.level.map[target] == Terrain.TRAP) {
                         set(target, Terrain.TRAP_GRASS);
+                        Dungeon.level.setTrap(Dungeon.level.traps.get(target).halfHide(), target);
                         GameScene.updateMap(target);
                         removeGrass(1);
                     } else {

@@ -57,6 +57,7 @@ public abstract class Trap implements Bundlable {
 	public int pos;
 
 	public boolean visible;
+    public boolean halfVisible;
 	public boolean active = true;
 	public boolean disarmedByActivation = true;
 	
@@ -85,6 +86,11 @@ public abstract class Trap implements Bundlable {
 			return reveal();
 		}
 	}
+    public Trap halfHide(){
+        halfVisible = true;
+        GameScene.updateMap(pos);
+        return this;
+    }
 
 	public void trigger() {
 		if (active) {
@@ -113,13 +119,15 @@ public abstract class Trap implements Bundlable {
 	}
 
 	private static final String POS	= "pos";
-	private static final String VISIBLE	= "visible";
+    private static final String VISIBLE	= "visible";
+    private static final String HALF_VISIBLE = "halfVisible";
 	private static final String ACTIVE = "active";
 
 	@Override
 	public void restoreFromBundle( Bundle bundle ) {
 		pos = bundle.getInt( POS );
 		visible = bundle.getBoolean( VISIBLE );
+        halfVisible = bundle.getBoolean( HALF_VISIBLE );
 		if (bundle.contains(ACTIVE)){
 			active = bundle.getBoolean(ACTIVE);
 		}
@@ -129,6 +137,7 @@ public abstract class Trap implements Bundlable {
 	public void storeInBundle( Bundle bundle ) {
 		bundle.put( POS, pos );
 		bundle.put( VISIBLE, visible );
+        bundle.put( HALF_VISIBLE, halfVisible);
 		bundle.put( ACTIVE, active );
 	}
 }

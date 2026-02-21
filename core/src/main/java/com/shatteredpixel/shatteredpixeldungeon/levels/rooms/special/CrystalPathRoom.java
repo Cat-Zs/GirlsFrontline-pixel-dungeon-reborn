@@ -277,11 +277,9 @@ public class CrystalPathRoom extends SpecialRoom {
         //填充药水链表
         potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));//potion[0]
         potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));//potion[1]
-        potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));//potion[2]
         //填充磁盘链表
         scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[0]
         scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[1]
-        scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[2]
         Potion p = new PotionOfExperience();
         Scroll s = new ScrollOfTransmutation();
         boolean isEXP = false;
@@ -290,10 +288,12 @@ public class CrystalPathRoom extends SpecialRoom {
             scrolls.add(s);
         } else {
             if (Random.Int(2) == 0) {
-                scrolls.set(2, s);
+                scrolls.add(s);
+                potions.add(Generator.randomUsingDefaults(Generator.Category.POTION));//potion[2]
                 isEXP = false;
             } else {
-                potions.set(2, p);
+                potions.add(p);
+                scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[1]
                 isEXP = true;
             }
         }

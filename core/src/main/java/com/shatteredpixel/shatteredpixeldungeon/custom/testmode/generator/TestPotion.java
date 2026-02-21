@@ -5,6 +5,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
 import com.shatteredpixel.shatteredpixeldungeon.items.Ankh;
 import com.shatteredpixel.shatteredpixeldungeon.items.ArcaneResin;
+import com.shatteredpixel.shatteredpixeldungeon.items.Grass;
 import com.shatteredpixel.shatteredpixeldungeon.items.Honeypot;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.KingsCrown;
@@ -477,6 +478,7 @@ public class TestPotion extends TestGenerator {
             case 10: return ArcaneResin.class;
             case 11: return Embers.class;
             case 12: return CorpseDust.class;
+            case 13: return Grass.class;
         }
     }
 
@@ -484,7 +486,7 @@ public class TestPotion extends TestGenerator {
         if(cate == 7) return 10;
         if(cate == 9) return 12;
         if(cate == 10) return 12;
-        if(cate == 11) return 12;
+        if(cate == 11) return 13;
         return 11;
     }
 

@@ -37,6 +37,7 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 	private static TerrainFeaturesTilemap instance;
 
 	private SparseArray<Plant> plants;
+    private static int Column = 24;
 	private SparseArray<Trap> traps;
 
 	public TerrainFeaturesTilemap(SparseArray<Plant> plants, SparseArray<Trap> traps) {
@@ -53,25 +54,26 @@ public class TerrainFeaturesTilemap extends DungeonTilemap {
 	protected int getTileVisual(int pos, int tile, boolean flat){
 		if (traps.get(pos) != null){
 			Trap trap = traps.get(pos);
-			if (!trap.visible)
-				return -1;
+            int i = (trap.active ? trap.color : Trap.BLACK) + (trap.shape * Column);
+            if (trap.halfVisible||trap.visible)
+                return i+(trap.halfVisible?15:0);
 			else
-				return (trap.active ? trap.color : Trap.BLACK) + (trap.shape * 16);
+				return -1;
 		}
 
 		if (plants.get(pos) != null){
-			return plants.get(pos).image + 7*16;
+			return plants.get(pos).image + 7*Column;
 		}
 
 		int stage = (Dungeon.depth-1)/5;
 		if (tile == Terrain.HIGH_GRASS){
-			return 9 + 16*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			return 9 + Column*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 		} else if (tile == Terrain.FURROWED_GRASS){
-			return 11 + 16*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			return 11 + Column*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 		} else if (tile == Terrain.GRASS) {
-			return 13 + 16*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			return 13 + Column*stage + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 		} else if (tile == Terrain.EMBERS) {
-			return 9 * (16*5) + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
+			return 9 * (Column*5) + (DungeonTileSheet.tileVariance[pos] >= 50 ? 1 : 0);
 		}
 
 		return -1;

@@ -33,6 +33,7 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.TalismanOfForesight;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.Scroll;
 import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfMagicMapping;
+import com.shatteredpixel.shatteredpixeldungeon.items.scrolls.ScrollOfTeleportation;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -86,9 +87,9 @@ public class TestBomb extends Bomb {
                 if (target instanceof NPC) {
                     int pos;
                     do {
-                        pos = Dungeon.hero.pos + PathFinder.NEIGHBOURS25[Random.Int(25)];
+                        pos = Dungeon.hero.pos + PathFinder.NEIGHBOURS9[Random.Int(9)];
                     }while (outMap(pos));
-                    target.pos = pos;
+                    ScrollOfTeleportation.appear(target, pos);
                 }
                 else
                     target.MustDie( this );

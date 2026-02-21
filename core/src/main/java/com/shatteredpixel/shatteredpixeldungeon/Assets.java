@@ -72,7 +72,7 @@ public class Assets {
 	}
 
 	public static class Environment {
-		public static final String TERRAIN_FEATURES = "environment/terrain_features.png";
+		public static final String TERRAIN_FEATURES = "environment/terrain_features_1.png";
 
 		public static final String VISUAL_GRID  = "environment/visual_grid.png";
 		public static final String PLAY_SNAKE   = "environment/play_snake1.png";
