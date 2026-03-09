@@ -66,7 +66,7 @@ public class debugSelectCodeB extends Window {
 
 		float pos = body.bottom() + 3*GAP;
 		for (int i :list) {
-			RedButton SelectTalent = new RedButton(debug.shortDesc(list, i), 7){
+			RedButton SelectTalent = new RedButton(debug.shortDesc(list, i), 9){
 				@Override
 				protected void onClick() {
                     Game.runOnRenderThread(new Callback() {

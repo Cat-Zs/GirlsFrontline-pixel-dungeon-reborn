@@ -76,14 +76,22 @@ public class ScrollPane extends Component {
 
 	@Override
 	protected void layout() {
-
 		content.setPos( 0, 0 );
+        Point p = camera().cameraToScreen( x, y );
+        if (x<0) {
+            width -= x;
+            x=0;
+        }
+        if (y<0){
+            height -= y;
+            content.height -= y;
+            y=0;
+        }
 		controller.x = x;
 		controller.y = y;
 		controller.width = width;
 		controller.height = height;
 
-		Point p = camera().cameraToScreen( x, y );
 		Camera cs = content.camera;
 		cs.x = p.x;
 		cs.y = p.y;

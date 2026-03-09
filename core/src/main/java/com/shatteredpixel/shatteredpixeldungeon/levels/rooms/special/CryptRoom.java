@@ -68,7 +68,7 @@ public class CryptRoom extends SpecialRoom {
 			cy = top + 2;
 		}
 		
-		level.drop( prize( level ), cx + cy * level.width() ).type = Heap.Type.TOMB;
+		level.drop( prize( level ), cx + cy * level.width() ).setType(Heap.Type.TOMB).setRoom(Heap.Room.Crypt);
 	}
 	
 	private static Item prize( Level level ) {

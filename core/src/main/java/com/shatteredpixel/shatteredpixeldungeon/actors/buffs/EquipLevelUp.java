@@ -46,8 +46,11 @@ public class EquipLevelUp extends FlavourBuff {
 
     @Override
     public String desc() {
-        return Messages.get(this, "desc",Dungeon.hero.hasTalent(Talent.Type56FourTwoTwo)?Dungeon.hero.pointsInTalent(Talent.Type56FourTwoTwo):1,
-                1+Dungeon.hero.pointsInTalent(Talent.Type56FourTwoTwo),dispTurns());
+        return Messages.get(this, "desc",Dungeon.hero.hasTalent(Talent.Type56FourTwoTwo)
+                        ?Dungeon.hero.pointsInTalent(Talent.Type56FourTwoTwo)
+                        :1,
+                1+Dungeon.hero.pointsInTalent(Talent.Type56FourTwoTwo),
+                (int)visualcooldown());
     }
     //buff介绍要留出两个接口以接受各自提升的等级
 }

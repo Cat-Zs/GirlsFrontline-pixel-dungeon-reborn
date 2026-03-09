@@ -24,8 +24,12 @@ package com.shatteredpixel.shatteredpixeldungeon.items;
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalMimic;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.GoldenMimic;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Wraith;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
+import com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder.SeedFinder;
 import com.shatteredpixel.shatteredpixeldungeon.effects.CellEmitter;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Speck;
 import com.shatteredpixel.shatteredpixeldungeon.effects.particles.ElmoParticle;
@@ -59,15 +63,46 @@ public class Heap implements Bundlable {
 	public enum Type {
 		HEAP,
 		FOR_SALE,
-		CHEST,
-		LOCKED_CHEST,
-		CRYSTAL_CHEST,
+        CHEST,
+        LOCKED_CHEST,
+        CRYSTAL_CHEST,
+        MIMIC,
+        GOLDEN_MIMIC,
+        CRYSTAL_MIMIC,
 		TOMB,
 		SKELETON,
-		REMAINS
+		REMAINS,
+        NONE
 	}
 	public Type type = Type.HEAP;
-	
+
+    public enum Room{
+        NONE,
+        Statue,
+        Armored_Statue,
+        Armory,
+        Crypt,
+        Choice,
+        Path,
+        PathNew,
+        Laboratory,
+        Library,
+        Fire,
+        Pit,
+        Pool,
+        Runestone,
+        Sacrifice,
+        Sentry,
+        Storage,
+        Traps,
+        FOUR_GOLDEN,
+        Secret_Laboratory,
+        Secret_Library,
+        Secret_Maze,
+        Secret_Runestone,
+        Secret_Summoning
+    }
+    public Room room = Room.NONE;
 	public int pos = 0;
 	
 	public ItemSprite sprite;
@@ -118,6 +153,15 @@ public class Heap implements Bundlable {
 		}
 		return this;
 	}
+    public Heap setType(Type type){
+        this.type = type;
+        return this;
+    }
+    public Heap setRoom(Room room){
+        if (SeedFinder.SeedFinding)
+            this.room = room;
+        return this;
+    }
 	
 	public int size() {
 		return items.size();
@@ -362,29 +406,72 @@ public class Heap implements Bundlable {
 
 	@Override
 	public String toString(){
+        String title;
 		switch(type){
+            default:
+                title = peek().toString();break;
             case FOR_SALE:
                 Item i = this.peek();
-                if (this.size() == 1) {
-                    return Messages.get(this, "for_sale", Shopkeeper.sellPrice(i), i.name());
-                }
-                return i.name();
+                if (this.size() == 1)
+                    title = Messages.get(this, "for_sale", Shopkeeper.sellPrice(i), i.name());
+                else
+                    title = i.name();break;
 			case CHEST:
-				return Messages.get(this, "chest");
+				title = Messages.get(this, "chest");break;
+            case MIMIC:
+                title = Messages.get( Mimic.class, "name");break;
 			case LOCKED_CHEST:
-				return Messages.get(this, "locked_chest");
+				title = Messages.get(this, "locked_chest");break;
+            case GOLDEN_MIMIC:
+                title = Messages.get( GoldenMimic.class, "name");break;
 			case CRYSTAL_CHEST:
-				return Messages.get(this, "crystal_chest");
+				title = Messages.get(this, "crystal_chest");break;
+            case CRYSTAL_MIMIC:
+                title = Messages.get( CrystalMimic.class, "name");break;
 			case TOMB:
-				return Messages.get(this, "tomb");
+				title = Messages.get(this, "tomb");break;
 			case SKELETON:
-				return Messages.get(this, "skeleton");
+				title = Messages.get(this, "skeleton");break;
 			case REMAINS:
-				return Messages.get(this, "remains");
-			default:
-				return peek().toString();
+				title = Messages.get(this, "remains");break;
 		}
+        title += RoomName(type, room);
+        return title;
 	}
+    public static String RoomName(Type type, Room room){
+        String desc = "";
+
+        if (type!=Type.NONE && room!=Room.NONE) {
+            desc+="/";
+        }
+        switch (room){
+            case NONE: default: break;
+            case Statue: desc += "傀儡西蒙诺夫";break;
+            case Armored_Statue: desc += "战术人形西蒙诺夫";break;
+            case Armory: desc += "军械房";break;
+            case Crypt: desc += "墓碑房";break;
+            case Choice: desc += "水晶选择房";break;
+            case Path: desc += "三水晶房";break;
+            case PathNew: desc += "六选三";break;
+            case Laboratory: desc += "炼金房";break;
+            case Library: desc += "书架房";break;
+            case Fire: desc += "火墙房";break;
+            case Pit: desc += "井房";break;
+            case Pool: desc += "鱼池房";break;
+            case Runestone: desc += "符石房";break;
+            case Sacrifice: desc += "献祭房";break;
+            case Sentry: desc += "井盖房";break;
+            case Storage: desc += "路障房";break;
+            case Traps: desc += "陷阱房";break;
+            case FOUR_GOLDEN: desc += "四金箱";break;
+            case Secret_Laboratory: desc += "隐藏炼金房";break;
+            case Secret_Library: desc += "隐藏书架房";break;
+            case Secret_Maze: desc += "迷宫房";break;
+            case Secret_Runestone: desc += "附魔石房";break;
+            case Secret_Summoning: desc += "经验房";break;
+        }
+        return desc;
+    }
 
 	public String info(){
 		switch(type){

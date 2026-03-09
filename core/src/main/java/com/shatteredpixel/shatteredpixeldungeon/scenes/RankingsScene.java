@@ -409,6 +409,9 @@ public class RankingsScene extends PixelScene {
 		
 		@Override
 		protected void onClick() {
+            //外部加一个按钮，对一个布尔值切换以确认是否正在清除，这里对布尔值判断，正在清除则抄锁存档的代码，对存档打下标记并保存回去，
+            //每次点击存档进行一次无fade的切换以即时显示存档是否被标记（在notice按钮中加入判断，优先级小于锁定大于种子）
+            //在下一次新增存档时，也就是进入了Rankings.submit()处，在获取size()前对存档进行一次遍历，使用非增强for遍历，对标记清除的存档进行remove，存档序号通过indexOf获得
 			if (rec.gameData != null) {
 				parent.add( new WndRanking( rec ) );
 			} else {

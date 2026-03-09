@@ -116,7 +116,7 @@ public class CrystalChoiceRoom extends SpecialRoom {
 					pos = level.pointToCell(room1.random(0));
 				}
 			} while (level.heaps.get(pos) != null);
-			level.drop(reward, pos);
+			level.drop(reward, pos).setRoom(Heap.Room.Choice);
 		}
 
 		Item hidden = Generator.random(Random.oneOf(
@@ -124,7 +124,7 @@ public class CrystalChoiceRoom extends SpecialRoom {
 				Generator.Category.RING,
 				Generator.Category.ARTIFACT
 		));
-		level.drop(hidden, level.pointToCell(room2.center())).type = Heap.Type.CHEST;
+		level.drop(hidden, level.pointToCell(room2.center())).setType(Heap.Type.CHEST).setRoom(Heap.Room.Choice);
 
 		level.addItemToSpawn( new CrystalKey( Dungeon.depth ) );
 

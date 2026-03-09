@@ -36,13 +36,16 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.watabou.utils.PathFinder;
 
 import java.util.ArrayList;
 
 public class Grass extends Item {
-
+    //考虑设置草料的堆叠上限，到达上限将会分组，但这需要整理代码
+    //考虑脱离隐身会增加暴露度，暴露度会增加草料消耗，并且暴露度到达一定程度将会无法以此进入隐身，暴露度随时间衰减
+    //考虑增加割草难度，概率获得草料，失败则获得草渣，将堆叠草块的功能给到草渣，对枯草使用草渣概率变成草块，失败则变成草地
+    //增加功能：考虑让草料可对固体使用，令其加入可燃烧II型词条，在燃烧摧毁处加入判断，可燃烧I型正常破坏（旧有地形），II型概率被破坏，失败则去除可燃烧II型词条
+    //可能需要分离燃烧的摧毁函数与其余破坏的摧毁函数
 	{
 		image = ItemSpriteSheet.SEED_HOLDER;
 		stackable = true;
@@ -51,7 +54,6 @@ public class Grass extends Item {
 	private static final String ActA = "ACTA";
     private static final String ActB = "ACTB";
     private static final String ActC = "ACTC";
-    private static final String AC_CHOOSE  = "choose";
 
 	@Override
 	public ArrayList<String> actions( Hero hero ) {
@@ -71,9 +73,6 @@ public class Grass extends Item {
 
 		super.execute( hero, action );
         switch (action) {
-            case AC_CHOOSE:
-                GameScene.show(new WndUseItem(null, this) );
-                break;
             case ActA:
                 GameScene.selectCell(ActAA);
                 break;

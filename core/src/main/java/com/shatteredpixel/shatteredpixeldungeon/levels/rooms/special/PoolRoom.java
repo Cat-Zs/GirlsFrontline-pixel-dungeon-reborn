@@ -84,7 +84,7 @@ public class PoolRoom extends SpecialRoom {
 		}
 		
 		int pos = x + y * level.width();
-		level.drop( prize( level ), pos ).type = Heap.Type.CHEST;
+		level.drop( prize( level ), pos ).setType(Heap.Type.CHEST).setRoom(Heap.Room.Pool);
 		Painter.set( level, pos, Terrain.PEDESTAL );
 		
 		level.addItemToSpawn( new PotionOfInvisibility() );

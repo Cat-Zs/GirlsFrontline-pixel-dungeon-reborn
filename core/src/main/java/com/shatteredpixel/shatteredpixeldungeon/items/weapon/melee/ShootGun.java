@@ -240,7 +240,7 @@ public class ShootGun extends MeleeWeapon {
             path = PathFinder.NEIGHBOURS25;
             Dungeon.hero.buff(GunBomb.BombDamage.class).detach();
         }
-        if (Dungeon.hero.hasTalent(Talent.GUN_2V2)){
+        if (Dungeon.hero.pointsInTalent(Talent.GUN_2V2)>=2){
             path = PathFinder.NEIGHBOURS25;
         }
         for(int m : path) {

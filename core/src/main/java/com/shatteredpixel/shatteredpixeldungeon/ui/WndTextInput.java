@@ -45,6 +45,10 @@ public class WndTextInput extends Window {
 
     public WndTextInput(final String title, final String body, final String initialValue, final int maxLength,
                         final boolean multiLine, final String posTxt, final String negTxt) {
+        this(title, body, initialValue, maxLength, multiLine, posTxt, negTxt, false);
+    }
+    public WndTextInput(final String title, final String body, final String initialValue, final int maxLength,
+                        final boolean multiLine, final String posTxt, final String negTxt, boolean clear) {
         super();
 
         //need to offset to give space for the soft keyboard
@@ -100,7 +104,8 @@ public class WndTextInput extends Window {
             @Override
             public void onClipBoardUpdate() {
                 super.onClipBoardUpdate();
-                btnPaste.enable(Gdx.app.getClipboard().hasContents());
+                if (!clear)
+                    btnPaste.enable(Gdx.app.getClipboard().hasContents());
             }
         };
         if (initialValue != null) textBox.setText(initialValue);
@@ -159,10 +164,14 @@ public class WndTextInput extends Window {
             @Override
             protected void onClick() {
                 super.onClick();
-                if (Gdx.app.getClipboard().hasContents()) {
-                    textBox.pasteFromClipboard();
-                } else {
-                    enable(false);
+                if (clear)
+                    textBox.textClear();
+                else {
+                    if (Gdx.app.getClipboard().hasContents()) {
+                        textBox.pasteFromClipboard();
+                    } else {
+                        enable(false);
+                    }
                 }
             }
 

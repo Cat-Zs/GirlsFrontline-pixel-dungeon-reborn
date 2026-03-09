@@ -146,7 +146,11 @@ public class RabbitBossLevel extends Level {
 
 	@Override
 	public int randomRespawnCell(Char ch) {
-		return entrance + PathFinder.NEIGHBOURS8[Random.Int(8)]; //random cell adjacent to the entrance.
+        int cell;
+        do {
+            cell = entrance + PathFinder.NEIGHBOURS8[Random.Int(8)];
+        }while (solid[cell]);
+		return cell; //random cell adjacent to the entrance.
 	}
 
 	@Override

@@ -52,6 +52,7 @@ import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.MissileSprite;
 import com.shatteredpixel.shatteredpixeldungeon.ui.QuickSlotButton;
+import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.particles.Emitter;
 import com.watabou.utils.Bundlable;
@@ -78,6 +79,7 @@ public class Item implements Bundlable {
     protected static final String AC_SKILL = "SKILL";
 	public static final String AC_DROP		= "DROP";
 	public static final String AC_THROW		= "THROW";
+    public static final String AC_CHOOSE    = "CHOOSE";
 	
 	public String defaultAction;
 	public boolean usesTargeting;
@@ -87,6 +89,7 @@ public class Item implements Bundlable {
 	public int icon = -1; //used as an identifier for items with randomized images
 	
 	public boolean stackable = false;
+    public boolean canHold = false;
     public boolean selled = false;
     protected int quantity = 1;
 	public boolean dropsDownHeap = false;
@@ -216,9 +219,12 @@ public class Item implements Bundlable {
 				doThrow(hero);
 			}
 			
-		} else if (action.equals( AC_SKILL )&&coolDownLeft>0)
-            if (Dungeon.hero.buff(CooldownTracker.class)==null)
+		} else if (action.equals( AC_SKILL )&&coolDownLeft>0) {
+            if (Dungeon.hero.buff(CooldownTracker.class) == null)
                 Buff.affect(Dungeon.hero, CooldownTracker.class);
+        } else if (action.equals( AC_CHOOSE )){
+            GameScene.show(new WndUseItem(null, this) );
+        }
     }
     public void notedSet(String text) {
         if(this instanceof Scroll||(this instanceof Potion&&!(this instanceof Brew)&&!(this instanceof Elixir)&&!(this instanceof AlchemicalCatalyst))){
@@ -629,9 +635,8 @@ public class Item implements Bundlable {
 	private static final String QUICKSLOT		= "quickslotpos";
 	private static final String KEPT_LOST       = "kept_lost";
     private static final String UPGRADEUSED     = "UpgradeUSED";
-    private static final String NOTESAVEA       = "NOTESAVEA";
-    private static final String NOTESAVEB       = "NOTESAVEB";
     private static final String NOTED           = "noted";
+    private static final String CAN_HOLD        = "canHold";
     private static final String BUFFLEVELPOINT  = "BUFFLEVELPOINT";
     private static final String COOLDOWN_LEFT = "cooldownLeft";
 	
@@ -651,6 +656,7 @@ public class Item implements Bundlable {
 
         bundle.put(NOTED,noted);
         bundle.put(COOLDOWN_LEFT, coolDownLeft);
+        bundle.put(CAN_HOLD, canHold);
 	}
 	
 	@Override
@@ -679,6 +685,7 @@ public class Item implements Bundlable {
 
         noted = bundle.getString(NOTED);
         coolDownLeft = bundle.getInt(COOLDOWN_LEFT);
+        canHold = bundle.getBoolean(CAN_HOLD);
 	}
 
 	public int targetingPos( Hero user, int dst ){

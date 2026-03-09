@@ -107,6 +107,7 @@ public class Nemeum extends Mob {
                 if (p == b.collisionPos)
                     break;
             }
+            Dungeon.hero.interrupt();
             spend( attackDelay()*4f );
             beamCharged = true;
             return true;

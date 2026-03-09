@@ -320,6 +320,9 @@ public class QuickSlotButton extends Button {
 				instance[i].enable(instance[i].active);
 			}
 		}
+        if (Toolbar.SWAP_INSTANCE != null){
+            Toolbar.SWAP_INSTANCE.updateVisuals();
+        }
 	}
 	
 	public static void target( Char target ) {

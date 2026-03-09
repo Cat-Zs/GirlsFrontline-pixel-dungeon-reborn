@@ -14,6 +14,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Corruption;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.CounterBuff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Doom;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Frost;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Invisibility;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.LockedFloor;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.MagicalSleep;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Paralysis;
@@ -209,12 +210,12 @@ public class Elphelt extends Mob {
                         //在这种情况下依旧贴脸了，那么根据choco修大兔子贴脸踢人进墙的代码，大兔子会优先移动以远离玩家
                         //由以上三点得出，仍进入了这里的就是在无敌点
                         traceMagnum = new Ballistica(pos, enemy.pos, Ballistica.BigRabbitOnly);
-                        boolean see = fieldOfView[enemy.pos];
+                        boolean see = fieldOfView[enemy.pos]&&!Invisibility.isInvisibility(enemy);
                         return ( see && (Dungeon.level.distance(pos, enemy.pos) <= RANGE_MAGNUM) );
                     }
 				} else {
                     traceMagnum = new Ballistica(pos, enemy.pos, Ballistica.BigRabbitOnly);
-                    boolean see = fieldOfView[enemy.pos];
+                    boolean see = fieldOfView[enemy.pos]&&!Invisibility.isInvisibility(enemy);
                     return ( timerRush < 2 && see && (Dungeon.level.distance(pos, enemy.pos) <= RANGE_MAGNUM) );
                 }
 		}

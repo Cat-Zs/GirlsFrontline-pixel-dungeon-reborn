@@ -65,7 +65,7 @@ public class debugSelectTalent extends Window {
 		float pos = body.bottom() + 3*GAP;
 		for (ArrayList<Talent> listb :list) {
 
-			RedButton SelectTalent = new RedButton(debug.shortDesc(listb), 7){
+			RedButton SelectTalent = new RedButton(debug.shortDesc(listb), 9){
 				@Override
 				protected void onClick() {
                     GameScene.show(new debugTalent(listb));

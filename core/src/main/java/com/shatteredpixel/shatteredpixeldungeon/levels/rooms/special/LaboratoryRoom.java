@@ -26,6 +26,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Alchemy;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.journal.AlchemyPage;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
@@ -79,7 +80,7 @@ public class LaboratoryRoom extends SpecialRoom {
 			} while (
 				level.map[pos] != Terrain.EMPTY_SP ||
 				level.heaps.get( pos ) != null);
-			level.drop( prize( level ), pos );
+			level.drop( prize( level ), pos ).setRoom(Heap.Room.Laboratory);
 		}
 		
 		//guide pages
@@ -112,7 +113,7 @@ public class LaboratoryRoom extends SpecialRoom {
 				} while (
 						level.map[pos] != Terrain.EMPTY_SP ||
 								level.heaps.get(pos) != null);
-				level.drop(p, pos);
+				level.drop(p, pos).setRoom(Heap.Room.Laboratory);
 			}
 		}
 

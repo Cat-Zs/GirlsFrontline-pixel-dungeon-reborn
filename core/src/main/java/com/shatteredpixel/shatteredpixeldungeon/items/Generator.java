@@ -699,6 +699,9 @@ public class Generator {
         if(item.getClass()== LloydsBeacon.class&&!trans){
             //并非嬗变的情况下随机到了空降，重新随机一次并归还空降的权重
             item = randomArtifact(false);
+            if (item == null)
+                return (Artifact) new LloydsBeacon().random();
+                //常规生成时，所有其他遗物都被生成过了，那就允许空降生成吧，以免恶心到喜欢收集的玩家
             for (int j = 0; j < Category.ARTIFACT.classes.length; j++){
                 if (Category.ARTIFACT.classes[j] == LloydsBeacon.class){
                     Category.ARTIFACT.probs[j] = 1;

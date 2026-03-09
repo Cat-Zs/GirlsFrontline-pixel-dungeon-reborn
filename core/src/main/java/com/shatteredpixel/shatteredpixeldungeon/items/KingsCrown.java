@@ -111,6 +111,7 @@ public class KingsCrown extends Item {
             }else {
                 classArmor = ClassArmor.upgrade(hero, armor);
             }
+            classArmor.identify();
 			if (hero.belongings.armor == armor) {
 
 				hero.belongings.armor = classArmor;

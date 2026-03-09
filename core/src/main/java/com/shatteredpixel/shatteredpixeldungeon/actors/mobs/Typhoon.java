@@ -113,6 +113,7 @@ public class Typhoon extends Hydra {
         }else if (!beamCharged){
             ((TyphoonSprite)sprite).charge( enemy.pos );
             TNTFindHero( enemy.pos );
+            Dungeon.hero.interrupt();
             beamTime = attackDelay()*14f;
             spend( attackDelay() );
             beamCharged = true;

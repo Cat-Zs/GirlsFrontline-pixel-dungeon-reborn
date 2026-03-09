@@ -126,6 +126,7 @@ public class Jupiter extends Mob {
                 if (p == b.collisionPos)
                     break;
             }
+            Dungeon.hero.interrupt();
             spend( attackDelay()*6f );
             beamCharged = true;
             return true;

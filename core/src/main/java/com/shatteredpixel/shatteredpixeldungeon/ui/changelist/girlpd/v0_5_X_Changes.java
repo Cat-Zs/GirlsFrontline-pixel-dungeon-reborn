@@ -16,6 +16,7 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Rat;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Snake;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Succubus;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Swarm;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Warlock;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.YogFist;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.FieldPot;
@@ -27,7 +28,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.Waterskin;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.DriedRose;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.HornOfPlenty;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.LloydsBeacon;
+import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.spells.Recycle;
+import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.Cypros;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.SMG.Ump45;
 import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SentryRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
@@ -71,6 +74,7 @@ import java.util.Arrays;
 
 public class v0_5_X_Changes {
     public static void addAllChanges(ArrayList<ChangeInfo> changeInfos) {
+        add_0_5_7_2_Changes(changeInfos);
         add_0_5_7_1_Changes(changeInfos);
         add_0_5_7_Changes(changeInfos);
         add_0_5_6_Changes(changeInfos);
@@ -88,6 +92,19 @@ public class v0_5_X_Changes {
 		add_0_5_0_Changes(changeInfos);
     }
 
+    public static void add_0_5_7_2_Changes( ArrayList<ChangeInfo> changeInfos ){
+        ChangeInfo changes = new ChangeInfo("v0.5.7v2", true, "");
+        changes.hardlight( Window.TITLE_COLOR );
+        changeInfos.add(changes);
+
+        changes = new ChangeInfo(Messages.get(ChangesScene.class, "changes"), false, null);
+        changes.hardlight( CharSprite.POSITIVE );
+        changeInfos.add(changes);
+
+        changes.addButton(new ChangeButton(new CrystalKey(), "六选三", "修复六选三在二者都鉴定情况下，会导致保底奖励两个都不刷出的bug。"));
+        changes.addButton(new ChangeButton(new Swarm(), 0.8F,  "飞行生物异常行动逻辑", "修复飞行生物强行选择可行走陆地的异常行动逻辑。"));
+        changes.addButton(new ChangeButton(new Cypros(), "_-_ 修复镜像使用Cypros会闪退的bug。\n_-_ 修复刚掉落的Cypros不切换模式的情况下护甲不生效的bug。"));
+    }
     public static void add_0_5_7_1_Changes( ArrayList<ChangeInfo> changeInfos ){
         ChangeInfo changes = new ChangeInfo("v0.5.7v1", true, "");
         changes.hardlight( Window.TITLE_COLOR );

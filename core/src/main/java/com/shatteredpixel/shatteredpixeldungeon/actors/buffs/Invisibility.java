@@ -93,6 +93,14 @@ public class Invisibility extends FlavourBuff {
 		return Messages.get(this, "desc", dispTurns());
 	}
 
+    public static boolean isInvisibility(Char target){
+        if (!target.buffs(Invisibility.class).isEmpty())
+            return true;
+        else if (target.buff( CloakOfShadows.cloakStealth.class )!=null)
+            return true;
+        else
+            return false;
+    }
 	public static void dispel() {
 		if (Dungeon.hero == null) return;
 

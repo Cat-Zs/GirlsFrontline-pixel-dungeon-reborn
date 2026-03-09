@@ -32,20 +32,22 @@ import com.shatteredpixel.shatteredpixeldungeon.Statistics;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Belongings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroSubClass;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.PixelScene;
+import com.shatteredpixel.shatteredpixeldungeon.scenes.RankingsScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.HeroSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BadgesGrid;
 import com.shatteredpixel.shatteredpixeldungeon.ui.BadgesList;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Button;
-import com.shatteredpixel.shatteredpixeldungeon.ui.CheckBox;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Icons;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ItemSlot;
 import com.shatteredpixel.shatteredpixeldungeon.ui.LockButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RedButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.RenderedTextBlock;
+import com.shatteredpixel.shatteredpixeldungeon.ui.ScrollPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentButton;
 import com.shatteredpixel.shatteredpixeldungeon.ui.TalentsPane;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Window;
@@ -55,10 +57,10 @@ import com.watabou.noosa.ColorBlock;
 import com.watabou.noosa.Game;
 import com.watabou.noosa.Group;
 import com.watabou.noosa.Image;
-import com.watabou.noosa.TextInput;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.noosa.ui.Component;
 
+import java.util.ArrayList;
 import java.util.Locale;
 
 public class WndRanking extends WndTabbed {
@@ -71,6 +73,7 @@ public class WndRanking extends WndTabbed {
 	
 	private Image busy;
     private Rankings.Record record;
+    private boolean change = false;
 	
 	public WndRanking( final Rankings.Record rec ) {
 		
@@ -106,7 +109,12 @@ public class WndRanking extends WndTabbed {
 		
 		thread.start();
 	}
-	
+
+    public void hide() {
+        super.hide();
+        if (change)
+            GirlsFrontlinePixelDungeon.switchNoFade(RankingsScene.class);
+    }
 	@Override
 	public void update() {
 		super.update();
@@ -193,6 +201,7 @@ public class WndRanking extends WndTabbed {
                     super.onClick();
                     int i = Rankings.INSTANCE.records.indexOf( record );
                     record.isLock = checked();
+                    change = !change;
                     Rankings.INSTANCE.records.set(i,record);
                     if (checked()) {
                         Rankings.INSTANCE.LockNumber++;
@@ -364,7 +373,7 @@ public class WndRanking extends WndTabbed {
 
 			for (int i = 0; i < slotsActive; i++){
 				if (Dungeon.quickslot.isNonePlaceholder(i)){
-					QuickSlotButton slot = new QuickSlotButton(Dungeon.quickslot.getItem(i));
+					Button slot = new QuickSlotButton(Dungeon.quickslot.getItem(i));
 
 					slot.setRect( pos, 120, slotWidth, 23 );
 					PixelScene.align(slot);
@@ -481,6 +490,27 @@ public class WndRanking extends WndTabbed {
 			Game.scene().add( new WndInfoItem( item ) );
 		}
 	}
+    private class canScrollItemButton extends ItemButton{
+
+        public canScrollItemButton( Item item ) {
+            super(item);
+        }
+        protected boolean onClick(float x, float y){
+            if(!inside(x,y)) return false;
+            onClick();
+
+            return true;
+        }
+        @Override
+        protected void onClick() {
+            super.onClick();
+        }
+        @Override
+        protected void layout(){
+            super.layout();
+            hotArea.width = hotArea.height = 0;
+        }
+    }
 
 	private class QuickSlotButton extends ItemSlot{
 
@@ -532,7 +562,62 @@ public class WndRanking extends WndTabbed {
 
 		@Override
 		protected void onClick() {
-			Game.scene().add(new WndInfoItem(item));
+            if (item instanceof Bag && !((Bag) item).items.isEmpty())
+                Game.scene().add(new ItemList((Bag) item));
+            else
+			    Game.scene().add(new WndInfoItem(item));
 		}
 	}
+    private class ItemList extends Window {
+        private ArrayList<canScrollItemButton> Button = new ArrayList<>();
+
+        public ItemList(Bag bag) {
+            int width = 120;
+            Component content = new Component();
+            float pos = 0;
+            for (Item item : bag.items){
+                item.canNote =false;
+                item.showSelf = true;
+                item.identify();
+                canScrollItemButton button = new canScrollItemButton(item){
+                    protected boolean onClick(float x, float y){
+                        if(!inside(x,y)) return false;
+                        onClick();
+
+                        return true;
+                    }
+                    @Override
+                    protected void onClick() {
+                        super.onClick();
+                    }
+                    @Override
+                    protected void layout(){
+                        super.layout();
+                        hotArea.width = hotArea.height = 0;
+                    }
+                };
+                button.setRect( 0, pos, width, ItemButton.HEIGHT );
+                content.add( button );
+                Button.add( button );
+
+                pos += button.height() + 1;
+            }
+            content.setSize(120, Button.get(Button.size()-1).bottom());
+            ScrollPane pane = new ScrollPane(content) {
+
+                @Override
+                public void onClick(float x, float y) {
+                    int max_size = Button.size();
+                    for (int i = 0; i < max_size; ++i) {
+                        if (Button.get(i).onClick(x, y))
+                            break;
+                    }
+                }
+            };
+            add(pane);
+            pane.setRect( -62, -78, 120, Math.min(153, (int)content.height() + 1));
+            pane.scrollTo(0,0);
+            resize(width, 153);
+        }
+    }
 }

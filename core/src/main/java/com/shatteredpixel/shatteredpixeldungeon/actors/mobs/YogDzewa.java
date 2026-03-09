@@ -469,6 +469,12 @@ public class YogDzewa extends Mob {
             cypros.GetBadge = true;
             Badges.RabbitWeaponWin();
         }
+        if (Dungeon.hero.belongings.weapon!=null&&Dungeon.hero.belongings.weapon.level()<=-20
+                &&Dungeon.hero.belongings.armor!=null&&Dungeon.hero.belongings.armor.level()<=-20
+                &&Dungeon.hero.belongings.misc!=null&&Dungeon.hero.belongings.misc.level()<=-20
+                &&Dungeon.hero.belongings.ring!=null&&Dungeon.hero.belongings.ring.level()<=-20){
+            Badges.AllEquipmentDegrade();
+        }
 		updateVisibility(Dungeon.level);
 
 		GameScene.bossSlain();

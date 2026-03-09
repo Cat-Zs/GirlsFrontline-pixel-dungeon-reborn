@@ -213,6 +213,8 @@ public class BadgeBanner extends Image {
 			atlas = new TextureFilm( image.texture, 16, 16 );
 		}
 		image.frame( atlas.get( index ) );
+        image.scale.set((float) Math.sqrt(1));
+        //此处用于修改成就贴图大小，如无提供贴图可使用pngImage，不过这样做的话，或许需要整理代码？
 		return image;
 	}
 }

@@ -81,7 +81,7 @@ public class HPtoFood extends BookSpell{
             foodB = foodA;
         }
         String info ="";
-        info+="你可以主动消耗一些血量换取饱食度(550-当前饥饿值)，此血量消耗为真实伤害，不受减伤、护盾影响。所获得的饱食度不受饥荒影响。\n" +
+        info+="你可以主动消耗一些血量换取饱食度，此血量消耗为真实伤害，不受减伤、护盾影响。所获得的饱食度不受饥荒影响。\n" +
                 "获得饱食度的持续期间内，玩家的回复不再受到深度睡眠、增压器的正面效果的额外收益\n" +
                 "当你食用食物时，超过饱食度上限的部分将会用于减少这个限制的持续时间";
         info+="当前将消耗 _"+dmgA+"_ 血量并获得 _"+foodB+"_ 饱食度";
@@ -90,7 +90,7 @@ public class HPtoFood extends BookSpell{
         }
         GameScene.show(
                 new WndOptions(new HeroIcon(new HPtoFood()),
-                        Messages.titleCase("技能名"),
+                        Messages.titleCase("锋血转换"),
                         info,
                         "确认",
                         "取消") {

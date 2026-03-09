@@ -23,6 +23,7 @@ package com.shatteredpixel.shatteredpixeldungeon.scenes;
 
 import com.shatteredpixel.shatteredpixeldungeon.Badges;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
+import com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder.SeedFinder;
 import com.shatteredpixel.shatteredpixeldungeon.effects.Flare;
 import com.shatteredpixel.shatteredpixeldungeon.ui.Archs;
 import com.shatteredpixel.shatteredpixeldungeon.ui.ExitButton;
@@ -311,6 +312,8 @@ public class AboutScene extends PixelScene {
             public void onClick(float x, float y) {
                 if (x>=onw.left()&&x<=onw.right()&&y>=onw.top()&&y<= onw.bottom()) {
                     Game.unlockClickTime++;
+//                    if (Game.unlockClickTime==5)
+//                        SeedFinder.SeedFinding = true; else
                     if (Game.unlockClickTime==10)
                         Game.isDebug = true;
                     else if (Game.unlockClickTime==100)

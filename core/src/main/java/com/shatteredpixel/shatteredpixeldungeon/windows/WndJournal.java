@@ -765,16 +765,23 @@ public class WndJournal extends WndTabbed {
 			}
 			
 			public boolean onClick( float x, float y ) {
-				if (inside( x, y ) && seen) {
-					if (item instanceof ClassArmor){
-						GameScene.show(new WndTitledMessage(new Image(icon),
-								Messages.titleCase(item.trueName()), item.desc()));
-					} else {
-                        item.canNote=false;
-                        item.canShowNote=false;
-						GameScene.show(new WndTitledMessage(new Image(icon),
-								Messages.titleCase(item.trueName()), item.info()));
-					}
+				if (inside( x, y )) {
+                    if (item == null)
+                        return false;
+                    item.canNote = false;
+                    item.canShowNote = false;
+                    if (seen) {
+                        if (item instanceof ClassArmor) {
+                            GameScene.show(new WndTitledMessage(new Image(icon),
+                                    Messages.titleCase(item.trueName()), item.desc()));
+                        } else {
+                            GameScene.show(new WndTitledMessage(new Image(icon),
+                                    Messages.titleCase(item.trueName()), item.info()));
+                        }
+                    }else if (!(item instanceof Potion|| item instanceof Scroll|| item instanceof Ring)){
+                        GameScene.show(new WndTitledMessage(new ItemSprite(item),
+                                Messages.titleCase("???"),"???"));
+                    }
 					return true;
 				} else {
 					return false;

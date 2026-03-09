@@ -59,7 +59,7 @@ public class WndInfoItem extends Window {
 		}
 		INSTANCE = this;
 
-		if (heap.type == Heap.Type.HEAP) {
+		if (heap.type == Heap.Type.HEAP && heap.room == Heap.Room.NONE) {
 			fillFields( heap.peek() );
 
 		} else {

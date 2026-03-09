@@ -409,7 +409,11 @@ public class debugBook extends TestItem {
                         item.degrade(-lvlB);
                     }
                 }else {
-                    item.level(lvl);
+                    if (item.level()==6666){
+                        item.level(-lvl);
+                    }else {
+                        item.level(lvl);
+                    }
                 }
                 Sample.INSTANCE.play( Assets.Sounds.READ );
             }

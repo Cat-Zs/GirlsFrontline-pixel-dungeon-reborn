@@ -78,7 +78,7 @@ public class WndChooseSubclass extends Window {
 								tome.choose( subCls );
                                 if (subCls == HeroSubClass.GUN_MASTER){
                                     //如果转职是枪械时，给予动作按钮
-                                    Buff.count(hero, ActHPtoGetFood.class, 1).setChangeA(0);
+                                    Buff.count(hero, ActHPtoGetFood.class, 1);
                                 }
 							}
 						}

@@ -783,7 +783,7 @@ public class PrisonBossLevel extends Level {
 				for (int x = tileX; x < tileX + tileW; x++){
 					t = Dungeon.level.traps.get(cell);
 					if (t != null){
-						data[i] = t.color + t.shape*16;
+						data[i] = t.color + t.shape*24;
 					} else {
 						data[i] = -1;
 					}

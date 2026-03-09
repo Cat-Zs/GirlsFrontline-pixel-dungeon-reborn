@@ -66,8 +66,6 @@ public class DeadBomb extends TargetSpell{
 
         Buff.affect(target, Terror.class, 3).object = fear.id();
 
-        GameScene.flash( 0xFFFFFF );
-
         Sample.INSTANCE.play( Assets.Sounds.BLAST );
         Invisibility.dispel();
 

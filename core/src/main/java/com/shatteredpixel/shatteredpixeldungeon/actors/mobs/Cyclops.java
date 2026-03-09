@@ -81,12 +81,6 @@ public class Cyclops extends Mob {
     }
     @Override
     public Item createLoot(){
-
-        if (Random.Int(3) < 1 && Random.Int(6) >= Dungeon.LimitedDrops.CYCLOPS_HP.count ){
-            //照搬的术士Warlock
-            Dungeon.LimitedDrops.CYCLOPS_HP.count++;
-            return new PotionOfHealing();
-        } else {
             Item i = Generator.random(Generator.Category.POTION);
             int healingTried = 0;
             while (i instanceof PotionOfHealing){
@@ -105,8 +99,7 @@ public class Cyclops extends Mob {
             }
 
             return i;
-        }
-
+        
     }
 
 }

@@ -470,6 +470,9 @@ public class Dungeon {
     public static long seedCurLevel(){
         return seedForLevel(levelId);
     }
+    public static long seedCurLevel(Level level){
+        return seedForLevel(level.levelId);
+    }
 	public static long seedForLevel(int createId){
 		Random.pushGenerator( seed );
         //以存档种子为开始的随机数序列
@@ -1084,7 +1087,7 @@ public class Dungeon {
 		}
 
         if (!(ch instanceof Hero)){
-            BArray.or( pass, Dungeon.level.special, passable );
+            BArray.or( passable, Dungeon.level.special, passable );
         }
 		if (chars && Char.hasProp(ch, Char.Property.LARGE)){
 			BArray.and( passable, Dungeon.level.openSpace, passable );
@@ -1116,7 +1119,7 @@ public class Dungeon {
 		}
 
         if (!(ch instanceof Hero)){
-            BArray.or( pass, Dungeon.level.special, passable );
+            BArray.or( passable, Dungeon.level.special, passable );
         }
 
 		if (Char.hasProp(ch, Char.Property.LARGE)){

@@ -42,11 +42,9 @@ import com.shatteredpixel.shatteredpixeldungeon.items.potions.PotionOfToxicGas;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.plants.Plant.Seed;
-import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSprite;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Reflection;
 
@@ -83,13 +81,6 @@ public class Blandfruit extends Food {
 
 	@Override
 	public void execute( Hero hero, String action ) {
-
-		if (action.equals( Potion.AC_CHOOSE )){
-
-			GameScene.show(new WndUseItem(null, this) );
-			return;
-
-		}
 
 		if (action.equals( AC_EAT ) && potionAttrib == null) {
 

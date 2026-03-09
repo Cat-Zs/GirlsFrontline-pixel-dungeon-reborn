@@ -43,7 +43,7 @@ public class StyledButton extends Button {
 	}
 	
 	public StyledButton(Chrome.Type type, String label, int size ){
-		this(Chrome.get(type), label, 9);
+		this(Chrome.get(type), label, size);
 	}
 
 	public StyledButton(NinePatch background, String label ) {

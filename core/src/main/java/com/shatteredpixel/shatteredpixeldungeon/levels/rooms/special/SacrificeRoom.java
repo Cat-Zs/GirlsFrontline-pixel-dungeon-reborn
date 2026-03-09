@@ -25,14 +25,17 @@ import com.shatteredpixel.shatteredpixeldungeon.Challenges;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.Blob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.blobs.SacrificialFire;
+import com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder.SeedFinder;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Terrain;
 import com.shatteredpixel.shatteredpixeldungeon.levels.painters.Painter;
 import com.watabou.utils.Point;
+import com.watabou.utils.Random;
 
 public class SacrificeRoom extends SpecialRoom {
 
@@ -58,13 +61,15 @@ public class SacrificeRoom extends SpecialRoom {
 		Painter.fill( level, c.x - 1, c.y - 1, 3, 3, Terrain.EMBERS );
 		Painter.set( level, c, Terrain.PEDESTAL );
 
-		Blob.seed( level.pointToCell(c), 6 + Dungeon.curDepth() * 4, SacrificialFire.class, level );
-
+        if (SeedFinder.SeedFinding)
+            level.drop(prize(level), level.pointToCell(c)).setRoom(Heap.Room.Sacrifice);
+        else
+            Blob.seed( level.pointToCell(c), 6 + Dungeon.curDepth() * 4, SacrificialFire.class, level );
 		door.set( Door.Type.EMPTY );
 	}
 
 	public static Item prize( Level level ) {
-
+        Random.pushGenerator(Dungeon.seedCurLevel(level));
 		//1 floor set higher than normal
 		Weapon prize = Generator.randomWeapon( (Dungeon.curDepth() / 5) + 1);
 
@@ -81,7 +86,7 @@ public class SacrificeRoom extends SpecialRoom {
 			}
 		}
 		prize.cursed = prize.cursedKnown = true;
-
+        Random.popGenerator();
 		return prize;
 	}
 

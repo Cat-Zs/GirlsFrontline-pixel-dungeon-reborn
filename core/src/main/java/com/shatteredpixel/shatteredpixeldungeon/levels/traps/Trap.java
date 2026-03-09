@@ -73,6 +73,7 @@ public abstract class Trap implements Bundlable {
 
 	public Trap reveal() {
 		visible = true;
+        halfVisible = false;
 		GameScene.updateMap(pos);
 		return this;
 	}
@@ -93,6 +94,7 @@ public abstract class Trap implements Bundlable {
     }
 
 	public void trigger() {
+        halfVisible = false;
 		if (active) {
 			if (Dungeon.level.heroFOV[pos]) {
 				Sample.INSTANCE.play(Assets.Sounds.TRAP);

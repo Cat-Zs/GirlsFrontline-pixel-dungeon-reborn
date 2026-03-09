@@ -65,7 +65,6 @@ import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
 import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndBag;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndOptions;
-import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.watabou.noosa.audio.Sample;
 import com.watabou.utils.Bundle;
 import com.watabou.utils.Random;
@@ -80,8 +79,6 @@ public class Potion extends Item {
 	public static final String AC_DRINK = "DRINK";
 	
 	//used internally for potions that can be drunk or thrown
-	public static final String AC_CHOOSE = "CHOOSE";
-
 	private static final float TIME_TO_DRINK = 1f;
 
 	private static final HashMap<String, Integer> colors = new HashMap<String, Integer>() {
@@ -226,11 +223,7 @@ public class Potion extends Item {
 
 		super.execute( hero, action );
 		
-		if (action.equals( AC_CHOOSE )){
-			
-			GameScene.show(new WndUseItem(null, this) );
-			
-		} else if (action.equals( AC_DRINK )) {
+		if (action.equals( AC_DRINK )) {
 			
 			if (isKnown() && mustThrowPots.contains(getClass())) {
 				

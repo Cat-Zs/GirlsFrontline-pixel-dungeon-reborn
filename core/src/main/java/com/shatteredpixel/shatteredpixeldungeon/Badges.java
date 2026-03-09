@@ -176,8 +176,9 @@ public class Badges {
 		CHAMPION_2                  ( 113 ),
 		CHAMPION_3                  ( 114 ),
 
-		CRYSTAL_TROPHY					(115,true),
-        XMASGift				(  119);
+		CRYSTAL_TROPHY				( 115,true),
+        XMASGift				    ( 119),
+        Degrade_Equipment           ( 121);
 
 		public boolean meta;
 
@@ -443,6 +444,7 @@ public class Badges {
 		Badge badge = null;
 		
 		// 检查一局内吃3个食物解锁type561角色
+        //考虑修改成制作全肉大饼，尚未更改
 		if (!isUnlocked(Badge.UNLOCK_TYPE561) && Statistics.foodEaten >= 3) {
 			validateType561Unlock();
 		}
@@ -826,6 +828,9 @@ public class Badges {
 	public static void validateType561Unlock(){
 		displayBadge(Badge.UNLOCK_TYPE561);
 	}
+    public static void AllEquipmentDegrade(){
+        displayBadge(Badge.Degrade_Equipment);
+    }
 	
 	public static void validateMasteryCombo( int n ) {
 		if (!local.contains( Badge.MASTERY_COMBO ) && n == 10) {

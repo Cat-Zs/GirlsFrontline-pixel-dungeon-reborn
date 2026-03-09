@@ -67,7 +67,7 @@ public class debugSelectCode extends Window {
 		float pos = body.bottom() + 3*GAP;
         int i = 0;
 		for (ArrayList<Integer> listb :list) {
-			RedButton SelectTalent = new RedButton(debug.shortDesc(listb), 7){
+			RedButton SelectTalent = new RedButton(debug.shortDesc(listb), 9){
 				@Override
 				protected void onClick() {
                     GameScene.show(new debugSelectCodeB(debugA, listb));

@@ -23,9 +23,11 @@ package com.shatteredpixel.shatteredpixeldungeon.ui;
 
 import com.shatteredpixel.shatteredpixeldungeon.Assets;
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
+import com.shatteredpixel.shatteredpixeldungeon.QuickSlot;
 import com.shatteredpixel.shatteredpixeldungeon.SPDAction;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
+import com.shatteredpixel.shatteredpixeldungeon.items.bags.Bag;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.CellSelector;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
@@ -51,7 +53,8 @@ public class Toolbar extends Component {
 	private Tool btnWait;
 	private Tool btnSearch;
 	private Tool btnInventory;
-	private QuickslotTool[] btnQuick;
+    private QuickslotTool[] btnQuick;
+    private SlotSwapTool btnSwap;
 	
 	private PickedUpItem pickedUp;
 	
@@ -86,19 +89,17 @@ public class Toolbar extends Component {
 
 		height = btnInventory.height();
 	}
-	
 	@Override
 	protected void createChildren() {
 
 		//TODO add a changer function to the 4th quickslot if there isn't room for 6?
-		int quickSlots = 4;
-		if (PixelScene.uiCamera.width > 152) quickSlots ++;
-		if (PixelScene.uiCamera.width > 170) quickSlots ++;
 
-		btnQuick = new QuickslotTool[quickSlots];
-		for (int i = 0; i < quickSlots; i++){
-			add( btnQuick[i] = new QuickslotTool(64, 0, 22, 24, i) );
-		}
+        add(btnSwap = new SlotSwapTool(84, 0, 20, 24));
+
+        btnQuick = new QuickslotTool[QuickSlot.SIZE];
+        for (int i = 0; i < btnQuick.length; i++){
+            add( btnQuick[i] = new QuickslotTool(84, 0, 22, 24, i) );
+        }
 		
 		add(btnWait = new Tool(24, 0, 20, 26) {
 			@Override
@@ -235,119 +236,170 @@ public class Toolbar extends Component {
 
 		add(pickedUp = new PickedUpItem());
 	}
-	
-	@Override
-	protected void layout() {
 
-		float right = width;
+    @Override
+    protected void layout() {
 
-		if (SPDSettings.interfaceSize() > 0){
-			btnInventory.setPos(right - btnInventory.width(), y);
-			btnWait.setPos(btnInventory.left() - btnWait.width(), y);
-			btnSearch.setPos(btnWait.left() - btnSearch.width(), y);
+        float right = width;
 
-			right = btnSearch.left();
-			for(int i = btnQuick.length-1; i >= 0; i--) {
-				if (i == btnQuick.length-1){
-					btnQuick[i].border(0, 2);
-					btnQuick[i].frame(106, 0, 19, 24);
-				} else if (i == 0){
-					btnQuick[i].border(2, 1);
-					btnQuick[i].frame(86, 0, 20, 24);
-				} else {
-					btnQuick[i].border(0, 1);
-					btnQuick[i].frame(88, 0, 18, 24);
-				}
-				btnQuick[i].setPos(right-btnQuick[i].width(), y+2);
-				right = btnQuick[i].left();
-			}
+        int quickslotsToShow = 4;
+        if (PixelScene.uiCamera.width > 152) quickslotsToShow ++;
+        if (PixelScene.uiCamera.width > 170) quickslotsToShow ++;
 
-			return;
-		}
+        btnSwap.frame(86, 0, 20, 24);
+        int startingSlot;
+        if ( quickslotsToShow < 6){
+            quickslotsToShow = 3;
+            startingSlot = swappedQuickSlots ? 3 : 0;
+            btnSwap.visible = true;
+            btnSwap.active = lastEnabled;
+        } else {
+            startingSlot = 0;
+            btnSwap.visible = btnSwap.active = false;
+            btnSwap.setPos(0, PixelScene.uiCamera.height);
+        }
+        int endingSlot = startingSlot+quickslotsToShow-1;
 
-		for(int i = 0; i < btnQuick.length; i++) {
-			if (i == 0 && !SPDSettings.flipToolbar() ||
-				i == btnQuick.length-1 && SPDSettings.flipToolbar()){
-				btnQuick[i].border(0, 2);
-				btnQuick[i].frame(106, 0, 19, 24);
-			} else if (i == 0 && SPDSettings.flipToolbar() ||
-					i == btnQuick.length-1 && !SPDSettings.flipToolbar()){
-				btnQuick[i].border(2, 1);
-				btnQuick[i].frame(86, 0, 20, 24);
-			} else {
-				btnQuick[i].border(0, 1);
-				btnQuick[i].frame(88, 0, 18, 24);
-			}
-		}
+        for (int i = 0; i < btnQuick.length; i++){
+            btnQuick[i].visible = i >= startingSlot && i <= endingSlot;
+            btnQuick[i].enable(btnQuick[i].visible && lastEnabled);
+            if (i < startingSlot || i > endingSlot){
+                btnQuick[i].setPos(btnQuick[i].left(), PixelScene.uiCamera.height);
+            }
+        }
 
-		switch(Mode.valueOf(SPDSettings.toolbarMode())){
-			case SPLIT:
-				btnWait.setPos(x, y);
-				btnSearch.setPos(btnWait.right(), y);
+        if (SPDSettings.interfaceSize() > 0){
+            btnInventory.setPos(right - btnInventory.width(), y);
+            btnWait.setPos(btnInventory.left() - btnWait.width(), y);
+            btnSearch.setPos(btnWait.left() - btnSearch.width(), y);
 
-				btnInventory.setPos(right - btnInventory.width(), y);
+            right = btnSearch.left();
+            for(int i = endingSlot; i >= startingSlot; i--) {
+                if (i == endingSlot){
+                    btnQuick[i].border(0, 2);
+                    btnQuick[i].frame(106, 0, 19, 24);
+                } else if (i == 0){
+                    btnQuick[i].border(2, 1);
+                    btnQuick[i].frame(86, 0, 20, 24);
+                } else {
+                    btnQuick[i].border(0, 1);
+                    btnQuick[i].frame(88, 0, 18, 24);
+                }
+                btnQuick[i].setPos(right-btnQuick[i].width(), y+2);
+                right = btnQuick[i].left();
+            }
 
-				btnQuick[0].setPos(btnInventory.left() - btnQuick[0].width(), y + 2);
-				for (int i = 1; i < btnQuick.length; i++) {
-					btnQuick[i].setPos(btnQuick[i-1].left() - btnQuick[i].width(), y + 2);
-				}
-				
-				//center the quickslots if they
-				if (btnQuick[btnQuick.length-1].left() < btnSearch.right()){
-					float diff = Math.round(btnSearch.right() - btnQuick[btnQuick.length-1].left())/2;
-					for( int i = 0; i < btnQuick.length; i++){
-						btnQuick[i].setPos( btnQuick[i].left()+diff, btnQuick[i].top() );
-					}
-				}
-				
-				break;
+            //swap button never appears on larger interface sizes
 
-			//center = group but.. well.. centered, so all we need to do is pre-emptively set the right side further in.
-			case CENTER:
-				float toolbarWidth = btnWait.width() + btnSearch.width() + btnInventory.width();
-				for(Button slot : btnQuick){
-					if (slot.visible) toolbarWidth += slot.width();
-				}
-				right = (width + toolbarWidth)/2;
+            return;
+        }
 
-			case GROUP:
-				btnWait.setPos(right - btnWait.width(), y);
-				btnSearch.setPos(btnWait.left() - btnSearch.width(), y);
-				btnInventory.setPos(btnSearch.left() - btnInventory.width(), y);
+        for(int i = startingSlot; i <= endingSlot; i++) {
+            if (i == startingSlot && !SPDSettings.flipToolbar() ||
+                    i == endingSlot && SPDSettings.flipToolbar()){
+                btnQuick[i].border(0, 2);
+                btnQuick[i].frame(106, 0, 19, 24);
+            } else if (i == startingSlot && SPDSettings.flipToolbar() ||
+                    i == endingSlot && !SPDSettings.flipToolbar()){
+                btnQuick[i].border(2, 1);
+                btnQuick[i].frame(86, 0, 20, 24);
+            } else {
+                btnQuick[i].border(0, 1);
+                btnQuick[i].frame(88, 0, 18, 24);
+            }
+        }
 
-				btnQuick[0].setPos(btnInventory.left() - btnQuick[0].width(), y + 2);
-				for (int i = 1; i < btnQuick.length; i++) {
-					btnQuick[i].setPos(btnQuick[i-1].left() - btnQuick[i].width(), y + 2);
-				}
-				
-				if (btnQuick[btnQuick.length-1].left() < 0){
-					float diff = -Math.round(btnQuick[btnQuick.length-1].left())/2;
-					for( int i = 0; i < btnQuick.length; i++){
-						btnQuick[i].setPos( btnQuick[i].left()+diff, btnQuick[i].top() );
-					}
-				}
-				
-				break;
-		}
-		right = width;
+        float shift = 0;
+        Toolbar.Mode mode;
+        try {
+            mode = Mode.valueOf(SPDSettings.toolbarMode());
+        } catch (Exception e){
+            Game.reportException(e);
+            mode = PixelScene.landscape() ? Mode.GROUP : Mode.SPLIT;
+        }
+        switch(mode){
+            case SPLIT:
+                btnWait.setPos(x, y);
+                btnSearch.setPos(btnWait.right(), y);
 
-		if (SPDSettings.flipToolbar()) {
+                btnInventory.setPos(right - btnInventory.width(), y);
 
-			btnWait.setPos( (right - btnWait.right()), y);
-			btnSearch.setPos( (right - btnSearch.right()), y);
-			btnInventory.setPos( (right - btnInventory.right()), y);
+                float left = 0;
 
-			for(int i = 0; i < btnQuick.length; i++) {
-				btnQuick[i].setPos( right - btnQuick[i].right(), y+2);
-			}
+                btnQuick[startingSlot].setPos(btnInventory.left() - btnQuick[startingSlot].width(), y + 2);
+                for (int i = startingSlot+1; i <= endingSlot; i++) {
+                    btnQuick[i].setPos(btnQuick[i-1].left() - btnQuick[i].width(), y + 2);
+                    shift = btnSearch.right() - btnQuick[i].left();
+                }
 
-		}
+                if (btnSwap.visible){
+                    btnSwap.setPos(btnQuick[endingSlot].left() - (btnSwap.width()-2), y+3);
+                    shift = btnSearch.right() - btnSwap.left();
+                }
 
-	}
+                break;
 
-	public static void updateLayout(){
-		if (instance != null) instance.layout();
-	}
+            //center = group but.. well.. centered, so all we need to do is pre-emptively set the right side further in.
+            case CENTER:
+                float toolbarWidth = btnWait.width() + btnSearch.width() + btnInventory.width();
+                for(Button slot : btnQuick){
+                    if (slot.visible) toolbarWidth += slot.width();
+                }
+                if (btnSwap.visible) toolbarWidth += btnSwap.width()-2;
+                right = (width + toolbarWidth)/2;
+
+            case GROUP:
+                btnWait.setPos(right - btnWait.width(), y);
+                btnSearch.setPos(btnWait.left() - btnSearch.width(), y);
+                btnInventory.setPos(btnSearch.left() - btnInventory.width(), y);
+
+                btnQuick[startingSlot].setPos(btnInventory.left() - btnQuick[startingSlot].width(), y + 2);
+                for (int i = startingSlot+1; i <= endingSlot; i++) {
+                    btnQuick[i].setPos(btnQuick[i-1].left() - btnQuick[i].width(), y + 2);
+                    shift = -btnQuick[i].left();
+                }
+
+                if (btnSwap.visible){
+                    btnSwap.setPos(btnQuick[endingSlot].left() - (btnSwap.width()-2), y+3);
+                    shift = -btnSwap.left();
+                }
+
+                break;
+        }
+
+        if (shift > 0){
+            shift /= 2; //we want to center;
+            for (int i = startingSlot; i <= endingSlot; i++) {
+                btnQuick[i].setPos(btnQuick[i].left()+shift,  btnQuick[i].top());
+            }
+            if (btnSwap.visible){
+                btnSwap.setPos(btnSwap.left()+shift, btnSwap.top());
+            }
+        }
+
+        right = width;
+
+        if (SPDSettings.flipToolbar()) {
+
+            btnWait.setPos( (right - btnWait.right()), y);
+            btnSearch.setPos( (right - btnSearch.right()), y);
+            btnInventory.setPos( (right - btnInventory.right()), y);
+
+            for(int i = startingSlot; i <= endingSlot; i++) {
+                btnQuick[i].setPos( right - btnQuick[i].right(), y+2);
+            }
+
+            if (btnSwap.visible){
+                btnSwap.setPos( right - btnSwap.right(), y+3);
+            }
+
+        }
+
+    }
+
+    public static void updateLayout(){
+        if (instance != null) instance.layout();
+    }
 	
 	@Override
 	public void update() {
@@ -481,7 +533,114 @@ public class Toolbar extends Component {
 			slot.enable( value );
 		}
 	}
-	
+
+    public static boolean swappedQuickSlots = false;
+    public static SlotSwapTool SWAP_INSTANCE;
+
+    public static class SlotSwapTool extends Tool {
+
+        private Image[] icons = new Image[4];
+        private Item[] items = new Item[4];
+
+        public SlotSwapTool(int x, int y, int width, int height) {
+            super(x, y, width, height);
+            SWAP_INSTANCE = this;
+            updateVisuals();
+        }
+
+        @Override
+        public synchronized void destroy() {
+            super.destroy();
+            if (SWAP_INSTANCE == this) SWAP_INSTANCE = null;
+        }
+
+        @Override
+        protected void onClick() {
+            super.onClick();
+            swappedQuickSlots = !swappedQuickSlots;
+            Toolbar.updateLayout();
+            updateVisuals();
+        }
+
+        public void updateVisuals(){
+            if (icons[0] == null){
+                icons[0] = Icons.get(Icons.CHANGES);
+                icons[0].scale.set(PixelScene.align(0.45f));
+                add(icons[0]);
+            }
+
+            int slot;
+            int slotDir;
+            if (SPDSettings.flipToolbar()){
+                slot = swappedQuickSlots ? 0 : 3;
+                slotDir = +1;
+            } else {
+                slot = swappedQuickSlots ? 2 : 5;
+                slotDir = -1;
+            }
+
+            for (int i = 1; i < 4; i++){
+                if (items[i] == Dungeon.quickslot.getItem(slot)){
+                    slot += slotDir;
+                    continue;
+                } else {
+                    items[i] = Dungeon.quickslot.getItem(slot);
+                }
+                if (icons[i] != null){
+                    icons[i].killAndErase();
+                    icons[i] = null;
+                }
+                if (items[i] != null){
+                    icons[i] = new ItemSprite(items[i]);
+                    icons[i].scale.set(PixelScene.align(0.45f));
+                    if (Dungeon.quickslot.isPlaceholder(slot)) icons[i].alpha(0.29f);
+                    add(icons[i]);
+                }
+                slot += slotDir;
+            }
+
+            icons[0].x = x + 2 + (8 - icons[0].width())/2;
+            icons[0].y = y + 2 + (9 - icons[0].height())/2;
+            PixelScene.align(icons[0]);
+
+            if (icons[1] != null){
+                icons[1].x = x + 11 + (8 - icons[1].width())/2;
+                icons[1].y = y + 2 + (9 - icons[1].height())/2;
+                PixelScene.align(icons[1]);
+            }
+
+            if (icons[2] != null){
+                icons[2].x = x + 2 + (8 - icons[2].width())/2;
+                icons[2].y = y + 12 + (9 - icons[2].height())/2;
+                PixelScene.align(icons[2]);
+            }
+
+            if (icons[3] != null){
+                icons[3].x = x + 11 + (8 - icons[3].width())/2;
+                icons[3].y = y + 12 + (9 - icons[3].height())/2;
+                PixelScene.align(icons[3]);
+            }
+        }
+
+        @Override
+        protected void layout() {
+            super.layout();
+            updateVisuals();
+        }
+
+        @Override
+        public void enable(boolean value) {
+            super.enable(value);
+            for (Image ic : icons){
+                if (ic != null && ic.alpha() >= 0.3f){
+                    ic.alpha( value ? 1 : 0.3f);
+                }
+            }
+        }
+
+        //private
+
+    }
 	public static class PickedUpItem extends ItemSprite {
 		
 		private static final float DURATION = 0.5f;

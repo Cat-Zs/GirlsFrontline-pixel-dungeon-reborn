@@ -8,8 +8,6 @@ import com.shatteredpixel.shatteredpixeldungeon.custom.testmode.TestItem;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.scenes.GameScene;
 import com.shatteredpixel.shatteredpixeldungeon.sprites.ItemSpriteSheet;
-import com.shatteredpixel.shatteredpixeldungeon.ui.TalentButton;
-import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.shatteredpixel.shatteredpixeldungeon.windows.WndUseItem;
 import com.shatteredpixel.shatteredpixeldungeon.windows.debugSelectCode;
 import com.shatteredpixel.shatteredpixeldungeon.windows.debugSelectTalent;
@@ -23,7 +21,6 @@ public class debug extends TestItem {
     }
     private static final String AC_SETMODE = "setmode";
     private static final String AC_SETCODE = "setcode";
-    private static final String AC_CHOOSE  = "choose";
     public static ArrayList<ArrayList<Talent>> debugTalent = new ArrayList<>();
     private static ArrayList<Talent> T14 = new ArrayList<>();
     private static boolean AddT14 = false;
@@ -156,9 +153,7 @@ public class debug extends TestItem {
     @Override
     public void execute(Hero hero, String action) {
         super.execute(hero, action);
-        if (action.equals(AC_CHOOSE)){
-            GameScene.show(new WndUseItem(null, this) );
-        }else if (action.equals(AC_SETMODE)) {
+        if (action.equals(AC_SETMODE)) {
             ResetC();
             //TalentButton.DebugTalent(Talent.Type56_23V2, Talent.Type56Two_Grass, 2);
             GameScene.show(new debugSelectTalent(new debug(), debugTalent));

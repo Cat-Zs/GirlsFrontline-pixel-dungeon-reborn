@@ -2,7 +2,6 @@ package com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder;
 
 import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GamesInProgress;
-import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.HeroClass;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.ArmoredStatue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.CrystalMimic;
@@ -11,14 +10,15 @@ import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mimic;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Mob;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.Statue;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Ghost.Quest;
+import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Shopkeeper;
 import com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Wandmaker;
 import com.shatteredpixel.shatteredpixeldungeon.items.Dewdrop;
 import com.shatteredpixel.shatteredpixeldungeon.items.EnergyCrystal;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
-import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.Heap.Type;
+import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.armor.Armor;
 import com.shatteredpixel.shatteredpixeldungeon.items.artifacts.Artifact;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
@@ -36,10 +36,15 @@ import com.shatteredpixel.shatteredpixeldungeon.items.weapon.Weapon;
 import com.shatteredpixel.shatteredpixeldungeon.items.weapon.melee.MeleeWeapon;
 import com.shatteredpixel.shatteredpixeldungeon.levels.CityBossLevel;
 import com.shatteredpixel.shatteredpixeldungeon.levels.Level;
+import com.shatteredpixel.shatteredpixeldungeon.levels.RegularLevel;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.Room;
+import com.shatteredpixel.shatteredpixeldungeon.levels.rooms.special.SacrificeRoom;
 import com.shatteredpixel.shatteredpixeldungeon.messages.Messages;
 import com.shatteredpixel.shatteredpixeldungeon.utils.DungeonSeed;
+import com.shatteredpixel.shatteredpixeldungeon.utils.GLog;
 import com.watabou.noosa.Game;
 import com.watabou.utils.Random;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -50,6 +55,7 @@ public class SeedFinder {
     List<Class<? extends Item>> blacklist;
     ArrayList<String> itemList;
     public static boolean SeedFinding = false;
+    private static boolean Mimic = false;
 
     // 新增：接收Scene引用，用于无间隔刷新
     private SeedFindScene sceneRef;
@@ -70,6 +76,11 @@ public class SeedFinder {
                     if (h.type == Type.FOR_SALE)
                         heap = Shopkeeper.sellPrice(h.peek())+"钻石";
                     builder.append(" ("+heap.toLowerCase()+")");
+                }
+                else if (h.room != Heap.Room.NONE){
+                    String room = Heap.RoomName(Type.NONE, h.room);
+                    builder.append(" ("+room.toLowerCase()+")");
+
                 }
                 builder.append("\n");
             }
@@ -92,23 +103,24 @@ public class SeedFinder {
     }
 
     // 重载findSeed方法，接收Scene引用（无间隔）
-    public String findSeed(ArrayList<String> wanted, int floor, int Challenges, HeroClass heroclass, SeedFindScene scene) {
+    public String findSeed(ArrayList<String> wanted, int floor, HeroClass heroclass, SeedFindScene scene, boolean mimic) {
         this.sceneRef = scene; // 保存Scene引用
-        return findSeed(wanted, floor, Challenges, heroclass);
+        return findSeed(wanted, floor, heroclass, mimic);
     }
 
     public String checkSeed(String seedCode, HeroClass heroclass){
         seedCode = DungeonSeed.formatText(seedCode);
         long seedNum = DungeonSeed.convertFromText(seedCode);
         SeedFinding = true;
-        String text = this.logSeedItems(seedNum, 31, SPDSettings.challenges(), heroclass);
+        String text = logSeedItems(seedNum, 31, heroclass);
         SeedFinding = false;
         return text;
     }
-    public String findSeed(ArrayList<String> wanted, int floor, int Challenges, HeroClass heroclass) {
+    public String findSeed(ArrayList<String> wanted, int floor, HeroClass heroclass, boolean mimic) {
         String result = "NONE";
         SeedFinding = true;
-        this.itemList = wanted;
+        Mimic = mimic;
+        itemList = wanted;
         long seedDigits = DungeonSeed.randomSeed();
         if (seedDigits>200000)
             seedDigits-=100000;
@@ -116,7 +128,7 @@ public class SeedFinder {
         SeedFinder.Options.condition = SeedFinder.Condition.ALL;
 
         // 无间隔遍历种子（移除所有sleep）
-        for(int i = Random.Int(9999999); (long)i < DungeonSeed.TOTAL_SEEDS && findingStatus == SeedFinder.FINDING.CONTINUE; ++i) {
+        for(int i = Random.Int(99999); (long)i < DungeonSeed.TOTAL_SEEDS && findingStatus == SeedFinder.FINDING.CONTINUE; ++i) {
             long currentSeed = seedDigits + i;
 
             // 无间隔刷新UI（直接回调，无延迟）
@@ -124,17 +136,17 @@ public class SeedFinder {
                 sceneRef.updateCurrentSeed(currentSeed);
             }
 
-            if (this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)
-                    &&this.testSeedALL(currentSeed, floor, heroclass)) {
-                result = this.logSeedItems(currentSeed, floor, Challenges, heroclass);
+            if (testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)
+                    &&testSeedALL(currentSeed, floor, heroclass)) {
+                result = logSeedItems(currentSeed, floor, heroclass);
                 break;
             }
 
@@ -171,11 +183,11 @@ public class SeedFinder {
                     h.items.add(item.identify());
                 }
                 if (m instanceof GoldenMimic) {
-                    h.type = Type.HEAP;
+                    h.type = Type.GOLDEN_MIMIC;
                 } else if (m instanceof CrystalMimic) {
-                    h.type = Type.HEAP;
+                    h.type = Type.CRYSTAL_MIMIC;
                 } else {
-                    h.type = Type.HEAP;
+                    h.type = Type.MIMIC;
                 }
                 heaps.add(h);
             }
@@ -192,7 +204,7 @@ public class SeedFinder {
             Game.lockXMAS = true;
         }else
             Dungeon.init(seedCode);
-        boolean[] itemsFound = new boolean[this.itemList.size()];
+        boolean[] itemsFound = new boolean[itemList.size()];
         Arrays.fill(itemsFound, false);
         int LevelSub = 0;
         for(int i = 1; i <= floors;) {
@@ -212,68 +224,73 @@ public class SeedFinder {
             }
             if (l instanceof CityBossLevel)
                 ((CityBossLevel) l).spawnShop();
-            ArrayList<Heap> heaps = new ArrayList<>(l.heaps.valueList());
-            heaps.addAll(this.getMobDrops(l));
-            if (Quest.armor != null) {
-                for(int j = 0; j < this.itemList.size(); ++j) {
-                    String wantingItem = this.itemList.get(j);
-                    boolean precise = wantingItem.startsWith("\"") && wantingItem.endsWith("\"");
-                    if (precise) {
-                        wantingItem = wantingItem.replaceAll(" ", "");
-                    } else {
-                        wantingItem = wantingItem.replaceAll("\"", "");
-                    }
-                    if ((!precise && Quest.armor.identify().toString().toLowerCase().replaceAll(" ", "").contains(wantingItem) || precise && Quest.armor.identify().toString().toLowerCase().equals(wantingItem)) && !itemsFound[j]) {
-                        itemsFound[j] = true;
-                        break;
+            ArrayList<Heap> heaps;
+            if (Mimic)
+                heaps=getMobDrops(l);
+            else {
+                heaps = new ArrayList<>(l.heaps.valueList());
+                heaps.addAll(getMobDrops(l));
+                if (Quest.armor != null) {
+                    for(int j = 0; j < this.itemList.size(); ++j) {
+                        String wantingItem = this.itemList.get(j);
+                        boolean precise = wantingItem.startsWith("\"") && wantingItem.endsWith("\"");
+                        if (precise) {
+                            wantingItem = wantingItem.replaceAll(" ", "");
+                        } else {
+                            wantingItem = wantingItem.replaceAll("\"", "");
+                        }
+                        if ((!precise && Quest.armor.identify().toString().toLowerCase().replaceAll(" ", "").contains(wantingItem) || precise && Quest.armor.identify().toString().toLowerCase().equals(wantingItem)) && !itemsFound[j]) {
+                            itemsFound[j] = true;
+                            break;
+                        }
                     }
                 }
-            }
-            if (Wandmaker.Quest.wand1 != null) {
-                for(int j = 0; j < this.itemList.size(); ++j) {
-                    String wantingItem = this.itemList.get(j);
-                    String wand1 = Wandmaker.Quest.wand1.identify().toString().toLowerCase();
-                    String wand2 = Wandmaker.Quest.wand2.identify().toString().toLowerCase();
-                    boolean precise = wantingItem.startsWith("\"") && wantingItem.endsWith("\"");
-                    if (precise) {
-                        wantingItem = wantingItem.replaceAll("\"", "");
-                        if ((wand1.equals(wantingItem) || wand2.equals(wantingItem)) && !itemsFound[j]) {
+                if (Wandmaker.Quest.wand1 != null) {
+                    for(int j = 0; j < this.itemList.size(); ++j) {
+                        String wantingItem = this.itemList.get(j);
+                        String wand1 = Wandmaker.Quest.wand1.identify().toString().toLowerCase();
+                        String wand2 = Wandmaker.Quest.wand2.identify().toString().toLowerCase();
+                        boolean precise = wantingItem.startsWith("\"") && wantingItem.endsWith("\"");
+                        if (precise) {
+                            wantingItem = wantingItem.replaceAll("\"", "");
+                            if ((wand1.equals(wantingItem) || wand2.equals(wantingItem)) && !itemsFound[j]) {
+                                itemsFound[j] = true;
+                                break;
+                            }
+                        } else {
+                            wantingItem = wantingItem.replaceAll(" ", "");
+                            wand1 = wand1.replaceAll(" ", "");
+                            wand2 = wand2.replaceAll(" ", "");
+                            if ((wand1.contains(wantingItem) || wand2.contains(wantingItem)) && !itemsFound[j]) {
+                                itemsFound[j] = true;
+                                break;
+                            }
+                        }
+                        if (Wandmaker.Quest.type() == 1 && Messages.get(this, "corpsedust", new Object[0]).contains(wantingItem.replaceAll(" ", ""))) {
+                            if (!itemsFound[j]) {
+                                itemsFound[j] = true;
+                                break;
+                            }
+                        } else if (Wandmaker.Quest.type() == 2 && Messages.get(this, "embers", new Object[0]).contains(wantingItem.replaceAll(" ", ""))) {
+                            if (!itemsFound[j]) {
+                                itemsFound[j] = true;
+                                break;
+                            }
+                        } else if (Wandmaker.Quest.type() == 3 && Messages.get(this, "rotberry", new Object[0]).contains(wantingItem.replaceAll(" ", "")) && !itemsFound[j]) {
                             itemsFound[j] = true;
                             break;
                         }
-                    } else {
-                        wantingItem = wantingItem.replaceAll(" ", "");
-                        wand1 = wand1.replaceAll(" ", "");
-                        wand2 = wand2.replaceAll(" ", "");
-                        if ((wand1.contains(wantingItem) || wand2.contains(wantingItem)) && !itemsFound[j]) {
-                            itemsFound[j] = true;
-                            break;
-                        }
-                    }
-                    if (Wandmaker.Quest.type() == 1 && Messages.get(this, "corpsedust", new Object[0]).contains(wantingItem.replaceAll(" ", ""))) {
-                        if (!itemsFound[j]) {
-                            itemsFound[j] = true;
-                            break;
-                        }
-                    } else if (Wandmaker.Quest.type() == 2 && Messages.get(this, "embers", new Object[0]).contains(wantingItem.replaceAll(" ", ""))) {
-                        if (!itemsFound[j]) {
-                            itemsFound[j] = true;
-                            break;
-                        }
-                    } else if (Wandmaker.Quest.type() == 3 && Messages.get(this, "rotberry", new Object[0]).contains(wantingItem.replaceAll(" ", "")) && !itemsFound[j]) {
-                        itemsFound[j] = true;
-                        break;
                     }
                 }
-            }
-            if (com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp.Quest.reward != null) {
-                for(int j = 0; j < this.itemList.size(); ++j) {
-                    String wantingItem = this.itemList.get(j);
-                    boolean precise = wantingItem.startsWith("\"") && wantingItem.endsWith("\"");
-                    String ring = com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp.Quest.reward.identify().toString().toLowerCase();
-                    if ((!precise && ring.replaceAll(" ", "").contains(wantingItem.replaceAll(" ", "")) || precise && ring.equals(wantingItem)) && !itemsFound[j]) {
-                        itemsFound[j] = true;
-                        break;
+                if (Imp.Quest.reward != null) {
+                    for(int j = 0; j < this.itemList.size(); ++j) {
+                        String wantingItem = this.itemList.get(j);
+                        boolean precise = wantingItem.startsWith("\"") && wantingItem.endsWith("\"");
+                        String ring = Imp.Quest.reward.identify().toString().toLowerCase();
+                        if ((!precise && ring.replaceAll(" ", "").contains(wantingItem.replaceAll(" ", "")) || precise && ring.equals(wantingItem)) && !itemsFound[j]) {
+                            itemsFound[j] = true;
+                            break;
+                        }
                     }
                 }
             }
@@ -281,10 +298,11 @@ public class SeedFinder {
                 for(Item item : h.items) {
                     item.identify();
                     String itemName = item.toString().toLowerCase();
-                    for(int j = 0; j < this.itemList.size(); ++j) {
-                        String wantingItem = this.itemList.get(j);
+                    for(int j = 0; j < itemList.size(); ++j) {
+                        String wantingItem = itemList.get(j);
                         boolean precise = wantingItem.startsWith("\"") && wantingItem.endsWith("\"");
-                        if ((!precise && itemName.replaceAll(" ", "").contains(wantingItem.replaceAll(" ", "")) || precise && itemName.equals(wantingItem.replaceAll("\"", ""))) && !itemsFound[j]) {
+                        if ((!precise && itemName.replaceAll(" ", "").contains(wantingItem.replaceAll(" ", ""))
+                                || precise && itemName.equals(wantingItem.replaceAll("\"", ""))) && !itemsFound[j]) {
                             itemsFound[j] = true;
                             break;
                         }
@@ -307,7 +325,7 @@ public class SeedFinder {
         return true;
     }
 
-    public String logSeedItems(long seed, int floors, int Challenges, HeroClass heroclass) {
+    public String logSeedItems(long seed, int floors, HeroClass heroclass) {
         String seedCode = DungeonSeed.convertToCode(seed);
         SeedFindScene.seedCode= seedCode;
         Dungeon.hero = null;
@@ -324,7 +342,7 @@ public class SeedFinder {
             Level l;
             if (i==25&&LevelSub==0){
                 l = Dungeon.newLevel(i);
-                LevelSub = 1;
+                LevelSub++;
             }
             else if (i==25&&LevelSub==1){
                 l = Dungeon.newLevel(LevelSub*1000+i);
@@ -374,10 +392,10 @@ public class SeedFinder {
                 }
                 this.addTextQuest("[ " + Messages.get(this, "wandmaker_reward") + " ]", rewards, builder);
             }
-            if (com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp.Quest.reward != null) {
+            if (Imp.Quest.reward != null) {
                 ArrayList<Item> rewards = new ArrayList<>();
-                rewards.add(com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp.Quest.reward.identify());
-                com.shatteredpixel.shatteredpixeldungeon.actors.mobs.npcs.Imp.Quest.complete();
+                rewards.add(Imp.Quest.reward.identify());
+                Imp.Quest.complete();
                 this.addTextQuest("[ " + Messages.get(this, "imp_reward") + " ]", rewards, builder);
             }
             heaps.addAll(this.getMobDrops(l));

@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.custom.seedfinder.SeedFinder;
 import com.shatteredpixel.shatteredpixeldungeon.items.Generator;
 import com.shatteredpixel.shatteredpixeldungeon.items.Gold;
+import com.shatteredpixel.shatteredpixeldungeon.items.Heap;
 import com.shatteredpixel.shatteredpixeldungeon.items.Item;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.CrystalKey;
 import com.shatteredpixel.shatteredpixeldungeon.items.keys.IronKey;
@@ -161,7 +162,7 @@ public class CrystalPathRoom extends SpecialRoom {
                     }
                     break;
             }
-            level.drop(item, pos);
+            level.drop(item, pos).setRoom(Heap.Room.Path);
             if (clockwise){
                 idx++;
                 if (idx > 3) idx = 0;
@@ -293,7 +294,7 @@ public class CrystalPathRoom extends SpecialRoom {
                 isEXP = false;
             } else {
                 potions.add(p);
-                scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[1]
+                scrolls.add(Generator.randomUsingDefaults(Generator.Category.SCROLL));//scroll[2]
                 isEXP = true;
             }
         }
@@ -312,15 +313,15 @@ public class CrystalPathRoom extends SpecialRoom {
         /*以下为物品生成并掉落，读取对应链表的第0位，将其生成并移除（移除后后续物品填充上来）
         然后在对应的room将生成的物品drop到地上*/
         //以下是药水的生成，同侧room为0,2,4
-        level.drop(potions.remove(0), level.pointToCell(rooms[0].center()));
-        level.drop(potions.remove(0), level.pointToCell(rooms[2].center()));
-        level.drop(potions.remove(0), prize1);
+        level.drop(potions.remove(0), level.pointToCell(rooms[0].center())).setRoom(Heap.Room.PathNew);
+        level.drop(potions.remove(0), level.pointToCell(rooms[2].center())).setRoom(Heap.Room.PathNew);
+        level.drop(potions.remove(0), prize1).setRoom(Heap.Room.PathNew);
         /*prize为破碎的机制，意为六选三的基座所在格，让保底经验/升级放置在基座上
         这里移除与否都没有影响，而且不移除可以让物品显得不那么凌乱*/
         //以下是磁盘的生成，同侧room为1,3,5
-        level.drop(scrolls.remove(0), level.pointToCell(rooms[1].center()));
-        level.drop(scrolls.remove(0), level.pointToCell(rooms[3].center()));
-        level.drop(scrolls.remove(0), prize2);
+        level.drop(scrolls.remove(0), level.pointToCell(rooms[1].center())).setRoom(Heap.Room.PathNew);
+        level.drop(scrolls.remove(0), level.pointToCell(rooms[3].center())).setRoom(Heap.Room.PathNew);
+        level.drop(scrolls.remove(0), prize2).setRoom(Heap.Room.PathNew);
         level.addItemToSpawn(new CrystalKey(Dungeon.depth));
         level.addItemToSpawn(new CrystalKey(Dungeon.depth));
         level.addItemToSpawn(new CrystalKey(Dungeon.depth));

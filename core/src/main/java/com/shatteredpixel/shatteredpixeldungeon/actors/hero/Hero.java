@@ -299,6 +299,7 @@ public class Hero extends Char {
 	private static final String LEVEL		= "lvl";
 	private static final String EXPERIENCE	= "exp";
 	private static final String HTBOOST     = "htboost";
+    private static final String HUNGER      = "hunger";
 	
 	@Override
 	public void storeInBundle( Bundle bundle ) {
@@ -321,7 +322,7 @@ public class Hero extends Char {
 		// 保存饥饿值
 		Hunger hunger = buff(Hunger.class);
 		if (hunger != null) {
-			bundle.put("hunger", (int)hunger.hunger());
+			bundle.put(HUNGER, (int)hunger.fullA());
 		}
 		
 		bundle.put( HTBOOST, HTBoost );
@@ -363,12 +364,7 @@ public class Hero extends Char {
 		info.hp = bundle.getInt( Char.TAG_HP );
 		info.ht = bundle.getInt( Char.TAG_HT );
 		info.shld = bundle.getInt( Char.TAG_SHLD );
-		// 尝试从bundle中读取饥饿值，如果不存在则默认为0
-		if (bundle.contains("hunger")) {
-			info.hunger = bundle.getInt("hunger");
-		} else {
-			info.hunger = 0;
-		}
+        info.hunger = bundle.getInt(HUNGER);
 		info.heroClass = bundle.getEnum( CLASS, HeroClass.class );
 		info.subClass = bundle.getEnum( SUBCLASS, HeroSubClass.class );
 		Belongings.preview( info, bundle );
@@ -847,11 +843,6 @@ public class Hero extends Char {
 	@Override
 	public boolean act() {
         Dungeon.GetSight();
-        if (Dungeon.hero.buff(ActHPtoGetFood.LockReg.class)!=null){
-            if (ActHPtoGetFood.LockReg.lost >=Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).cooldown()){
-                Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).detach();
-            }
-        }
 		//calls to dungeon.observe will also update hero's local FOV.
 		fieldOfView = Dungeon.level.heroFOV;
 

@@ -25,6 +25,7 @@ import com.shatteredpixel.shatteredpixeldungeon.Dungeon;
 import com.shatteredpixel.shatteredpixeldungeon.GirlsFrontlinePixelDungeon;
 import com.shatteredpixel.shatteredpixeldungeon.SPDSettings;
 import com.shatteredpixel.shatteredpixeldungeon.Statistics;
+import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.ActHPtoGetFood;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Buff;
 import com.shatteredpixel.shatteredpixeldungeon.actors.buffs.Hunger;
 import com.shatteredpixel.shatteredpixeldungeon.actors.hero.Hero;
@@ -197,8 +198,12 @@ public class WndHero extends WndTabbed {
 			// 添加饱食度显示
 			Hunger hunger = Dungeon.hero.buff(Hunger.class);
 			if (hunger != null) {
+                String buffFood = "";
+                if (Dungeon.hero.buff(ActHPtoGetFood.LockReg.class)!=null){
+                    buffFood = String.format("(%d)", (int)Dungeon.hero.buff(ActHPtoGetFood.LockReg.class).visualcooldown());
+                }
 			    statSlot( Messages.get(this, "hunger"),
-                        String.format("%.0f/%.0f", hunger.fullA(), Hunger.STARVING-Hunger.minLevel) );
+                        String.format("%.0f%s/%.0f", hunger.fullA(),buffFood, Hunger.STARVING-Hunger.minLevel) );
 			}
 			
 			pos += GAP;

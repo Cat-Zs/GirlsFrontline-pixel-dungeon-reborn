@@ -104,10 +104,10 @@ public class TrapsRoom extends SpecialRoom {
 			if (lastRow == Terrain.CHASM) {
 				Painter.set( level, pos, Terrain.EMPTY );
 			}
-			level.drop( prize( level ), pos ).type = Heap.Type.CHEST;
+			level.drop( prize( level ), pos ).setType(Heap.Type.CHEST).setRoom(Heap.Room.Traps);
 		} else {
 			Painter.set( level, pos, Terrain.PEDESTAL );
-			level.drop( prize( level ), pos ).type = Heap.Type.CHEST;
+			level.drop( prize( level ), pos ).setType(Heap.Type.CHEST).setRoom(Heap.Room.Traps);
 		}
 		
 		level.addItemToSpawn( new PotionOfLevitation() );
